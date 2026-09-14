@@ -2,7 +2,7 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.0 — ready for pulpit UX runtime test
+## PrayerClarity 0.1.0 — runtime result: superseded
 
 - Type: first production-architecture prototype; **Clarity only**, with no intended prayer-mechanics or balance changes.
 - Purpose: validate the minimal pulpit decision-time surface before implementing broader tooltip/HUD layers or any Vanilla Fix / Balance-Rework behavior.
@@ -16,10 +16,10 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Handoff DLL SHA-256: `dc47501e5a9d444309954f4b2a58c230f2bc1c8a725c1163eb43944576b6c949`.
 - Supported target identity: Graveyard Keeper 1.407 Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`; other MVIDs fail closed before patching.
 - Localization contract: English, French, German, Simplified Chinese, Spanish (Spain), Portuguese (Brazil), Korean, Japanese, Russian, Italian and Polish are embedded in the DLL; current game language is resolved on the relevant UI redraw with English fallback.
-- Runtime architecture: one postfix on `PrayCraftGUI.RedrawTextValues(float,float)`; no polling, no Unity-wide scans and no call to `PrayLogics.CalculatePray` for preview. Base Faith/money are read through the game's own `SmartExpression.EvaluateFloat`; known special effects are read from verified game definitions/semantics.
+- Runtime architecture: one postfix on `PrayCraftGUI.RedrawTextValues(float,float)`; no polling, no Unity-wide scans and no call to `PrayLogics.CalculatePray` for preview. Base Faith/money are intended to be read through the game's own `SmartExpression.EvaluateFloat`; known special effects are read from verified game definitions/semantics.
 - Fail-safe behavior: a forecast error is logged once and vanilla pulpit UI remains usable.
-- Requested user test: install this DLL as the only PrayerClarity production prototype, open the church pulpit and switch among several available prayers without needing to execute a sermon. Check whether the added success/failure outcome line and optional effect/reward line are readable, useful and correctly localized; specifically note clipping/overlap, unexpected values, duplicated text, or a prayer whose explanation is misleading. A screenshot of the pulpit with several representative prayers is sufficient initial evidence.
-- Status: **candidate built and frozen; pending user runtime UX evidence**. Do not merge runtime behavior to `main` yet.
+- Runtime evidence, 2026-09-14: the test harness successfully switched synthetic prayer families/qualities in the live pulpit UI without granting them to the save. The visible `Church quality / Sermon requires / Success chance` block was confirmed to be vanilla UI. PrayerClarity's own forecast did **not** render because `R.BalanceData` selected an open generic `GameBalance.GetData*` overload and late-bound invocation failed with `ContainsGenericParameters=true`. The plugin failed safe and left the vanilla pulpit usable; no prayer-mechanics change was observed.
+- Status: **superseded / not accepted**. Next candidate must fix only the balance-data method resolver before any broader presentation redesign is judged in runtime.
 
 ## PrayerClarity Audit Probe 0.1.0 — pending runtime evidence
 
