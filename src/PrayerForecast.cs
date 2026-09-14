@@ -21,7 +21,7 @@ namespace PrayerClarity
 
             Localization.UseCurrentGameLanguage();
 
-            object prayEvent = R.BalanceData(eventId, false, "PrayEventDefinition");
+            object prayEvent = R.BalanceData(eventId, "PrayEventDefinition", false);
             int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
             float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
 
@@ -56,7 +56,7 @@ namespace PrayerClarity
                 parts.Add(special);
                 specialConsumed = true;
             }
-            if (parts.Count == 0) parts.Add(Localization.T("forecast.no_bonus"));
+            if (parts.Count == 0) parts.Add(Localization.F("forecast.no_bonus"));
 
             int chancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f);
             return Localization.F("forecast.on_success", chancePercent, string.Join(" · ", parts.ToArray()));
@@ -105,7 +105,7 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(buffId)) return null;
 
-            object buff = R.BalanceData(buffId, true, "BuffDefinition");
+            object buff = R.BalanceData(buffId, "BuffDefinition", true);
             object res = buff == null ? null : R.Get(buff, "res");
 
             switch (buffId)
