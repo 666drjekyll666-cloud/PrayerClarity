@@ -117,7 +117,7 @@ That explains why the prayer can feel unreliable even while technically working.
 Leading candidate keeps the prayer ceiling at **normal story max + 1**, capped at the game's final normal corpse tier:
 
 - **Bronze:** stock pool expansion (`max +1`), stock random selection;
-- **Silver:** **85% chance** to choose a body from the highest prayer-eligible tier; remaining 15% falls back to lower eligible tiers;
+- **Silver:** **90% chance** to choose a body from the highest prayer-eligible tier; remaining 10% comes from lower eligible tiers;
 - **Gold:** **100%** body from the highest prayer-eligible tier;
 - keep 18/36/54 min.
 
@@ -174,7 +174,7 @@ The **non-production Rebalanced roster is now complete enough for review**:
 - Repentance: 30/50/70%;
 - Shoots & Roots: repaired stock -20%;
 - Combat: soft merge; +5/+8/+12 damage, +4 armor, 1 HP/min, 36/72/108 min;
-- Repose: stock / 85% best eligible tier / 100% best eligible tier;
+- Repose: stock / 90% best eligible tier / 100% best eligible tier;
 - Imagination: +0.7/+0.9/+1.1;
 - Excellence: +0.2/+0.3/+0.4;
 - Prosperity and BSS prayers: stock unless runtime testing establishes a concrete problem.
