@@ -2,27 +2,48 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.7 — deterministic frame calibration candidate
+## PrayerClarity 0.1.8 — fixed-window wrapping candidate
+
+- Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
+- Purpose: retain the workable fixed-window composition found by the user in 0.1.7, remove the disproved frame-resize controls, add localization-safe effect wrapping, and repair several misleading/blank special-effect rows.
+- Frozen candidate ref: `candidate/0.1.8`.
+- Exact build source SHA: `46f5d9954d710a160308e393f2cb1bf91e28e82a`.
+- GitHub Actions run: `34899841772`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10369988505` (`PrayerClarity-0.1.8-ci-46f5d9954d710a160308e393f2cb1bf91e28e82a`).
+- Handoff filename: `PrayerClarity-0.1.8-ci.dll`.
+- Handoff DLL SHA-256: `8b78d5bf6b3bd395b0b8399e016f6e49b894e08ad6e509f50c4f4da2d5eb9656`.
+- Layout baseline: the 0.1.7 user calibration from the second supplied screenshot is now the default starting point at 2560x1440: context `8/72/12`, result `8/20/13`, effect `-122/-35/10` with icon size `10`, note `-6/-87/9`, prayer selector `90/55`, prayer button `0/-120`.
+- Removed controls: `Window extra width` and `Window extra height` are gone. Runtime proved they only resize child artwork and do not enlarge the actual pulpit window.
+- Config isolation: layout controls now live under `Prototype pulpit layout tuning v3`, so rejected v2 width/height values cannot carry into this candidate.
+- Effect wrapping: the mod-owned effect label now uses a fixed width with top-left `ResizeHeight`. Only the new effect label expands downward; the stock center-pivot `l_total_values` widget that caused 0.1.4 cumulative drift is not resized.
+- Repose copy: stock Clarity now describes the verified `body_max +1` in terms of the Donkey being able to bring a body one quality tier higher and uses the native inline white-skull symbol. It intentionally does **not** use bronze/silver/gold `possible/likely/guaranteed` language because that belongs to the future Rebalanced mechanics, not stock 1.407.
+- Prosperity: Commercial Blessing output now appends the game's own localized description explaining that it can be sold to a merchant to raise that merchant's level.
+- BSS Soul's Repose: detection now keys off the verified `pray_for_souls_*` event family, so the vanilla localized Soul Gratitude/Faith explanation should no longer be blank.
+- Soul Contentment: copy order is now `Effect: +10% (gratitude_points) ...`; the generic leading buff icon is suppressed to avoid duplicate/ambiguous icon grammar.
+- Thorough Cleansing: uses explicit `i_sin_shard`, the Sin Shard art referenced by the stock Sin Shard body-part craft rows. The `sin_shard` ItemDefinition itself has blank icon fields, which explains why the prior generic item-icon fallback failed.
+- Balance separation: the user-proposed Soul Contentment `+20/+40/+60%` and Thorough Cleansing `x2/x3/x4` curves are recorded as Rebalanced design hypotheses only. This candidate still reports and preserves stock `+10%` and `x2` behavior.
+- Requested user test: replace 0.1.7 with 0.1.8 and first leave the new v3 layout values untouched. Confirm that the pulpit opens close to the accepted second-screenshot composition and that Window width/height controls are absent. Then test Shoots & Roots and Repentance for automatic effect-line wrapping; Repose for clearer stock wording/white-skull cue; Prosperity for the merchant-level explanation; BSS Soul's Repose for a nonblank Effect row; Soul Contentment for `+10%` before the Soul Gratitude icon; and Thorough Cleansing for actual Sin Shard art. A quick Faith/Donations/Combo switch should confirm specialist-arrow semantics remain intact. No sermon execution is required.
+- Status: **ready for runtime UX verification; not accepted**.
+
+## PrayerClarity 0.1.7 — runtime result: fixed-window layout useful, frame resize rejected
 
 - Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
-- Purpose: retain the useful live Configuration Manager calibration from 0.1.6 while replacing its broken aspect-ratio-sensitive frame stretching, refining success-bonus arrow semantics, and closing the visible BSS special-effect gaps found in runtime.
 - Frozen candidate ref: `candidate/0.1.7`.
 - Exact build source SHA: `4df3d204866afc39ee0b848c14bb724101a29761`.
 - GitHub Actions run: `34895350258`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
 - Workflow artifact ID: `10368661089` (`PrayerClarity-0.1.7-ci-4df3d204866afc39ee0b848c14bb724101a29761`).
 - Handoff filename: `PrayerClarity-0.1.7-ci.dll`.
 - Handoff DLL SHA-256: `3742468ee5fef4190ad631933e4c0da220657e14aab46b3246fd9799ea99d4f2`.
-- Calibration section: moved to `Prototype pulpit layout tuning v2`, intentionally resetting rejected 0.1.6 experimental values rather than silently inheriting them.
-- New calibration controls: independent extra window width/height; context/result/effect/note X/Y and font sizes; effect-icon size; selected-prayer-slot X/Y; prayer-button X/Y. Effect X now reaches -220 local units.
-- Frame change: every tuning application starts from captured stock dimensions/positions. Before changing dimensions, PrayerClarity sets the NGUI aspect policy to `Free` and uses `UIWidget.SetDimensions(int,int)` when the runtime exposes it. The top/header remains fixed; bottom/center pieces and controller tips move by deterministic fractions of the requested height instead of accumulating offsets.
-- Button terminology: the F1 controls now say `Prayer button` rather than `Craft button`. PrayerClarity does not replace the actual in-game action text; stock 1.407 already supplies localized `btn_pray` / `btn_try_pray` strings such as Russian `Молиться` / `Попытка молитвы`.
-- Success-bonus cue: `(up)` is now resource-specific. Faith prayer places it immediately before Faith; Donations places it immediately before money; Ordinary, Combo and all other prayer families receive no success-row arrow.
-- Soul's Repose: its effect row now reuses vanilla localized `b_souls_d`, exposing the otherwise hidden fact that Soul Gratitude contributes to Faith. The native Soul Gratitude sprite is used as the effect icon candidate.
-- Soul Contentment: the +10% text is explicitly paired with the native Soul Gratitude token/icon so the percentage has a visible noun.
-- Thorough Cleansing: the effect icon now prefers the actual `sin_shard` item icon over the generic buff icon.
-- Requested user test: replace 0.1.6 with this DLL, keep Test Harness and Configuration Manager, open the pulpit and F1 -> PrayerClarity. First vary `Window extra height` and `Window extra width` to confirm the frame no longer explodes sideways or moves in disconnected jumps. Then place `Prayer selector`, `Prayer button`, `Effect`, `Result` and `Note` as desired. Check Faith, Donations, Combo, Soul's Repose, Soul Contentment and Thorough Cleansing. Confirm the arrow targets only the specialist resource and the two BSS effect icons/descriptions are understandable.
-- Status: **ready for runtime UX verification; not accepted**.
+- Runtime evidence, 2026-09-15: the independent Window extra width/height controls still do **not** enlarge the actual pulpit window. They deterministically stretch/move the child background/decor artwork, proving that the targeted child widgets are not the real usable window boundary. The frame-resize approach is rejected rather than iterated again.
+- Accepted UX direction: moving the prayer selector into the upper-right creates enough usable space inside the unchanged stock pulpit to fit the forecast. The second supplied screenshot produced a workable calibration baseline: context `8/72/12`, result `8/20/13`, effect `-122/-35/10`, effect icon `10`, note `-6/-87/9`, selector `90/55`, prayer button `0/-120`.
+- Accepted arrow semantics: Faith highlights Faith; Donations highlights money; Combo and non-resource specialists show no green up arrow. The user reported Faith/Donations/Combo as reading correctly.
+- New presentation failure: Shoots & Roots effect text can run beyond the available horizontal region. This is a localization problem, not a Russian-only string problem, so the next candidate must wrap the effect label automatically rather than insert language-specific hard line breaks.
+- Repose finding: the stock text `corpses can be one tier better` is too abstract. A Donkey/body-quality formulation is clearer. However, stock 1.407 exposes the same `body_max +1` special magnitude at every prayer quality, so bronze/silver/gold reliability language must wait for the future Rebalanced implementation.
+- BSS Soul's Repose remained blank in the Effect row. Root cause in 0.1.7 code: the special-text path matched a guessed prayer-craft prefix instead of the already-verified `pray_for_souls_*` event family.
+- Soul Contentment still read ambiguously because a leading effect icon plus an inline Soul Gratitude icon visually duplicated the noun. The desired grammar is `+10% [Soul Gratitude] from soul healing`.
+- Thorough Cleansing still did not show the expected Sin Shard art. Direct balance evidence resolves the icon path: stock Sin Shard body-part crafting rows use `i_sin_shard`, while the `sin_shard` ItemDefinition has blank icon fields.
+- Status: **superseded by 0.1.8; fixed-window composition retained, frame resizing rejected**.
 
 ## PrayerClarity 0.1.6 — runtime result: live tuning useful, frame/arrow design rejected
 
