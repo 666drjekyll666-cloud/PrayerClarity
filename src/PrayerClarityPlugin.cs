@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         internal const string PluginName = "PrayerClarity";
-        internal const string PluginVersion = "0.1.5";
+        internal const string PluginVersion = "0.1.6";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -34,12 +34,13 @@ namespace PrayerClarity
                 }
 
                 Localization.Initialize(Assembly.GetExecutingAssembly(), Logger);
+                PulpitTuning.Bind(Config);
 
                 Type prayGui = R.GameType("PrayCraftGUI");
                 MethodInfo redraw = R.Method(prayGui, "RedrawTextValues", false, new[] { typeof(float), typeof(float) });
                 R.Patch(PluginGuid, typeof(PrayerClarityPlugin), redraw, nameof(RedrawTextValuesPostfix));
 
-                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit forecast; no prayer mechanics are changed.");
+                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit forecast; no prayer mechanics are changed. Prototype layout tuning is available through BepInEx configuration.");
             }
             catch (Exception ex)
             {
