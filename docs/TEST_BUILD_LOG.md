@@ -2,7 +2,29 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.5 — measured pulpit layout candidate
+## PrayerClarity 0.1.6 — live pulpit calibration candidate
+
+- Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
+- Purpose: stop iterating pulpit coordinates through rebuilds. Expose the relevant NGUI layout values through BepInEx Configuration Manager so the real installed game can calibrate the layout live, then convert the accepted geometry back into fixed production defaults.
+- Frozen candidate ref: `candidate/0.1.6`.
+- Exact build source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
+- GitHub Actions run: `34891988740`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10367390730` (`PrayerClarity-0.1.6-ci-adf752e1a04c93172bdedc54b913d4b926413c0d`).
+- Handoff filename: `PrayerClarity-0.1.6-ci.dll`.
+- Handoff DLL SHA-256: `cd741f905510db6dc968cdf87a0c2ca6f74e507bc9deb29b3bd801b2685e0a8d`.
+- Calibration controls: Configuration Manager exposes live X/Y/font-size controls for context, result, effect and dependency-note blocks; effect icon size; craft-button Y; and an experimental downward pulpit-frame extension. Changes are applied only when a PrayerClarity forecast is active and do not require reopening the pulpit.
+- Coordinate model: controls use the game's local NGUI coordinates rather than raw display pixels. The user's 2560x1440 calibration is therefore expected to be more portable than screen-pixel offsets, but cross-resolution portability is **not accepted until separately tested**.
+- Context change: the low-value `Sermon context` / `Контекст проповеди` heading is removed from the rendered block. The section contains only church quality, sermon requirement and graveyard quality.
+- Dependency note: obvious resource/source nouns are icon-first. Faith uses `(faith)`, church quality `(cross)`, donations `(slv)`, graveyard quality `(wskull)`, and the Souls variant also uses `(gratitude_points)`.
+- Success-bonus cue: one native `(up)` green-arrow symbol prefixes the **whole success-bonus resource group**, rather than drawing one arrow per Faith/money resource. This avoids double-arrow clutter on Combo while still communicating that all following values are improvements over the guaranteed row.
+- Special-effect icon: the earlier verified native `BuffDefinition.GetIconName` / item-icon resolver is restored and cached. Thorough Cleansing explicitly falls back to the `sin_shard` item icon when its buff does not provide one.
+- Effect grammar remains conservative: 0.1.6 does **not** mechanically replace every `+` in buff descriptions with an up arrow. Additive stat/effect iconography will be decided after the main layout is accepted so reductions such as Roots are not represented misleadingly.
+- Experimental frame extension: stock pulpit background/decor widgets are stretched downward while preserving their measured top edge, and controller tips move down by the same amount. This is a presentation hypothesis; visible sprite distortion or bad anchoring is grounds to set `Window extra height` to zero and replace the frame strategy.
+- Requested user test: install 0.1.6 in place of 0.1.5, keep Test Harness and Configuration Manager, open the pulpit and F1 -> PrayerClarity. Tune primarily `Window extra height`, `Context Y`, `Result Y`, `Effect Y`, `Note Y` and `Craft button Y`; use X/font/icon-size controls only if useful. Test at least Faith, Combo, Thorough Cleansing and one Souls/long-effect prayer. Confirm that controls apply live, the Sin Shard effect icon appears, and no cumulative drift returns. Return a pulpit screenshot plus the final visible PrayerClarity setting values.
+- Status: **ready for runtime UX calibration; not accepted**.
+
+## PrayerClarity 0.1.5 — runtime result: stable geometry, layout rejected
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
 - Purpose: replace the rejected 0.1.4 single expanding label with a layout derived from measured stock pulpit geometry, while retaining the accepted `guaranteed + success bonus + special effect` information model.
@@ -14,13 +36,11 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Handoff filename: `PrayerClarity-0.1.5-ci.dll`.
 - Handoff DLL SHA-256: `5f5684dac333683bbf6a547ee4f4d97b5df81b0d25faf4dad7555d3b668b58fb`.
 - Geometry evidence: the stock `l_total_values` label is 242x68 at local `(-3,49)`, center pivot, 16 px font, `spacingY=-3`, `ShrinkContent`; the selected prayer item cell occupies the middle of the container and the craft button is at window-local `y=-85`.
-- Layout change: context remains in the measured upper text region; a native-font cloned result label occupies the measured region below the prayer item cell; the craft button moves only to `y=-100`; a smaller dependency note occupies the measured gap below that button and above the stock controller tips. No `ResizeHeight` is used for the main stock label.
-- Resource order: each result row starts with its semantic label (`Guaranteed` / `Additional on success (N%)`), followed by Faith first and then `Trading.FormatMoney` money output. Zero-value money denominations remain omitted by the vanilla formatter.
-- Verified inline symbols used by 0.1.5: `(faith)` -> native Faith icon; `(wskull)` -> green-wreath graveyard-quality skull; `(slv)` -> silver coin used as generic donation cue in the dependency note; `(gratitude_points)` -> Soul Gratitude icon.
-- Dependency wording now says **guaranteed** Faith/donations rather than base Faith/donations and uses native resource icons; the Souls variant includes the Soul Gratitude icon.
-- Stability change: all presentation labels use fixed measured pivots/positions/sizes. This removes the center-pivot `ResizeHeight` path that produced cumulative vertical drift in 0.1.4.
-- Requested user test: replace 0.1.4 with this DLL, keep Test Harness 0.1.0, open the pulpit and switch repeatedly among Faith, Combo, Souls/Repose or another long-effect prayer, and back again. Verify: no cumulative vertical drift; context never touches the prayer slot; result/effect never touch the prayer slot or craft button; the dependency note is secondary but readable; `(wskull)`, `(faith)`, coin and Soul Gratitude symbols render correctly; repeated switching does not progressively move any label or button.
-- Status: **ready for runtime UX verification; not accepted**.
+- Layout change: context remained in the measured upper text region; a native-font cloned result label occupied the measured region below the prayer item cell; the craft button moved to `y=-100`; a smaller dependency note occupied the gap below that button and above the stock controller tips. No `ResizeHeight` was used for the main stock label.
+- Runtime evidence, 2026-09-14: repeated Test Harness switching across Faith, Combo, Souls, Retribution, Donations, Repose, Thorough Cleansing, Gratitude, Roots, Imagination and other synthetic selections no longer produced the cumulative downward drift seen in 0.1.4. The supplied runtime log shows PrayerClarity 0.1.5 loaded and the switches completed without a reported PrayerClarity forecast failure.
+- UX result: **the drift fix is accepted as evidence, but the layout is rejected**. The fixed blocks still overlap/crowd the stock prayer slot/button area, the frame remains too short for the desired information hierarchy, and `Контекст проповеди` adds little value.
+- Additional UX findings from the runtime test: the dependency note should replace church/graveyard source nouns with their native icons; Thorough Cleansing needs a Sin Shard visual cue; and repeated rebuilds are an inefficient way to calibrate several local NGUI positions.
+- Status: **superseded by 0.1.6 calibration candidate; not accepted for stable**.
 
 ## PrayerClarity 0.1.4 — runtime result: single expanding label rejected
 
@@ -50,7 +70,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Handoff DLL SHA-256: `e24b93a6e70c69f6c440da08d7f2bdf91c9d6bafc2a979cd6307d0ae7092066c`.
 - Runtime evidence, 2026-09-14: PrayerClarity 0.1.3 and Test Harness 0.1.0 loaded successfully; synthetic prayer selection continued to work and no PrayerClarity forecast exception was observed. The rendered multi-label layout visibly drifted outside the pulpit window.
 - UX result: the fixed-column/multi-widget approach is **rejected**. It introduced brittle geometry without improving clarity enough to justify the extra UI hierarchy. The underlying `guaranteed + success bonus + special effect` information model remains accepted.
-- Next narrow candidate: reuse the existing vanilla pulpit UILabel instead of creating a parallel widget hierarchy; present a spacious vertical `context -> result -> effect -> dependency note` block, add live graveyard quality, and use `ResizeHeight` rather than shrinking text.
+- Next narrow candidate: reuse the existing vanilla pulpit UILabel instead of creating a parallel UI hierarchy; present a spacious vertical `context -> result -> effect -> dependency note` block, add live graveyard quality, and use `ResizeHeight` rather than shrinking text.
 - Status: **superseded for presentation; information model retained**.
 
 ## PrayerClarity 0.1.2 — runtime result: information model retained, single-label layout rejected
