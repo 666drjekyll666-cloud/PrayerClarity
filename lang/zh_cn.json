@@ -10,11 +10,11 @@
   "forecast.reward": "奖励：{0}",
   "buff.sword": "伤害 +{0:0.##} · {1:0} 分钟",
   "buff.shield": "护甲 +{0:0.##} · {1:0} 分钟",
-  "buff.skull": "驴：尸体最高可提高 {0:0.##} 档 · {1:0} 分钟",
+  "buff.skull": "驴运来的尸体最高可提高 {0:0.##} 档品质 (skull) · {1:0} 分钟",
   "buff.pen": "书写品质 +{0:0.##} · {1:0} 分钟",
   "buff.star": "受影响制作的品质 +{0:0.##} · {1:0} 分钟",
   "buff.plant_inactive": "植物生长：原版 1.407 中效果不生效 · 增益 {0:0} 分钟",
   "buff.sins_unverified": "原版 1.407 中未找到特殊效果 · 增益 {0:0} 分钟",
-  "buff.gratitude": "治愈灵魂时 +10% · {0:0} 分钟",
+  "buff.gratitude": "治愈灵魂时 +10% (gratitude_points) · {0:0} 分钟",
   "buff.sin_shard": "成功治愈灵魂时 ×2 · {0:0} 分钟"
 }
