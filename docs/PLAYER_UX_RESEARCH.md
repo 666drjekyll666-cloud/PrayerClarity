@@ -24,6 +24,7 @@ A comment or thread is a **community signal**, not proof of a mechanic. Repetiti
 | 2026-03-13 | Reddit — `The Effect of "Prayer for Soul's Repose" is Secretly Capped?` | Player observes a result that does not match their inferred formula, suspects a hidden cap, then updates after other players derive a different formula from testing. | **community signal**; recent; direct 1.407 runtime independently confirms the Souls baseline uses both church quality and Soul Gratitude |
 | 2026-01-15 | Steam — `What does graveyard quality do (aside from finishing bishop quests)` | Player explicitly asks where the game explains graveyard rating and initially believes sermon Faith/money both come from church quality. Replies say the relationship may not be shown in-game and explain graveyard -> donations, church -> Faith. | **community signal**; recent, direct discoverability complaint |
 | 2026-04-12 | Steam — `Why is my friend getting twice the donations with worse stats?` | Player compares two games and cannot reconcile per-person donation animations with church/graveyard stats. Explanation requires separating total donations, visitor count, graveyard rating, prayer success, and perks. | **community signal**; recent; highlights that visible per-person coins can teach the wrong mental model |
+| 2026-04-20 | Reddit — `Does the higher tier inspirational books give a stronger buff?` | Player explicitly asks whether a higher-quality inspiration prayer makes the writing buff stronger. Replies disagree/clarify that quality affects duration rather than buff magnitude. | **community signal**; recent and directly about whether prayer quality changes effect strength versus duration |
 
 Source URLs:
 
@@ -31,6 +32,7 @@ Source URLs:
 - https://www.reddit.com/r/GraveyardKeeper/comments/1rsjmat/the_effect_of_prayer_for_souls_repose_is_secretly/
 - https://steamcommunity.com/app/599140/discussions/0/780944762959117296/
 - https://steamcommunity.com/app/599140/discussions/4/801218828360078237/
+- https://www.reddit.com/r/GraveyardKeeper/comments/1sqeane/does_the_higher_tier_inspirational_books_give_a/
 
 ## Repeated historical/supporting signals
 
@@ -64,17 +66,34 @@ A public capture of the same Preaching UI family visibly shows `Church quality`,
 
 Therefore **hidden success probability is not currently considered a likely PrayerClarity UX gap**. Exact current localization remains to be pinned down, but available evidence points away from spending mod UI on information the base interface already provides.
 
-This is important narrowing: the stronger candidate problems concern **what the reward notation means**, **which current-state values feed the reward**, and **whether the player can compare actual outcomes before committing**.
+This is important narrowing: the stronger candidate problems concern **what the reward notation means**, **which current-state values feed the reward**, **whether quality changes magnitude or only duration for passive prayers**, and **whether the player can compare actual outcomes before committing**.
 
 ## Existing mod landscape — initial check
 
-A current Nexus mod, `Pray the Day Away`, updated on 2026-05-19, changes sermon frequency/consumption/pacing. It is not presented as a prayer-effect clarity or forecast mod.
+Current Nexus search/top-list review found sermon-affecting mods, but no obvious prayer-effect explanation/forecast mod:
 
-Source:
+- `Pray the Day Away` (updated 2026-05-19) changes sermon frequency, repeatability, consumption/downgrade rules, and playback speed;
+- `Give Me Moar` (updated 2026-06-20) adds configurable multipliers for Faith, prayer donations, gratitude, and other resources;
+- older `Not Just - Zombie Enhanced` includes an at-will sermon feature and unrelated tooltips, but is not presented as a prayer-effect clarity mod.
+
+Sources:
 
 - https://www.nexusmods.com/graveyardkeeper/mods/72
+- https://www.nexusmods.com/graveyardkeeper/mods/70
+- https://www.nexusmods.com/graveyardkeeper/mods/24
 
-This only shows that sermons are an active mod surface. It does not yet prove novelty; the broader mod inventory remains open.
+**Status:** useful negative evidence, not proof of novelty. Search coverage is not exhaustive enough to claim that no clarity/forecast mod exists anywhere.
+
+## Secondary public presentation reference
+
+The current public wiki is useful as a **presentation/reference vocabulary source**, not mechanics authority. It exposes the same ambiguous quantity style for common prayers, e.g. `Faith (x1) (+50%)`, and documents passive effects in prose such as “better chance to write something of good quality.” This supports why players can form multiplier/strength assumptions, but direct 1.407 localization/UI remains the required source for any mod wording decision.
+
+Examples:
+
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_faith
+- https://graveyardkeeper.fandom.com/wiki/Combo_prayer
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_excellence
+- https://graveyardkeeper.fandom.com/wiki/Sermon
 
 ## Provisional actual mechanics -> UI -> player-understanding synthesis
 
@@ -132,13 +151,17 @@ Whether current 1.407 explicitly exposes this dependency remains an open present
 
 This candidate is precisely what the next UI audit must confirm or reject. If the base UI already supplies a current result forecast, this candidate disappears.
 
-### Candidate E — passive prayer effects may be quantitatively underexplained
+### Candidate E — prayer quality can be mistaken for effect-strength scaling when it may change duration instead
 
-Direct runtime data proves concrete effects exist. For example, the `b_sin_shard` prayer's active buff sets `increase_sin_shard_drop = 1`, and the soul-healing consumer consequently doubles the base Sin Shard output. Other prayer buffs expose parameters such as +damage, +armor, `craft_q`, and growth flags.
+Direct runtime data shows several passive prayer buffs have fixed effect parameters while the prayer tiers carry different duration-related values. For example, `buff_pen` exposes one fixed `craft_q` parameter and the prayer family has tier-dependent duration data.
 
-Historical/current player reports sometimes say they cannot tell whether passive-effect prayers work or how large the benefit is.
+A current April 2026 player explicitly asks whether a higher-tier inspiration prayer makes the writing effect stronger; replies clarify that the practical scaling is duration, not a stronger underlying buff.
 
-**Status:** still a candidate, not an accepted UX finding. The current 1.407 item description and buff-hover presentation must be inspected before saying this information is hidden.
+**Provisional UX finding:**
+
+> Before investing in a higher-quality passive prayer, the player may not be able to tell whether quality increases the buff's magnitude, its duration, or both, making the value of upgrading ambiguous.
+
+**Status:** mechanics-side duration application is not yet fully traced, and the exact current item/buff text must be audited before accepting this finding.
 
 ## Current priority order
 
@@ -146,7 +169,7 @@ Historical/current player reports sometimes say they cannot tell whether passive
 2. **Current-state outcome prediction / cross-prayer comparison** — high-value, presentation audit still incomplete.
 3. **Church vs graveyard dependency visibility** — strong recent community signal, needs exact UI comparison.
 4. **Soul Gratitude dependency visibility** — direct unusual mechanic + recent player confusion.
-5. **Passive-buff magnitude/duration** — potentially useful, but more consumer/UI evidence required.
+5. **Passive-buff magnitude vs duration** — now has a recent direct player question; still needs exact UI and duration-path evidence.
 6. **Success chance** — deprioritized because the base UI appears to expose it already.
 
 ## What must be audited before design work
@@ -157,7 +180,8 @@ Historical/current player reports sometimes say they cannot tell whether passive
 4. Current buff descriptions and buff-hover behavior for passive prayers.
 5. Result-screen wording and whether it clearly separates base reward from prayer bonus.
 6. Whether Souls prayer UI surfaces current Soul Gratitude's quantitative role.
-7. Broader Nexus/GitHub mod inventory for existing prayer-information solutions.
+7. Complete the broader mod inventory enough to support or reject a novelty claim.
+8. Trace passive prayer duration application far enough to distinguish magnitude-vs-duration semantics safely.
 
 ## Design status
 
