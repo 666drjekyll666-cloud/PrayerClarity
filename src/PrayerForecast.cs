@@ -9,6 +9,13 @@ namespace PrayerClarity
 {
     internal static class PrayerForecast
     {
+        internal enum BonusHighlight
+        {
+            None,
+            Faith,
+            Money
+        }
+
         internal sealed class Result
         {
             internal int BaseFaith;
@@ -18,6 +25,7 @@ namespace PrayerClarity
             internal int ChancePercent;
             internal float GraveyardQuality;
             internal bool UsesSoulGratitude;
+            internal BonusHighlight Highlight;
             internal string SpecialText;
             internal string SpecialIconName;
         }
@@ -61,7 +69,7 @@ namespace PrayerClarity
 
             int bonusFaith = fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
             float bonusMoney = fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
-            SpecialInfo special = BuildSpecial(craft, rewards);
+            SpecialInfo special = BuildSpecial(craft, craftId, rewards);
 
             return new Result
             {
@@ -72,9 +80,19 @@ namespace PrayerClarity
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
                 GraveyardQuality = R.ZoneQuality("graveyard"),
                 UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
+                Highlight = GetBonusHighlight(craftId),
                 SpecialText = special == null ? null : special.Text,
                 SpecialIconName = special == null ? null : special.IconName
             };
+        }
+
+        private static BonusHighlight GetBonusHighlight(string craftId)
+        {
+            if (craftId.StartsWith("pray:b_faith:", StringComparison.Ordinal))
+                return BonusHighlight.Faith;
+            if (craftId.StartsWith("pray:b_money:", StringComparison.Ordinal))
+                return BonusHighlight.Money;
+            return BonusHighlight.None;
         }
 
         private static void CollectOutputs(object craft, ref int fixedFaith, ref float fixedMoney, List<RewardItem> rewards)
@@ -93,10 +111,18 @@ namespace PrayerClarity
             }
         }
 
-        private static SpecialInfo BuildSpecial(object craft, List<RewardItem> rewards)
+        private static SpecialInfo BuildSpecial(object craft, string craftId, List<RewardItem> rewards)
         {
             List<string> parts = new List<string>();
             string iconName = null;
+
+            if (craftId.StartsWith("pray:b_souls:", StringComparison.Ordinal))
+            {
+                string soulsText = R.VanillaLocalize("b_souls_d");
+                if (!string.IsNullOrEmpty(soulsText) && !string.Equals(soulsText, "b_souls_d", StringComparison.Ordinal))
+                    parts.Add(soulsText);
+                iconName = "techpoint_drop_smile";
+            }
 
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
@@ -104,7 +130,7 @@ namespace PrayerClarity
             if (buff != null)
             {
                 if (!string.IsNullOrEmpty(buff.Text)) parts.Add(buff.Text);
-                iconName = buff.IconName;
+                if (!string.IsNullOrEmpty(buff.IconName)) iconName = buff.IconName;
             }
 
             if (rewards.Count > 0)
@@ -155,11 +181,13 @@ namespace PrayerClarity
                     text = Localization.F("buff.sins_unverified", duration);
                     break;
                 case "buff_gp_increase":
-                    text = Localization.F("buff.gratitude", duration);
+                    text = "(gratitude_points) " + Localization.F("buff.gratitude", duration);
+                    iconName = "techpoint_drop_smile";
                     break;
                 case "buff_sin_shard":
                     text = Localization.F("buff.sin_shard", duration);
-                    if (string.IsNullOrEmpty(iconName)) iconName = GetItemIconName("sin_shard");
+                    string shardIcon = GetItemIconName("sin_shard");
+                    if (!string.IsNullOrEmpty(shardIcon)) iconName = shardIcon;
                     break;
                 default:
                     text = null;
