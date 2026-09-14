@@ -7,10 +7,25 @@ namespace PrayerClarity
 {
     internal static class PulpitPresentation
     {
+        private sealed class StretchPart
+        {
+            internal Transform Transform;
+            internal object Widget;
+            internal int OriginalHeight;
+            internal Vector3 OriginalPosition;
+            internal float DownFactor;
+        }
+
+        private static readonly Dictionary<string, Sprite> SpriteCache =
+            new Dictionary<string, Sprite>(StringComparer.Ordinal);
+
         private static object _template;
         private static GameObject _root;
         private static object _resultLabel;
+        private static object _effectLabel;
+        private static object _effectIcon;
         private static object _noteLabel;
+        private static MethodInfo _getSprite;
 
         private static object _originalAlignment;
         private static object _originalOverflow;
@@ -27,6 +42,15 @@ namespace PrayerClarity
         private static Vector3 _originalButtonPosition;
         private static bool _buttonCaptured;
 
+        private static Transform _windowTransform;
+        private static StretchPart _windowBack;
+        private static StretchPart _decoreBack;
+        private static StretchPart _decore;
+        private static StretchPart _inactiveBack;
+        private static Transform _tipsTransform;
+        private static Vector3 _originalTipsPosition;
+        private static bool _windowCaptured;
+
         internal static void Render(object template, object gui, string vanillaContext, PrayerForecast.Result forecast)
         {
             if (template == null || forecast == null) return;
@@ -38,13 +62,16 @@ namespace PrayerClarity
             ConfigureResult(_resultLabel);
             R.Set(_resultLabel, "text", BuildResult(forecast));
 
+            SetEffect(forecast.SpecialText, forecast.SpecialIconName);
+
             ConfigureNote(_noteLabel);
             string noteKey = forecast.UsesSoulGratitude
                 ? "forecast.dependency_note_souls"
                 : "forecast.dependency_note";
             R.Set(_noteLabel, "text", "[777777]" + Localization.F(noteKey) + "[-]");
 
-            MoveCraftButton(gui);
+            MoveCraftButton();
+            ApplyWindowExtension();
             if (_root != null) _root.SetActive(true);
             _presentationActive = true;
         }
@@ -54,8 +81,24 @@ namespace PrayerClarity
             if (!_presentationActive) return;
             if (_root != null) _root.SetActive(false);
             RestoreTemplate(template);
-            RestoreCraftButton(gui);
+            RestoreCraftButton();
+            RestoreWindow();
             _presentationActive = false;
+        }
+
+        internal static void ApplyTuning()
+        {
+            if (!_presentationActive || _template == null) return;
+
+            ConfigureContext(_template);
+            ConfigureResult(_resultLabel);
+            ConfigureNote(_noteLabel);
+
+            bool showIcon = IsActive(_effectIcon);
+            ConfigureEffectGeometry(showIcon);
+
+            MoveCraftButton();
+            ApplyWindowExtension();
         }
 
         private static void Ensure(object template, object gui)
@@ -63,6 +106,7 @@ namespace PrayerClarity
             if (ReferenceEquals(_template, template) && _styleCaptured && _root != null)
             {
                 CaptureCraftButton(gui);
+                CaptureWindow(template);
                 return;
             }
 
@@ -70,7 +114,9 @@ namespace PrayerClarity
             {
                 try { RestoreTemplate(_template); }
                 catch { }
-                try { RestoreCraftButton(gui); }
+                try { RestoreCraftButton(); }
+                catch { }
+                try { RestoreWindow(); }
                 catch { }
             }
 
@@ -102,16 +148,18 @@ namespace PrayerClarity
 
             int depth = R.Int(R.Get(template, "depth"));
             _resultLabel = CreateLabel("Result", template, depth + 1);
+            _effectLabel = CreateLabel("Effect", template, depth + 1);
+            _effectIcon = CreateSprite("Effect.Icon", template, depth + 2);
             _noteLabel = CreateLabel("DependencyNote", template, depth + 1);
             _root.SetActive(false);
 
             CaptureCraftButton(gui);
+            CaptureWindow(template);
         }
 
         private static string BuildContext(string vanillaContext, PrayerForecast.Result forecast)
         {
             List<string> lines = new List<string>();
-            lines.Add(Localization.F("forecast.context_header"));
 
             string normalized = (vanillaContext ?? string.Empty).Replace("\r\n", "\n").TrimEnd('\n');
             if (!string.IsNullOrEmpty(normalized))
@@ -131,11 +179,11 @@ namespace PrayerClarity
             lines.Add(Localization.F("forecast.result_header"));
             lines.Add("  " + Localization.F("forecast.guaranteed") + ": " +
                       FormatResources(forecast.BaseFaith, forecast.BaseMoney));
-            lines.Add("  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " +
-                      FormatResources(forecast.BonusFaith, forecast.BonusMoney));
 
-            if (!string.IsNullOrEmpty(forecast.SpecialText))
-                lines.Add("  " + Localization.F("forecast.effect_header") + ": " + forecast.SpecialText);
+            bool positiveBonus = forecast.BonusFaith > 0 || forecast.BonusMoney > 0.0001f;
+            string bonusMarker = positiveBonus ? "(up) " : string.Empty;
+            lines.Add("  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " +
+                      bonusMarker + FormatResources(forecast.BonusFaith, forecast.BonusMoney));
 
             return string.Join("\n", lines.ToArray());
         }
@@ -148,26 +196,130 @@ namespace PrayerClarity
             return parts.Count == 0 ? "—" : string.Join(", ", parts.ToArray());
         }
 
+        private static void SetEffect(string text, string iconName)
+        {
+            bool hasText = !string.IsNullOrEmpty(text);
+            GameObject labelGo = _effectLabel == null ? null : R.Get(_effectLabel, "gameObject") as GameObject;
+            if (labelGo != null) labelGo.SetActive(hasText);
+
+            Sprite sprite = hasText ? ResolveSprite(iconName) : null;
+            GameObject iconGo = _effectIcon == null ? null : R.Get(_effectIcon, "gameObject") as GameObject;
+            bool showIcon = sprite != null && iconGo != null;
+
+            if (showIcon)
+            {
+                TrySet(_effectIcon, "sprite2D", sprite);
+                iconGo.SetActive(true);
+            }
+            else if (iconGo != null)
+            {
+                iconGo.SetActive(false);
+            }
+
+            if (_effectLabel != null)
+                R.Set(_effectLabel, "text", hasText ? Localization.F("forecast.effect_header") + ": " + text : string.Empty);
+
+            ConfigureEffectGeometry(showIcon);
+        }
+
+        private static Sprite ResolveSprite(string iconName)
+        {
+            if (string.IsNullOrEmpty(iconName)) return null;
+
+            Sprite cached;
+            if (SpriteCache.TryGetValue(iconName, out cached)) return cached;
+
+            try
+            {
+                if (_getSprite == null)
+                {
+                    Type type = R.GameType("EasySpritesCollection");
+                    _getSprite = R.Method(type, "GetSprite", true,
+                        new[] { typeof(string), typeof(bool), typeof(string) });
+                }
+
+                Sprite sprite = _getSprite == null
+                    ? null
+                    : _getSprite.Invoke(null, new object[] { iconName, false, string.Empty }) as Sprite;
+
+                SpriteCache[iconName] = sprite;
+                return sprite;
+            }
+            catch
+            {
+                SpriteCache[iconName] = null;
+                return null;
+            }
+        }
+
         private static void ConfigureContext(object label)
         {
-            // Probe 0.1.0 proved the vanilla label is centered at (-3,49), 242x68.
-            // Keep its original top edge (83) but switch to a fixed top pivot so repeated
-            // redraws can never accumulate the ResizeHeight/center-pivot Y drift seen in 0.1.4.
-            ConfigureLabel(label, -3f, 83f, 258, 52, "Top", "Left", "ShrinkContent", 14, -2);
+            ConfigureLabel(label,
+                PulpitTuning.ContextX.Value,
+                PulpitTuning.ContextY.Value,
+                258,
+                44,
+                "Top",
+                "Left",
+                "ShrinkContent",
+                PulpitTuning.ContextFontSize.Value,
+                -2);
         }
 
         private static void ConfigureResult(object label)
         {
-            // The stock prayer item cell occupies the middle of the window. Results live
-            // below it instead of growing a single label through that cell.
-            ConfigureLabel(label, -3f, -38f, 258, 42, "Top", "Left", "ShrinkContent", 11, -1);
+            ConfigureLabel(label,
+                PulpitTuning.ResultX.Value,
+                PulpitTuning.ResultY.Value,
+                258,
+                40,
+                "Top",
+                "Left",
+                "ShrinkContent",
+                PulpitTuning.ResultFontSize.Value,
+                -1);
+        }
+
+        private static void ConfigureEffectGeometry(bool showIcon)
+        {
+            if (_effectLabel == null) return;
+
+            float x = PulpitTuning.EffectX.Value;
+            float y = PulpitTuning.EffectY.Value;
+            int iconSize = PulpitTuning.EffectIconSize.Value;
+            float iconSpace = showIcon ? iconSize + 4f : 0f;
+
+            ConfigureLabel(_effectLabel,
+                x + iconSpace,
+                y,
+                Math.Max(1, Mathf.RoundToInt(258f - iconSpace)),
+                24,
+                "TopLeft",
+                "Left",
+                "ShrinkContent",
+                PulpitTuning.EffectFontSize.Value,
+                -1);
+
+            ConfigureWidget(_effectIcon,
+                x,
+                y - 1f,
+                iconSize,
+                iconSize,
+                "TopLeft");
         }
 
         private static void ConfigureNote(object label)
         {
-            // Secondary dependency reminder sits in the measured gap below the craft button
-            // and above the stock controller tips. It deliberately uses a smaller font.
-            ConfigureLabel(label, -3f, -102f, 266, 10, "Top", "Center", "ShrinkContent", 9, -1);
+            ConfigureLabel(label,
+                PulpitTuning.NoteX.Value,
+                PulpitTuning.NoteY.Value,
+                266,
+                20,
+                "Top",
+                "Center",
+                "ShrinkContent",
+                PulpitTuning.NoteFontSize.Value,
+                -1);
         }
 
         private static object CreateLabel(string suffix, object template, int depth)
@@ -184,6 +336,22 @@ namespace PrayerClarity
             CopyStyle(template, label);
             TrySet(label, "depth", depth);
             return label;
+        }
+
+        private static object CreateSprite(string suffix, object template, int depth)
+        {
+            Type type = R.AnyType("UI2DSprite");
+            if (type == null) return null;
+
+            GameObject templateGo = R.Get(template, "gameObject") as GameObject;
+            GameObject go = new GameObject("PrayerClarity." + suffix);
+            go.layer = templateGo == null ? _root.layer : templateGo.layer;
+            go.transform.SetParent(_root.transform, false);
+            go.transform.localScale = templateGo == null ? Vector3.one : templateGo.transform.localScale;
+
+            object sprite = go.AddComponent(type);
+            TrySet(sprite, "depth", depth);
+            return sprite;
         }
 
         private static void CopyStyle(object source, object target)
@@ -229,6 +397,18 @@ namespace PrayerClarity
             go.transform.localPosition = new Vector3(x, y, 0f);
         }
 
+        private static void ConfigureWidget(object widget, float x, float y, int width, int height, string pivot)
+        {
+            if (widget == null) return;
+            GameObject go = R.Get(widget, "gameObject") as GameObject;
+            if (go == null) return;
+
+            SetEnum(widget, "pivot", pivot);
+            TrySet(widget, "width", width);
+            TrySet(widget, "height", height);
+            go.transform.localPosition = new Vector3(x, y, 0f);
+        }
+
         private static void CaptureCraftButton(object gui)
         {
             if (gui == null) return;
@@ -242,19 +422,103 @@ namespace PrayerClarity
             _buttonCaptured = true;
         }
 
-        private static void MoveCraftButton(object gui)
+        private static void MoveCraftButton()
         {
-            CaptureCraftButton(gui);
             if (!_buttonCaptured || _buttonObject == null) return;
             Vector3 p = _originalButtonPosition;
-            _buttonObject.transform.localPosition = new Vector3(p.x, -100f, p.z);
+            _buttonObject.transform.localPosition = new Vector3(p.x, PulpitTuning.CraftButtonY.Value, p.z);
         }
 
-        private static void RestoreCraftButton(object gui)
+        private static void RestoreCraftButton()
         {
-            CaptureCraftButton(gui);
             if (!_buttonCaptured || _buttonObject == null) return;
             _buttonObject.transform.localPosition = _originalButtonPosition;
+        }
+
+        private static void CaptureWindow(object template)
+        {
+            GameObject templateGo = template == null ? null : R.Get(template, "gameObject") as GameObject;
+            Transform container = templateGo == null ? null : templateGo.transform.parent;
+            Transform window = container == null ? null : container.parent;
+            if (window == null) return;
+
+            if (ReferenceEquals(_windowTransform, window) && _windowCaptured) return;
+
+            _windowTransform = window;
+            _windowBack = CaptureStretchPart(window, "back", 0f);
+            _decoreBack = CaptureStretchPart(window, "decore_back", 1f);
+            _decore = CaptureStretchPart(window, "decore", 0.5f);
+            _inactiveBack = CaptureStretchPart(window, "back for inactive stuff", 0.5f);
+
+            _tipsTransform = window.Find("buttons tips");
+            _originalTipsPosition = _tipsTransform == null ? Vector3.zero : _tipsTransform.localPosition;
+            _windowCaptured = true;
+        }
+
+        private static StretchPart CaptureStretchPart(Transform window, string childName, float downFactor)
+        {
+            Transform transform = window == null ? null : window.Find(childName);
+            if (transform == null) return null;
+
+            Type spriteType = R.AnyType("UI2DSprite");
+            object widget = spriteType == null ? null : transform.gameObject.GetComponent(spriteType);
+            return new StretchPart
+            {
+                Transform = transform,
+                Widget = widget,
+                OriginalHeight = widget == null ? 0 : Math.Max(1, R.Int(R.Get(widget, "height"))),
+                OriginalPosition = transform.localPosition,
+                DownFactor = downFactor
+            };
+        }
+
+        private static void ApplyWindowExtension()
+        {
+            if (!_windowCaptured) return;
+            float extra = Mathf.Max(0f, PulpitTuning.WindowExtraHeight.Value);
+
+            Stretch(_windowBack, extra);
+            Stretch(_decoreBack, extra);
+            Stretch(_decore, extra);
+            Stretch(_inactiveBack, extra);
+
+            if (_tipsTransform != null)
+            {
+                Vector3 p = _originalTipsPosition;
+                _tipsTransform.localPosition = new Vector3(p.x, p.y - extra, p.z);
+            }
+        }
+
+        private static void Stretch(StretchPart part, float extra)
+        {
+            if (part == null || part.Transform == null) return;
+
+            if (part.Widget != null && part.OriginalHeight > 0)
+                TrySet(part.Widget, "height", Math.Max(1, Mathf.RoundToInt(part.OriginalHeight + extra)));
+
+            Vector3 p = part.OriginalPosition;
+            part.Transform.localPosition = new Vector3(p.x, p.y - extra * part.DownFactor, p.z);
+        }
+
+        private static void RestoreWindow()
+        {
+            if (!_windowCaptured) return;
+
+            RestoreStretchPart(_windowBack);
+            RestoreStretchPart(_decoreBack);
+            RestoreStretchPart(_decore);
+            RestoreStretchPart(_inactiveBack);
+
+            if (_tipsTransform != null)
+                _tipsTransform.localPosition = _originalTipsPosition;
+        }
+
+        private static void RestoreStretchPart(StretchPart part)
+        {
+            if (part == null || part.Transform == null) return;
+            if (part.Widget != null && part.OriginalHeight > 0)
+                TrySet(part.Widget, "height", part.OriginalHeight);
+            part.Transform.localPosition = part.OriginalPosition;
         }
 
         private static void RestoreTemplate(object template)
@@ -270,6 +534,12 @@ namespace PrayerClarity
             TrySet(template, "fontSize", _originalFontSize);
             if (_originalSpacingY != null) TrySet(template, "spacingY", _originalSpacingY);
             if (go != null) go.transform.localPosition = _originalPosition;
+        }
+
+        private static bool IsActive(object widget)
+        {
+            GameObject go = widget == null ? null : R.Get(widget, "gameObject") as GameObject;
+            return go != null && go.activeSelf;
         }
 
         private static void TrySet(object obj, string name, object value)
