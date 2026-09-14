@@ -55,9 +55,17 @@ Do **not** require every prayer quality tier to scale the same way. Existing 36/
 
 However, if extra duration does not materially improve the prayer's real use case, duration-only quality progression may still be insufficient.
 
+A prayer can therefore have a healthy **role** but still need a **quality-progression** rework.
+
+## Starter-prayer boundary
+
+The free starter `b_empty` Ordinary Prayer remains outside the current Faith-specialist rework.
+
+The proposed `+100/+200/+300%` specialist curve applies to the separately crafted `b_faith` Prayer for Faith. Do not accidentally accelerate the opening game by modifying `b_empty` under the same design label.
+
 ## Generalist vs specialist principle
 
-The quantitative audit has now established the key structural issue more strongly than the earlier qualitative analysis:
+The quantitative audit established the key structural issue:
 
 - Faith prayer target `k_faith` = `.5 / 1 / 1.5`;
 - Combo target `k_faith` = `.5 / 1 / 1.5`;
@@ -72,9 +80,9 @@ The specialists therefore are not actually stronger specialists at equal quality
 
 Those are meaningful early-game advantages, but once book production and church quality are routine, the generalist keeps equal target-resource power while also supplying the second resource.
 
-**Design consequence:** a specialist premium is now the leading systemic rework direction. Prefer testing stronger Faith/Donation specialist curves while keeping Combo useful and familiar before considering direct Combo nerfs.
+**Design consequence:** a specialist premium is the leading systemic rework direction. Prefer testing stronger Faith/Donation specialist curves while keeping Combo useful and familiar before considering direct Combo nerfs.
 
-Candidate curves live in `PRAYER_REBALANCE_OPTIONS.md`; no values are accepted yet.
+Current leading non-accepted curve in `PRAYER_REBALANCE_OPTIONS.md` is `+100/+200/+300%` target bonus for Faith/Donations while Combo stays stock.
 
 ## Church/graveyard requirements as design levers
 
@@ -85,31 +93,30 @@ Thematic requirements/scalers can also be useful where the relationship is obvio
 Current preferred architecture is conservative:
 
 - **church quality** remains the universal sermon-success/delivery gate;
-- **graveyard quality** may gate/scale the Donations **specialist premium** or provide a visible thematic threshold;
+- first exploit the fact that Graveyard Quality already scales the larger Donations specialist bonus naturally;
+- add a visible Graveyard Quality threshold only if runtime testing shows an additional progression gate is useful;
 - avoid making the same graveyard stat both a continuous reward multiplier and an opaque second success multiplier;
 - do not add thematic requirements merely for symmetry.
-
-A graveyard-only sermon success rule remains an option, not the preferred first experiment.
 
 ## Prayer-by-prayer design matrix
 
 | Prayer family | Stock role / cost context | Design diagnosis | Current design direction |
 | --- | --- | --- | --- |
-| `b_empty` Ordinary | starter sermon | intentionally temporary baseline | **keep; clarity only** |
-| `b_faith` Faith | Chapter +5 Faith; lower q than Combo; same Faith coefficient as Combo at equal tier | healthy early specialist, but loses output specialization once Combo's book/q gates are solved | **Rework candidate: specialist premium; keep cheaper craft/lower q identity** |
-| `b_money` Donations | Chapter +5 Faith; same unlock as Combo; lower q; same money coefficient as Combo | clearest specialist/generalist compression because it is not even earlier-unlocked | **Rework candidate: specialist premium; optionally thematic Graveyard Quality condition/scaler** |
-| `b_faith_money` Combo | Hard Book +7 Faith; q15/30/60; same target coefficients as both specialists | powerful universal default once production gate is routine | **keep as strong generalist initially; solve choice compression by specialist premium before nerfing** |
+| `b_empty` Ordinary | free starter sermon | intentionally temporary baseline; changing it would directly accelerate opening Faith income | **keep stock; clarity only** |
+| `b_faith` Faith | Chapter +5 Faith; lower q than Combo; same Faith coefficient as Combo at equal tier | healthy early specialist, but loses output specialization once Combo's book/q gates are solved | **Rework candidate: specialist premium; current lead +100/+200/+300%** |
+| `b_money` Donations | Chapter +5 Faith; same unlock as Combo; lower q; same money coefficient as Combo | clearest specialist/generalist compression because it is not even earlier-unlocked | **Rework candidate: specialist premium; let Graveyard Quality scale value naturally first** |
+| `b_faith_money` Combo | Hard Book +7 Faith; q15/30/60; same target coefficients as both specialists | powerful universal default once production gate is routine | **keep stock initially; solve choice compression by specialist premium before nerfing** |
 | `b_plant` Shoots and Roots | Chapter +5 Faith; special farming prayer | proven wiring defect disconnects existing `-20%` growth formula | **Vanilla Fix: reconnect stock -20%; runtime-test before extra buff** |
-| `b_sins` Repentance | Chapter +5 Faith; q10/20/40; 18/36/54 min; base confession chance 15% | timed buff has no consumer; intended role known but magnitude absent | **Balance/Rework: quality-scaled confession chance; current candidate family includes 30/50/70%** |
-| `b_skull` Repose | Hard Book +7 Faith; +1 Donkey max corpse tier, 18/36/54 min | clear progression accelerator, naturally expires at final corpse tier | **keep role; clarity first; only tune if usable window is too narrow for investment** |
-| `b_sword` Retribution | deep Smithing route; Hard Book +7 Faith; +5 damage, 36/72/108 min | full investment/week cost is high for a one-dimensional combat offer, even though +5 itself is substantial | **Rework candidate: broader offensive package preferred over blind scalar** |
-| `b_shield` Protection | same deep unlock; separate Hard Book +7 Faith; +4 armor, 36/72/108 min | second one-dimensional combat sermon paying the same full weekly cost | **Rework candidate: broader defensive package; preserve recognizable identity if possible** |
-| `b_pen` Imagination | Hard Book +7 Faith; +0.7 writing input, 18/36/54 min | powerful concentrated production window; demonstrated player value | **keep; clarity only initially** |
-| `b_star` Excellence | Hard Book +7 Faith; can be unlocked from two late production routes; +0.2 linked-craft input | narrow but potentially useful quality-crafting tool | **keep; clarity first; affected-craft usefulness decides later tuning** |
-| `b_village` Prosperity | Chapter +5 Faith; permanent vendor-progression outputs | very strong progression utility, naturally exhausts itself | **keep; strong reference case** |
-| `b_souls` Soul's Repose (BSS) | shared BSS unlock; Chapter +5 Faith +2 Sin Shards; state-dependent Faith | can beat ordinary/Combo Faith substantially at high Gratitude | **keep; dynamic forecast is main improvement** |
-| `b_grat_points_incr` Soul Contentment | shared BSS unlock; Chapter +4 Faith +2 Sin Shards; +10% Gratitude | clear workflow-specific throughput niche | **keep first; clarity/quality duration** |
-| `b_sin_shard` Thorough Cleansing | shared BSS unlock; Chapter +4 Faith +1 Sin Shard; x2 shards | deliberately powerful specialist effect; clear temptation-parity benchmark | **keep; strong reference case** |
+| `b_sins` Repentance | Chapter +5 Faith; q10/20/40; 18/36/54 min; base confession chance 15% | timed buff has no consumer; intended role known but magnitude absent | **Balance/Rework: current lead 30/50/70% confession chance** |
+| `b_skull` Repose | Hard Book +7 Faith; +1 Donkey max corpse tier, 18/36/54 min | role is valid, but all qualities share same +1 and only duration scales; raw +1/+2/+3 risks skipping several short story corpse tiers | **Rework candidate: quality should improve reliability/quality floor while staying at most one story tier ahead** |
+| `b_sword` Retribution | deep Smithing route; Hard Book +7 Faith; +5 damage, 36/72/108 min | one half of an expensive combat-preparation proposition | **preferred Rebalanced architecture: canonical combined Combat Prayer ID** |
+| `b_shield` Protection | same deep unlock; separate Hard Book +7 Faith; +4 armor, 36/72/108 min | second half of the same expensive combat-preparation proposition | **preferred soft merge: hide for new Rebalanced crafting; preserve existing items as same-quality legacy aliases** |
+| `b_pen` Imagination | Hard Book +7 Faith; +0.7 writing input, 18/36/54 min | bronze effect is genuinely powerful; duration-only silver/gold can be weak because writing can be stockpiled and batched | **Rework candidate: retain bronze +0.7, model magnitude scaling (lead +0.7/+1.0/+1.3)** |
+| `b_star` Excellence | Hard Book +7 Faith; +0.2 linked-craft input, 18/36/54 min; affects a narrow quality-crafting set | useful niche exists, but fixed magnitude plus duration-only scaling creates same quality problem | **Reopen quality scaling; model after Imagination** |
+| `b_village` Prosperity | Chapter +5 Faith; 1/2/3 Blessings of Commerce by quality | permanent vendor-progression utility and direct 1x/2x/3x special-output scaling | **keep stock; strong quality-progression reference** |
+| `b_souls` Soul's Repose (BSS) | shared BSS unlock; state-dependent Faith baseline includes Soul Gratitude; quality also scales Faith bonus | can beat Combo/Faith substantially at high Gratitude and higher quality multiplies that stronger baseline | **keep stock; dynamic current-value preview is main improvement** |
+| `b_grat_points_incr` Soul Contentment | +10% Gratitude, 36/72/108 min | clear workflow-specific throughput niche; long duration can cross sermon weeks | **keep first; clarity/quality duration** |
+| `b_sin_shard` Thorough Cleansing | x2 shards, 36/72/108 min | deliberately powerful specialist effect; clear temptation-parity benchmark | **keep; strong reference case** |
 
 ## Repentance — final classification and current design pressure
 
@@ -119,23 +126,63 @@ Therefore a working Repentance is definitively **Balance / Rework**.
 
 A flat `15% -> 30%` is useful as a bronze benchmark because it doubles the stock chance, but the power-budget analysis shows why it may be too modest as the whole prayer: finite 18/36/54-minute windows plus a full weekly sermon cost make quality-scaled chance a more promising design.
 
-Current leading hypothesis in `PRAYER_REBALANCE_OPTIONS.md` is **30% / 50% / 70%**, not accepted. It keeps uncertainty while making silver/gold materially better.
+Current leading hypothesis is **30% / 50% / 70%**, not accepted. It keeps uncertainty while making silver/gold materially better.
 
-## Combat prayers — structural diagnosis
+## Combat prayers — merged product direction with save compatibility
 
-Retribution and Protection are **two separate prayers**, not one combined combat sermon. Both are unlocked at Martial Skills after a deep Smithing route, then each separately consumes Hard Book +7 Faith and a weekly sermon use.
+Retribution and Protection are two separate prayers in stock, but the preferred Rebalanced product direction is now **one strong combat-preparation prayer**, not two expensive one-stat sermons.
 
-Raw magnitude comparisons remain useful:
+The mod can merge them without destructive save migration:
 
-- Retribution +5 damage is large relative to several swords and equals common short damage buffs;
-- Protection +4 armor is large relative to normal armor and equals the short armor potion/food buff;
-- both prayer durations are far longer than consumables.
+- keep one existing ID (candidate `b_sword`) as canonical Combat Prayer;
+- combine offense + defense + a bounded regeneration component;
+- stop offering the second recipe as a new distinct Rebalanced choice;
+- existing `b_shield` inventory items remain unchanged in the save and are interpreted as same-quality legacy aliases of Combat Prayer while Rebalanced is active;
+- do not rewrite saved item IDs;
+- uninstall/profile-off therefore restores vanilla identity naturally.
 
-But raw stat size is not enough to make the proposition attractive. The design issue is that Graveyard Keeper asks for limited sustained combat, cautious play/consumables substitute for much of the need, and each prayer delivers only one stat after a very large progression/investment budget.
+This preserves existing player investment while allowing the roster to behave as if the game had originally shipped one coherent combat sermon.
 
-Current leading structural hypothesis is to **keep two recognizable prayers but turn each into a full thematic package** (offensive Retribution, defensive Protection) using verified stable game parameters. Combining them into one prayer and repurposing the second remains a larger fallback redesign.
+Exact damage/armor/regeneration scaling remains open. Armor is flat subtraction and stock potion regeneration is too strong to copy unchanged over multi-day prayer durations, so the combined package must be modeled as a whole rather than built by stacking stock short-buff numbers.
 
-No package contents or numbers are accepted until combat formulas/available parameters are audited narrowly.
+## Repose — quality design finding
+
+Direct runtime evidence proves the prayer contributes to the live Donkey `Tier max` path. Current quality changes duration only.
+
+The appealing `+1/+2/+3` idea is **not** rejected because it is “too fun”; it is rejected provisionally because each integer is a whole story corpse tier and the underlying progression only contains a few tiers. A gold +3 can therefore leap several progression stages.
+
+Preferred design goal:
+
+- never access more than the **next** corpse tier beyond current story progression;
+- bronze may merely extend the pool upward, as stock does;
+- silver should reduce low-tier outcomes / raise the quality floor;
+- gold should make boosted next-tier deliveries reliable while active.
+
+This makes quality materially stronger without turning the prayer into a story-sequence skip.
+
+## Imagination / Excellence — quality design finding
+
+Imagination's stock +0.7 is not weak. Current/community evidence shows it can enable extremely productive writing batches and materially improve the chance of moving written products up a quality tier.
+
+The issue is that **all qualities give the same +0.7**. Since writing materials can be accumulated before the sermon, a player can often perform the whole batch during bronze's 18-minute window. Silver/gold duration then does not necessarily create enough extra value.
+
+Current leading Imagination design hypothesis is `+0.7 / +1.0 / +1.3`, retaining 18/36/54 min. This keeps bronze stock-strong while making silver/gold improve the actual quality roll.
+
+Excellence has the same structural quality issue on a narrower craft set: stock +0.2 at every tier. Reopen it after Imagination; a simple `+0.2/+0.4/+0.6` family is a modeling candidate, not accepted behavior.
+
+## Prosperity / BSS Soul's Repose — why they survive the quality audit
+
+### Prosperity
+
+Prayer quality directly yields **1 / 2 / 3 Blessings of Commerce**. These are permanent vendor-progression resources rather than a temporary magnitude hidden behind extra duration. Bronze has immediate early/mid-game value; gold triples the special output and can accelerate several vendors in one sermon.
+
+Natural obsolescence after the useful vendors are maxed is acceptable for a progression prayer.
+
+### BSS Soul's Repose
+
+Soul Gratitude enters the Faith **baseline**, and prayer quality then applies `.5 / 1 / 1.5` Faith bonus scaling on top of that state-dependent baseline. At high Gratitude, gold is therefore not merely “same effect for longer”; it amplifies a much larger current reward and can substantially beat Combo/Faith.
+
+The main defect is that vanilla does not show this current result. A dynamic pulpit preview is the appropriate first fix.
 
 ## Active-buff UI — final presentation finding
 
@@ -150,7 +197,7 @@ This strengthens the Clarity requirement. After-use UI cannot substitute for goo
 Community discussion does not provide one agreed numerical rebalance, but it repeatedly exposes the target:
 
 - Combo becomes a default once obtainable and production gates are solved;
-- some niche prayers are excellent precisely because they are powerful in a narrow use case (Imagination, Prosperity, Thorough Cleansing, high-Gratitude BSS Soul's Repose);
+- some niche prayers are excellent precisely because they are powerful in a narrow use case (Prosperity, Imagination's bronze effect, Thorough Cleansing, high-Gratitude BSS Soul's Repose);
 - broken/opaque prayers are treated as useless when players cannot observe value;
 - expensive gold/book prayers create an expectation of meaningful payoff.
 
@@ -158,14 +205,12 @@ Representative sources remain documented in `PLAYER_UX_RESEARCH.md` and `PRAYER_
 
 ## Current stage / next design work
 
-The quantitative power-budget requested by the project is now complete enough to stop broad data collection. `PRAYER_REBALANCE_OPTIONS.md` contains the first candidate roster families.
+Broad mechanics/cost discovery is closed. The next stage is candidate-roster completion:
 
-Next work is **model and narrow**, not “research everything again”:
-
-1. simulate the Faith/Donations specialist curves versus stock Combo at representative early/mid/late church and graveyard states, then choose one first candidate;
-2. compare Repentance chance curves against expected confessional throughput and writing/Faith value, then choose one first candidate;
-3. inspect only the combat formula/parameter surface needed to turn the preferred two-package combat hypothesis into concrete candidate effects;
-4. keep Shoots/Roots at the recoverable -20% for its first runtime test;
-5. assemble one coherent non-production `Rebalanced` specification before opening a `dev/*` implementation branch.
+1. specify/model the merged Combat Prayer package and bounded regeneration;
+2. model Repose delivery reliability against real body-tier ranges;
+3. model Imagination and Excellence candidate quality curves against real craft-quality probabilities;
+4. freeze one complete non-production Rebalanced specification;
+5. only then open a `dev/*` implementation branch.
 
 No user in-game test is required at this stage.
