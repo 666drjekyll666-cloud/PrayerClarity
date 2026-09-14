@@ -1,74 +1,24 @@
 # PrayerClarity — Design Notes
 
-Status: product/design hypothesis stage, 2026-09-14. Mechanics discovery is sufficiently closed; production implementation is not accepted yet.
+Status: product/design stage, 2026-09-14. Stock mechanics and the final presentation/confessional audit are sufficiently closed. No production implementation or rebalance numbers are accepted yet.
 
-Detailed prayer-by-prayer role and balance judgements now live in `docs/PRAYER_DESIGN_AUDIT.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
+Detailed prayer-by-prayer judgements live in `docs/PRAYER_DESIGN_AUDIT.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
 
-## Problem statement
+## Product problem
 
 Stock Graveyard Keeper 1.407 answers **“will this sermon succeed?”** reasonably well, but poorly answers **“what will this prayer actually do for me now?”**.
 
-The player can see church quality, sermon requirement, and success chance. They generally cannot see current Faith/donation outcomes, many passive prayers omit magnitude/duration, quality can change duration without changing strength, and two stock prayers contain special-effect anomalies that vanilla does not disclose.
+The broader design problem is now also established: a prayer costs technology investment, crafting resources, prayer-quality effort, a church-quality success gate and—most importantly—the week's sermon opportunity. A prayer should therefore be a desirable strategic purchase/choice, not merely contain a non-zero buff.
 
-Research also established that the product question is broader than presentation alone: some stock prayer effects are disconnected/broken, while community discussions repeatedly question the usefulness and opportunity cost of several otherwise-working prayers. The product must therefore distinguish clarity, repair and rebalance rather than silently mixing them.
+The design target is **temptation parity**: every prayer should present a compelling reason to want it in the stage/niche where it belongs. This does not mean equal numerical power or permanent end-game relevance.
 
-## Actual mechanics -> vanilla information -> player risk
+## Product architecture
 
-| Area | Actual mechanics | Vanilla before use | UX status |
-| --- | --- | --- | --- |
-| Success | church quality / requirement -> visible chance | quality, requirement, % chance shown | already clear; do not duplicate heavily |
-| Faith notation | fixed Faith output is additive; proportional bonus is separate | `xN` can look multiplicative | confirmed UX finding |
-| Donations | baseline uses graveyard quality | selection foregrounds church quality; no current donation forecast | confirmed UX finding |
-| Souls prayer | baseline uses church quality + Soul Gratitude | dependency mentioned, current result absent | confirmed UX finding |
-| Passive magnitude | +5 damage, +4 armor, +0.7/+0.2 quality inputs, +1 max Donkey corpse tier, etc. | several descriptions are flavour-only | confirmed UX finding |
-| Passive duration | common tiers 18/36/54 or 36/72/108 min; quality often changes duration only | duration omitted | confirmed UX finding |
-| Failure | base Faith/money remain; prayer bonuses/special success outputs are lost | chance shown, consequence not explained | confirmed supporting issue |
-| Repentance | timed `buff_sins` exists; no gameplay consumer found | flavour-only | stock mechanics anomaly + clarity risk |
-| Shoots/Roots | `-20%` growth formula exists, but prayer writes `buff_plant` to player while formula reads growing WGO | farming flavour only | confirmed stock wiring mismatch + clarity risk |
+One codebase may expose three independently controlled semantic layers:
 
-## Presentation surfaces are related but not one universal tooltip
-
-The game does not route every prayer description through one content builder.
-
-- Technology-tree unlock presentation uses its own `TechUnlock`/technology UI path and builds sermon/craft information dynamically.
-- Item/prayer description uses `ItemDefinition.GetItemDescription`, starting from localized item description data and adding sermon-specific information.
-- The pulpit selection (`PrayCraftGUI`) is a separate live decision surface.
-- After success, timed prayer effects enter the ordinary `BuffsGUI` / `PlayerBuff` system used by other temporary buffs.
-
-**Design consequence:** build one internal prayer-information model, then render the appropriate subset through adapters for each surface. Do not independently hard-code divergent descriptions in several UI patches.
-
-Proposed roles:
-
-- **Technology tree:** what capability the prayer unlocks, broad niche, and quality progression.
-- **Prayer item:** exact static properties of this quality tier.
-- **Pulpit selection:** current-state success/failure output, Faith, donations, special output/effect.
-- **Active buff:** rely on vanilla icon/timer/hover where adequate; exact hover content is the final presentation audit item.
-
-## Product scope — three semantic layers
-
-The accepted architectural direction is **one project / one mod package with independently controlled semantic layers**.
-
-### Layer 1 — Clarity
-
-Informational only. It must be able to describe stock 1.407 without changing outcomes.
-
-Examples: unambiguous Faith/donation wording, passive magnitude/duration, current-state pulpit forecast, success-vs-failure result, dependency hints and quality comparison.
-
-### Layer 2 — Vanilla Fixes
-
-Narrow behavior changes only where evidence supports a broken/disconnected stock implementation and a sufficiently recoverable vanilla intent.
-
-Current strongest candidate:
-
-- **Shoots and Roots:** reconnect the existing prayer state to the existing `-20%` growth-time path. The coefficient is already stock data and Lazy Bear publicly described the intended reduced-growth-time role.
-
-Repentance is not yet equally clean: the intended semantic target is increased confessional use, but the intended magnitude/algorithm has not been recovered. If the final confessional audit does not expose one, a working Repentance rule belongs to Balance/Rework rather than being mislabeled as a vanilla fix.
-
-### Layer 3 — Balance / Rework
-
-Intentional changes to functioning mechanics, or a new implementation where the game reveals the role but not the missing magnitude. These changes are subjective and require explicit design acceptance.
-
-If the public product remains named **PrayerClarity**, balance tuning should default off. If deliberately repositioned as a broader **Prayer Overhaul**, a fixed/balanced profile may become the intended default while retaining a vanilla-clarity profile.
+1. **Clarity** — information only.
+2. **Vanilla Fixes** — evidence-backed repairs where stock intent/magnitude are recoverable.
+3. **Balance / Rework** — intentional new design/tuning, never mislabeled as recovered vanilla behavior.
 
 Potential profiles:
 
@@ -76,118 +26,126 @@ Potential profiles:
 - `Fixed Vanilla`
 - `Rebalanced`
 
-One DLL is preferred unless the rebalance layer later becomes large enough to create compatibility or maintenance reasons for a companion mod.
+Keep stock 1.407 mechanics documented independently from every modded profile.
 
-## Permanent product decision — preserve failed-sermon base donations
+## Permanent product policy — failed-sermon donations
 
-The payout audit found an implementation mismatch: on failure the graph supplies `0.5` participation to `SpreadMoneyIncome`, but its integer `Random.Range(0,1)` call causes every visitor to participate. Stock 1.407 therefore distributes the full **base** donation pool on failure, while prayer-specific money bonuses disappear.
+Stock 1.407 still gives the full base donation pool on sermon failure because the nominal 50% participation path is defeated by the integer `Random.Range(0,1)` implementation.
 
-**Accepted product policy:** do not “fix” this in a way that reduces player rewards. Preserve the full base donation pool for failed sermons in every PrayerClarity/Prayer Overhaul profile. This is a deliberate compatibility/design decision and must not be described as proven developer intent.
+**Do not change this in any profile.** On failure the player keeps base Faith and base donations but loses prayer-specific bonuses/special success outputs.
 
-The clarity UI should simply tell the truth: on failure the player keeps base Faith and base donations but loses prayer-specific bonuses/special success outputs.
+This is a deliberate player-favourable project policy, not a claim about original developer intent.
 
-## Balance philosophy
+## Presentation surfaces
 
-The community evidence does **not** support a blanket “buff every non-Combo prayer” pass.
+Prayer information is not built by one universal tooltip.
 
-Use these classifications before changing a working prayer:
+- Technology-tree presentation uses its own technology/unlock path.
+- Prayer item description uses `ItemDefinition.GetItemDescription` and sermon additions.
+- Pulpit selection uses `PrayCraftGUI` and live state.
+- Timed prayer effects use the standard `BuffsGUI` / `PlayerBuff` system.
 
-- **broken/disconnected**
-- **misleading/opaque**
-- **healthy niche**
-- **progression tool**
-- **dominated/redundant**
-- **underpowered opportunity cost**
+Probe 0.1.6 closes the active-buff question: `BuffIcon.Draw` assigns the icon and timer behavior, and `BuffIcon.Redraw` only updates remaining time. No prayer-specific dynamic effect description is wired through `BuffIcon`.
 
-Niche or progression-limited behavior is not automatically a defect. Repose is a useful example: +1 maximum Donkey corpse tier is meaningful before the final tier and naturally becomes obsolete afterwards. Prosperity similarly has a strong merchant-progression role and then exhausts itself. Imagination can be extremely strong when the player deliberately batches writing work.
+**Consequence:** build one mod-owned prayer-information model and render context-appropriate subsets:
 
-Current prayer-by-prayer preliminary verdicts are recorded in `docs/PRAYER_DESIGN_AUDIT.md`. After direct comparison with swords, armor, perks, food and potion buffs, even Retribution/Protection are **not currently justified balance changes**: their +5/+4 magnitudes are substantial and their distinctive benefit is very long duration. Their limitation is chiefly the amount of sustained combat the game asks of the player, not obviously bad numbers.
+- **technology tree:** role / why unlock it / quality progression;
+- **prayer item:** exact static properties of this quality tier;
+- **pulpit:** current success/failure Faith, donations, special effect/output and duration;
+- **active buff:** optionally improve icon hover later, because vanilla currently communicates essentially icon + remaining time rather than effect magnitude.
 
-At this stage no functioning stock prayer has been approved for tuning. The rebalance layer remains an available architecture, not a mandate to change something.
+Do not rely on after-use HUD as a substitute for decision-point clarity.
 
-## Preferred UI — compact dynamic breakdown
+## Rebalance philosophy
 
-The preferred UI hypothesis remains a compact block in the existing prayer-selection context, backed by the shared prayer-information model.
+A prayer's power budget includes:
 
-Illustrative hierarchy only:
+- technology/prerequisite depth and tech-point cost;
+- chapter vs book crafting class and Faith/material cost;
+- difficulty of producing bronze/silver/gold inputs;
+- church-quality success requirement;
+- reward/effect magnitude;
+- duration and whether it crosses future sermon weeks;
+- the stage where the effect is useful;
+- the weekly opportunity cost of not using another sermon.
 
-- `Faith on success: 18`
-  - `Base 11 · Prayer +7`
+Bronze should already be credible. Silver/gold should provide meaningful additional value through magnitude, duration, outputs, thresholds or reduced effective weekly opportunity cost.
+
+Niche prayers may be stronger than the universal option inside their niche. Progression prayers may become obsolete naturally after doing their job.
+
+Prefer making alternatives attractive over nerfing a familiar player-favourable result. Nerfs require a stronger justification than “the meta exists.”
+
+## Combo as structural reference
+
+Combo is not automatically “overpowered,” because it pays real costs: it is a book-sermon and has higher church-quality thresholds than Faith/Donations.
+
+However, it unlocks relatively early in Theology and, after the production gate is solved, combines the principal Faith and donation percentage bonuses in one universally convenient choice. Community discussion repeatedly shows it becoming the default.
+
+Therefore Combo is a legitimate **Rework candidate** at the choice-structure level.
+
+Do not pick a nerf yet. Candidate approaches include:
+
+- strengthen dedicated Faith/Donation specialization while leaving Combo unchanged;
+- apply a generalist tax so Combo is good at both but best at neither;
+- increase Combo's church-quality gate;
+- make niche prayers sufficiently powerful that choosing them over Combo is exciting rather than self-handicapping.
+
+## Broken prayer policy
+
+### Shoots and Roots
+
+Stock data contains the exact dormant `-20%` growth-time term and the prayer supplies `buff_plant=1`, but the parameter is written to the player while the growth expressions read the growing/workbench WGO. No propagation path exists in the inspected stock path.
+
+This is the cleanest **Vanilla Fix** candidate: reconnect the existing effect using the existing 20% coefficient, then judge its balance after it actually works.
+
+### Repentance
+
+Stock role: more confessions. Base confessional probability is 15%.
+
+The prayer creates `buff_sins`, but repeated code/data/FlowCanvas audits found no consumer. Probe 0.1.6 found the periodic logic entry that invokes `church_budka_roll`, but no surviving code/FlowCanvas reference specifies how `buff_sins` should alter `confession_probability`.
+
+**Final classification:** the role is recoverable, the magnitude/algorithm is not. A working Repentance must therefore be an explicit **Balance / Rework** design, not presented as Vanilla Fix.
+
+## Combat prayers — structural rework question
+
+Retribution and Protection are two separate book-sermons unlocked together by Martial Skills. Each individually costs the weekly sermon choice.
+
+Their stock magnitudes are not trivial (+5 damage and +4 armor) and their 36/72/108-minute durations are much longer than normal consumable buffs. But raw stat size is not the complete value proposition: sustained combat demand is limited and much of the need can be replaced by cautious play or consumables.
+
+This makes them legitimate **Rework candidates** even without proving their raw values are numerically small.
+
+Future options to compare include consolidating them into a stronger combat package, broadening each into a distinct multi-effect offensive/defensive role, or making quality progression materially deepen the combat package. Do not choose an implementation until available stock parameters and progression impact are inspected.
+
+## Quality progression
+
+Duration-only scaling can be meaningful when it crosses weekly boundaries. For 36/72/108-minute buffs, silver/gold can remain active into later sermon weeks, letting the player choose a different sermon while the old buff persists.
+
+Use this pattern deliberately. Do not automatically add magnitude scaling where duration already creates a strong strategic upgrade; conversely, do not treat duration as sufficient where the real use window makes extra time irrelevant.
+
+## Church/graveyard requirements
+
+Church quality is the natural general sermon-success gate because stock mechanics and UI already support it. Stronger reworked prayers may justify higher church requirements.
+
+Do not use graveyard quality as an arbitrary universal gate. Use it only where the relationship is mechanically/thematically clear and player-facing presentation can explain it.
+
+## Preferred Clarity UI
+
+The preferred pulpit hypothesis remains a compact dynamic breakdown backed by the shared semantic model, for example:
+
+- `Faith on success: 18` (`Base 11 · Prayer +7`)
 - `Donations on success: 42s`
 - `On failure: 11 Faith · 28s`
 - `Effect: +5 damage`
 - `Duration: 36 min`
 
-For quality comparison where relevant:
+The same model must drive technology/item/pulpit wording for the currently selected profile so a fix/rework never leaves stale vanilla text elsewhere.
 
-- `Same +5 damage · duration 36 -> 72 min`
+Do **not** call `PrayLogics.CalculatePray` merely to preview results; the preview must use a side-effect-free deterministic calculation path.
 
-For Repose:
+## Current design gate
 
-- `Effect: Donkey maximum corpse tier +1`
-- `Duration: 18 / 36 / 54 min by prayer quality`
+Do not start broad production code yet.
 
-For Soul Contentment:
+Next build a quantitative prayer power-budget/progression matrix covering unlock depth/cost, crafting class, quality difficulty, church requirements, weekly opportunity cost, effect/duration, progression window and community use. Then design candidate changes prayer-by-prayer.
 
-- `Effect: +10% Soul Gratitude`
-- an exact future next-soul forecast can reproduce `RoundToInt(GP_base * 1.1)`.
-
-The panel must describe **effective configured mechanics**. If a fix or rebalance option changes an effect, tech/item/pulpit text must all derive from the same model and change with it.
-
-## Side-effect-free calculation architecture
-
-Do **not** call `PrayLogics.CalculatePray` to render a preview because it performs success/random/result bookkeeping and manages sermon result/drop state.
-
-Preferred production direction:
-
-- read selected `CraftDefinition`;
-- evaluate linked `PrayEventDefinition` expressions through stock expression evaluation;
-- reproduce only verified deterministic rounding/bonus composition;
-- read existing church/graveyard/Soul Gratitude/perk state through normal getters;
-- compute only on relevant UI open/selection/state change;
-- no per-frame polling;
-- no broad reflection scans in production;
-- route every presentation surface through the same mod-owned semantic model.
-
-Exact lifecycle/Harmony targets remain implementation-stage evidence work and must not be guessed.
-
-## Broken-prayer policy
-
-### Shoots and Roots
-
-Stock facts:
-
-- growth definitions contain `-0.2*WGOpar("buff_plant")`;
-- prayer application writes `buff_plant=1` to player data;
-- `WGOpar` reads the bound growing/workbench WGO;
-- CraftComponent evaluates growth craft time with that WGO;
-- no propagation path was found.
-
-This supports an evidence-backed repair using the existing 20% coefficient rather than inventing a new one.
-
-### Repentance
-
-Stock facts:
-
-- prayer attaches timed `buff_sins`;
-- no gameplay consumer was found across code literals, 180 loaded FlowCanvas graphs or balance references beyond its definition/crafts;
-- `church_budka_roll` separately sets `confession_probability=0.15` in stock balance data;
-- community testing repeatedly fails to detect a prayer effect.
-
-The final narrow confessional audit must determine whether any dormant/current path specifies how `buff_sins` should modify that 15%. If not, the role can be retained but the magnitude must be openly designed as new balance.
-
-## Remaining research gate
-
-Only two small questions still affect product/UI design:
-
-1. **Active buff hover:** exactly what stock `BuffsGUI/BuffIcon` displays besides icon/timer, so PrayerClarity does not duplicate after-use information.
-2. **Repentance/confessional roll:** exact `church_budka_roll` implementation and every current reference to `confession_probability`, to see whether a recoverable multiplier/branch survived.
-
-A final read-only presentation probe 0.1.6 is dedicated only to those questions. No broader mechanics probe is planned.
-
-After that result, choose the first implementation slice. Current likely order:
-
-1. shared Clarity model + compact pulpit presentation prototype;
-2. evidence-backed Shoots/Roots fix behind the Vanilla Fixes layer;
-3. Repentance repair only after classifying it correctly as vanilla recovery or explicit new balance;
-4. leave functioning-prayer numbers unchanged unless later runtime/player evidence establishes a concrete balance problem that clarity alone does not solve.
+The first runtime prototype should be built only after the Clarity model and first accepted rework/fix specification agree on the effective prayer system.
