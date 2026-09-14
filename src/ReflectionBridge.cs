@@ -10,6 +10,8 @@ namespace PrayerClarity
         internal static readonly BindingFlags Inst = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
         internal static readonly BindingFlags Stat = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         internal static Assembly GameAssembly;
+        private static MethodInfo _vanillaLocalizeMethod;
+        private static bool _vanillaLocalizeResolved;
 
         internal static bool BindGameAssembly()
         {
@@ -188,12 +190,16 @@ namespace PrayerClarity
         internal static string VanillaLocalize(string key)
         {
             // Direct audit evidence places GJL in Assembly-CSharp-firstpass on 1.407,
-            // not in Assembly-CSharp. Search the loaded assemblies just like the
-            // compatibility boundary already does for NGUI/Harmony types.
-            Type type = AnyType("GJL");
-            MethodInfo method = Method(type, "L", true, new[] { typeof(string) });
-            if (method == null) return key;
-            object value = method.Invoke(null, new object[] { key });
+            // not in Assembly-CSharp. Resolve it once across loaded assemblies, then
+            // reuse the exact L(string) method at relevant UI redraw boundaries.
+            if (!_vanillaLocalizeResolved)
+            {
+                Type type = AnyType("GJL");
+                _vanillaLocalizeMethod = Method(type, "L", true, new[] { typeof(string) });
+                _vanillaLocalizeResolved = true;
+            }
+            if (_vanillaLocalizeMethod == null) return key;
+            object value = _vanillaLocalizeMethod.Invoke(null, new object[] { key });
             return value == null ? key : value.ToString();
         }
 
