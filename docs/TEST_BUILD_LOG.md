@@ -2,6 +2,22 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity 0.1.1 — resolver-fix candidate
+
+- Type: narrow follow-up production-architecture candidate; **Clarity only**, with no intended prayer-mechanics or balance changes.
+- Purpose: prove that the 0.1.0 pulpit forecast architecture works once the reflection resolver correctly closes the game's generic `GameBalance.GetData*<T>(string)` seam.
+- Source branch: `dev/clarity-pulpit-v0.1`.
+- Frozen candidate ref: `candidate/0.1.1`.
+- Exact source SHA: `bfa437a729cedebdad8c787fd663edfa5ed51630`.
+- GitHub Actions run: `34864837824`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10355544046` (`PrayerClarity-0.1.1-ci-bfa437a729cedebdad8c787fd663edfa5ed51630`).
+- Handoff filename: `PrayerClarity-0.1.1-ci.dll`.
+- Handoff DLL SHA-256: `f86dc5710b79c4f7db081f97a634f59ab25831ba964d856e8999d67006228987`.
+- Change from 0.1.0: `R.BalanceData` now resolves a one-string-parameter balance getter against the expected result type; it uses a compatible closed overload when present, otherwise binds the verified one-generic-argument method definition with `MakeGenericMethod(expectedType)` before invocation. Callers explicitly request `PrayEventDefinition` or `BuffDefinition`.
+- Requested user test: replace only the PrayerClarity production DLL with 0.1.1, keep the existing Test Harness, open the pulpit and select one ordinary/faith/combo prayer. Confirm that new forecast lines now appear below the vanilla `Church quality / Sermon requires / Success chance` block and return a screenshot plus log if an error remains.
+- Status: **ready for runtime verification; not accepted**.
+
 ## PrayerClarity 0.1.0 — runtime result: superseded
 
 - Type: first production-architecture prototype; **Clarity only**, with no intended prayer-mechanics or balance changes.
@@ -19,7 +35,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Runtime architecture: one postfix on `PrayCraftGUI.RedrawTextValues(float,float)`; no polling, no Unity-wide scans and no call to `PrayLogics.CalculatePray` for preview. Base Faith/money are intended to be read through the game's own `SmartExpression.EvaluateFloat`; known special effects are read from verified game definitions/semantics.
 - Fail-safe behavior: a forecast error is logged once and vanilla pulpit UI remains usable.
 - Runtime evidence, 2026-09-14: the test harness successfully switched synthetic prayer families/qualities in the live pulpit UI without granting them to the save. The visible `Church quality / Sermon requires / Success chance` block was confirmed to be vanilla UI. PrayerClarity's own forecast did **not** render because `R.BalanceData` selected an open generic `GameBalance.GetData*` overload and late-bound invocation failed with `ContainsGenericParameters=true`. The plugin failed safe and left the vanilla pulpit usable; no prayer-mechanics change was observed.
-- Status: **superseded / not accepted**. Next candidate must fix only the balance-data method resolver before any broader presentation redesign is judged in runtime.
+- Status: **superseded / not accepted**.
 
 ## PrayerClarity Audit Probe 0.1.0 — pending runtime evidence
 
