@@ -10,11 +10,11 @@
   "forecast.reward": "Reward: {0}",
   "buff.sword": "+{0:0.##} damage · {1:0} min",
   "buff.shield": "+{0:0.##} armor · {1:0} min",
-  "buff.skull": "Donkey: corpses can be {0:0.##} tier better · {1:0} min",
+  "buff.skull": "Donkey can deliver a body up to {0:0.##} quality tier higher (skull) · {1:0} min",
   "buff.pen": "Writing quality +{0:0.##} · {1:0} min",
   "buff.star": "Affected craft quality +{0:0.##} · {1:0} min",
   "buff.plant_inactive": "Plant growth: effect does not work in vanilla 1.407 · buff {0:0} min",
   "buff.sins_unverified": "Special effect not found in vanilla 1.407 · buff {0:0} min",
-  "buff.gratitude": "+10% from soul healing · {0:0} min",
+  "buff.gratitude": "+10% (gratitude_points) from soul healing · {0:0} min",
   "buff.sin_shard": "×2 from successful soul healing · {0:0} min"
 }
