@@ -79,6 +79,24 @@ State UX gaps concretely, for example: `Before choosing a prayer, the player can
 
 Do not assume the answer is a long tooltip. Potential solutions may include clearer existing text, dynamic values, a forecast, a compact breakdown, a contextual hint, or a small panel.
 
+## Player-facing clarity target
+
+The intended end state is a **white-box player experience**, not a developer-facing formula viewer.
+
+Internally, research must recover the complete mechanics needed to explain every player-relevant prayer: inputs, conditions, dependencies, branching, arithmetic, randomness, rounding, duration, and outputs. No relevant part of the effect should remain an unexplained black box merely because the current game UI omits it.
+
+The eventual UI should translate that complete model into player-facing information without requiring the player to read implementation formulas or coefficient algebra. For each prayer, the player should be able to answer, in ordinary game terms:
+
+- what this prayer does;
+- what current values or conditions affect it;
+- what outcome/effect to expect now, including uncertainty where real;
+- what changing prayer quality or other relevant inputs changes;
+- how it differs from another prayer when making a choice.
+
+Prefer concrete current-state values, short dependency explanations, ranges/chances where appropriate, and visual hierarchy over raw formulas. Preserve completeness, but do not turn the interface into a wiki or expose implementation jargon when a simpler faithful explanation exists.
+
+Exact presentation is deliberately undecided until the mechanics and presentation audits are complete.
+
 ## Runtime and performance constraints
 
 Any future production mod should be event-driven and cheap:
