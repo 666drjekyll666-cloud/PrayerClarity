@@ -2,17 +2,6 @@ name: Build PrayerClarity prototype
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev/clarity-pulpit-v0.1
-    paths:
-      - 'PrayerClarity.csproj'
-      - 'src/PrayerClarityPlugin.cs'
-      - 'src/ReflectionBridge.cs'
-      - 'src/PrayerForecast.cs'
-      - 'src/Localization.cs'
-      - 'lang/**'
-      - '.github/workflows/build-clarity.yml'
 
 permissions:
   contents: read

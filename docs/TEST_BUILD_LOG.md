@@ -2,6 +2,26 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity 0.1.2 — `Always / On success` pulpit candidate
+
+- Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
+- Purpose: validate the accepted pulpit information model after 0.1.1 proved the forecast seam but the `Success | Failure` presentation was rejected.
+- Source branch: `dev/clarity-pulpit-v0.1`.
+- Frozen candidate ref: `candidate/0.1.2`.
+- Exact build source SHA: `12da4d081aaf0dac11c8b2e528daf441af3e12ac`.
+- GitHub Actions run: `34867338643`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10356689583` (`PrayerClarity-0.1.2-ci-12da4d081aaf0dac11c8b2e528daf441af3e12ac`).
+- Handoff filename: `PrayerClarity-0.1.2-ci.dll`.
+- Handoff DLL SHA-256: `bf02d1035664c798967ebcf06a376af7f8e877e3f11d1673fc92e0de5c12c167`.
+- Presentation change: when a verified forecast exists, preserve the first two vanilla pulpit rows (`Church quality`, `Sermon requires`) but suppress vanilla's detached `Success chance` row. Replace the old one-line `Success | Failure` forecast with `Always` (base Faith + donations delivered regardless of success) and `On success (N%)` (only additional Faith/donations and success-only special effect/reward). There is no separate failure row.
+- Probability source: the original `PrayCraftGUI.RedrawTextValues(float needs_q, float chance)` `chance` argument; 0.1.2 uses the same `round(chance * 100)` semantics as vanilla rather than recalculating probability separately.
+- Localization: the new presentation keys exist in all 11 supported locale resources. Existing native inline tokens continue to provide Faith/money icon rendering where supported by the game's UILabel parser.
+- Failure behavior: forecast calculation still completes before replacing the label; if the forecast fails, the postfix leaves the complete vanilla three-row block intact and logs the error once.
+- Build note: an earlier source snapshot at `c290bbe3...` reached CI but failed compilation before artifact creation because three call sites used the existing helper APIs with the wrong parameter order/accessibility. Run `34867153354` therefore produced no candidate and consumed no versioned handoff. Those call-site errors were corrected at the frozen source above.
+- Requested user test: replace the production prototype DLL with 0.1.2 and keep Test Harness 0.1.0. At the pulpit, inspect at least Ordinary, Faith, Donations/Combo and one special-effect prayer. Verify: (1) only the two useful vanilla context rows remain, (2) `Always` matches the previous failure/base outcome, (3) `On success (N%)` shows the same probability vanilla previously showed and only the extra reward/effect, and (4) text does not wrap/overlap badly.
+- Status: **ready for runtime UX verification; not accepted**.
+
 ## PrayerClarity 0.1.1 — runtime result: forecast path verified, presentation not accepted
 
 - Type: narrow follow-up production-architecture candidate; **Clarity only**, with no intended prayer-mechanics or balance changes.
