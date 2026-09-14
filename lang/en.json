@@ -1,16 +1,14 @@
 {
-  "forecast.always": "Always: {0} (faith), {1}",
-  "forecast.on_success": "On success ({0}%): {1}",
-  "forecast.no_bonus": "no additional reward",
-  "forecast.effect": "Effect: {0}",
+  "forecast.guaranteed": "Guaranteed",
+  "forecast.success_bonus": "Success bonus ({0}%)",
   "forecast.reward": "Reward: {0}",
-  "buff.sword": "+{0:0.##} damage for {1:0} min",
-  "buff.shield": "+{0:0.##} armor for {1:0} min",
-  "buff.skull": "Donkey: maximum corpse tier +{0:0.##} for {1:0} min",
-  "buff.pen": "Writing quality score +{0:0.##} for {1:0} min",
-  "buff.star": "Quality score +{0:0.##} on affected crafts for {1:0} min",
-  "buff.plant_inactive": "Growth-speed effect is inactive in vanilla 1.407 (buff lasts {0:0} min)",
-  "buff.sins_unverified": "Special effect could not be verified in vanilla 1.407 (buff lasts {0:0} min)",
-  "buff.gratitude": "Soul Gratitude gained +10% for {0:0} min",
-  "buff.sin_shard": "Sin Shards from successful soul healing ×2 for {0:0} min"
+  "buff.sword": "+{0:0.##} damage · {1:0} min",
+  "buff.shield": "+{0:0.##} armor · {1:0} min",
+  "buff.skull": "Donkey: corpses can be {0:0.##} tier better · {1:0} min",
+  "buff.pen": "Writing quality +{0:0.##} · {1:0} min",
+  "buff.star": "Affected craft quality +{0:0.##} · {1:0} min",
+  "buff.plant_inactive": "Plant growth: effect does not work in vanilla 1.407 · buff {0:0} min",
+  "buff.sins_unverified": "Special effect not found in vanilla 1.407 · buff {0:0} min",
+  "buff.gratitude": "+10% from soul healing · {0:0} min",
+  "buff.sin_shard": "×2 from successful soul healing · {0:0} min"
 }

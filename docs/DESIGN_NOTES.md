@@ -35,26 +35,43 @@ Build one mod-owned semantic model and render context-appropriate subsets:
 
 - technology tree: role, why unlock it, quality progression;
 - prayer item: exact static tier properties;
-- pulpit: current success/failure Faith, donations, special output/effect, duration and relevant probabilities;
+- pulpit: current guaranteed Faith/donations, success-only additions, special output/effect, duration and relevant probabilities;
 - active buff: optional later quantitative hover.
 
 Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` merely to render information.
 
 Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
 
-### Accepted pulpit information model after 0.1.1 runtime UX test
+### Accepted pulpit information model
 
-The pulpit should preserve vanilla's useful current context but avoid duplicating the same probability in a detached row:
+Runtime testing through 0.1.2 established that the useful information model is:
 
 1. keep vanilla `Church quality`;
 2. keep vanilla `Sermon requires`;
-3. suppress the standalone vanilla `Success chance` line once a Clarity forecast is available;
-4. show `Always` = the base Faith and donations delivered regardless of sermon success;
-5. show `On success (N%)` = only the additional Faith/donations and success-only special reward/effect supplied by the selected prayer.
+3. suppress the detached vanilla `Success chance` row once a Clarity forecast is available;
+4. show a **guaranteed** row containing the base Faith and donations received regardless of success;
+5. show a **success bonus (N%)** row containing only the additional Faith/donations supplied on sermon success;
+6. show special prayer effects separately from the two resource rows.
 
-Do not add a separate failure row: the `Always` line is the failure/base outcome and also the guaranteed component of a successful sermon. This teaches the important stock rule that sermon failure is not zero reward while keeping the layout compact.
+Do not add a separate failure row: failure is already represented by the guaranteed row. This teaches the important stock rule that sermon failure is not zero reward while keeping the result model compact.
 
-Presentation should be icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, church quality, damage or armor; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle. Prefer native inline tokens. If a native token is unavailable, resolve the required native sprite lazily at the first relevant UI lifecycle point after atlases are ready and cache that reference for the session; never repeat atlas/global searches on redraw or per frame.
+### 0.1.3 pulpit presentation hypothesis
+
+The 0.1.2 semantic model is retained, but its single text label presentation was rejected in runtime because it became visually dense, resource positions moved between lines, and long special effects forced NGUI `ShrinkContent` to reduce the font size of the whole block.
+
+The next candidate therefore tests a narrow presentation-only redesign:
+
+- visually separate the two vanilla context lines from result rows with whitespace;
+- render guaranteed and success-bonus results as two aligned rows with fixed columns for row label, Faith and money, so the same resource remains on the same vertical axis;
+- keep the native `(faith)` inline token and `Trading.FormatMoney` coin presentation rather than duplicating icons/assets;
+- render special effects in their own row;
+- keep the normal font size stable and use NGUI `ResizeHeight` for the special-effect label instead of shrinking the whole forecast;
+- where a prayer/buff/reward already has a verified native icon, resolve the native sprite lazily on first relevant use and cache it for the session; do not commit proprietary sprite assets or search atlases on every redraw;
+- fall back to text when no verified useful icon can be resolved.
+
+This is a **design hypothesis pending runtime acceptance**, not an accepted layout. The test must establish that dynamic label geometry fits the real pulpit without colliding with the prayer slot/button and that long localized special effects remain readable.
+
+Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle.
 
 ## Localization architecture
 
@@ -149,7 +166,7 @@ If merge is implemented:
 
 Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
-The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations but rejected the one-line `Success | Failure` presentation. The next candidate validates the accepted `Always` / `On success (N%)` model before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
+The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations. The 0.1.2 runtime test retained the `guaranteed + success bonus` information model but rejected the dense single-label layout and variable font shrink. The next candidate tests only the aligned multi-label presentation described above before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
 
 Cross-cutting contracts remain:
 

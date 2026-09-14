@@ -2,25 +2,19 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.2 — `Always / On success` pulpit candidate
+## PrayerClarity 0.1.2 — runtime result: information model retained, single-label layout rejected
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
-- Purpose: validate the accepted pulpit information model after 0.1.1 proved the forecast seam but the `Success | Failure` presentation was rejected.
-- Source branch: `dev/clarity-pulpit-v0.1`.
+- Purpose: test the `guaranteed + success bonus` information model in the live pulpit after the 0.1.1 forecast seam was proved.
 - Frozen candidate ref: `candidate/0.1.2`.
-- Exact build source SHA: `12da4d081aaf0dac11c8b2e528daf441af3e12ac`.
+- Exact source SHA: `12da4d081aaf0dac11c8b2e528daf441af3e12ac`.
 - GitHub Actions run: `34867338643`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
-- Workflow artifact ID: `10356689583` (`PrayerClarity-0.1.2-ci-12da4d081aaf0dac11c8b2e528daf441af3e12ac`).
-- Handoff filename: `PrayerClarity-0.1.2-ci.dll`.
+- Artifact ID: `10356689583`.
 - Handoff DLL SHA-256: `bf02d1035664c798967ebcf06a376af7f8e877e3f11d1673fc92e0de5c12c167`.
-- Presentation change: when a verified forecast exists, preserve the first two vanilla pulpit rows (`Church quality`, `Sermon requires`) but suppress vanilla's detached `Success chance` row. Replace the old one-line `Success | Failure` forecast with `Always` (base Faith + donations delivered regardless of success) and `On success (N%)` (only additional Faith/donations and success-only special effect/reward). There is no separate failure row.
-- Probability source: the original `PrayCraftGUI.RedrawTextValues(float needs_q, float chance)` `chance` argument; 0.1.2 uses the same `round(chance * 100)` semantics as vanilla rather than recalculating probability separately.
-- Localization: the new presentation keys exist in all 11 supported locale resources. Existing native inline tokens continue to provide Faith/money icon rendering where supported by the game's UILabel parser.
-- Failure behavior: forecast calculation still completes before replacing the label; if the forecast fails, the postfix leaves the complete vanilla three-row block intact and logs the error once.
-- Build note: an earlier source snapshot at `c290bbe3...` reached CI but failed compilation before artifact creation because three call sites used the existing helper APIs with the wrong parameter order/accessibility. Run `34867153354` therefore produced no candidate and consumed no versioned handoff. Those call-site errors were corrected at the frozen source above.
-- Requested user test: replace the production prototype DLL with 0.1.2 and keep Test Harness 0.1.0. At the pulpit, inspect at least Ordinary, Faith, Donations/Combo and one special-effect prayer. Verify: (1) only the two useful vanilla context rows remain, (2) `Always` matches the previous failure/base outcome, (3) `On success (N%)` shows the same probability vanilla previously showed and only the extra reward/effect, and (4) text does not wrap/overlap badly.
-- Status: **ready for runtime UX verification; not accepted**.
+- Runtime evidence, 2026-09-14: the user exercised ordinary, Combo, Donations, Retribution and Thorough Cleansing examples through the real pulpit/Test Harness. Forecast values rendered and updated correctly.
+- UX result: the semantic split into guaranteed base output and success-only additions is useful and should be retained. The single-label layout is **not accepted**: resource positions move between rows, the context and forecast read as one dense block, and long special-effect text causes NGUI `ShrinkContent` to reduce the font size of the entire label.
+- Next narrow candidate: separate context from results, align repeated resources into fixed columns, render the special effect in its own row, preserve normal font size, and test native cached icons where verified.
+- Status: **superseded for presentation; information model retained**.
 
 ## PrayerClarity 0.1.1 — runtime result: forecast path verified, presentation not accepted
 
@@ -36,7 +30,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Handoff DLL SHA-256: `f86dc5710b79c4f7db081f97a634f59ab25831ba964d856e8999d67006228987`.
 - Change from 0.1.0: `R.BalanceData` resolves a one-string-parameter balance getter against the expected result type; it uses a compatible closed overload when present, otherwise binds the verified one-generic-argument method definition with `MakeGenericMethod(expectedType)` before invocation. Callers explicitly request `PrayEventDefinition` or `BuffDefinition`.
 - Runtime evidence, 2026-09-14: forecast output now renders successfully in the live 1.407 pulpit UI and updates while the Test Harness switches prayer families and qualities. The supplied runtime log contains no recurring `PrayerClarity forecast failed` error for 0.1.1 and confirms synthetic selection across ordinary, Faith, Donations, Repose, Excellence and Roots examples without save/inventory mutation.
-- UX result: current append-only presentation is **not accepted**. Vanilla `Church quality / Sermon requires / Success chance` remains useful, but `Success | Failure` on one line is visually poor and separates probability from its corresponding outcome. Next presentation candidate should keep the first two vanilla lines, integrate probability directly into separate success/failure rows, and continue toward icon-first resource presentation.
+- UX result: current append-only presentation is **not accepted**. Vanilla `Church quality / Sermon requires / Success chance` remains useful, but `Success | Failure` on one line is visually poor and separates probability from its corresponding outcome.
 - Status: **forecast/runtime seam verified; superseded for UX iteration, not accepted for stable**.
 
 ## PrayerClarity 0.1.0 — runtime result: superseded

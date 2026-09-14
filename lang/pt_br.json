@@ -1,16 +1,14 @@
 {
-  "forecast.always": "Sempre: {0} (faith), {1}",
-  "forecast.on_success": "Em caso de sucesso ({0}%): {1}",
-  "forecast.no_bonus": "sem recompensa adicional",
-  "forecast.effect": "Efeito: {0}",
+  "forecast.guaranteed": "Garantido",
+  "forecast.success_bonus": "Bônus no sucesso ({0}%)",
   "forecast.reward": "Recompensa: {0}",
-  "buff.sword": "+{0:0.##} de dano por {1:0} min",
-  "buff.shield": "+{0:0.##} de armadura por {1:0} min",
-  "buff.skull": "Burro: nível máximo do cadáver +{0:0.##} por {1:0} min",
-  "buff.pen": "Pontuação de qualidade da escrita +{0:0.##} por {1:0} min",
-  "buff.star": "Pontuação de qualidade +{0:0.##} nas fabricações afetadas por {1:0} min",
-  "buff.plant_inactive": "O efeito de velocidade de crescimento está inativo na versão original 1.407 (o bônus dura {0:0} min)",
-  "buff.sins_unverified": "Não foi possível confirmar o efeito especial na versão original 1.407 (o bônus dura {0:0} min)",
-  "buff.gratitude": "Gratidão das Almas recebida +10% por {0:0} min",
-  "buff.sin_shard": "Fragmentos de Pecado obtidos ao curar uma alma com sucesso ×2 por {0:0} min"
+  "buff.sword": "+{0:0.##} de dano · {1:0} min",
+  "buff.shield": "+{0:0.##} de armadura · {1:0} min",
+  "buff.skull": "Burro: cadáveres podem vir {0:0.##} nível melhores · {1:0} min",
+  "buff.pen": "Qualidade de escrita +{0:0.##} · {1:0} min",
+  "buff.star": "Qualidade das produções afetadas +{0:0.##} · {1:0} min",
+  "buff.plant_inactive": "Crescimento: efeito não funciona no vanilla 1.407 · buff {0:0} min",
+  "buff.sins_unverified": "Efeito especial não encontrado no vanilla 1.407 · buff {0:0} min",
+  "buff.gratitude": "+10% ao curar almas · {0:0} min",
+  "buff.sin_shard": "×2 ao curar uma alma com sucesso · {0:0} min"
 }

@@ -1,16 +1,14 @@
 {
-  "forecast.always": "常に: {0} (faith)、{1}",
-  "forecast.on_success": "成功時 ({0}%): {1}",
-  "forecast.no_bonus": "追加報酬なし",
-  "forecast.effect": "効果: {0}",
-  "forecast.reward": "報酬: {0}",
-  "buff.sword": "ダメージ +{0:0.##}、{1:0}分間",
-  "buff.shield": "防御力 +{0:0.##}、{1:0}分間",
-  "buff.skull": "ロバ: 死体の最大ランク +{0:0.##}、{1:0}分間",
-  "buff.pen": "執筆品質スコア +{0:0.##}、{1:0}分間",
-  "buff.star": "対象クラフトの品質スコア +{0:0.##}、{1:0}分間",
-  "buff.plant_inactive": "バニラ1.407では成長速度の効果は機能しません（バフは{0:0}分間）",
-  "buff.sins_unverified": "バニラ1.407では特殊効果を確認できませんでした（バフは{0:0}分間）",
-  "buff.gratitude": "獲得する魂の感謝 +10%、{0:0}分間",
-  "buff.sin_shard": "魂の治療成功時に得る罪の欠片 ×2、{0:0}分間"
+  "forecast.guaranteed": "確定",
+  "forecast.success_bonus": "成功ボーナス（{0}%）",
+  "forecast.reward": "報酬：{0}",
+  "buff.sword": "ダメージ +{0:0.##} · {1:0}分",
+  "buff.shield": "防御 +{0:0.##} · {1:0}分",
+  "buff.skull": "ロバ：死体が最大 {0:0.##}段階よくなる可能性 · {1:0}分",
+  "buff.pen": "執筆品質 +{0:0.##} · {1:0}分",
+  "buff.star": "対象クラフト品質 +{0:0.##} · {1:0}分",
+  "buff.plant_inactive": "植物成長：バニラ1.407では効果なし · バフ {0:0}分",
+  "buff.sins_unverified": "バニラ1.407では特殊効果を確認できず · バフ {0:0}分",
+  "buff.gratitude": "魂の治療で +10% · {0:0}分",
+  "buff.sin_shard": "魂の治療成功時 ×2 · {0:0}分"
 }

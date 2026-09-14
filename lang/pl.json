@@ -1,16 +1,14 @@
 {
-  "forecast.always": "Zawsze: {0} (faith), {1}",
-  "forecast.on_success": "Przy sukcesie ({0}%): {1}",
-  "forecast.no_bonus": "brak dodatkowej nagrody",
-  "forecast.effect": "Efekt: {0}",
+  "forecast.guaranteed": "Gwarantowane",
+  "forecast.success_bonus": "Premia za sukces ({0}%)",
   "forecast.reward": "Nagroda: {0}",
-  "buff.sword": "+{0:0.##} obrażeń przez {1:0} min",
-  "buff.shield": "+{0:0.##} pancerza przez {1:0} min",
-  "buff.skull": "Osioł: maksymalny poziom zwłok +{0:0.##} przez {1:0} min",
-  "buff.pen": "Wynik jakości pisania +{0:0.##} przez {1:0} min",
-  "buff.star": "Wynik jakości +{0:0.##} w objętych recepturach przez {1:0} min",
-  "buff.plant_inactive": "Efekt przyspieszenia wzrostu nie działa w wersji vanilla 1.407 (premia trwa {0:0} min)",
-  "buff.sins_unverified": "Nie udało się potwierdzić efektu specjalnego w wersji vanilla 1.407 (premia trwa {0:0} min)",
-  "buff.gratitude": "Zdobywana wdzięczność dusz +10% przez {0:0} min",
-  "buff.sin_shard": "Odłamki grzechu za udane leczenie duszy ×2 przez {0:0} min"
+  "buff.sword": "+{0:0.##} obrażeń · {1:0} min",
+  "buff.shield": "+{0:0.##} pancerza · {1:0} min",
+  "buff.skull": "Osioł: zwłoki mogą być lepsze o {0:0.##} poziom · {1:0} min",
+  "buff.pen": "Jakość pisania +{0:0.##} · {1:0} min",
+  "buff.star": "Jakość objętych wytworów +{0:0.##} · {1:0} min",
+  "buff.plant_inactive": "Wzrost roślin: efekt nie działa w vanilla 1.407 · buff {0:0} min",
+  "buff.sins_unverified": "Nie znaleziono efektu specjalnego w vanilla 1.407 · buff {0:0} min",
+  "buff.gratitude": "+10% z leczenia dusz · {0:0} min",
+  "buff.sin_shard": "×2 za udane leczenie duszy · {0:0} min"
 }

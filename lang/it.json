@@ -1,16 +1,14 @@
 {
-  "forecast.always": "Sempre: {0} (faith), {1}",
-  "forecast.on_success": "In caso di successo ({0}%): {1}",
-  "forecast.no_bonus": "nessuna ricompensa aggiuntiva",
-  "forecast.effect": "Effetto: {0}",
+  "forecast.guaranteed": "Garantito",
+  "forecast.success_bonus": "Bonus al successo ({0}%)",
   "forecast.reward": "Ricompensa: {0}",
-  "buff.sword": "+{0:0.##} danni per {1:0} min",
-  "buff.shield": "+{0:0.##} armatura per {1:0} min",
-  "buff.skull": "Asino: livello massimo del cadavere +{0:0.##} per {1:0} min",
-  "buff.pen": "Punteggio qualità della scrittura +{0:0.##} per {1:0} min",
-  "buff.star": "Punteggio qualità +{0:0.##} nelle produzioni interessate per {1:0} min",
-  "buff.plant_inactive": "L’effetto sulla velocità di crescita è inattivo nella versione vanilla 1.407 (il bonus dura {0:0} min)",
-  "buff.sins_unverified": "Non è stato possibile verificare l’effetto speciale nella versione vanilla 1.407 (il bonus dura {0:0} min)",
-  "buff.gratitude": "Gratitudine delle anime ottenuta +10% per {0:0} min",
-  "buff.sin_shard": "Frammenti del peccato ottenuti curando con successo un’anima ×2 per {0:0} min"
+  "buff.sword": "+{0:0.##} danni · {1:0} min",
+  "buff.shield": "+{0:0.##} armatura · {1:0} min",
+  "buff.skull": "Asino: i cadaveri possono essere migliori di {0:0.##} livello · {1:0} min",
+  "buff.pen": "Qualità di scrittura +{0:0.##} · {1:0} min",
+  "buff.star": "Qualità delle creazioni interessate +{0:0.##} · {1:0} min",
+  "buff.plant_inactive": "Crescita: effetto non funzionante in vanilla 1.407 · bonus {0:0} min",
+  "buff.sins_unverified": "Effetto speciale non trovato in vanilla 1.407 · bonus {0:0} min",
+  "buff.gratitude": "+10% dalla cura delle anime · {0:0} min",
+  "buff.sin_shard": "×2 con cura dell’anima riuscita · {0:0} min"
 }
