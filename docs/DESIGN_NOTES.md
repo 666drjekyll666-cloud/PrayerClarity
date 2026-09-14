@@ -1,8 +1,8 @@
 # PrayerClarity — Design Notes
 
-Status: product/design stage, 2026-09-14. Stock mechanics, presentation/confessional audit, and the quantitative power-budget pass are sufficiently closed. No production implementation or rebalance numbers are accepted yet.
+Status: product/design stage, 2026-09-14. Stock mechanics, presentation/confessional audit, and the quantitative power-budget pass are sufficiently closed. No production implementation or numerical rebalance is accepted yet.
 
-Detailed prayer-by-prayer judgements live in `docs/PRAYER_DESIGN_AUDIT.md`. Quantitative unlock/craft/opportunity-cost analysis lives in `docs/PRAYER_POWER_BUDGET.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
+Detailed prayer-by-prayer judgements live in `docs/PRAYER_DESIGN_AUDIT.md`. Quantitative unlock/craft/opportunity-cost analysis lives in `docs/PRAYER_POWER_BUDGET.md`. Concrete candidate curves live in `docs/PRAYER_REBALANCE_OPTIONS.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
 
 ## Product problem
 
@@ -58,7 +58,11 @@ Do not rely on after-use HUD as a substitute for decision-point clarity.
 
 ## Quantitative balance findings
 
-The direct 1.407 power-budget audit changes several earlier qualitative judgements.
+### Starter Ordinary Prayer stays stock
+
+The specialist-premium proposal applies to the separately crafted `b_faith` Prayer for Faith, **not** the free `b_empty` Ordinary Prayer supplied at the start.
+
+Do not accidentally accelerate the opening game by turning the starter sermon into the new `+100%` Faith specialist. Any future starter-sermon change requires its own early-game justification.
 
 ### Specialists vs Combo is the strongest systemic issue
 
@@ -70,21 +74,35 @@ Donations and Combo are also unlocked together by `Price of faith`. Specialists 
 
 Those are meaningful early gates, but once books and church quality are routine, Combo gains breadth without giving up target-resource effectiveness.
 
-**Preferred direction:** test a specialist premium before nerfing Combo. Combo should remain a strong generalist; Faith should be best at Faith and Donations best at money.
+**Preferred direction:** test a specialist premium before nerfing Combo. Current leading curve in `PRAYER_REBALANCE_OPTIONS.md` is `+100/+200/+300%` target output for Faith/Donations while Combo remains stock.
 
-No coefficient is accepted yet. Candidate families must be simulated at representative progression values before selection.
-
-### Combat prayers pay a very high full budget
+### Combat prayers are now a merge-design problem
 
 Retribution and Protection are two separate Hard-Book prayers unlocked only after a deep Smithing route. Each costs its own Book +7 Faith and its own weekly sermon slot.
 
-Their raw +5 damage/+4 armor are not tiny, but the full proposition is weak enough to justify redesign work: deep unlock, expensive quality, limited sustained-combat demand, and one-dimensional effects that cautious play/consumables can partially replace.
+The user preference is to replace the two one-stat offerings with **one genuinely strong combat-preparation prayer**, including offense, defense and regeneration if the package remains bounded.
 
-Treat this as a **package-design problem**, not merely “increase +5 to +10.”
+The mod-specific migration problem can be solved without deleting saved items:
 
-### Strong niche prayers are the benchmark
+- keep one existing ID as canonical Combat Prayer;
+- hide the second recipe/unlock for new Rebalanced play;
+- keep already-crafted copies of the second ID as same-quality **legacy aliases** of Combat Prayer;
+- do not rewrite inventory/save item IDs;
+- if the mod is removed, vanilla receives the original IDs again.
 
-Prosperity, Imagination, high-Gratitude BSS Soul's Repose and Thorough Cleansing demonstrate the desired pattern: a prayer can be narrow or progression-limited and still be exciting because its payoff is large in the relevant window.
+This soft-merge/legacy-alias strategy is the preferred compatibility direction. Exact combat numbers are still open.
+
+### Quality progression needs a second audit, not just prayer-role classification
+
+Earlier design notes treated several prayers as healthy because their **role** was good. That was incomplete: bronze/silver/gold can still be poorly differentiated even when the prayer has a useful niche.
+
+Current split:
+
+- **Prosperity:** stock quality already outputs 1/2/3 permanent Blessings of Commerce; this is meaningful scaling.
+- **BSS Soul's Repose:** quality multiplies a Soul-Gratitude-enhanced Faith baseline; this is already strong value scaling and mainly needs dynamic Clarity.
+- **Imagination:** role is strong, but all qualities provide the same `+0.7` special magnitude; duration-only quality is suspect because writing can be batched. Rework candidate.
+- **Repose:** role is legitimate, but all qualities provide the same `+1 max corpse tier`; duration-only quality is suspect. Rework candidate.
+- **Excellence:** fixed `+0.2` special magnitude across tiers creates the same quality question and is reopened for modeling.
 
 ## Broken prayer policy
 
@@ -102,7 +120,7 @@ The prayer creates `buff_sins`, but repeated code/data/FlowCanvas audits found n
 
 **Final classification:** the role is recoverable, the magnitude/algorithm is not. A working Repentance must therefore be an explicit **Balance / Rework** design, not presented as Vanilla Fix.
 
-`15% -> 30%` is now recorded only as the first benchmark: it cleanly doubles the stock chance but may be too modest for a dedicated prayer, finite buff and weekly slot. Candidate quality-scaled families such as `30/45/60%` and `30/50/70%` should be evaluated against actual confessional throughput/rewards before acceptance.
+Current leading hypothesis is `30% / 50% / 70%` by bronze/silver/gold. The user's original `15 -> 30%` idea is retained as a strong bronze baseline rather than the final ceiling.
 
 ## Requirements as balancing levers
 
@@ -119,21 +137,44 @@ Prayer for Donations is the strongest candidate because **graveyard quality alre
 Preferred design order:
 
 1. keep church quality as the success gate;
-2. use graveyard quality as a threshold/scaler for the **specialist premium** of Donations;
-3. consider a clear hybrid church + graveyard gate if needed;
-4. reserve graveyard-only sermon success for a later option if the simpler designs fail.
+2. first exploit the existing fact that Graveyard Quality naturally scales the larger specialist donation bonus;
+3. add a visible Graveyard Quality threshold only if playtesting shows an additional progression gate is needed;
+4. consider a hybrid gate only after the simpler design is tested.
 
 This gives the player an intuitive rule: **the church determines whether you can deliver the sermon; the relevant system determines how much a specialist prayer can exploit its niche.**
 
 Do not add thematic gates to every prayer merely for symmetry.
 
-## Quality progression
+## Quality progression details
 
 Bronze should already feel worthwhile. Silver/gold should create meaningful additional value through some combination of magnitude, duration, output, thresholds and reduced effective weekly opportunity cost.
 
 Duration-only scaling can be meaningful when it crosses weekly boundaries. For 36/72/108-minute buffs, silver/gold can remain active into later sermon weeks, letting the player choose a different sermon while the old buff persists.
 
-Use this deliberately. Where the useful activity is short, additional duration alone is not sufficient reason to pursue higher quality.
+But duration-only scaling is weak when the relevant work can simply be stockpiled and completed inside the bronze window.
+
+### Imagination
+
+Stock `+0.7` is genuinely powerful and should remain a credible bronze prayer. Current leading quality-rework hypothesis is:
+
+- bronze `+0.7`;
+- silver `+1.0`;
+- gold `+1.3`;
+- keep 18/36/54 min initially.
+
+This preserves the proven bronze use case while making higher quality improve actual writing probabilities, not just spare time.
+
+### Repose
+
+Do **not** simply use `+1/+2/+3 corpse tiers`. Runtime/story progression has only a few Donkey corpse tiers; +3 can jump several story stages.
+
+Preferred direction is to keep the special reach to at most **one tier above the current story maximum**, but make higher prayer quality improve how reliably the Donkey delivers the boosted tier. Bronze can preserve stock max+1 behavior; gold can aim for reliable best-boosted-tier deliveries while active.
+
+This makes gold strong without sequence-breaking the whole corpse progression.
+
+### Excellence
+
+Reopen quality scaling. A simple `+0.2/+0.4/+0.6` candidate is worth modeling because the effect is narrow and duration-only scaling may not justify silver/gold. No curve is accepted yet.
 
 ## Preferred Clarity UI
 
@@ -145,19 +186,31 @@ The preferred pulpit hypothesis remains a compact dynamic breakdown backed by th
 - `Effect: +5 damage`
 - `Duration: 36 min`
 
+For reworked prayers the same UI must explain effective quality scaling explicitly—for example `Inspiration +0.7` vs `+1.0`, or `Donkey: next-tier corpse chance/reliability`—so the player can see why silver/gold are desirable.
+
 The same model must drive technology/item/pulpit wording for the currently selected profile so a fix/rework never leaves stale vanilla text elsewhere.
 
 Do **not** call `PrayLogics.CalculatePray` merely to preview results; the preview must use a side-effect-free deterministic calculation path.
 
 ## Current design gate
 
-The quantitative power-budget pass is complete enough to stop gathering broad mechanics/cost data. No additional game probe or user runtime test is currently justified.
+The broad mechanics/cost research phase is closed. No additional game probe or user runtime test is currently justified.
 
-Next produce a **candidate rebalanced roster** for the Tier-1 design problems:
+Current leading candidate directions are:
 
-1. Faith / Donations / Combo specialist-generalist relationship;
-2. Repentance confession-throughput design;
-3. Retribution / Protection combat-package structure;
-4. Shoots and Roots after the known -20% Vanilla Fix.
+1. Faith / Donations specialists `+100/+200/+300%`, Combo stock;
+2. Repentance `30/50/70%` confession chance;
+3. Shoots and Roots stock-intent `-20%` repair;
+4. one combined Combat Prayer with save-safe legacy alias for the removed second recipe, exact package open;
+5. Prosperity stock;
+6. BSS Soul's Repose stock + dynamic Clarity;
+7. Imagination quality magnitude scaling candidate;
+8. Repose quality/consistency rework without multi-tier progression skipping;
+9. Excellence reopened for quality scaling.
 
-For each family, compare 2–3 coherent bronze/silver/gold options at representative progression states and select a preferred design hypothesis. Only after that should the first integrated runtime prototype be implemented.
+Next narrow work is **candidate-roster completion**, not broad discovery:
+
+- quantify the combat package including bounded regeneration;
+- quantify Repose delivery consistency at real story tier ranges;
+- model Imagination/Excellence quality probabilities;
+- then freeze one complete non-production Rebalanced specification before opening a `dev/*` implementation branch.
