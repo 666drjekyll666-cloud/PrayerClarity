@@ -16,8 +16,8 @@ namespace PrayerClarityResearch
     public sealed class PrayerClarityFollowupProbe : BaseUnityPlugin
     {
         public const string PluginGuid = "prayerclarity.auditprobe.flowgraph";
-        public const string PluginName = "PrayerClarity FlowGraph Audit Probe";
-        public const string PluginVersion = "0.1.2";
+        public const string PluginName = "PrayerClarity Final Research Audit Probe";
+        public const string PluginVersion = "0.1.3";
 
         private bool _completed;
         private float _gameReadyAt = -1f;
@@ -38,7 +38,7 @@ namespace PrayerClarityResearch
 
         private void Awake()
         {
-            Logger.LogInfo("PrayerClarity FlowGraph Audit Probe 0.1.2 loaded: read-only reflection only; no Harmony, graph execution, or game-state mutation.");
+            Logger.LogInfo("PrayerClarity Final Research Audit Probe 0.1.3 loaded: read-only reflection only; no Harmony, graph execution, or game-state mutation.");
         }
 
         private void Update()
@@ -51,7 +51,7 @@ namespace PrayerClarityResearch
 
             _completed = true;
             try { RunAudit(gameAsm); }
-            catch (Exception ex) { Logger.LogError("PrayerClarity flowgraph audit failed: " + ex); }
+            catch (Exception ex) { Logger.LogError("PrayerClarity final research audit failed: " + ex); }
         }
 
         private static bool IsGameStarted(Assembly gameAsm)
@@ -65,113 +65,269 @@ namespace PrayerClarityResearch
 
         private void RunAudit(Assembly gameAsm)
         {
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            Type[] gameTypes = SafeGetTypes(gameAsm);
-            Type[] allTypes = assemblies.SelectMany(SafeGetTypes).ToArray();
+            Type[] allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(SafeGetTypes).ToArray();
             StringBuilder sb = new StringBuilder(512 * 1024);
 
-            sb.AppendLine("PRAYERCLARITY — FLOWGRAPH READ-ONLY PRAYER AUDIT");
+            sb.AppendLine("PRAYERCLARITY — FINAL NARROW READ-ONLY RESEARCH AUDIT");
             sb.AppendLine("ProbeVersion=" + PluginVersion);
             sb.AppendLine("GeneratedUtc=" + DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
             sb.AppendLine("GameAssembly=" + gameAsm.FullName);
             sb.AppendLine("ModuleVersionId=" + gameAsm.ManifestModule.ModuleVersionId);
             sb.AppendLine("Contract=READ_ONLY_REFLECTION_NO_GRAPH_EXECUTION_NO_MUTATION");
-            sb.AppendLine("Questions=pray graph reward/failure wiring; success-only buff/drop branch; gratitude gain arithmetic; buff_sins consumer");
+            sb.AppendLine("Questions=exact soul_portal gratitude wiring; prayer success-only buff/drop callback; buff_sins consumer/reference audit");
             sb.AppendLine();
 
-            sb.AppendLine("=== TARGET IL ===");
-            DumpType(sb, FindType(allTypes, "FlowCanvas.Nodes.Souls.Flow_CalculateGratitudePoints"), null);
-            DumpType(sb, FindType(allTypes, "SoulsHelper"), new[] { "CalculatePointsAfterSoulRelease" });
-            DumpType(sb, FindType(allTypes, "CustomFlowScript"), new[] { "GetGraph" });
-            DumpCallers(sb, allTypes, FindType(allTypes, "SoulsHelper"), "CalculatePointsAfterSoulRelease");
-            DumpStringLiteralUsers(sb, allTypes, new[] { "buff_sins", "increase_gp_gain" });
-            sb.AppendLine("=== END TARGET IL ===");
-            sb.AppendLine();
+            DumpGraph(sb, allTypes, "soul_portal");
+            DumpPrayerAnimationEvidence(sb, allTypes);
+            DumpBuffSinsEvidence(sb, allTypes);
 
-            DumpPrayGraph(sb, allTypes);
-            DumpLoadedGraphKeywordHits(sb, allTypes, new[] { "buff_sins", "increase_gp_gain", "gratitude_points" });
-
-            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-audit-0.1.2.txt");
+            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-audit-0.1.3.txt");
             File.WriteAllText(path, sb.ToString(), new UTF8Encoding(false));
-            Logger.LogInfo("PrayerClarity flowgraph audit complete: " + path);
+            Logger.LogInfo("PrayerClarity final research audit complete: " + path);
         }
 
-        private static void DumpPrayGraph(StringBuilder sb, Type[] allTypes)
+        private static void DumpGraph(StringBuilder sb, Type[] allTypes, string graphName)
         {
-            sb.AppendLine("=== PRAY FLOW GRAPH ===");
+            sb.AppendLine("=== FULL FLOW GRAPH: " + graphName + " ===");
             Type customFlow = FindType(allTypes, "CustomFlowScript");
-            if (customFlow == null) { sb.AppendLine("CustomFlowScript missing"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+            if (customFlow == null) { sb.AppendLine("CustomFlowScript missing"); sb.AppendLine("=== END FULL FLOW GRAPH ==="); return; }
 
             MethodInfo getGraph = customFlow.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
                 .FirstOrDefault(m => m.Name == "GetGraph" && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(string));
-            if (getGraph == null) { sb.AppendLine("GetGraph(string) missing"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
-            sb.AppendLine("GetGraph=" + Signature(getGraph) + " static=" + getGraph.IsStatic);
-            if (!getGraph.IsStatic) { sb.AppendLine("Refusing to instantiate/execute CustomFlowScript for read-only audit."); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+            if (getGraph == null || !getGraph.IsStatic)
+            {
+                sb.AppendLine("Static GetGraph(string) unavailable");
+                sb.AppendLine("=== END FULL FLOW GRAPH ===");
+                return;
+            }
 
-            object graph;
-            try { graph = getGraph.Invoke(null, new object[] { "pray" }); }
-            catch (Exception ex) { sb.AppendLine("GetGraph(pray) failed=" + ex.GetType().Name + ":" + ex.Message); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
-            if (graph == null) { sb.AppendLine("GetGraph(pray)=null"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+            object graph = null;
+            try { graph = getGraph.Invoke(null, new object[] { graphName }); }
+            catch (Exception ex) { sb.AppendLine("GetGraph failed=" + ex.GetType().Name + ":" + ex.Message); }
+            if (graph == null)
+            {
+                sb.AppendLine("Graph=null");
+                sb.AppendLine("=== END FULL FLOW GRAPH ===");
+                return;
+            }
 
+            string serialized = GetSerializedGraph(graph);
             sb.AppendLine("GraphType=" + graph.GetType().FullName);
             sb.AppendLine("GraphName=" + TryUnityName(graph));
-            string serialized = GetSerializedGraph(graph);
             sb.AppendLine("SerializedLength=" + (serialized == null ? -1 : serialized.Length));
             if (!string.IsNullOrEmpty(serialized))
             {
-                sb.AppendLine("PRAY_GRAPH_SERIALIZED_BEGIN");
+                sb.AppendLine("GRAPH_SERIALIZED_BEGIN");
                 sb.AppendLine(serialized);
-                sb.AppendLine("PRAY_GRAPH_SERIALIZED_END");
+                sb.AppendLine("GRAPH_SERIALIZED_END");
             }
-            DumpNodeSummary(sb, graph);
-            sb.AppendLine("=== END PRAY FLOW GRAPH ===");
+            sb.AppendLine("=== END FULL FLOW GRAPH ===");
             sb.AppendLine();
         }
 
-        private static void DumpLoadedGraphKeywordHits(StringBuilder sb, Type[] allTypes, string[] needles)
+        private static void DumpPrayerAnimationEvidence(StringBuilder sb, Type[] allTypes)
         {
-            sb.AppendLine("=== LOADED FLOW GRAPH KEYWORD HITS ===");
+            sb.AppendLine("=== PRAYER SUCCESS/FAILURE ANIMATION EVIDENCE ===");
+
+            Type churchPulpit = FindType(allTypes, "ChurchPulpit");
+            if (churchPulpit != null)
+            {
+                string[] names = churchPulpit.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+                    .Where(m => m.Name.IndexOf("Pray", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                m.Name.IndexOf("Buff", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Select(m => m.Name).Distinct().ToArray();
+                DumpType(sb, churchPulpit, names);
+
+                DumpCallers(sb, allTypes, churchPulpit, "DoBuffSuccessAnimation");
+            }
+
+            Type baseCharacter = FindType(allTypes, "BaseCharacterComponent");
+            DumpType(sb, baseCharacter, new[] { "StartPrayAnimation" });
+
+            Type player = FindType(allTypes, "PlayerComponent");
+            if (player != null)
+            {
+                FieldInfo successField = player.GetField("_pray_buff_success", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+                if (successField != null) DumpFieldUsers(sb, allTypes, successField);
+            }
+
+            sb.AppendLine("=== END PRAYER SUCCESS/FAILURE ANIMATION EVIDENCE ===");
+            sb.AppendLine();
+        }
+
+        private static void DumpBuffSinsEvidence(StringBuilder sb, Type[] allTypes)
+        {
+            sb.AppendLine("=== BUFF_SINS REFERENCE AUDIT ===");
+            DumpStringLiteralUsers(sb, allTypes, new[] { "buff_sins" });
+            DumpLoadedGraphKeywordHits(sb, allTypes, "buff_sins");
+            DumpGameBalanceKeywordHits(sb, allTypes, "buff_sins");
+            sb.AppendLine("=== END BUFF_SINS REFERENCE AUDIT ===");
+            sb.AppendLine();
+        }
+
+        private static void DumpLoadedGraphKeywordHits(StringBuilder sb, Type[] allTypes, string needle)
+        {
             Type graphType = FindType(allTypes, "NodeCanvas.Framework.Graph");
             if (graphType == null || !typeof(UnityEngine.Object).IsAssignableFrom(graphType))
             {
-                sb.AppendLine("NodeCanvas.Framework.Graph unavailable");
-                sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ===");
+                sb.AppendLine("FLOWGRAPH_SCAN unavailable");
                 return;
             }
 
             UnityEngine.Object[] graphs;
             try { graphs = Resources.FindObjectsOfTypeAll(graphType); }
-            catch (Exception ex) { sb.AppendLine("FindObjectsOfTypeAll failed=" + ex.GetType().Name); sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ==="); return; }
+            catch (Exception ex) { sb.AppendLine("FLOWGRAPH_SCAN failed=" + ex.GetType().Name); return; }
 
-            int graphHits = 0;
+            int hits = 0;
             foreach (UnityEngine.Object graph in graphs)
             {
                 if (graph == null) continue;
                 string serialized = GetSerializedGraph(graph);
-                if (string.IsNullOrEmpty(serialized)) continue;
-                List<string> hitNeedles = needles.Where(n => serialized.IndexOf(n, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
-                if (hitNeedles.Count == 0) continue;
-                graphHits++;
-                sb.AppendLine("GRAPH_HIT name=" + Quote(graph.name) + " type=" + graph.GetType().FullName + " needles=" + string.Join(",", hitNeedles.ToArray()) + " length=" + serialized.Length);
-                foreach (string needle in hitNeedles)
+                if (string.IsNullOrEmpty(serialized) || serialized.IndexOf(needle, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                hits++;
+                sb.AppendLine("FLOWGRAPH_HIT name=" + Quote(graph.name) + " type=" + graph.GetType().FullName + " length=" + serialized.Length);
+                int index = serialized.IndexOf(needle, StringComparison.OrdinalIgnoreCase);
+                int left = Math.Max(0, index - 1200);
+                int len = Math.Min(serialized.Length - left, 2400);
+                sb.AppendLine(serialized.Substring(left, len));
+            }
+            sb.AppendLine("FLOWGRAPH_SCAN loaded=" + graphs.Length + " hits=" + hits);
+        }
+
+        private static void DumpGameBalanceKeywordHits(StringBuilder sb, Type[] allTypes, string needle)
+        {
+            Type gameBalanceType = FindType(allTypes, "GameBalance");
+            Type smartType = FindType(allTypes, "SmartExpression");
+            if (gameBalanceType == null)
+            {
+                sb.AppendLine("BALANCE_SCAN GameBalance missing");
+                return;
+            }
+
+            object gameBalance = null;
+            try
+            {
+                PropertyInfo me = gameBalanceType.GetProperty("me", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (me != null) gameBalance = me.GetValue(null, null);
+            }
+            catch { }
+            if (gameBalance == null)
+            {
+                sb.AppendLine("BALANCE_SCAN GameBalance.me unavailable");
+                return;
+            }
+
+            MethodInfo rawExpression = smartType == null ? null :
+                smartType.GetMethod("GetRawExpressionString", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            int hits = 0;
+            const BindingFlags fields = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            foreach (FieldInfo collectionField in gameBalanceType.GetFields(fields).OrderBy(f => f.Name))
+            {
+                object collection;
+                try { collection = collectionField.GetValue(gameBalance); } catch { continue; }
+                IEnumerable enumerable = collection as IEnumerable;
+                if (enumerable == null || collection is string) continue;
+
+                int rowIndex = 0;
+                foreach (object row in enumerable)
                 {
-                    int start = 0;
-                    int occurrence = 0;
-                    while (occurrence < 5)
+                    rowIndex++;
+                    if (row == null) continue;
+                    string rowId = TryGetId(row);
+                    ScanObjectFields(sb, row, collectionField.Name + "[" + rowIndex + "] id=" + Quote(rowId), needle, smartType, rawExpression, ref hits, 0);
+                }
+            }
+            sb.AppendLine("BALANCE_SCAN hits=" + hits);
+        }
+
+        private static void ScanObjectFields(StringBuilder sb, object obj, string path, string needle, Type smartType, MethodInfo rawExpression, ref int hits, int depth)
+        {
+            if (obj == null || depth > 2) return;
+            Type type = obj.GetType();
+            const BindingFlags f = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            foreach (FieldInfo field in type.GetFields(f))
+            {
+                object value;
+                try { value = field.GetValue(obj); } catch { continue; }
+                if (value == null) continue;
+                string fieldPath = path + "." + field.Name;
+
+                string s = value as string;
+                if (s != null)
+                {
+                    if (s.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        int index = serialized.IndexOf(needle, start, StringComparison.OrdinalIgnoreCase);
-                        if (index < 0) break;
-                        occurrence++;
-                        int left = Math.Max(0, index - 900);
-                        int len = Math.Min(serialized.Length - left, 1800);
-                        sb.AppendLine("SNIPPET needle=" + needle + " occurrence=" + occurrence);
-                        sb.AppendLine(serialized.Substring(left, len));
-                        start = index + needle.Length;
+                        sb.AppendLine("BALANCE_HIT path=" + fieldPath + " type=string value=" + Quote(s));
+                        hits++;
+                    }
+                    continue;
+                }
+
+                if (smartType != null && smartType.IsInstanceOfType(value))
+                {
+                    string raw = "";
+                    try { if (rawExpression != null) raw = Convert.ToString(rawExpression.Invoke(value, null), CultureInfo.InvariantCulture) ?? ""; } catch { }
+                    if (raw.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        sb.AppendLine("BALANCE_HIT path=" + fieldPath + " type=SmartExpression raw=" + Quote(raw));
+                        hits++;
+                    }
+                    continue;
+                }
+
+                IEnumerable nested = value as IEnumerable;
+                if (nested != null && !(value is string) && depth < 2)
+                {
+                    int i = 0;
+                    foreach (object child in nested)
+                    {
+                        i++;
+                        if (child == null) continue;
+                        string childString = child as string;
+                        if (childString != null)
+                        {
+                            if (childString.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                sb.AppendLine("BALANCE_HIT path=" + fieldPath + "[" + i + "] type=string value=" + Quote(childString));
+                                hits++;
+                            }
+                        }
+                        else if (smartType != null && smartType.IsInstanceOfType(child))
+                        {
+                            string raw = "";
+                            try { if (rawExpression != null) raw = Convert.ToString(rawExpression.Invoke(child, null), CultureInfo.InvariantCulture) ?? ""; } catch { }
+                            if (raw.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                sb.AppendLine("BALANCE_HIT path=" + fieldPath + "[" + i + "] type=SmartExpression raw=" + Quote(raw));
+                                hits++;
+                            }
+                        }
+                        else if (child.GetType().Assembly == type.Assembly)
+                        {
+                            ScanObjectFields(sb, child, fieldPath + "[" + i + "]", needle, smartType, rawExpression, ref hits, depth + 1);
+                        }
                     }
                 }
             }
-            sb.AppendLine("LoadedGraphCount=" + graphs.Length + " MatchingGraphCount=" + graphHits);
-            sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ===");
+        }
+
+        private static string TryGetId(object row)
+        {
+            if (row == null) return "";
+            Type type = row.GetType();
+            FieldInfo field = type.GetField("id", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field != null)
+            {
+                try { return Convert.ToString(field.GetValue(row), CultureInfo.InvariantCulture) ?? ""; } catch { }
+            }
+            PropertyInfo prop = type.GetProperty("id", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (prop != null && prop.GetIndexParameters().Length == 0)
+            {
+                try { return Convert.ToString(prop.GetValue(row, null), CultureInfo.InvariantCulture) ?? ""; } catch { }
+            }
+            return "";
         }
 
         private static string GetSerializedGraph(object graph)
@@ -190,44 +346,28 @@ namespace PrayerClarityResearch
             return null;
         }
 
-        private static void DumpNodeSummary(StringBuilder sb, object graph)
-        {
-            if (graph == null) return;
-            PropertyInfo prop = FindProperty(graph.GetType(), "allNodes");
-            if (prop == null) { sb.AppendLine("allNodes property missing"); return; }
-            IEnumerable nodes;
-            try { nodes = prop.GetValue(graph, null) as IEnumerable; } catch { nodes = null; }
-            if (nodes == null) { sb.AppendLine("allNodes unavailable"); return; }
-            Dictionary<string, int> counts = new Dictionary<string, int>();
-            int total = 0;
-            foreach (object node in nodes)
-            {
-                if (node == null) continue;
-                total++;
-                string name = node.GetType().FullName;
-                int count;
-                counts.TryGetValue(name, out count);
-                counts[name] = count + 1;
-            }
-            sb.AppendLine("NodeCount=" + total);
-            foreach (KeyValuePair<string, int> kv in counts.OrderBy(k => k.Key)) sb.AppendLine("NODETYPE " + kv.Value + " x " + kv.Key);
-        }
-
-        private static PropertyInfo FindProperty(Type type, string name)
-        {
-            while (type != null)
-            {
-                PropertyInfo prop = type.GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-                if (prop != null) return prop;
-                type = type.BaseType;
-            }
-            return null;
-        }
-
         private static string TryUnityName(object value)
         {
             UnityEngine.Object obj = value as UnityEngine.Object;
             return obj == null ? "<not UnityEngine.Object>" : obj.name;
+        }
+
+        private static void DumpFieldUsers(StringBuilder sb, Type[] allTypes, FieldInfo target)
+        {
+            sb.AppendLine("FIELD_TARGET " + target.DeclaringType.FullName + "." + target.Name);
+            int hits = 0;
+            foreach (Type type in allTypes)
+            {
+                foreach (MethodBase method in GetDeclaredMethods(type))
+                {
+                    List<Instruction> il;
+                    try { il = Read(method); } catch { continue; }
+                    if (!il.Any(i => Same(i.Member as FieldInfo, target))) continue;
+                    hits++;
+                    DumpMethod(sb, method, "FIELD_HIT=" + target.DeclaringType.FullName + "." + target.Name);
+                }
+            }
+            sb.AppendLine("FIELD_USER_COUNT=" + hits);
         }
 
         private static void DumpCallers(StringBuilder sb, Type[] allTypes, Type targetType, string targetName)
@@ -236,21 +376,24 @@ namespace PrayerClarityResearch
             MethodBase[] targets = targetType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
                 .Where(m => m.Name == targetName).Cast<MethodBase>().ToArray();
             foreach (MethodBase target in targets) sb.AppendLine("CALLER_TARGET " + Signature(target));
+            int hits = 0;
             foreach (Type type in allTypes)
             {
-                MethodBase[] methods = GetDeclaredMethods(type);
-                foreach (MethodBase method in methods)
+                foreach (MethodBase method in GetDeclaredMethods(type))
                 {
                     List<Instruction> il;
                     try { il = Read(method); } catch { continue; }
                     if (!il.Any(i => targets.Any(t => Same(i.Member as MethodBase, t)))) continue;
+                    hits++;
                     DumpMethod(sb, method, "CALLS=" + targetType.FullName + "." + targetName);
                 }
             }
+            sb.AppendLine("CALLER_COUNT=" + hits);
         }
 
         private static void DumpStringLiteralUsers(StringBuilder sb, Type[] allTypes, string[] needles)
         {
+            int hitsCount = 0;
             foreach (Type type in allTypes)
             {
                 foreach (MethodBase method in GetDeclaredMethods(type))
@@ -259,9 +402,14 @@ namespace PrayerClarityResearch
                     try { il = Read(method); } catch { continue; }
                     List<string> hits = il.Where(i => i.StringValue != null && needles.Any(n => string.Equals(i.StringValue, n, StringComparison.OrdinalIgnoreCase)))
                         .Select(i => i.StringValue).Distinct().ToList();
-                    if (hits.Count > 0) DumpMethod(sb, method, "STRING_HITS=" + string.Join(",", hits.ToArray()));
+                    if (hits.Count > 0)
+                    {
+                        hitsCount++;
+                        DumpMethod(sb, method, "STRING_HITS=" + string.Join(",", hits.ToArray()));
+                    }
                 }
             }
+            sb.AppendLine("STRING_LITERAL_METHOD_HITS=" + hitsCount);
         }
 
         private static MethodBase[] GetDeclaredMethods(Type type)
