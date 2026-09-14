@@ -55,42 +55,45 @@ Runtime testing through 0.1.2 established that the useful information model is:
 
 Do not add a separate failure row: failure is already represented by the guaranteed row. This teaches the important stock rule that sermon failure is not zero reward while keeping the result model compact.
 
-### Runtime layout evidence and current 0.1.5 hypothesis
+### Runtime layout evidence and current 0.1.6 calibration hypothesis
 
-The information model is accepted; the first two presentation attempts are not.
+The information model is accepted; layout is still being calibrated.
 
 - **0.1.3:** fixed-column/multi-widget layout was rejected in runtime because its geometry drifted outside the pulpit.
 - **0.1.4:** replacing that hierarchy with one stock `l_total_values` label plus `ResizeHeight` was also rejected. It overlapped the selected prayer/button and accumulated a downward offset on repeated redraws.
+- **0.1.5:** fixed measured regions removed the cumulative drift, and repeated prayer switching stayed geometrically stable. The actual placements were still rejected: the content remained crowded around the prayer slot/button and the stock frame was too short for the desired hierarchy.
 
-A narrow read-only layout probe closed the geometry question instead of continuing coordinate guesses. Stock 1.407 uses:
+A narrow read-only layout probe established stock 1.407 geometry:
 
 - `l_total_values`: local `(-3,49)`, `242x68`, center pivot, 16 px font, `spacingY=-3`, `ShrinkContent`;
 - selected prayer cell: the middle region below the stock text block;
 - craft button: window-local `y=-85`;
 - controller tips: window-local `y=-136`.
 
-The same stock bitmap font directly exposes the symbols needed by the requested presentation:
+The same stock bitmap font exposes the symbols needed by the presentation:
 
 - `(faith)` — Faith;
+- `(cross)` — church-quality cross;
 - `(wskull)` — green-wreath graveyard-quality skull;
 - `(gld)`, `(slv)`, `(brz)` — money denominations;
-- `(gratitude_points)` — Soul Gratitude.
+- `(gratitude_points)` — Soul Gratitude;
+- `(up)` — native small green up arrow.
 
-The probe also observed 0.1.4's label Y progress `49 -> 35 -> 21 -> 7 -> -7 -> -21 -> -35` while switching synthetic prayers after the label had been changed to 170/208 px `ResizeHeight`. The current candidate therefore removes that mutable center-pivot growth path rather than trying to compensate for the drift numerically.
+The 0.1.4 probe observed Y progress `49 -> 35 -> 21 -> 7 -> -7 -> -21 -> -35` after the stock center-pivot label had been converted to 170/208 px `ResizeHeight`. 0.1.5 eliminated that mutable geometry path, and the user's repeated-switch test confirmed the cumulative drift no longer occurs.
 
-**0.1.5 presentation hypothesis:** use the measured native regions instead of one expanding block:
+**0.1.6 presentation/calibration hypothesis:** stop guessing several coordinates through rebuilds and expose the narrow layout variables through BepInEx Configuration Manager for live runtime calibration:
 
-- keep the context in the upper text region with clear indentation;
-- keep the selected prayer cell untouched in the middle;
-- use one native-font cloned result label in the measured region below the prayer cell;
-- move the craft button only from `y=-85` to `y=-100` to create the required result gap;
-- use a small secondary dependency label in the measured gap below that button and above the stock controller tips;
-- use fixed pivots/positions/sizes and `ShrinkContent`, not `ResizeHeight`, so repeated redraws do not mutate geometry;
-- result rows read semantically left-to-right: `Guaranteed:` / `Additional on success (N%):`, then `(faith)` value, then vanilla `Trading.FormatMoney` output;
-- graveyard quality uses `(wskull)` rather than a misleading plus sign;
-- the secondary dependency note says **guaranteed** Faith/donations and replaces obvious resource nouns with `(faith)`, `(slv)` and, for Souls sermons, `(gratitude_points)`.
+- remove the low-value `Sermon context` heading; context consists only of church quality, sermon requirement and graveyard quality;
+- expose context/result/effect/dependency-note X/Y and font sizes, effect icon size, craft-button Y and experimental extra pulpit height;
+- apply settings only on the existing pulpit presentation path and on config-change events; no polling or per-frame layout work;
+- keep all positions in local NGUI coordinates rather than raw display pixels. A 2560x1440 calibration is therefore expected to transfer better than screen-pixel offsets, but portability is not a fact until a second resolution is tested;
+- use native inline icons in the dependency note: `(faith)` depends on `(cross)`; donation `(slv)` depends on `(wskull)`; Souls additionally names `(gratitude_points)`;
+- prefix the **whole success-bonus resource group** with one `(up)` marker instead of placing separate arrows before Faith and money. This communicates “these values are the improvement” without giving Combo two noisy arrows or implying that two arrows encode greater specialization;
+- do not mechanically replace every plus sign inside special-effect prose. Additive stat grammar, duration changes and reductions such as Roots have different semantics and will be iconized only where the result stays unambiguous;
+- restore the verified native special-effect icon path (`BuffDefinition.GetIconName` / item icon), with `sin_shard` item-icon fallback for Thorough Cleansing;
+- experimentally extend the stock pulpit frame downward while preserving its measured top edge and moving controller tips down with it. If the existing sprites visibly distort when stretched, this strategy is rejected rather than hidden with more offsets.
 
-This remains a **runtime UX hypothesis** until 0.1.5 is tested. The acceptance question is not whether the numbers are correct—they already are—but whether the measured layout stays stable, readable and non-overlapping across ordinary, money-heavy and long-effect prayers.
+The Configuration Manager controls are **temporary calibration instrumentation**, not automatically a final user setting surface. Once useful geometry is found, the next step is to harden the accepted defaults and perform at least one second-resolution check before deciding whether any layout setting should remain public.
 
 Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle.
 
@@ -187,7 +190,7 @@ If merge is implemented:
 
 Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
-The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations. The 0.1.2 runtime test retained the `guaranteed + success bonus` information model. 0.1.3 and 0.1.4 were both rejected on layout behavior. The current narrow gate is runtime acceptance/rejection of **0.1.5's measured fixed-region pulpit layout** before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
+The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations. The 0.1.2 runtime test retained the `guaranteed + success bonus` information model. 0.1.3 and 0.1.4 were rejected on layout behavior. 0.1.5 proved that fixed non-`ResizeHeight` geometry removes cumulative drift but did not produce an acceptable composition. The current narrow gate is **0.1.6 live pulpit calibration**: obtain a visually acceptable layout in the real game, then freeze those local NGUI defaults and verify them once at a second resolution before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
 
 Cross-cutting contracts remain:
 
