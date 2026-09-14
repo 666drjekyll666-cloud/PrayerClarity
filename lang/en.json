@@ -1,6 +1,12 @@
 {
+  "forecast.context_header": "Sermon context",
+  "forecast.result_header": "Result",
+  "forecast.effect_header": "Effect",
+  "forecast.graveyard_quality": "Graveyard quality: +{0:0.#}",
   "forecast.guaranteed": "Guaranteed",
-  "forecast.success_bonus": "Success bonus ({0}%)",
+  "forecast.success_bonus": "Additional on success ({0}%)",
+  "forecast.dependency_note": "Base Faith depends on church quality; donations depend on graveyard quality.",
+  "forecast.dependency_note_souls": "Base Faith depends on church quality and Soul Gratitude; donations depend on graveyard quality.",
   "forecast.reward": "Reward: {0}",
   "buff.sword": "+{0:0.##} damage · {1:0} min",
   "buff.shield": "+{0:0.##} armor · {1:0} min",

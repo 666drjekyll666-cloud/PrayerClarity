@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using UnityEngine;
 
 namespace PrayerClarity
@@ -16,19 +15,18 @@ namespace PrayerClarity
             internal int BonusFaith;
             internal float BonusMoney;
             internal int ChancePercent;
+            internal float GraveyardQuality;
+            internal bool UsesSoulGratitude;
             internal string SpecialText;
-            internal string SpecialIconName;
         }
 
         private sealed class SpecialInfo
         {
             internal readonly string Text;
-            internal readonly string IconName;
 
-            internal SpecialInfo(string text, string iconName)
+            internal SpecialInfo(string text)
             {
                 Text = text;
-                IconName = iconName;
             }
         }
 
@@ -68,8 +66,9 @@ namespace PrayerClarity
                 BonusFaith = bonusFaith,
                 BonusMoney = bonusMoney,
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
-                SpecialText = special == null ? null : special.Text,
-                SpecialIconName = special == null ? null : special.IconName
+                GraveyardQuality = R.ZoneQuality("graveyard"),
+                UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
+                SpecialText = special == null ? null : special.Text
             };
         }
 
@@ -92,16 +91,11 @@ namespace PrayerClarity
         private static SpecialInfo BuildSpecial(object craft, List<RewardItem> rewards)
         {
             List<string> parts = new List<string>();
-            string iconName = null;
 
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
             SpecialInfo buff = BuildBuffEffect(buffId, duration);
-            if (buff != null)
-            {
-                if (!string.IsNullOrEmpty(buff.Text)) parts.Add(buff.Text);
-                iconName = buff.IconName;
-            }
+            if (buff != null && !string.IsNullOrEmpty(buff.Text)) parts.Add(buff.Text);
 
             if (rewards.Count > 0)
             {
@@ -110,12 +104,11 @@ namespace PrayerClarity
                 {
                     string name = R.VanillaLocalize(reward.Id);
                     rewardParts.Add(name + " ×" + reward.Value.ToString(CultureInfo.InvariantCulture));
-                    if (string.IsNullOrEmpty(iconName)) iconName = GetItemIconName(reward.Id);
                 }
                 parts.Add(Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray())));
             }
 
-            return parts.Count == 0 ? null : new SpecialInfo(string.Join(" · ", parts.ToArray()), iconName);
+            return parts.Count == 0 ? null : new SpecialInfo(string.Join(" · ", parts.ToArray()));
         }
 
         private static SpecialInfo BuildBuffEffect(string buffId, float duration)
@@ -124,7 +117,6 @@ namespace PrayerClarity
 
             object buff = R.BalanceData(buffId, "BuffDefinition", true);
             object res = buff == null ? null : R.Get(buff, "res");
-            string iconName = GetBuffIconName(buff);
 
             string text;
             switch (buffId)
@@ -161,7 +153,7 @@ namespace PrayerClarity
                     break;
             }
 
-            return string.IsNullOrEmpty(text) ? null : new SpecialInfo(text, iconName);
+            return string.IsNullOrEmpty(text) ? null : new SpecialInfo(text);
         }
 
         private static string NumberedResEffect(string key, object res, string resKey, float duration)
@@ -170,26 +162,6 @@ namespace PrayerClarity
             float value = R.GameResGet(res, resKey);
             if (Math.Abs(value) < 0.0001f) return null;
             return Localization.F(key, value, duration);
-        }
-
-        private static string GetBuffIconName(object buff)
-        {
-            if (buff == null) return null;
-            MethodInfo method = R.Method(buff.GetType(), "GetIconName", false, 0);
-            object value = method == null ? null : method.Invoke(buff, null);
-            return value == null ? null : value.ToString();
-        }
-
-        private static string GetItemIconName(string itemId)
-        {
-            object item = R.BalanceData(itemId, "ItemDefinition", true);
-            if (item == null) return null;
-
-            string icon = R.Get(item, "icon") as string;
-            if (!string.IsNullOrEmpty(icon)) return icon;
-
-            icon = R.Get(item, "custom_ovr_icon") as string;
-            return string.IsNullOrEmpty(icon) ? null : icon;
         }
 
         private sealed class RewardItem

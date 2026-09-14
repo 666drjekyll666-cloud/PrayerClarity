@@ -1,6 +1,12 @@
 {
+  "forecast.context_header": "설교 정보",
+  "forecast.result_header": "결과",
+  "forecast.effect_header": "효과",
+  "forecast.graveyard_quality": "묘지 품질: +{0:0.#}",
   "forecast.guaranteed": "확정",
-  "forecast.success_bonus": "성공 보너스 ({0}%)",
+  "forecast.success_bonus": "성공 시 추가 ({0}%)",
+  "forecast.dependency_note": "기본 신앙은 교회 품질에, 기부금은 묘지 품질에 따라 달라집니다.",
+  "forecast.dependency_note_souls": "기본 신앙은 교회 품질과 영혼 감사에, 기부금은 묘지 품질에 따라 달라집니다.",
   "forecast.reward": "보상: {0}",
   "buff.sword": "피해 +{0:0.##} · {1:0}분",
   "buff.shield": "방어력 +{0:0.##} · {1:0}분",

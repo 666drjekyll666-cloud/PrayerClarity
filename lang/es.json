@@ -1,6 +1,12 @@
 {
+  "forecast.context_header": "Contexto del sermón",
+  "forecast.result_header": "Resultado",
+  "forecast.effect_header": "Efecto",
+  "forecast.graveyard_quality": "Calidad del cementerio: +{0:0.#}",
   "forecast.guaranteed": "Garantizado",
-  "forecast.success_bonus": "Bonus por éxito ({0} %)",
+  "forecast.success_bonus": "Adicional al tener éxito ({0} %)",
+  "forecast.dependency_note": "La Fe base depende de la calidad de la iglesia; las donaciones, de la calidad del cementerio.",
+  "forecast.dependency_note_souls": "La Fe base depende de la calidad de la iglesia y de la Gratitud de las almas; las donaciones, de la calidad del cementerio.",
   "forecast.reward": "Recompensa: {0}",
   "buff.sword": "+{0:0.##} de daño · {1:0} min",
   "buff.shield": "+{0:0.##} de armadura · {1:0} min",

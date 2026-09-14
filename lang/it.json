@@ -1,6 +1,12 @@
 {
+  "forecast.context_header": "Contesto del sermone",
+  "forecast.result_header": "Risultato",
+  "forecast.effect_header": "Effetto",
+  "forecast.graveyard_quality": "Qualità del cimitero: +{0:0.#}",
   "forecast.guaranteed": "Garantito",
-  "forecast.success_bonus": "Bonus al successo ({0}%)",
+  "forecast.success_bonus": "In più in caso di successo ({0}%)",
+  "forecast.dependency_note": "La Fede base dipende dalla qualità della chiesa; le donazioni, dalla qualità del cimitero.",
+  "forecast.dependency_note_souls": "La Fede base dipende dalla qualità della chiesa e dalla Gratitudine delle anime; le donazioni, dalla qualità del cimitero.",
   "forecast.reward": "Ricompensa: {0}",
   "buff.sword": "+{0:0.##} danni · {1:0} min",
   "buff.shield": "+{0:0.##} armatura · {1:0} min",

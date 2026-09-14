@@ -1,6 +1,12 @@
 {
+  "forecast.context_header": "Predigtkontext",
+  "forecast.result_header": "Ergebnis",
+  "forecast.effect_header": "Effekt",
+  "forecast.graveyard_quality": "Friedhofsqualität: +{0:0.#}",
   "forecast.guaranteed": "Garantiert",
-  "forecast.success_bonus": "Erfolgsbonus ({0}%)",
+  "forecast.success_bonus": "Zusätzlich bei Erfolg ({0}%)",
+  "forecast.dependency_note": "Basis-Glaube hängt von der Kirchenqualität ab; Spenden von der Friedhofsqualität.",
+  "forecast.dependency_note_souls": "Basis-Glaube hängt von Kirchenqualität und Seelendankbarkeit ab; Spenden von der Friedhofsqualität.",
   "forecast.reward": "Belohnung: {0}",
   "buff.sword": "+{0:0.##} Schaden · {1:0} Min.",
   "buff.shield": "+{0:0.##} Rüstung · {1:0} Min.",

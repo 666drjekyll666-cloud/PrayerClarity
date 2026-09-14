@@ -1,289 +1,96 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 namespace PrayerClarity
 {
     internal static class PulpitPresentation
     {
-        private static readonly Dictionary<string, Sprite> SpriteCache =
-            new Dictionary<string, Sprite>(StringComparer.Ordinal);
-
         private static object _template;
-        private static GameObject _root;
-        private static object _context;
-        private static object _guaranteedLabel;
-        private static object _guaranteedFaith;
-        private static object _guaranteedMoney;
-        private static object _successLabel;
-        private static object _successFaith;
-        private static object _successMoney;
-        private static object _specialLabel;
-        private static object _specialIcon;
-        private static MethodInfo _getSprite;
+        private static object _originalAlignment;
+        private static object _originalOverflow;
+        private static int _originalHeight;
+        private static bool _styleCaptured;
+        private static bool _presentationActive;
 
         internal static void Render(object template, string vanillaContext, PrayerForecast.Result forecast)
         {
             if (template == null || forecast == null) return;
             Ensure(template);
 
-            string faithBase = "(faith) " + forecast.BaseFaith;
-            string faithBonus = forecast.BonusFaith == 0 ? "—" : "(faith) +" + forecast.BonusFaith;
-            string moneyBase = R.FormatMoney(forecast.BaseMoney);
-            string moneyBonus = Math.Abs(forecast.BonusMoney) < 0.0001f
-                ? "—"
-                : "+" + R.FormatMoney(forecast.BonusMoney);
+            // Reuse the vanilla label itself. This preserves its panel, layer, bitmap font,
+            // symbol table and anchoring instead of creating a parallel UI hierarchy.
+            TrySet(template, "height", _originalHeight);
+            SetEnum(template, "alignment", "Left");
+            SetEnum(template, "overflowMethod", "ResizeHeight");
 
-            SetText(_context, vanillaContext);
-            SetText(_guaranteedLabel, Localization.F("forecast.guaranteed"));
-            SetText(_guaranteedFaith, faithBase);
-            SetText(_guaranteedMoney, moneyBase);
-            SetText(_successLabel, Localization.F("forecast.success_bonus", forecast.ChancePercent));
-            SetText(_successFaith, faithBonus);
-            SetText(_successMoney, moneyBonus);
-            SetSpecial(forecast.SpecialText, forecast.SpecialIconName);
+            List<string> lines = new List<string>();
+            lines.Add(Localization.F("forecast.context_header"));
+            if (!string.IsNullOrEmpty(vanillaContext))
+            {
+                string normalized = vanillaContext.Replace("\r\n", "\n").TrimEnd('\n');
+                if (!string.IsNullOrEmpty(normalized)) lines.Add(normalized);
+            }
+            lines.Add(Localization.F("forecast.graveyard_quality", forecast.GraveyardQuality));
 
-            _root.SetActive(true);
-            R.Set(template, "text", string.Empty);
+            lines.Add(string.Empty);
+            lines.Add(Localization.F("forecast.result_header"));
+            lines.Add("(faith) " + Localization.F("forecast.guaranteed") + ": " + forecast.BaseFaith);
+            lines.Add(Localization.F("forecast.guaranteed") + ": " + R.FormatMoney(forecast.BaseMoney));
+
+            if (forecast.BonusFaith != 0)
+                lines.Add("(faith) " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": +" + forecast.BonusFaith);
+
+            if (Math.Abs(forecast.BonusMoney) >= 0.0001f)
+                lines.Add(Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": +" + R.FormatMoney(forecast.BonusMoney));
+
+            if (!string.IsNullOrEmpty(forecast.SpecialText))
+            {
+                lines.Add(string.Empty);
+                lines.Add(Localization.F("forecast.effect_header"));
+                lines.Add(forecast.SpecialText);
+            }
+
+            lines.Add(string.Empty);
+            string noteKey = forecast.UsesSoulGratitude
+                ? "forecast.dependency_note_souls"
+                : "forecast.dependency_note";
+            lines.Add("[777777]* " + Localization.F(noteKey) + "[-]");
+
+            R.Set(template, "text", string.Join("\n", lines.ToArray()));
+            _presentationActive = true;
         }
 
         internal static void Hide(object template)
         {
-            if (_root != null) _root.SetActive(false);
+            if (!_presentationActive || template == null || !ReferenceEquals(_template, template)) return;
+            Restore(template);
         }
 
         private static void Ensure(object template)
         {
-            if (ReferenceEquals(_template, template) && _root != null) return;
+            if (ReferenceEquals(_template, template) && _styleCaptured) return;
 
-            if (_root != null) UnityEngine.Object.Destroy(_root);
-            _template = template;
-
-            GameObject templateGo = R.Get(template, "gameObject") as GameObject;
-            if (templateGo == null) throw new InvalidOperationException("Pulpit label GameObject is unavailable.");
-
-            Transform parent = templateGo.transform.parent;
-            if (parent == null) throw new InvalidOperationException("Pulpit label parent is unavailable.");
-
-            _root = new GameObject("PrayerClarity.PulpitForecast");
-            _root.layer = templateGo.layer;
-            _root.transform.SetParent(parent, false);
-            _root.transform.localPosition = Vector3.zero;
-            _root.transform.localRotation = Quaternion.identity;
-            _root.transform.localScale = Vector3.one;
-
-            int width = Math.Max(1, R.Int(R.Get(template, "width")));
-            int height = Math.Max(1, R.Int(R.Get(template, "height")));
-            int fontSize = Math.Max(1, R.Int(R.Get(template, "fontSize")));
-            int depth = R.Int(R.Get(template, "depth"));
-            Vector3 pos = templateGo.transform.localPosition;
-            string pivot = Convert.ToString(R.Get(template, "pivot"));
-
-            float left = pos.x - width * PivotX(pivot);
-            float top = pos.y + height * PivotTop(pivot);
-            float line = Math.Max(fontSize + 2f, 14f);
-            float contextHeight = line * 2.05f;
-            float rowHeight = line * 1.25f;
-            float sectionGap = Math.Max(6f, line * 0.42f);
-            float rowGap = Math.Max(2f, line * 0.16f);
-
-            float labelWidth = width * 0.56f;
-            float faithWidth = width * 0.17f;
-            float moneyWidth = width - labelWidth - faithWidth;
-            float row1Y = top - contextHeight - sectionGap;
-            float row2Y = row1Y - rowHeight - rowGap;
-            float specialY = row2Y - rowHeight - Math.Max(5f, line * 0.34f);
-
-            _context = CreateLabel("Context", template, depth + 1);
-            ConfigureLabel(_context, left, top, width, contextHeight, "TopLeft", "Center", "ClampContent");
-
-            _guaranteedLabel = CreateLabel("Guaranteed.Label", template, depth + 1);
-            ConfigureLabel(_guaranteedLabel, left, row1Y, labelWidth, rowHeight, "TopLeft", "Right", "ClampContent");
-
-            _guaranteedFaith = CreateLabel("Guaranteed.Faith", template, depth + 1);
-            ConfigureLabel(_guaranteedFaith, left + labelWidth, row1Y, faithWidth, rowHeight, "TopLeft", "Left", "ClampContent");
-
-            _guaranteedMoney = CreateLabel("Guaranteed.Money", template, depth + 1);
-            ConfigureLabel(_guaranteedMoney, left + labelWidth + faithWidth, row1Y, moneyWidth, rowHeight, "TopLeft", "Left", "ClampContent");
-
-            _successLabel = CreateLabel("Success.Label", template, depth + 1);
-            ConfigureLabel(_successLabel, left, row2Y, labelWidth, rowHeight, "TopLeft", "Right", "ClampContent");
-
-            _successFaith = CreateLabel("Success.Faith", template, depth + 1);
-            ConfigureLabel(_successFaith, left + labelWidth, row2Y, faithWidth, rowHeight, "TopLeft", "Left", "ClampContent");
-
-            _successMoney = CreateLabel("Success.Money", template, depth + 1);
-            ConfigureLabel(_successMoney, left + labelWidth + faithWidth, row2Y, moneyWidth, rowHeight, "TopLeft", "Left", "ClampContent");
-
-            float iconSize = Math.Max(16f, fontSize + 2f);
-            _specialIcon = CreateSprite("Special.Icon", depth + 2);
-            ConfigureWidget(_specialIcon, left, specialY - rowHeight * 0.5f, iconSize, iconSize, "Left");
-
-            _specialLabel = CreateLabel("Special.Text", template, depth + 1);
-            ConfigureLabel(_specialLabel, left + iconSize + 5f, specialY, width - iconSize - 5f, rowHeight,
-                "TopLeft", "Left", "ResizeHeight");
-
-            _root.SetActive(false);
-        }
-
-        private static object CreateLabel(string suffix, object template, int depth)
-        {
-            GameObject templateGo = R.Get(template, "gameObject") as GameObject;
-            GameObject go = new GameObject("PrayerClarity." + suffix);
-            go.layer = templateGo == null ? _root.layer : templateGo.layer;
-            go.transform.SetParent(_root.transform, false);
-            go.transform.localScale = templateGo == null ? Vector3.one : templateGo.transform.localScale;
-
-            object label = go.AddComponent(template.GetType());
-            CopyStyle(template, label);
-            TrySet(label, "depth", depth);
-            return label;
-        }
-
-        private static object CreateSprite(string suffix, int depth)
-        {
-            Type type = R.AnyType("UI2DSprite");
-            if (type == null) return null;
-
-            GameObject go = new GameObject("PrayerClarity." + suffix);
-            go.layer = _root.layer;
-            go.transform.SetParent(_root.transform, false);
-            object sprite = go.AddComponent(type);
-            TrySet(sprite, "depth", depth);
-            return sprite;
-        }
-
-        private static void CopyStyle(object source, object target)
-        {
-            // Preserve the bitmap font when the vanilla label uses one. Its symbol table is
-            // what makes inline tokens such as (faith) render as native icons. Setting the
-            // derived trueTypeFont afterwards would clear that bitmap font in NGUI.
-            object bitmapFont = R.Get(source, "bitmapFont");
-            if (bitmapFont != null)
-                TrySet(target, "bitmapFont", bitmapFont);
-            else
-                TrySet(target, "trueTypeFont", R.Get(source, "trueTypeFont"));
-
-            string[] properties =
+            if (_template != null && _presentationActive)
             {
-                "fontSize", "fontStyle", "color", "effectStyle", "effectColor",
-                "effectDistance", "supportEncoding", "symbolStyle", "spacingX",
-                "spacingY", "useFloatSpacing", "floatSpacingX", "floatSpacingY",
-                "applyGradient", "gradientTop", "gradientBottom"
-            };
-
-            foreach (string property in properties)
-            {
-                try
-                {
-                    object value = R.Get(source, property);
-                    if (value != null) R.Set(target, property, value);
-                }
+                try { Restore(_template); }
                 catch { }
             }
+
+            _template = template;
+            _originalAlignment = R.Get(template, "alignment");
+            _originalOverflow = R.Get(template, "overflowMethod");
+            _originalHeight = Math.Max(1, R.Int(R.Get(template, "height")));
+            _styleCaptured = true;
+            _presentationActive = false;
         }
 
-        private static void ConfigureLabel(object label, float x, float y, float width, float height,
-            string pivot, string alignment, string overflow)
+        private static void Restore(object template)
         {
-            ConfigureWidget(label, x, y, width, height, pivot);
-            SetEnum(label, "alignment", alignment);
-            SetEnum(label, "overflowMethod", overflow);
-        }
-
-        private static void ConfigureWidget(object widget, float x, float y, float width, float height, string pivot)
-        {
-            if (widget == null) return;
-
-            GameObject go = R.Get(widget, "gameObject") as GameObject;
-            if (go == null) return;
-
-            go.transform.localPosition = new Vector3(x, y, 0f);
-            TrySet(widget, "width", Math.Max(1, Mathf.RoundToInt(width)));
-            TrySet(widget, "height", Math.Max(1, Mathf.RoundToInt(height)));
-            SetEnum(widget, "pivot", pivot);
-        }
-
-        private static void SetSpecial(string text, string iconName)
-        {
-            bool hasText = !string.IsNullOrEmpty(text);
-            GameObject labelGo = _specialLabel == null ? null : R.Get(_specialLabel, "gameObject") as GameObject;
-            if (labelGo != null) labelGo.SetActive(hasText);
-
-            Sprite sprite = hasText ? ResolveSprite(iconName) : null;
-            GameObject iconGo = _specialIcon == null ? null : R.Get(_specialIcon, "gameObject") as GameObject;
-            bool showIcon = sprite != null && iconGo != null;
-
-            if (showIcon)
-            {
-                TrySet(_specialIcon, "sprite2D", sprite);
-                iconGo.SetActive(true);
-            }
-            else if (iconGo != null)
-            {
-                iconGo.SetActive(false);
-            }
-
-            if (_specialLabel != null)
-            {
-                SetText(_specialLabel, text ?? string.Empty);
-
-                int width = Math.Max(1, R.Int(R.Get(_context, "width")));
-                GameObject contextGo = R.Get(_context, "gameObject") as GameObject;
-                GameObject specialGo = R.Get(_specialLabel, "gameObject") as GameObject;
-                GameObject specialIconGo = _specialIcon == null ? null : R.Get(_specialIcon, "gameObject") as GameObject;
-
-                if (contextGo != null && specialGo != null)
-                {
-                    float left = contextGo.transform.localPosition.x;
-                    float iconWidth = showIcon ? Math.Max(16, R.Int(R.Get(_specialIcon, "width"))) + 5f : 0f;
-                    Vector3 p = specialGo.transform.localPosition;
-                    specialGo.transform.localPosition = new Vector3(left + iconWidth, p.y, p.z);
-                    TrySet(_specialLabel, "width", Math.Max(1, Mathf.RoundToInt(width - iconWidth)));
-                }
-
-                if (specialIconGo != null && contextGo != null)
-                {
-                    Vector3 p = specialIconGo.transform.localPosition;
-                    specialIconGo.transform.localPosition = new Vector3(contextGo.transform.localPosition.x, p.y, p.z);
-                }
-            }
-        }
-
-        private static Sprite ResolveSprite(string iconName)
-        {
-            if (string.IsNullOrEmpty(iconName)) return null;
-
-            Sprite cached;
-            if (SpriteCache.TryGetValue(iconName, out cached)) return cached;
-
-            try
-            {
-                if (_getSprite == null)
-                {
-                    Type type = R.GameType("EasySpritesCollection");
-                    _getSprite = R.Method(type, "GetSprite", true,
-                        new[] { typeof(string), typeof(bool), typeof(string) });
-                }
-
-                Sprite sprite = _getSprite == null
-                    ? null
-                    : _getSprite.Invoke(null, new object[] { iconName, false, string.Empty }) as Sprite;
-
-                SpriteCache[iconName] = sprite;
-                return sprite;
-            }
-            catch
-            {
-                SpriteCache[iconName] = null;
-                return null;
-            }
-        }
-
-        private static void SetText(object label, string text)
-        {
-            if (label != null) R.Set(label, "text", text ?? string.Empty);
+            if (_originalAlignment != null) TrySet(template, "alignment", _originalAlignment);
+            if (_originalOverflow != null) TrySet(template, "overflowMethod", _originalOverflow);
+            TrySet(template, "height", _originalHeight);
+            _presentationActive = false;
         }
 
         private static void TrySet(object obj, string name, object value)
@@ -303,22 +110,6 @@ namespace PrayerClarity
                 property.SetValue(obj, Enum.Parse(property.PropertyType, value), null);
             }
             catch { }
-        }
-
-        private static float PivotX(string pivot)
-        {
-            if (string.IsNullOrEmpty(pivot)) return 0.5f;
-            if (pivot.IndexOf("Left", StringComparison.OrdinalIgnoreCase) >= 0) return 0f;
-            if (pivot.IndexOf("Right", StringComparison.OrdinalIgnoreCase) >= 0) return 1f;
-            return 0.5f;
-        }
-
-        private static float PivotTop(string pivot)
-        {
-            if (string.IsNullOrEmpty(pivot)) return 0.5f;
-            if (pivot.IndexOf("Top", StringComparison.OrdinalIgnoreCase) >= 0) return 0f;
-            if (pivot.IndexOf("Bottom", StringComparison.OrdinalIgnoreCase) >= 0) return 1f;
-            return 0.5f;
         }
     }
 }

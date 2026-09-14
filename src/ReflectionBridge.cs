@@ -157,6 +157,20 @@ namespace PrayerClarity
             return bound.ContainsGenericParameters ? null : bound;
         }
 
+        internal static float ZoneQuality(string zoneId)
+        {
+            Type worldZoneType = GameType("WorldZone");
+            MethodInfo getZone = Method(worldZoneType, "GetZoneByID", true, new[] { typeof(string), typeof(bool) });
+            if (getZone == null) throw new MissingMethodException("WorldZone.GetZoneByID(string,bool)");
+
+            object zone = getZone.Invoke(null, new object[] { zoneId, false });
+            if (zone == null) throw new InvalidOperationException("World zone unavailable: " + zoneId);
+
+            MethodInfo getQuality = Method(zone.GetType(), "GetTotalQuality", false, 0);
+            if (getQuality == null) throw new MissingMethodException("WorldZone.GetTotalQuality()");
+            return Float(getQuality.Invoke(zone, null));
+        }
+
         internal static float GameResGet(object gameRes, string key)
         {
             if (gameRes == null) return 0f;
