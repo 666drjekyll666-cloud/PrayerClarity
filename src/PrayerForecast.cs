@@ -69,7 +69,8 @@ namespace PrayerClarity
 
             int bonusFaith = fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
             float bonusMoney = fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
-            SpecialInfo special = BuildSpecial(craft, craftId, rewards);
+            SpecialInfo special = BuildSpecial(craft, eventId, rewards);
+            bool usesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal);
 
             return new Result
             {
@@ -79,7 +80,7 @@ namespace PrayerClarity
                 BonusMoney = bonusMoney,
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
                 GraveyardQuality = R.ZoneQuality("graveyard"),
-                UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
+                UsesSoulGratitude = usesSoulGratitude,
                 Highlight = GetBonusHighlight(craftId),
                 SpecialText = special == null ? null : special.Text,
                 SpecialIconName = special == null ? null : special.IconName
@@ -111,17 +112,19 @@ namespace PrayerClarity
             }
         }
 
-        private static SpecialInfo BuildSpecial(object craft, string craftId, List<RewardItem> rewards)
+        private static SpecialInfo BuildSpecial(object craft, string eventId, List<RewardItem> rewards)
         {
             List<string> parts = new List<string>();
             string iconName = null;
 
-            if (craftId.StartsWith("pray:b_souls:", StringComparison.Ordinal))
+            // The PrayEventDefinition family is the verified semantic discriminator for
+            // the BSS prayer. Matching the event is more robust than relying on an item/
+            // craft spelling and is already used by the dependency-note path.
+            if (eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal))
             {
                 string soulsText = R.VanillaLocalize("b_souls_d");
                 if (!string.IsNullOrEmpty(soulsText) && !string.Equals(soulsText, "b_souls_d", StringComparison.Ordinal))
                     parts.Add(soulsText);
-                iconName = "techpoint_drop_smile";
             }
 
             string buffId = R.Get(craft, "buff") as string;
@@ -138,14 +141,29 @@ namespace PrayerClarity
                 List<string> rewardParts = new List<string>();
                 foreach (RewardItem reward in rewards)
                 {
-                    string name = R.VanillaLocalize(reward.Id);
-                    rewardParts.Add(name + " ×" + reward.Value.ToString(CultureInfo.InvariantCulture));
+                    rewardParts.Add(BuildRewardText(reward));
                     if (string.IsNullOrEmpty(iconName)) iconName = GetItemIconName(reward.Id);
                 }
                 parts.Add(Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray())));
             }
 
             return parts.Count == 0 ? null : new SpecialInfo(string.Join(" · ", parts.ToArray()), iconName);
+        }
+
+        private static string BuildRewardText(RewardItem reward)
+        {
+            string name = R.VanillaLocalize(reward.Id);
+            string amount = " ×" + reward.Value.ToString(CultureInfo.InvariantCulture);
+
+            if (string.Equals(reward.Id, "blessing_commerce", StringComparison.Ordinal))
+            {
+                string description = R.VanillaLocalize("blessing_commerce_d");
+                if (!string.IsNullOrEmpty(description) &&
+                    !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal))
+                    return name + amount + " — " + description;
+            }
+
+            return name + amount;
         }
 
         private static SpecialInfo BuildBuffEffect(string buffId, float duration)
@@ -167,6 +185,9 @@ namespace PrayerClarity
                     break;
                 case "buff_skull":
                     text = NumberedResEffect("buff.skull", res, "body_max", duration);
+                    // The localized sentence uses the proven inline (skull) symbol. Do
+                    // not place a second, generic buff icon before the Effect label.
+                    iconName = null;
                     break;
                 case "buff_pen":
                     text = buff == null ? null : Localization.F("buff.pen", R.Float(R.Get(buff, "craft_q")), duration);
@@ -181,13 +202,17 @@ namespace PrayerClarity
                     text = Localization.F("buff.sins_unverified", duration);
                     break;
                 case "buff_gp_increase":
-                    text = "(gratitude_points) " + Localization.F("buff.gratitude", duration);
-                    iconName = "techpoint_drop_smile";
+                    // The text owns the Soul Gratitude symbol so the grammar reads
+                    // "Effect: +10% [gratitude] ..." instead of icon / Effect / icon.
+                    text = Localization.F("buff.gratitude", duration);
+                    iconName = null;
                     break;
                 case "buff_sin_shard":
                     text = Localization.F("buff.sin_shard", duration);
-                    string shardIcon = GetItemIconName("sin_shard");
-                    if (!string.IsNullOrEmpty(shardIcon)) iconName = shardIcon;
+                    // Direct 1.407 balance data uses this exact icon on Sin Shard body-
+                    // part crafting rows while the sin_shard ItemDefinition itself has
+                    // blank icon fields.
+                    iconName = "i_sin_shard";
                     break;
                 default:
                     text = null;
