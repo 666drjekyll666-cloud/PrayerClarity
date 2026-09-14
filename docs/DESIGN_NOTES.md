@@ -55,21 +55,42 @@ Runtime testing through 0.1.2 established that the useful information model is:
 
 Do not add a separate failure row: failure is already represented by the guaranteed row. This teaches the important stock rule that sermon failure is not zero reward while keeping the result model compact.
 
-### 0.1.3 pulpit presentation hypothesis
+### Runtime layout evidence and current 0.1.5 hypothesis
 
-The 0.1.2 semantic model is retained, but its single text label presentation was rejected in runtime because it became visually dense, resource positions moved between lines, and long special effects forced NGUI `ShrinkContent` to reduce the font size of the whole block.
+The information model is accepted; the first two presentation attempts are not.
 
-The next candidate therefore tests a narrow presentation-only redesign:
+- **0.1.3:** fixed-column/multi-widget layout was rejected in runtime because its geometry drifted outside the pulpit.
+- **0.1.4:** replacing that hierarchy with one stock `l_total_values` label plus `ResizeHeight` was also rejected. It overlapped the selected prayer/button and accumulated a downward offset on repeated redraws.
 
-- visually separate the two vanilla context lines from result rows with whitespace;
-- render guaranteed and success-bonus results as two aligned rows with fixed columns for row label, Faith and money, so the same resource remains on the same vertical axis;
-- keep the native `(faith)` inline token and `Trading.FormatMoney` coin presentation rather than duplicating icons/assets;
-- render special effects in their own row;
-- keep the normal font size stable and use NGUI `ResizeHeight` for the special-effect label instead of shrinking the whole forecast;
-- where a prayer/buff/reward already has a verified native icon, resolve the native sprite lazily on first relevant use and cache it for the session; do not commit proprietary sprite assets or search atlases on every redraw;
-- fall back to text when no verified useful icon can be resolved.
+A narrow read-only layout probe closed the geometry question instead of continuing coordinate guesses. Stock 1.407 uses:
 
-This is a **design hypothesis pending runtime acceptance**, not an accepted layout. The test must establish that dynamic label geometry fits the real pulpit without colliding with the prayer slot/button and that long localized special effects remain readable.
+- `l_total_values`: local `(-3,49)`, `242x68`, center pivot, 16 px font, `spacingY=-3`, `ShrinkContent`;
+- selected prayer cell: the middle region below the stock text block;
+- craft button: window-local `y=-85`;
+- controller tips: window-local `y=-136`.
+
+The same stock bitmap font directly exposes the symbols needed by the requested presentation:
+
+- `(faith)` — Faith;
+- `(wskull)` — green-wreath graveyard-quality skull;
+- `(gld)`, `(slv)`, `(brz)` — money denominations;
+- `(gratitude_points)` — Soul Gratitude.
+
+The probe also observed 0.1.4's label Y progress `49 -> 35 -> 21 -> 7 -> -7 -> -21 -> -35` while switching synthetic prayers after the label had been changed to 170/208 px `ResizeHeight`. The current candidate therefore removes that mutable center-pivot growth path rather than trying to compensate for the drift numerically.
+
+**0.1.5 presentation hypothesis:** use the measured native regions instead of one expanding block:
+
+- keep the context in the upper text region with clear indentation;
+- keep the selected prayer cell untouched in the middle;
+- use one native-font cloned result label in the measured region below the prayer cell;
+- move the craft button only from `y=-85` to `y=-100` to create the required result gap;
+- use a small secondary dependency label in the measured gap below that button and above the stock controller tips;
+- use fixed pivots/positions/sizes and `ShrinkContent`, not `ResizeHeight`, so repeated redraws do not mutate geometry;
+- result rows read semantically left-to-right: `Guaranteed:` / `Additional on success (N%):`, then `(faith)` value, then vanilla `Trading.FormatMoney` output;
+- graveyard quality uses `(wskull)` rather than a misleading plus sign;
+- the secondary dependency note says **guaranteed** Faith/donations and replaces obvious resource nouns with `(faith)`, `(slv)` and, for Souls sermons, `(gratitude_points)`.
+
+This remains a **runtime UX hypothesis** until 0.1.5 is tested. The acceptance question is not whether the numbers are correct—they already are—but whether the measured layout stays stable, readable and non-overlapping across ordinary, money-heavy and long-effect prayers.
 
 Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle.
 
@@ -166,7 +187,7 @@ If merge is implemented:
 
 Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
-The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations. The 0.1.2 runtime test retained the `guaranteed + success bonus` information model but rejected the dense single-label layout and variable font shrink. The next candidate tests only the aligned multi-label presentation described above before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
+The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations. The 0.1.2 runtime test retained the `guaranteed + success bonus` information model. 0.1.3 and 0.1.4 were both rejected on layout behavior. The current narrow gate is runtime acceptance/rejection of **0.1.5's measured fixed-region pulpit layout** before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
 
 Cross-cutting contracts remain:
 
