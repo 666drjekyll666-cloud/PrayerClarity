@@ -1,12 +1,12 @@
 # Player UX Research — Prayer/Sermon System
 
-Status: evidence map, updated 2026-09-14 after direct 1.407 presentation/mechanics probes 0.1.0–0.1.3 and an external wiki/community mechanics cross-check.
+Status: evidence map, updated 2026-09-14 after direct 1.407 presentation/mechanics probes 0.1.0–0.1.5 and external wiki/community cross-checking.
 
 This document records **player-experience evidence and UX findings**. Authoritative mechanics live in `PRAYER_MECHANICS.md`; design options live in `DESIGN_NOTES.md`.
 
 ## Method
 
-Community sources are used to identify:
+Community sources identify:
 
 - what players cannot infer from the game;
 - wording players misread;
@@ -14,19 +14,19 @@ Community sources are used to identify:
 - hidden/unclear dependencies on church, graveyard, Soul Gratitude, prayer quality, perks, or buff duration;
 - effects that require wiki tables, calculators, reload testing, or forum explanations.
 
-A thread/comment is a **community signal**, not proof of mechanics. Direct 1.407 runtime/UI evidence is used to decide whether the signal still applies.
+A thread/comment is a **community signal**, not proof of mechanics. Direct 1.407 runtime/UI evidence decides whether the signal still applies. External disagreement is a re-check trigger, not authority over current runtime evidence.
 
 ## Strong current community signals
 
 | Date | Source | Signal | Classification |
 | --- | --- | --- | --- |
-| 2026-06-09 | Reddit — `Is Prayer for Faith in bronze quality worth using?` | Player reads `Faith (x2)` as double base Faith and `Faith (x1) (+50%)` as 150% of base, changing their comparison of prayers. | **community signal**, recent, notation-specific |
-| 2026-03-13 | Reddit — `The Effect of "Prayer for Soul's Repose" is Secretly Capped?` | Player's inferred Souls formula does not match observed output; they suspect a hidden cap before others derive a different relation. | **community signal**; direct 1.407 evidence independently confirms Soul Gratitude enters the Faith baseline |
-| 2026-01-15 | Steam — `What does graveyard quality do (aside from finishing bishop quests)` | Player believes Faith/money are both driven by church quality and asks where graveyard rating matters. | **community signal**, discoverability |
-| 2026-04-12 | Steam — `Why is my friend getting twice the donations with worse stats?` | Player tries to reconcile per-person donation animations with church/graveyard stats. | **community signal**; visible coins can teach the wrong mental model |
-| 2026-04-20 | Reddit — `Does the higher tier inspirational books give a stronger buff?` | Player asks whether better prayer quality strengthens the writing buff or only changes duration. | **community signal**, directly about quality scaling |
+| 2026-06-09 | Reddit — `Is Prayer for Faith in bronze quality worth using?` | Player reads `Faith (x2)` as double base Faith and `Faith (x1) (+50%)` as 150% of base. | **community signal**, recent, notation-specific |
+| 2026-03-13 | Reddit — `The Effect of "Prayer for Soul's Repose" is Secretly Capped?` | Player's inferred Souls formula does not match observed output until other users derive the hidden relation. | **community signal**; runtime independently confirms Soul Gratitude enters the Faith baseline |
+| 2026-01-15 | Steam — `What does graveyard quality do` | Player believes Faith/money are both driven by church quality and asks where graveyard rating matters. | **community signal**, discoverability |
+| 2026-04-12 | Steam — donation comparison discussion | Player tries to reconcile per-person donation animations with church/graveyard stats. | **community signal**; visible coins can teach the wrong mental model |
+| 2026-04-20 | Reddit — prayer quality/buff strength question | Player asks whether a better prayer strengthens the buff or only extends it. | **community signal**, quality scaling |
 
-Source URLs:
+Primary current-source URLs:
 
 - https://www.reddit.com/r/GraveyardKeeper/comments/1u0z66v/is_prayer_for_faith_in_bronze_quality_worth_using/
 - https://www.reddit.com/r/GraveyardKeeper/comments/1rsjmat/the_effect_of_prayer_for_souls_repose_is_secretly/
@@ -36,17 +36,17 @@ Source URLs:
 
 ## Historical/supporting signals
 
-| Date | Source | Signal | Caveat |
-| --- | --- | --- | --- |
-| 2021-03 | Reddit — `Please fix prayers descriptions` | `x2 Faith` is read as multiplication although behavior is additive; descriptions make comparisons difficult. | historical, but same interpretation appears again in 2026 |
-| 2024-05 | Reddit — `Gold prayer for Faith vs Silver Combo Prayer?` | Answer points to an external sermon calculator spreadsheet. | supports outside-arithmetic problem |
-| 2021-10 | Reddit — first-sermon mismatch | Player expects visible Combo Prayer stats to imply a larger benefit; reply uses a gain calculator. | historical |
-| 2023-12 | Reddit — `Beginner's guide to prayers?` | New player cannot confidently choose the next prayer. | broad discoverability signal |
-| 2025-02 | Reddit — `What's the best prayer to use?` | Passive prayers seem unreliable because player does not notice a difference. | exact cause unproved |
-| 2023-12 | Steam — `How good Pray for soul's repose?` | Player asks how Soul Gratitude changes Faith and how to compare Souls with ordinary percentage prayers. | supports quantitative-predictability problem |
-| 2018-09 | Steam — `What do the different sermons do?` | Player says buff effects are poorly explained. | historical; current descriptions have now been audited directly |
+Repeated older discussions show the same classes of confusion:
 
-Source URLs:
+- 2021 Reddit: `x2 Faith` read as multiplication although the fixed component is additive;
+- 2024 Reddit: Gold Faith vs Silver Combo comparison answered with an external calculator;
+- 2021 Reddit: first-sermon mismatch answered with a gain calculator;
+- 2023 Reddit: beginner asks which prayer to craft/use;
+- 2025 Reddit: passive prayers feel unreliable because the player cannot observe the effect clearly;
+- 2023 Steam: Soul's Repose comparison requires outside explanation;
+- 2018 Steam: players explicitly say sermon effects are poorly explained.
+
+Supporting URLs:
 
 - https://www.reddit.com/r/GraveyardKeeper/comments/ma1hcy/
 - https://www.reddit.com/r/GraveyardKeeper/comments/1d3svge/
@@ -60,7 +60,7 @@ Source URLs:
 
 ### Selection panel answers success, not outcome
 
-`PrayCraftGUI.RedrawTextValues` shows exactly:
+`PrayCraftGUI.RedrawTextValues` shows:
 
 - current church quality;
 - selected sermon requirement;
@@ -74,7 +74,7 @@ Current RU strings:
 - below threshold: `Попытка молитвы`;
 - at/above threshold: `Молиться`.
 
-Item descriptions also append `%1 необходимо, чтобы гарантировать успех проповеди.`
+Item descriptions append `%1 необходимо, чтобы гарантировать успех проповеди.`
 
 **Conclusion:** hidden success probability is **not** a PrayerClarity problem.
 
@@ -101,13 +101,13 @@ It does not show one combined Faith total or one combined donation total.
 | `b_faith` | Молитва веры | says more Faith, no current amount |
 | `b_money` | Молитва о пожертвованиях | says extra donations, no current amount |
 | `b_faith_money` | Комбо-молитва | says extra Faith + donations, no current amount |
-| `b_plant` | Молитва о корнях и побегах | flavour only; no farming effect/duration |
-| `b_sins` | Молитва о покаянии | flavour only; no gameplay effect/duration |
-| `b_skull` | Молитва об упокоении | flavour/joke; no effect/duration |
-| `b_sword` | Молитва о возмездии | rage wording; no `+5 damage`, no duration |
-| `b_shield` | Защитная молитва | strength wording; no `+4 armor`, no duration |
-| `b_pen` | Молитва воображения | inspiration wording; no exact quality effect/duration |
-| `b_star` | Молитва о совершенстве | hard-work wording; no exact quality effect/duration |
+| `b_plant` | Молитва о корнях и побегах | flavour only; no farming effect/duration and no indication that stock wiring is disconnected |
+| `b_sins` | Молитва о покаянии | flavour only; no gameplay effect/duration and no indication that no consumer is detectable |
+| `b_skull` | Молитва об упокоении | flavour/joke; no `+1 maximum Donkey corpse tier`, no duration |
+| `b_sword` | Молитва о возмездии | no `+5 damage`, no duration |
+| `b_shield` | Защитная молитва | no `+4 armor`, no duration |
+| `b_pen` | Молитва воображения | no exact `craft_q=0.7` effect/duration |
+| `b_star` | Молитва о совершенстве | no exact `craft_q=0.2` effect/duration |
 | `b_village` | Молитва о процветании | explains Commercial Blessing purpose, not quantity/current reward |
 | `b_souls` | Молитва за упокой душ | says more Soul Gratitude -> more Faith, no current result |
 | `b_grat_points_incr` | Молитва о довольстве душ | states `+10%` Soul Gratitude, not duration/quality scaling |
@@ -123,17 +123,17 @@ It does not show one combined Faith total or one combined donation total.
 
 > Before choosing between prayers, the player can read `Faith (xN)` as a multiplier of base Faith even though that component is a flat additive reward, which can reverse the apparent ranking of prayer options.
 
-**Status:** confirmed/strong: direct mechanics + repeated player misinterpretation.
+**Status:** confirmed/strong.
 
 ### B — selection UI gives success chance but no current-state reward forecast
 
-**Actual mechanics:** final rewards combine current church quality, graveyard quality, prayer fixed/proportional bonuses, perks, and for Souls prayer Soul Gratitude.
+**Actual mechanics:** final rewards combine current church quality, graveyard quality, fixed/proportional prayer bonuses, perks, and for Souls prayer Soul Gratitude.
 
 **Vanilla:** selection UI does not turn those inputs into current Faith/donation totals.
 
 > At prayer-selection time, the player can see whether the sermon is likely to succeed but cannot see the resulting Faith/donation output for the current state, forcing outside arithmetic or experimentation for quantitative comparison.
 
-**Status:** confirmed for the principal selection screen; current evidence gives no equivalent pre-use forecast elsewhere.
+**Status:** confirmed.
 
 ### C — church and graveyard quality drive different outputs, but the decision UI foregrounds only church quality
 
@@ -145,13 +145,13 @@ It does not show one combined Faith total or one combined donation total.
 
 **Status:** strong current UX finding, supported by 2026 Steam questions.
 
-### D — passive prayers hide effect magnitude and quality scaling
+### D — passive prayers hide magnitude and quality scaling
 
 Verified examples:
 
 - `b_sword`: +5 damage;
 - `b_shield`: +4 armor;
-- `b_skull`: +1 `body_max` internal parameter while active; exact corpse-selection consumer still needs current-path verification;
+- `b_skull`: +1 to the maximum corpse tier used by live Donkey corpse generation;
 - `b_pen`: fixed `craft_q=0.7` quality input;
 - `b_star`: fixed `craft_q=0.2` quality input.
 
@@ -160,11 +160,11 @@ Prayer `dur_parameter` overrides default buff duration. Common tier sets are:
 - 18 / 36 / 54 minutes;
 - 36 / 72 / 108 minutes.
 
-Thus higher prayer quality can mean **same buff strength, longer duration**.
+Thus higher prayer quality can mean **same strength, longer duration**. Prayer for Repose is a direct example: magnitude remains +1 maximum tier while duration becomes 18/36/54 minutes.
 
 > Before using or upgrading many passive prayers, the player cannot determine what the buff quantitatively does, how long it lasts, or whether prayer quality changes strength, duration, or both.
 
-**Status:** confirmed/strong. Post-use buff-hover text cannot solve the before-use decision problem by itself.
+**Status:** confirmed/strong.
 
 ### E — Souls prayer discloses the dependency but not the current outcome
 
@@ -174,52 +174,70 @@ Thus higher prayer quality can mean **same buff strength, longer duration**.
 
 **Status:** confirmed refined finding. Do not claim Soul Gratitude is completely hidden.
 
-### F — Prayer of Repentance appears to promise an effect that no runtime consumer uses
+### F — Prayer of Repentance creates a timed buff with no detected gameplay consumer
 
 Direct mechanics audit:
 
-- all three `b_sins` prayer tiers attach `buff_sins`;
-- `buff_sins` exists and has a timed duration;
-- final 0.1.3 scan found no game-code literal consumer;
+- all three `b_sins` tiers attach `buff_sins`;
+- the buff exists and has duration;
+- no game-code literal consumer was found;
 - 180 loaded FlowCanvas graphs contained no `buff_sins` reference;
 - GameBalance references were only the buff definition and the three prayer crafts.
 
-**Fact:** no `buff_sins` gameplay consumer was found on the inspected runtime surfaces.
+External wiki/community reports also repeatedly describe the prayer as broken/no apparent effect.
 
-**Strong mechanics hypothesis:** the special effect is inert/unimplemented in stock 1.407.
+> Vanilla flavour text gives the player no way to discover that the prayer's special timed buff has no detectable consumer, so an inert mechanic can look merely subtle or poorly explained.
 
-UX implication:
+**Status:** mechanics anomaly + confirmed UX risk. PrayerClarity must not invent/rebalance an effect without a separate product decision.
 
-> Vanilla flavour text gives the player no way to discover that the prayer's special timed buff has no detectable consumer, so external experimentation can be mistaken for an unclear or subtle effect rather than an apparently inert mechanic.
+### G — Prayer for Shoots and Roots contains an effect formula that the prayer buff does not feed
 
-**Status:** mechanics anomaly + UX risk. PrayerClarity must not invent or rebalance an effect without a separate product decision.
+Direct 1.407 evidence now closes the earlier external discrepancy:
 
-## Failure semantics are also non-obvious
+- many plant/growth crafts contain `-0.2*WGOpar("buff_plant")` in craft time;
+- prayer buff application writes `buff_plant=1` to the **player**;
+- `WGOpar(name)` reads `SmartExpression._wgo.GetParam(name,0)`;
+- CraftComponent evaluates growth `craft_time` with the **growing/workbench WGO** as `_wgo` and the player only as the character argument;
+- no stock propagation path from player `buff_plant` to those growing WGOs was found.
+
+Therefore the apparently intended `20%` growth-speed term is disconnected from the normal prayer-buff path in stock 1.407.
+
+> The game presents a farming-themed prayer but gives no indication that its timed player buff and the growth-time formula use different parameter owners, leaving the special effect effectively inert in the inspected stock path.
+
+**Status:** confirmed wiring mismatch / UX anomaly. This also explains why older wiki/community reports call the prayer broken despite the formula existing in balance data.
+
+Do not silently display “20% faster growth” as though it currently works; doing so would make PrayerClarity less accurate than vanilla.
+
+## Failure semantics are non-obvious
 
 Direct `pray` graph evidence shows:
 
 - failed sermon still delivers base Faith;
 - failed sermon still delivers base donations in stock 1.407;
 - prayer-specific Faith/money bonuses are removed;
-- success animation contains buff creation and special item dropping.
+- buff/item outputs are tied to the success-animation path.
 
-Vanilla selection UI exposes chance, but not this consequence model. If PrayerClarity shows forecasts for risky prayers, it should show the success result and the failure result rather than implying “failure = nothing”.
+Vanilla exposes chance but not this consequence model. A forecast should show success and failure outcomes rather than imply “failure = nothing”.
 
 ## DLC effects that are comparatively clear already
 
 Better Save Soul descriptions are stronger than many base-game descriptions:
 
-- Soul Gratitude prayer states `+10%`;
+- Soul Contentment states `+10%`;
 - Thorough Cleansing states `x2` Sin Shards;
 - Soul's Repose says more Soul Gratitude gives more Faith.
 
-Do not rewrite already-clear magnitude text merely for consistency. Useful missing information is duration, tier scaling, and current-state output.
+The +10% implementation is now exact:
+
+`GP_awarded = RoundToInt(GP_base * 1.1)` while the prayer buff is active.
+
+Do not rewrite already-clear magnitude text merely for consistency. Useful additions are duration, quality scaling, and current-state output.
 
 ## Existing mod landscape — initial check
 
 Current Nexus review found sermon-affecting mods but no obvious prayer-effect explanation/forecast mod:
 
-- `Pray the Day Away` (updated 2026-05-19): sermon frequency/repeatability/consumption/playback changes;
+- `Pray the Day Away` (updated 2026-05-19): frequency/repeatability/consumption/playback changes;
 - `Give Me Moar` (updated 2026-06-20): configurable reward multipliers;
 - `Not Just - Zombie Enhanced`: at-will sermon feature plus unrelated tooltips.
 
@@ -233,22 +251,22 @@ Sources:
 
 ## External mechanics cross-check — 2026-09-14
 
-Purpose: use wiki/community material as an independent consistency check against the direct 1.407 runtime model. External sources do not override direct runtime evidence; disagreements are re-check triggers.
+Purpose: independent consistency check against the direct 1.407 runtime model.
 
 ### Broad agreement
 
-The current official community wiki agrees with the runtime catalogue on the important prayer requirements/coefficients and passive magnitudes checked here:
+The community wiki agrees with the runtime catalogue on the main requirements/coefficients and passive magnitudes checked here:
 
 - Faith prayer: q 10/20/50, Faith +50/+100/+150%, donations +20%;
 - Combo: q 15/30/60, Faith and donations +50/+100/+150%;
-- Imagination: fixed +0.7 writing-quality contribution, quality changes duration 18/36/54 rather than magnitude;
-- Excellence: fixed +0.2 selected-craft quality contribution, duration 18/36/54;
+- Imagination: fixed +0.7 contribution, duration 18/36/54;
+- Excellence: fixed +0.2 contribution, duration 18/36/54;
 - Retribution: +5 damage, duration 36/72/108;
-- Protection: +4 defense, duration 36/72/108;
-- Soul Contentment: +10% Soul Gratitude, duration 36/72/108 on the Effects page;
+- Protection: +4 armor, duration 36/72/108;
+- Soul Contentment: +10% Soul Gratitude, duration 36/72/108;
 - Thorough Cleansing: x2 Sin Shards, duration 36/72/108.
 
-The March 2026 Soul's Repose discussion independently derives `CQ/5 + (SG-CQ)/10`, which algebraically reduces to `(CQ+SG)/10`. That matches the direct 1.407 Souls baseline when Eloquence is absent. This is unusually strong community cross-validation of the recovered runtime formula.
+The March 2026 Soul's Repose discussion independently derives `CQ/5 + (SG-CQ)/10`, algebraically `(CQ+SG)/10`, matching the direct 1.407 Souls baseline without Eloquence.
 
 Sources:
 
@@ -262,11 +280,11 @@ Sources:
 - https://graveyardkeeper.fandom.com/wiki/Effects
 - https://www.reddit.com/r/GraveyardKeeper/comments/1rsjmat/the_effect_of_prayer_for_souls_repose_is_secretly/
 
-### Repentance: external evidence reinforces the inert-effect hypothesis
+### Repentance
 
-The wiki still marks Prayer for Repentance as `Broken – no apparent effect (Confirmed v1.124)` and says the intended effect is increased confessional use. A 2019–2024 Steam testing thread reports no statistically significant increase; a May 2026 Reddit discussion still asks whether the prayer affects confessional chance because the effect remains unestablished externally.
+The wiki still marks Prayer for Repentance `Broken – no apparent effect`; older Steam testing and a 2026 Reddit discussion also fail to establish a working special effect. A broad 1.301 release note says `The prayers are fixed`, but does not specifically prove Repentance functionality.
 
-There is one historical contradiction: official version 1.301 release notes (2020-10-28) say only `The prayers are fixed.` This is nonspecific and later player evidence does not establish that Repentance became functional. Direct 1.407 runtime evidence therefore remains the stronger current source: the timed `buff_sins` exists, but no consumer was found.
+Direct 1.407 runtime evidence remains stronger: timed `buff_sins` exists, no consumer was found.
 
 Sources:
 
@@ -275,24 +293,15 @@ Sources:
 - https://www.reddit.com/r/GraveyardKeeper/comments/1t303jw/what_is_the_chance_per_day_of_getting_faith_from/
 - https://store.steampowered.com/news/posts/?appids=599140&enddate=1603904514&feed=steam_community_announcements
 
-The wiki page itself also contains stale/internal inconsistency: its sermon table lists 27/36/81 for the effect, while its Effect section lists 18/36/54. Direct 1.407 runtime data proves 18/36/54.
+The wiki page also has stale/internal duration disagreement; direct 1.407 runtime proves 18/36/54.
 
-### Soul Contentment: magnitude confirmed, exact rounding still externally unresolved
+### Soul Contentment
 
-The current wiki consistently describes Spiritual Blessing as `10% more Soul Gratitude from releasing souls through the Soul Portal` and the Effects page gives the same 36/72/108 durations as runtime. No located wiki, Steam, Reddit, or guide source specifies the exact multiply/round/add order.
+External sources consistently describe +10% Soul Gratitude. The exact multiply/round order was absent from external sources, but probe 0.1.4 closed it directly: the +10% multiplier is applied before `Mathf.RoundToInt`.
 
-Therefore the external cross-check confirms the **player-facing magnitude (+10%)**, but does not close the narrow implementation detail of whether the +10% is applied before/after a particular intermediate rounding operation. That detail matters only for exact integer forecasts at fractional boundaries.
+### Shoots and Roots — discrepancy resolved
 
-Sources:
-
-- https://graveyardkeeper.fandom.com/wiki/Effects
-- https://graveyardkeeper.fandom.com/wiki/Sermon
-
-### Re-check trigger 1: Shoots and Roots
-
-The wiki still marks Prayer for Shoots and Roots as broken/no apparent effect (old v1.124 confirmation), and older/community testing reports no perceived growth change. An official Lazy Bear reply in April 2022 states the intended mechanic is reduced garden-crop growth time and that zombie beds are affected.
-
-Direct current 1.407 balance data, however, contains many live craft-time expressions with `-0.2*WGOpar("buff_plant")`, including ordinary crops, zombie-garden crafts, refugee-garden crops, and some natural respawn crafts. This is stronger current evidence that an effect path **exists** than the stale wiki warning. What is not yet closed is the end-to-end propagation from the player's active `buff_plant` to the WGO parameter consumed by those growth expressions.
+The wiki/community history says broken/no apparent effect, while current balance data visibly contains a `-20%` term. Probes 0.1.4–0.1.5 reconcile the contradiction: the formula exists, but it reads `buff_plant` from the growing WGO while the prayer writes the parameter to the player. No propagation route was found.
 
 Sources:
 
@@ -300,13 +309,17 @@ Sources:
 - https://steamcommunity.com/app/599140/discussions/0/3190243624323744636/
 - https://steamcommunity.com/app/599140/discussions/0/1734336452556299084/
 
-**Status:** do not label this prayer broken or working yet. The discrepancy justifies a narrow end-to-end verification before player-facing wording claims `20% faster growth`.
+The external “broken” observation is therefore consistent with current 1.407 wiring, while the Lazy Bear statement about intended reduced growth time is consistent with the presence of the dormant `-20%` formula.
 
-### Re-check trigger 2: Prayer for Repose
+### Prayer for Repose — external claim verified directly
 
-Current wiki/community descriptions consistently say the Difficult Corpses effect temporarily raises the corpse tier/range available from Donkey; recent experienced-player reports describe it as effectively +1 tier/range and useless once the final tier is unlocked.
+External sources describe the effect as raising the corpse tier/range available from Donkey. Probe 0.1.5 captured the live `npc_donkey` graph and proved:
 
-Our direct runtime work has verified `buff_skull` and its internal `body_max=1`, but the previously surfaced `body_max`/`buff_skull` code was in `GameSave.LateSaveFixer`, i.e. migration logic rather than a current corpse-generation consumer. The external description is plausible and semantically consistent with `body_max`, but the exact live consumer still needs tracing before `+1 corpse tier` is promoted to direct fact.
+- `Tier min = body_min + add_body_min`;
+- `Tier max = body_max + add_body_max`;
+- `buff_skull` contributes `body_max=1` to player parameters.
+
+Thus the prayer raises Donkey's **maximum corpse tier by exactly +1** while active, without raising the minimum. Quality changes duration 18/36/54, not magnitude.
 
 Sources:
 
@@ -325,16 +338,19 @@ Before committing, the player should be able to answer:
 4. Which current inputs matter?
 5. What will I get now on success?
 6. If chance is below 100%, what do I still get on failure?
+7. Is a special effect known to be disconnected/inert in stock 1.407?
 
 The internal implementation may require formulas, but player presentation should prefer current results, concise breakdowns, and dependency hints over coefficient algebra.
 
 ## Design transition
 
-The research phase has identified concrete UX gaps, but the external cross-check exposed two special-effect paths that deserve narrow verification before a complete prayer-by-prayer white-box prototype is treated as mechanically closed:
+The mechanics re-checks that previously blocked a complete prayer-by-prayer white-box prototype are now resolved:
 
-1. end-to-end `buff_plant` propagation for Prayer for Shoots and Roots;
-2. the current corpse-generation consumer of `buff_skull` for Prayer for Repose.
+- Soul Contentment rounding/order: closed;
+- Prayer for Repose live Donkey consumer: closed;
+- Shoots and Roots end-to-end wiring: closed as a stock parameter-scope mismatch;
+- Prayer of Repentance: no gameplay consumer found, externally corroborated as apparently inert.
 
-Prayer of Repentance is now externally corroborated as apparently inert/broken; Soul Contentment's +10% magnitude is externally corroborated while exact rounding remains a narrow non-blocking detail.
+No further mechanics probe or user runtime test is currently justified.
 
-`docs/DESIGN_NOTES.md` still favors a **compact dynamic breakdown in the existing prayer-selection context**, but production code should wait until the two re-check triggers above are resolved or explicitly scoped out.
+`docs/DESIGN_NOTES.md` favors a **compact dynamic breakdown in the existing prayer-selection context**. The next step is a narrow UI prototype that reports verified stock behavior and explicitly avoids presenting intended-but-disconnected effects as working mechanics.
