@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/design stage, 2026-09-14. Stock mechanics, presentation audit, community cross-check, quantitative power budget and a complete first non-production Rebalanced roster are sufficiently modeled. No gameplay implementation or numerical rebalance is accepted yet.
+Status: product/design stage, 2026-09-14. Stock mechanics, presentation audit, community cross-check, quantitative power budget and the revised first non-production Rebalanced roster are sufficiently modeled. No gameplay implementation or numerical rebalance is accepted yet.
 
 Canonical documents:
 
@@ -18,94 +18,114 @@ One codebase may expose three semantic layers:
 2. **Vanilla Fixes** — evidence-backed repair where stock intent/magnitude are recoverable;
 3. **Balance / Rework** — explicit new design/tuning.
 
-Possible profiles remain `Vanilla + Clarity`, `Fixed Vanilla`, and `Rebalanced`. Stock behavior must remain separately documented.
+Potential profiles remain `Vanilla + Clarity`, `Fixed Vanilla`, and `Rebalanced`. Stock behavior remains separately documented.
 
-## Permanent policy
+## Permanent policies
 
-Do not nerf failed-sermon base donations. Preserve the stock full base donation pool on failure in every profile; only prayer-specific bonuses/special success outputs disappear.
-
-## Core design target
-
-Use **temptation parity**. A prayer is a strategic purchase whose real budget includes unlock depth, technology points, writing/craft resources, quality effort, success requirements and the weekly sermon slot.
-
-Every prayer should offer a compelling reason to want it in its stage/niche. Bronze should already be credible; silver/gold should materially improve value. A narrow prayer may be much stronger than a universal prayer in its niche.
+- Do not nerf failed-sermon base donations. Preserve full base donations on failure in every profile; only prayer-specific bonuses/special success outputs disappear.
+- Use **temptation parity**: a prayer must justify unlock/craft/quality cost plus the weekly sermon opportunity.
+- Bronze must already be credible; silver/gold may deliberately buy magnitude, reliability, output, duration or certainty.
+- Strong gold behavior is acceptable when bounded by a narrow role and finite game caps.
 
 ## Presentation architecture
 
-Prayer information is not built by one universal vanilla tooltip. Technology unlock, prayer item, pulpit choice and active buff HUD are separate paths. Probe 0.1.6 established that active timed buffs effectively communicate icon + remaining time, not quantitative meaning.
+Technology unlock, prayer item, pulpit choice and active buff HUD are separate vanilla paths. Active timed buffs communicate essentially icon + remaining time, not quantitative meaning.
 
 Build one mod-owned semantic model and render context-appropriate subsets:
 
-- **technology tree:** role, why unlock it, quality progression;
-- **prayer item:** exact static properties of that quality;
-- **pulpit:** current success/failure Faith, donations, special output/effect and duration;
-- **active buff:** optional later quantitative hover; do not rely on vanilla HUD for explanation.
+- technology tree: role, why unlock it, quality progression;
+- prayer item: exact static tier properties;
+- pulpit: current success/failure Faith, donations, special output/effect, duration and relevant probabilities;
+- active buff: optional later quantitative hover.
 
-Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` just to render information.
+Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` merely to render information.
 
-## Current leading Rebalanced roster
+Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
 
-These are design hypotheses pending implementation/runtime acceptance:
+## Revised leading Rebalanced roster
 
-- Ordinary: stock;
-- Faith: target Faith bonus +100/+200/+300%;
-- Donations: target donations +100/+200/+300%;
-- Combo: stock +50/+100/+150% both;
-- Repentance: 30/50/70% confession chance;
-- Shoots & Roots: repair existing stock -20% growth path;
-- Combat: merge Retribution/Protection save-safely; +5/+8/+12 damage, constant +4 armor, 1 HP/min slow regeneration, 36/72/108 min;
-- Repose: bronze stock pool expansion; silver 85% best prayer-eligible corpse tier; gold 100%; never exceed normal story max +1;
-- Imagination: +0.7/+0.9/+1.1 writing-quality input;
-- Excellence: +0.2/+0.3/+0.4 linked-craft quality input;
-- Prosperity: stock 1/2/3 Blessings;
-- BSS Soul's Repose: stock mechanics, dynamic Faith forecast;
-- Soul Contentment: stock initially;
-- Thorough Cleansing: stock x2 Sin Shards.
+These remain design hypotheses pending runtime acceptance:
 
-Full rationale and fallback options live in `PRAYER_REBALANCE_OPTIONS.md`.
+- **Ordinary:** stock; free starter is not buffed.
+- **Faith:** +100/+200/+300% target Faith.
+- **Donations:** +100/+200/+300% target donations.
+- **Combo:** stock +50/+100/+150% both.
+- **Repentance:** 30/50/70% confession chance.
+- **Shoots & Roots:** Fixed Vanilla repairs stock -20%; Rebalanced scales **-20/-30/-40% growth time**.
+- **Combat:** save-safe Retribution/Protection soft merge; +5/+8/+12 damage, +4 armor, regen **1 HP every 3/2/1.5 sec**, duration 36/72/108 min.
+- **Repose:** bronze stock random selection from max+1 pool; silver exactly halfway from current vanilla best-tier chance to certainty; gold 100% best prayer-eligible tier; ceiling remains story max+1.
+- **Imagination:** +0.5/+0.7/+1.0 writing-quality input, 18/36/54 min.
+- **Excellence:** +0.2/+0.5/+1.0 linked-craft quality input, 18/36/54 min.
+- **Prosperity:** stock 1/2/3 Blessings.
+- **BSS Soul's Repose:** stock mechanics, dynamic Faith forecast.
+- **Soul Contentment:** stock initially.
+- **Thorough Cleansing:** stock x2 Sin Shards.
+
+Full modeling and fallback options are in `PRAYER_REBALANCE_OPTIONS.md`.
+
+## Important revisions from the prior roster
+
+### Shoots & Roots
+
+The -20% stock coefficient remains the evidence-backed Vanilla Fix. Rebalanced may legitimately scale the actual growth reduction by prayer quality to 20/30/40%, giving increasingly strong throughput rather than duration-only quality.
+
+### Repose
+
+Do not use a fixed 90% silver value globally. Vanilla top-tier probability itself changes with the current corpse-tier pool. Silver should be **mathematically halfway between whatever vanilla currently gives and 100%**:
+
+`P_silver = (P_vanilla + 100%)/2`.
+
+Gold is certainty. This preserves a meaningful gold upgrade at every progression state.
+
+### Imagination / Excellence
+
+Direct multiquality evidence confirms linked perk stars and prayer `craft_q` contributions are additive and outputs have finite quality tiers. Therefore late-game saturation is real rather than hypothetical.
+
+Imagination lead changes to **0.5/0.7/1.0**: stock +0.7 becomes silver rather than bronze, while gold adds a full quality-score point.
+
+Excellence lead changes to **0.2/0.5/1.0**. Because it affects a narrower craft set, a gold prayer that makes a reachable high-quality result deterministic is considered a desirable payoff, not an automatic balance failure.
+
+### Combat regeneration
+
+The rejected 1 HP/min concept did not meet temptation parity. Vanilla long-heal potion heals 1 HP every 1.5 sec. The first Combat Prayer candidate therefore uses **3/2/1.5 sec** ticks across bronze/silver/gold. Gold reaches an existing potion cadence but lasts much longer and is bundled with damage/armor; the resulting power should be judged in runtime rather than pre-nerfed into irrelevance.
 
 ## Specialist/generalist policy
 
-The current preferred solution to Combo choice compression is **not a Combo nerf**. Faith and Donations should become true specialists while Combo remains a strong familiar generalist.
+Do not nerf Combo first. Faith and Donations become true specialists while Combo stays a familiar generalist.
 
-Church quality stays the universal sermon-success gate. Graveyard Quality already creates donation base value; do not add a second GQ gate until runtime evidence shows the stronger Donations specialist needs one.
+Church quality remains the universal sermon-success gate. Graveyard Quality already creates the donation base, so do not add a second GQ gate until runtime evidence shows it is needed.
 
 ## Broken-prayer policy
 
 ### Shoots and Roots
 
-Classify as Vanilla Fix: stock contains both the intended -20% growth term and the prayer state; only scope wiring is disconnected.
+Vanilla Fix = reconnect stock -20% only. Any 30/40% quality scaling exists only in Rebalanced.
 
 ### Repentance
 
-Classify as Balance/Rework: stock reveals the intended “more confessions” role and the 15% base roll, but no surviving rule specifies how the prayer should change it. Current lead is 30/50/70%.
+Balance/Rework = role known, magnitude lost. Current first candidate is 30/50/70%.
 
 ## Combat migration policy
 
-If the combat merge is implemented:
+If merge is implemented:
 
-- use an existing prayer ID as canonical (`b_sword` candidate);
-- preserve every existing `b_shield` item in saves as a same-quality legacy alias;
-- do not destructively rewrite inventories/saves;
-- hide the redundant new-player recipe only after exact lifecycle/unlock behavior is verified;
-- profile/mod removal must leave the vanilla save structurally valid.
-
-## Quality progression findings
-
-Duration-only scaling is not automatically healthy. It works when longer duration meaningfully crosses later sermon weeks, but can be redundant when the relevant work can be batched quickly.
-
-This is why Imagination and Excellence now have conservative magnitude scaling candidates, while Repose quality is modeled as better reliability rather than +2/+3 future story tiers.
+- existing `b_sword` becomes canonical Combat Prayer;
+- existing `b_shield` remains in saves as same-quality legacy alias;
+- no destructive save migration;
+- hide redundant new recipe only after lifecycle verification;
+- uninstall/profile change leaves vanilla save structurally valid.
 
 ## Current gate
 
-Broad research is done. The next step is **not another general probe** and not more community browsing by default.
+Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
-After user review of the modeled roster:
+Next:
 
-1. inspect exact implementation/lifecycle/Harmony targets for the shared semantic model and each narrow gameplay change;
-2. verify save-safe combat alias/hide behavior without destructive migration;
-3. open a `dev/*` branch;
-4. implement the smallest coherent integrated prototype;
-5. build one numbered candidate only when it is ready for an actual in-game acceptance test.
+1. inspect exact UI lifecycle/Harmony targets for the shared semantic model;
+2. inspect only the narrow gameplay hooks needed for Roots, Repentance, Repose, Combat and quality-magnitude changes;
+3. verify save-safe combat alias/hide behavior;
+4. open a `dev/*` branch;
+5. implement the smallest coherent integrated prototype;
+6. build one numbered candidate when it is ready for an actual in-game acceptance test.
 
 No user runtime action is currently required.
