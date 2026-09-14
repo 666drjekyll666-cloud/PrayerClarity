@@ -63,18 +63,21 @@ namespace PrayerClarity
             CraftButtonY = BindFloat(config, "15 Craft button Y", -120f, -170f, -70f,
                 "Vertical position of the stock Create button while PrayerClarity forecast is active.");
 
-            ConfigEntryBase[] entries =
-            {
-                WindowExtraHeight,
-                ContextX, ContextY, ContextFontSize,
-                ResultX, ResultY, ResultFontSize,
-                EffectX, EffectY, EffectFontSize, EffectIconSize,
-                NoteX, NoteY, NoteFontSize,
-                CraftButtonY
-            };
-
-            foreach (ConfigEntryBase entry in entries)
-                entry.SettingChanged += OnSettingChanged;
+            Watch(WindowExtraHeight);
+            Watch(ContextX);
+            Watch(ContextY);
+            Watch(ContextFontSize);
+            Watch(ResultX);
+            Watch(ResultY);
+            Watch(ResultFontSize);
+            Watch(EffectX);
+            Watch(EffectY);
+            Watch(EffectFontSize);
+            Watch(EffectIconSize);
+            Watch(NoteX);
+            Watch(NoteY);
+            Watch(NoteFontSize);
+            Watch(CraftButtonY);
         }
 
         private static ConfigEntry<float> BindFloat(ConfigFile config, string key, float value, float min, float max, string description)
@@ -87,6 +90,11 @@ namespace PrayerClarity
         {
             return config.Bind(Section, key, value,
                 new ConfigDescription(description, new AcceptableValueRange<int>(min, max)));
+        }
+
+        private static void Watch<T>(ConfigEntry<T> entry)
+        {
+            entry.SettingChanged += OnSettingChanged;
         }
 
         private static void OnSettingChanged(object sender, EventArgs e)
