@@ -31,30 +31,36 @@ The inspected `PlayerBuff` state contains the buff ID, end time, tick state and 
 
 This means Bronze/Silver/Gold cannot be reconstructed reliably from an active buff after save/load solely from vanilla buff state.
 
-Any quality-sensitive long-lived rework therefore requires one of the following before implementation is considered safe:
-
-1. a mod-owned persisted tier token bound to the correct game save; or
-2. another directly evidenced vanilla state that survives save/load and uniquely identifies the applied tier.
-
-No such vanilla tier token has yet been proven.
+PrayerClarity therefore needs its own tiny semantic tier token for each quality-sensitive active prayer. That token must survive save/load but must not replace or rewrite the vanilla buff itself.
 
 ### Capture tier while the prayer source craft still exists
 
-The successful sermon handoff does provide a narrow capture seam before the information is lost:
+The successful sermon handoff provides a narrow capture seam before the information is lost:
 
 - `PrayCraftGUI.DoPrayForBuff(...)` calls `PlayerComponent.StartPrayAnimation(pray_craft, success)`;
 - `StartPrayAnimation` retains `_pray_craft`, `_pray_buff`, and the success state;
 - `PlayerComponent.CreatePrayBuffFlyingObject` still has `_pray_craft.dur_parameter` and the chosen buff before creating the actual player buff.
 
-This is a better source for recording prayer identity/tier than attempting to infer quality later from active-buff duration.
+This is the correct source for recording prayer identity/tier rather than attempting to infer quality later from active-buff duration.
 
-### Save binding remains an implementation gate
+### Native player params are the preferred persisted tier store
 
-Runtime logs prove that Graveyard Keeper has stable save filenames/slot identifiers in its save flow, but the current research has not yet proven the exact supported API or field/property PrayerClarity should use to bind a sidecar record to the active save.
+The initial sidecar idea is no longer necessary. Static and accepted runtime evidence closes the persistence chain inside the game's own player state:
 
-**Open blocker:** identify a stable, low-risk current-save identity and exact load/save lifecycle hooks before any tier sidecar is implemented.
+- the live player `Item` stores ordinary parameters in `Item._params`, whose runtime type is `GameRes`;
+- `GameRes` is generic string-to-float storage using parallel `_res_type` and `_res_v` lists;
+- `GameRes.Set(string,float)` and `GameRes.Add(string,float)` accept non-special arbitrary string keys: if a key is absent it is appended to those lists rather than rejected by a whitelist;
+- `GameSave.PrepareForSave()` assigns the whole `MainGame.player.data` `Item` to `GameSave._inventory`;
+- `GameSave.GetSavedPlayerInventory()` returns that saved `Item` on load;
+- `GameSave.ToBinary()` serializes the `GameSave`, including `_inventory`, through `SmartSerializer.Serialize`.
 
-The sidecar should be minimal and contain only mod-owned semantic state needed to reconstruct active quality-sensitive prayer behaviour. It must not duplicate the whole vanilla save.
+Therefore a namespaced float player parameter can carry PrayerClarity's active tier with the same save ownership as the vanilla player data. Candidate keys should be explicit per buff, for example `prayerclarity_buff_pen_tier`, rather than one shared global tier that could be ambiguous if effects overlap.
+
+Runtime reads must still be gated by the corresponding active vanilla buff. A stale tier token without `buff_pen`, `buff_star`, `buff_sword`, etc. is inert. This makes stale tokens harmless after natural expiry or mod removal and avoids invasive save-cleanup logic.
+
+**Accepted architecture constraint:** do not create an external sidecar or depend on save-slot filenames for prayer tiers unless later evidence disproves native player-param persistence on the target build.
+
+A separate save/load persistence probe is not currently justified; the relevant serialization and storage path is already directly evidenced.
 
 ## Clarity presentation target
 
@@ -86,10 +92,10 @@ Verified calculation seam: `CraftDefinition.GetMultiqualityResult` collects qual
 Candidate Balance/Rework target:
 
 - postfix `CraftDefinition.GetBuffValue(string buff_id)`;
-- alter only the result for `buff_pen` when the Rebalanced profile is enabled and the active tier is known;
+- alter only the result for `buff_pen` when the Rebalanced profile is enabled and the active tier token is present;
 - candidate values remain `+0.5 / +0.7 / +1.0` for Bronze/Silver/Gold.
 
-This avoids mutating shared definitions and naturally falls back to stock behaviour when the mod is absent. It still depends on safe tier persistence across reloads.
+This avoids mutating shared definitions and naturally falls back to stock behaviour when the mod is absent. The previously open persistence gate is now closed by the native player-param tier token.
 
 ### Excellence (`b_star` / `buff_star`)
 
@@ -97,7 +103,7 @@ Use the same `CraftDefinition.GetBuffValue` seam, restricted to `buff_star`.
 
 Current Balance/Rework candidate remains `+0.2 / +0.5 / +1.0`.
 
-This shares the same persistence gate as Imagination.
+The tier can use the same native player-param persistence pattern as Imagination.
 
 ### Combat (`b_sword`, legacy `b_shield`)
 
@@ -113,10 +119,11 @@ Save-safe direction:
 - keep the stock sword and shield buff IDs/resources as the base mechanical state;
 - canonical Combat can apply both stock buffs for the same prayer duration;
 - legacy shield prayer can remain a save-safe alias instead of migrating saved buff IDs;
+- capture the Combat tier in a namespaced player parameter at sermon application;
 - add only the tier-specific extra damage (`+0/+3/+7`) at the actual damage consumer;
-- add regeneration through a separate symmetric/tick mechanism whose tier survives reload.
+- add regeneration through a separate symmetric/tick mechanism gated by the active combat buff and persisted tier token.
 
-This direction preserves a valid stock fallback if PrayerClarity is removed. It is not yet ready to implement because the exact damage-consumption seam and tier persistence path are still open.
+This direction preserves a valid stock fallback if PrayerClarity is removed. The remaining Combat blockers are the exact damage-consumption seam and the cheapest correct regeneration scheduling seam, not persistence.
 
 The stock Long Heal Potion is a useful mechanical reference: it heals `1 HP` per `1.5 s` tick, confirming that the Gold candidate intentionally reaches vanilla potion-grade regeneration speed rather than inventing a new scale.
 
@@ -124,17 +131,19 @@ The stock Long Heal Potion is a useful mechanical reference: it heals `1 HP` per
 
 The vanilla scope bug is directly evidenced in affected growth crafts: prayer activation writes player parameter `buff_plant`, while growth expressions read `WGOpar("buff_plant")` from the work object. The intended coefficient is `-20%` growth time.
 
+`SmartExpression` natively supports both scopes. Its expression environment registers `WGOpar` and `Ppar`; the expression preprocessor maps `$name` to `Ppar("name")` and `@name` to `WGOpar("name")`. A custom evaluator is therefore unnecessary.
+
 **Vanilla Fix candidate:** surgically repair the affected growth expressions to read the corresponding player prayer parameter while retaining the stock `-20%` effect for every quality tier.
 
-**Rebalanced candidate:** `-20/-30/-40%` growth time.
+**Rebalanced candidate:** `-20/-30/-40%` growth time, with the active tier held in a namespaced player parameter.
 
 Do not conflate these layers. The stock scope repair and quality scaling are separate features.
 
-Before implementation, prove the exact supported expression/player-parameter accessor and mutation/rebuild lifecycle. Rebalanced scaling also remains dependent on a reliable active tier.
+Before implementation, prove the safe mutation/rebuild lifecycle for the already-loaded `SmartExpression` instances so the corrected source is actually recompiled without broad balance reloads.
 
 ### Repose (`b_skull` / `buff_skull`)
 
-The donkey flowgraph chain is now sufficiently closed to establish the stock mechanism:
+The donkey flowgraph chain is sufficiently closed to establish the stock mechanism:
 
 - normal corpse `Tier min` is `body_min + add_body_min`;
 - normal corpse `Tier max` is `body_max + add_body_max`;
@@ -150,7 +159,7 @@ Current Balance/Rework candidate:
 
 This should be implemented at the corpse-tier selection/generation seam rather than by rewriting donkey progression parameters globally.
 
-**Open blocker:** inspect the exact `Flow_DropBody` tier selection/RNG implementation so Silver and Gold can be defined without approximating or replacing unrelated corpse generation logic.
+**Open blocker:** inspect the exact corpse-tier selection/RNG implementation used after `Flow_DropBody` receives `tier_min/tier_max`, so Silver and Gold can wrap the actual stock roll instead of approximating it.
 
 ### Repentance (`b_sins` / `buff_sins`)
 
@@ -162,31 +171,30 @@ If Repentance is included in the first rework build, inspect `church_budka_roll`
 
 ### Faith, Donations, Combo, Ordinary, Prosperity and BSS prayers
 
-These do not currently introduce the same persisted passive-tier problem when their proposed behaviour is calculated at sermon/result time or remains stock. Their exact implementation still must reuse the common semantic model and verified sermon formulas rather than duplicating guessed constants.
+These do not introduce the same persisted passive-tier problem when their proposed behaviour is calculated at sermon/result time or remains stock. Their exact implementation still must reuse the common semantic model and verified sermon formulas rather than duplicating guessed constants.
 
 The permanent donation policy remains unchanged: PrayerClarity must not 'fix' failed-sermon base donations. In stock 1.407 the downstream integer random range makes that path pay full base donations, and project policy intentionally preserves it in every profile.
 
 ## Recommended staging
 
-Do not open a production `dev/*` branch solely because the numerical roster is now coherent. The cross-cutting active-tier persistence problem is still unresolved.
+The cross-cutting active-tier persistence problem is no longer a blocker. The implementation audit now supports a deliberately narrow first `dev/*` prototype without pretending every rework has a closed target.
 
-A safe staged prototype becomes possible once the current-save identity/lifecycle seam is proven. At that point the first coherent implementation can prioritize:
+A low-risk first implementation slice can contain:
 
-1. the shared semantic/forecast model and pulpit Clarity surface;
-2. sermon-time prayers whose behaviour does not depend on persisted active tier;
-3. Imagination/Excellence through `GetBuffValue` once tier persistence is available;
-4. Combat, Roots, Repose and Repentance only after their remaining exact consumer/generator seams are closed.
+1. the shared pure semantic/forecast model and pulpit Clarity surface;
+2. sermon-time candidate tuning whose mechanics are already directly evidenced;
+3. native player-param tier capture at the successful prayer-application seam;
+4. Imagination and Excellence through `CraftDefinition.GetBuffValue`, because both their calculation seam and tier persistence path are now closed.
 
-This order is about implementation risk, not prayer importance or final product scope.
+Combat, Roots, Repose and Repentance should remain out of the first runtime slice until their remaining exact consumer/rebuild/generator seams are closed. This is staging by evidence and implementation risk, not by prayer importance or final product scope.
 
 ## Remaining integration-gate questions
 
-The next research step should answer only blockers that materially affect the first real build:
+The next research work should answer only blockers that materially affect later slices:
 
-- What exact API and lifecycle identify the active save robustly enough for a tiny PrayerClarity sidecar?
-- What exact consumer should receive Combat's tier-specific extra damage without mutating `buff_sword.res`?
-- What exact `Flow_DropBody` tier-selection algorithm should Repose's Silver/Gold policy wrap?
-- What exact expression/player-parameter API is safe for the Roots scope repair?
-- If Repentance is in first scope, what does `church_budka_roll` actually read and write?
+- What exact consumer should receive Combat's tier-specific extra damage without mutating `buff_sword.res`, and what existing lifecycle is the cheapest correct home for regeneration ticks?
+- What exact corpse-tier selection/RNG algorithm should Repose's Silver/Gold policy wrap?
+- How can the affected Roots `SmartExpression` source be replaced and its compiled state safely rebuilt without a broad balance reload?
+- If Repentance is in scope for the next slice, what does `church_budka_roll` actually read and write?
 
-Prefer one narrowly scoped static/runtime bridge probe only if existing accepted data cannot answer these questions. Do not spend hosted CI on a general exploratory build.
+Prefer existing accepted static data before any new probe. Use a narrowly scoped probe only when the current evidence cannot answer one of these concrete questions, and do not spend hosted CI on general exploration.
