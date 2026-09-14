@@ -1,27 +1,30 @@
 # Prayer Mechanics — Graveyard Keeper 1.407
 
-Status: evidence map, updated 2026-09-14 after targeted read-only probe 0.1.0.
+Status: evidence map, updated 2026-09-14 after targeted read-only probes 0.1.0–0.1.2.
 
-This document records verified mechanics before any PrayerClarity production implementation. Player-facing names are intentionally not treated as interchangeable with internal IDs until localization or direct UI evidence establishes the mapping.
+This document records verified mechanics before any PrayerClarity production implementation. `prayer item`, `PrayCraft`, `PrayEventDefinition`, localized prayer names, and the sermon flow are kept distinct unless direct evidence maps them.
 
 ## Evidence basis
 
-Primary evidence comes from read-only diagnostics captured from the user's installed Graveyard Keeper 1.407 runtime and Assembly-CSharp IL. The inspected runtime uses Assembly-CSharp 11.0.0.0. Targeted probe 0.1.0 identified module MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`. Raw proprietary game data is not committed; only minimal derived facts are retained here.
+Primary evidence comes from read-only diagnostics captured from the user's installed Graveyard Keeper 1.407 runtime, including Assembly-CSharp IL, runtime balance definitions, current localization, and serialized FlowCanvas graphs. The inspected runtime uses `Assembly-CSharp, Version=11.0.0.0` with module MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
 
-Community pages, wiki pages, guides, calculators, and public screenshots are discovery/presentation evidence. They are not used as authority for internal formulas when direct 1.407 runtime or IL evidence is available.
+The probes are diagnostic only: no Harmony patches, graph execution, or game-state mutation. Raw proprietary assemblies/assets/graphs are not committed; only minimal derived facts are retained here.
+
+Community pages, wikis, guides, calculators, and screenshots are discovery or UX evidence, not authority for internal formulas when direct 1.407 evidence is available.
 
 ## Internal model
 
-A sermon/prayer interaction spans several distinct layers:
+A sermon/prayer interaction spans distinct layers:
 
 - a prayer item, e.g. `b_faith:1`;
 - a `CraftDefinition` with `craft_type = PrayCraft`, normally used at `church_pulpit`;
 - the craft's `linked_sub_id`, selecting a `PrayEventDefinition` such as `default_1` or `pray_for_souls_1`;
 - the `PrayEventDefinition`, supplying base `people`, `faith`, and `money` expressions;
 - prayer-craft fields such as `needs_quality`, `k_faith`, `k_money`, fixed outputs, optional `buff`, and `dur_parameter`;
-- downstream FlowCanvas nodes, visitor-distribution functions, item-drop logic, animation code, and buff logic.
+- the `pray` FlowCanvas graph, which distributes Faith/money and drives prayer animation;
+- downstream visitor, item-drop, and buff consumers.
 
-Therefore `prayer item`, `PrayCraft`, `PrayEventDefinition`, `sermon`, and localized prayer names are not synonyms.
+These layers must not be treated as synonyms.
 
 ## Core calculation
 
@@ -48,8 +51,6 @@ The success draw is:
 - automatically successful at 100%; otherwise
 - `Random.Range(0, 100) < success_percent`.
 
-This is a direct linear relationship between current church quality and the prayer's quality requirement.
-
 ### Prayer-specific bonuses
 
 On success, `CalculatePray` processes the prayer craft's output list and coefficients:
@@ -58,52 +59,77 @@ On success, `CalculatePray` processes the prayer craft's output list and coeffic
 - fixed output `money` -> add `value / 100` to `money_bonus`;
 - `k_faith != 0` -> add `RoundToInt(base_faith * k_faith)` to `faith_bonus`;
 - `k_money != 0` -> add `Round(base_money * k_money * 100) / 100` to `money_bonus`;
-- any other output remains in the sermon-drop list.
+- any other output remains in `_sermon_drops`.
 
-On a failed success check, prayer-specific `faith_bonus` and `money_bonus` are set to zero.
+On a failed success check:
 
-### Downstream PrayResult shape
+- `faith_bonus = 0`;
+- `money_bonus = 0`.
 
-The direct 1.407 FlowCanvas callback for `Flow_CalculatePrayEvent` maps the result as follows:
+The base event values remain intact.
 
-- flow `people` = `PrayResult.people`;
-- flow `faith` = `PrayResult.faith`;
-- flow `faith_bonus` = `PrayResult.faith_bonus`;
-- flow `money` = `PrayResult.money + PrayResult.money_bonus`;
-- flow `success` = `PrayResult.success`.
+### Downstream `PrayResult` shape
 
-Therefore the game's downstream sermon graph receives **total money already combined**, while base Faith and bonus Faith remain separate values at this boundary.
+`Flow_CalculatePrayEvent` exposes:
 
-**Still open:** the exact FlowCanvas wiring that finally calls visitor Faith/money distribution must be traced before documenting complete failed-sermon payout semantics or claiming the final Faith total path.
+- `people = PrayResult.people`;
+- `faith = PrayResult.faith`;
+- `faith_bonus = PrayResult.faith_bonus`;
+- `money = PrayResult.money + PrayResult.money_bonus`;
+- `success = PrayResult.success`.
 
-## Visitor distribution and physical drops
+So the sermon graph receives money already combined, while base Faith and bonus Faith remain separate.
 
-### Faith distribution primitive
+## Final sermon payout wiring
+
+Probe 0.1.2 captured the stock `FlowCanvas/pray` graph directly.
+
+### Faith
+
+The graph sends base `faith` from `Flow_CalculatePrayEvent` to `Flow_SpreadFaithIncome` **before** the prayer-buff/success-reaction stage. Therefore base Faith is distributed on both successful and failed sermons.
+
+A second `Flow_SpreadFaithIncome` receives `faith_bonus` later in the graph. Both the success and failure reaction branches reach that node, but `CalculatePray` has already set `faith_bonus = 0` on failure.
+
+Therefore:
+
+- success: `Faith delivered = base_faith + faith_bonus`;
+- failure: `Faith delivered = base_faith`.
+
+### Money
+
+The graph sends the combined money output to `Flow_SpreadMoneyIncome`. A `Flow_ConditionFloatValue` supplies its `chance` input:
+
+- success -> `1.0`;
+- failure -> `0.5`.
+
+However, `PrayLogics.SpreadMoneyIncome` tests each visitor with the **integer** overload `UnityEngine.Random.Range(0, 1)`, then compares the resulting integer (converted to float) with `success_percent`.
+
+Because integer `Random.Range(0, 1)` can only return `0`, both `0 < 1.0` and `0 < 0.5` are always true. In stock 1.407 every visitor is selected in both branches. The helper then distributes the requested money among the selected visitors while preserving the requested total to cent precision.
+
+Therefore the actual stock-1.407 result is:
+
+- success: `money delivered = base_money + money_bonus`;
+- failure: `money delivered = base_money`.
+
+The graph structure suggests the `0.5` failure value was intended to affect donation participation, but the current helper implementation does not produce that effect. Treat this as a direct implementation mismatch, not as an inferred design intention.
+
+### Visitor-distribution details
 
 `PrayLogics.SpreadFaithIncome(prayers, faith)`:
 
-1. removes null visitor references from the supplied list;
+1. removes null visitor references;
 2. repeats exactly `faith` times;
-3. each iteration chooses one random visitor from the list;
-4. increments that visitor's `_faith` parameter by 1.
+3. chooses a random visitor for each unit;
+4. adds `1` to that visitor's `_faith`.
 
-Thus the input is an integer count of Faith units, each assigned individually to a random attending visitor.
+`PrayLogics.SpreadMoneyIncome(prayers, money, success_percent)`:
 
-### Money distribution primitive
+1. builds the selected visitor list using the test described above;
+2. computes equal share `floor(money * 100 / selected_count) / 100`;
+3. adds that share to every selected visitor's `_money`;
+4. assigns leftover cents one at a time to random selected visitors until the requested total is reached.
 
-`PrayLogics.SpreadMoneyIncome(prayers, money, success_percent)` builds a selected visitor list, then:
-
-- calculates an equal per-selected-visitor share rounded down to whole cents: `floor(money * 100 / selected_count) / 100`;
-- gives that amount through each selected visitor's `_money` parameter;
-- distributes remaining cents one at a time to random selected visitors until the accumulated amount reaches the requested `money`.
-
-The caller and exact meaning/range of the method's `success_percent` argument are still open. Do not infer payout probability semantics from this helper in isolation.
-
-### Non-money/non-Faith prayer outputs
-
-`PrayLogics.DropPrayItems()` takes the remaining `_sermon_drops` list and creates every unit as an individual world drop at `faith_drop_point`, staggered by 0.2 seconds.
-
-This proves that prayer outputs other than the special `faith` and `money` rows can be concrete physical sermon rewards rather than merely metadata.
+The visible per-person coin animation therefore represents distribution of a total pool; it is not itself the source formula for total donations.
 
 ## Verified `PrayEventDefinition` catalogue
 
@@ -128,172 +154,182 @@ Notation:
 
 Direct consequences:
 
-- ordinary event-base Faith is driven by **church quality**;
-- event-base money is driven by **graveyard quality**;
-- Eloquence modifies event-base Faith;
-- Cardinal modifies the ordinary event-base money coefficient where the event uses `0.03 + 0.01*C`;
-- the Souls event family adds current `gratitude_points` to church quality before calculating base Faith.
+- ordinary base Faith is driven by **church quality**;
+- base donations are driven by **graveyard quality**;
+- Eloquence modifies base Faith;
+- Cardinal modifies the ordinary base-donation coefficient where the event uses `0.03 + 0.01*C`;
+- the Souls family adds current Soul Gratitude to church quality before calculating base Faith.
 
-Without Eloquence, Souls base Faith simplifies to `(CQ + GP) / 10` before integer rounding.
+Without Eloquence, Souls base Faith is `(CQ + GP) / 10` before integer rounding.
 
 ## Verified prayer-craft families
 
-The table uses internal family IDs. It does not assert the current localized display name unless separately mapped. `q` = `needs_quality`; `kF` = `k_faith`; `kM` = `k_money`.
+`q` = `needs_quality`; `kF` = `k_faith`; `kM` = `k_money`.
 
-| Internal family | Linked event(s) | q, tiers 1/2/3 | kF, tiers | kM, tiers | Additional direct data | Status |
+| Internal family | Current RU name | Linked event(s) | q, tiers 1/2/3 | kF, tiers | kM, tiers | Additional direct data |
 | --- | --- | --- | --- | --- | --- | --- |
-| `b_empty` | `default_0` for `pray:b_empty` | 10 | 0 | 0 | fixed Faith output on the non-suffixed craft | core craft verified; placeholder/suffixed reachability still needs classification |
-| `b_faith` | `default_1/2/3` | 10 / 20 / 50 | .5 / 1 / 1.5 | .2 / .2 / .2 | fixed Faith + money outputs | verified |
-| `b_money` | `default_1/2/3` | 10 / 20 / 50 | .2 / .2 / .2 | .5 / 1 / 1.5 | fixed Faith + money outputs | verified |
-| `b_faith_money` | `default_1/2/3` | 15 / 30 / 60 | .5 / 1 / 1.5 | .5 / 1 / 1.5 | fixed Faith + money outputs | verified |
-| `b_plant` | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_plant`; `dur_parameter` 36 / 72 / 108 | craft verified; effect scope partly traced |
-| `b_sins` | `default_1/2/3` | 10 / 20 / 40 | .25 / .5 / .75 | .1 / .1 / .1 | `buff_sins`; `dur_parameter` 18 / 36 / 54 | consumer still open |
-| `b_skull` | `default_1/2/3` | 20 / 40 / 50 | .1 / .1 / .1 | .25 / .5 / .75 | `buff_skull`; `dur_parameter` 18 / 36 / 54 | verified direct buff resource; localized mapping pending |
-| `b_sword` | `default_1/2/3` | 10 / 20 / 40 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_sword`; `dur_parameter` 36 / 72 / 108 | verified |
-| `b_shield` | `default_1/2/3` | 10 / 20 / 40 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_shield`; `dur_parameter` 36 / 72 / 108 | verified |
-| `b_pen` | `default_1/2/3` | 10 / 40 / 60 | .25 / .5 / .75 | .1 / .1 / .1 | `buff_pen`; `dur_parameter` 18 / 36 / 54 | `craft_q` consumer open |
-| `b_star` | `default_1/2/3` | **10 / 40 / 60** | .25 / .5 / .75 | .1 / .1 / .1 | `buff_star`; `dur_parameter` **18 / 36 / 54** | `craft_q` value verified; consumer open |
-| `b_village` | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | fixed Faith 1/2/3; money 1/2/3 silver; `blessing_commerce` x1/x2/x3 | outputs verified; downstream use of blessing item still open |
-| `b_souls` | `pray_for_souls_1/2/3` | 15 / 30 / 60 | .5 / 1 / 1.5 | .25 / .25 / .25 | Souls-specific event formulas | verified player content; current localized name pending direct 1.407 localization |
-| `b_grat_points_incr` | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_gp_increase`; `dur_parameter` 36 / 72 / 108 | verified player content; gratitude-gain consumer open |
-| `b_sin_shard` | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_sin_shard`; `dur_parameter` 36 / 72 / 108 | verified player content; effect magnitude traced |
+| `b_empty` | Обычная молитва | `default_0` for `pray:b_empty` | 10 | 0 | 0 | fixed Faith output on non-suffixed craft; placeholder/suffixed reachability still open |
+| `b_faith` | Молитва веры | `default_1/2/3` | 10 / 20 / 50 | .5 / 1 / 1.5 | .2 / .2 / .2 | fixed Faith + money outputs |
+| `b_money` | Молитва о пожертвованиях | `default_1/2/3` | 10 / 20 / 50 | .2 / .2 / .2 | .5 / 1 / 1.5 | fixed Faith + money outputs |
+| `b_faith_money` | Комбо-молитва | `default_1/2/3` | 15 / 30 / 60 | .5 / 1 / 1.5 | .5 / 1 / 1.5 | fixed Faith + money outputs |
+| `b_plant` | Молитва о корнях и побегах | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_plant`; duration 36 / 72 / 108 |
+| `b_sins` | Молитва о покаянии | `default_1/2/3` | 10 / 20 / 40 | .25 / .5 / .75 | .1 / .1 / .1 | `buff_sins`; duration 18 / 36 / 54; consumer open |
+| `b_skull` | Молитва об упокоении | `default_1/2/3` | 20 / 40 / 50 | .1 / .1 / .1 | .25 / .5 / .75 | `buff_skull`; duration 18 / 36 / 54 |
+| `b_sword` | Молитва о возмездии | `default_1/2/3` | 10 / 20 / 40 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_sword`; duration 36 / 72 / 108 |
+| `b_shield` | Защитная молитва | `default_1/2/3` | 10 / 20 / 40 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_shield`; duration 36 / 72 / 108 |
+| `b_pen` | Молитва воображения | `default_1/2/3` | 10 / 40 / 60 | .25 / .5 / .75 | .1 / .1 / .1 | `buff_pen`; duration 18 / 36 / 54 |
+| `b_star` | Молитва о совершенстве | `default_1/2/3` | 10 / 40 / 60 | .25 / .5 / .75 | .1 / .1 / .1 | `buff_star`; duration 18 / 36 / 54 |
+| `b_village` | Молитва о процветании | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | Faith 1/2/3; money 1/2/3 silver; `blessing_commerce` x1/x2/x3 |
+| `b_souls` | Молитва за упокой душ | `pray_for_souls_1/2/3` | 15 / 30 / 60 | .5 / 1 / 1.5 | .25 / .25 / .25 | Souls-specific baseline |
+| `b_grat_points_incr` | Молитва о довольстве душ | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_gp_increase`; duration 36 / 72 / 108 |
+| `b_sin_shard` | Молитва за тщательное очищение душ | `default_1/2/3` | 10 / 20 / 30 | .25 / .25 / .25 | .25 / .25 / .25 | `buff_sin_shard`; duration 36 / 72 / 108 |
 
-The Better Save Soul technology definition `soul_church_additions` directly unlocks `b_souls`, `b_grat_points_incr`, and `b_sin_shard`. This proves these three families are reachable player content, rather than merely orphan rows in the runtime registry.
+The Better Save Soul technology `soul_church_additions` directly unlocks `b_souls`, `b_grat_points_incr`, and `b_sin_shard`.
 
 ### `b_village` direct outputs
 
-Direct runtime craft data gives:
+- tier 1: `faith x1`, `money x100` (= 1 silver as prayer output), `blessing_commerce x1`;
+- tier 2: `faith x2`, `money x200`, `blessing_commerce x2`;
+- tier 3: `faith x3`, `money x300`, `blessing_commerce x3`.
 
-- tier 1: fixed `faith x1`, `money x100` (= 1 silver before the special conversion), `blessing_commerce x1`;
-- tier 2: fixed `faith x2`, `money x200` (= 2 silver), `blessing_commerce x2`;
-- tier 3: fixed `faith x3`, `money x300` (= 3 silver), `blessing_commerce x3`.
+Faith/money rows become prayer bonus fields on success. `blessing_commerce` is not special-cased by `CalculatePray`, so it remains in `_sermon_drops`.
 
-`CalculatePray` removes the Faith/money rows into the corresponding bonus fields on success. `blessing_commerce` is not special-cased, so it remains in `_sermon_drops` and is eligible for physical dropping by `DropPrayItems()`.
+`blessing_commerce` is current-RU `Благословение коммерции`; its description says it can be sold to a merchant to raise that merchant's level. Its exact downstream merchant transaction/effect path is still open.
 
-The `blessing_commerce` item definition itself is non-usable (`can_be_used = false`), stack size 5, product type `blessing`. Runtime object indexing associates it with the pulpit object group. Its later insertion/use mechanics are still open.
+### Other `PrayCraft` rows
 
-### Other `PrayCraft` rows are not yet accepted as player-visible prayers
+Runtime data also contains `b_ghost`, `b_energy`, `b_random`, `b_techpoint_blue`, `b_techpoint_green`, `b_techpoint_red`, `b_circle`, and `b_cross`.
 
-Runtime data also contains families such as `b_ghost`, `b_energy`, `b_random`, `b_techpoint_blue`, `b_techpoint_green`, `b_techpoint_red`, `b_circle`, and `b_cross`.
-
-Some have zero quality requirement, zero Faith/money coefficients, generic/empty linked event data, or other signs of legacy/development/placeholder use. They remain **unclassified internal data** until item definitions, unlock paths, localization, and UI reachability prove player use.
+These remain **unclassified internal data** until item definitions, unlock paths, localization, and UI reachability prove player use.
 
 ## Verified buff mechanics
 
-| Buff ID | Direct data | Base length expression | Verified gameplay meaning |
-| --- | --- | --- | --- |
-| `buff_plant` | `buff_plant = 1` | `36 * (1 + 0.3*buff_longtimer)` | inspected growing crafts include a `-0.2 * WGOpar("buff_plant")` time term; effect scope still needs complete enumeration |
-| `buff_sins` | `buff_sins = 1` | same | flag/duration definition verified; consumer open |
-| `buff_skull` | `body_max = 1` | same | +1 `body_max` resource while active |
-| `buff_sword` | `add_damage = 5` | same | +5 damage resource while active |
-| `buff_shield` | `add_armor = 4` | same | +4 armor resource while active |
-| `buff_pen` | `craft_q = 0.7` | same | quality parameter verified; generic accessor traced, consumer open |
-| `buff_star` | `craft_q = 0.2` | same | quality parameter verified; generic accessor traced, consumer open |
-| `buff_sin_shard` | `increase_sin_shard_drop = 1` | same | **direct consumer traced: doubles base Sin Shard output during soul healing** |
-| `buff_gp_increase` | `increase_gp_gain = 1` | same | flag verified; exact gratitude-gain arithmetic open |
+| Buff ID | Direct data | Verified gameplay meaning |
+| --- | --- | --- |
+| `buff_plant` | `buff_plant = 1` | inspected growing crafts include `-0.2 * WGOpar("buff_plant")` in craft-time logic; full scope still needs enumeration |
+| `buff_sins` | `buff_sins = 1` | buff exists and receives prayer duration; gameplay consumer still unresolved |
+| `buff_skull` | `body_max = 1` | +1 `body_max` while active |
+| `buff_sword` | `add_damage = 5` | +5 damage while active |
+| `buff_shield` | `add_armor = 4` | +4 armor while active |
+| `buff_pen` | `craft_q = 0.7` | contributes +0.7 through linked-buff multi-quality calculation |
+| `buff_star` | `craft_q = 0.2` | contributes +0.2 through linked-buff multi-quality calculation |
+| `buff_sin_shard` | `increase_sin_shard_drop = 1` | doubles base Sin Shard output during soul healing |
+| `buff_gp_increase` | `increase_gp_gain = 1` | consumed by the `soul_portal` Gratitude path; exact multiplier wiring still needs full graph capture |
 
-### Generic craft-quality buff accessor
+### Multi-quality buffs
 
-`CraftDefinition.GetBuffValue(buff_id)` returns:
+`CraftDefinition.GetBuffValue(buff_id)` returns 0 if the named buff is inactive; otherwise it returns that `BuffDefinition.craft_q`.
 
-- `0` when the named buff is not currently active;
-- otherwise that buff definition's `craft_q` value.
+`CraftDefinition.GetMultiqualityResult(...)` consumes linked buff IDs through this accessor. Therefore `buff_pen = 0.7` and `buff_star = 0.2` are real additive inputs to the game's multi-quality calculation for crafts whose definitions list those buffs.
 
-Thus `buff_pen = 0.7` and `buff_star = 0.2` are intentionally exposed through a generic craft-quality accessor. The callers that give those two values their concrete gameplay meaning still need direct tracing.
+The exact set of affected crafts is a catalogue question and should not be generalized beyond directly enumerated `linked_buffs`.
 
-### `buff_sin_shard` exact effect
+### Sin Shards
 
-The soul-healing consumer starts from the healed soul's base `sins_count`, then adds:
+The soul-healing consumer starts from the healed soul's `sins_count` and adds:
 
 `increase_sin_shard_drop * sins_count`
 
-`buff_sin_shard` sets `increase_sin_shard_drop = 1`, therefore while the buff is active:
+With `buff_sin_shard = 1`:
 
-`Sin Shards awarded = sins_count + sins_count = 2 * sins_count`
+`Sin Shards awarded = 2 * sins_count`
 
-This is a direct 1.407 code result, not a wiki inference.
+### Base Soul Gratitude on release
 
-### Prayer-buff application path
+`SoulsHelper.CalculatePointsAfterSoulRelease(healed_soul)` computes:
 
-Direct 1.407 IL now proves these steps:
+1. `d = healed_soul.durability`;
+2. `s = healed_soul.GetParam("sins_count", 0)`;
+3. if `d > 0.9`, set `d = 1`;
+4. return `5*d + 5*s`.
 
-1. `PlayerComponent.StartPrayAnimation(pray_craft, success)` resolves `pray_craft.buff` to a `BuffDefinition` and stores both the craft and success state.
-2. `PlayerComponent.CreatePrayBuffFlyingObject(pos)` passes that buff to `FlyingObject.CreateBuffFlyingObject`.
-3. If `pray_craft.dur_parameter` is non-zero, it is passed as an explicit nullable duration; otherwise no override is supplied.
-4. `BuffsLogics.AddBuff(buff_id, length)` uses the explicit `length` when provided, otherwise evaluates `BuffDefinition.length`.
-5. `AddBuff` converts the chosen length by `length / 450 * 60` into its internal game-time delta and sets/extends the saved `PlayerBuff.end_time` according to overlay mode.
-6. `PlayerBuff.GetTimerText()` converts the remaining internal delta back through the 450-second basis before formatting `H:MM:SS` or `M:SS`.
+So the direct pre-buff Gratitude amount is:
 
-**One handoff remains open:** probe 0.1.0 did not include the body that takes the created buff flying object to `BuffsLogics.AddBuff`. Until that final call edge is captured, treat `dur_parameter = 18/36/54/...` as a strongly supported duration input, not yet as a fully closed end-to-end duration proof.
+`GP_base = 5 * effective_durability + 5 * sins_count`
 
-A user's installed time-scaling compatibility mods may deliberately alter the real-time conversion. PrayerClarity's mechanics documentation describes the stock 1.407 path unless a compatibility section explicitly says otherwise.
+where `effective_durability = 1` for durability above 0.9.
 
-## Presentation evidence
+The loaded `soul_portal` graph then:
+- calculates this GP value;
+- reads player parameter `increase_gp_gain`;
+- passes values through multiply/add/multiply nodes;
+- rounds with `Mathf.RoundToInt`;
+- adds the result to `gratitude_points`;
+- also compares current Gratitude with Souls-zone quality for a cap/limit path.
 
-### Prayer item description exposes the required church quality
+Current Russian prayer text states `(+10%)`, but probe 0.1.2 only captured snippets of this graph, not enough connection data to prove the exact multiplier formula. Do not yet replace graph evidence with the localization claim.
 
-Current 1.407 `ItemDefinition.GetItemDescription` contains a Preach branch. For sermon items it appends localization key `preach_params`, passing:
+## Prayer buff application and duration
 
-`"(cross)" + linked_craft.needs_quality`
+The end-to-end stock path is now closed:
 
-Therefore the prayer description directly includes the prayer's required church-quality value in some localized format. Runtime prayer item definitions inspected so far have empty optional `q_hint`, so this requirement line is not coming from the generic quality-hint field.
+1. `PlayerComponent.StartPrayAnimation(pray_craft, success)` resolves and stores `pray_craft.buff`, the craft, and success state.
+2. `PlayerComponent.CreatePrayBuffFlyingObject(pos)` passes `pray_craft.dur_parameter` as an explicit duration when non-zero.
+3. `FlyingObject.CreateBuffFlyingObject(...)` stores that override.
+4. `FlyingObject.ReallyGiveBuff(buff)` calls `BuffsLogics.AddBuff(buff.id, _override_duration)`.
+5. `BuffsLogics.AddBuff` uses the explicit duration when present; otherwise it evaluates `BuffDefinition.length`.
+6. The saved `PlayerBuff.end_time` and `PlayerBuff.GetTimerText()` use the same 450-second game-time basis.
 
-### Prayer-selection UI directly shows church quality, requirement, and chance
+For prayer crafts with non-zero `dur_parameter`, that prayer value overrides the buff definition's default length.
 
-`PrayCraftGUI.RedrawTextValues(needs_q, chance)` directly constructs exactly three lines of decision-state information:
+In stock 1.407 the prayer tier values correspond to game-timer minutes:
 
-- `pray_gui_church_q` with current church quality, formatted as `(cross){0:0.#}`;
-- `pray_gui_sermon_needs` with the selected prayer's requirement, formatted as `(cross){0:0}`;
-- `sermon_success_chance` with `RoundToInt(chance * 100) + "%"`.
+- `18 / 36 / 54` -> 18 / 36 / 54 minutes;
+- `36 / 72 / 108` -> 36 min / 1 h 12 min / 1 h 48 min.
 
-`OnResourcePickerClosed` computes `chance = current_church_quality / needs_quality`, caps it at 1, and switches the action label to:
+Installed time-scaling mods may deliberately change real-time pacing; these are vanilla game-time semantics.
 
-- `btn_try_pray` when below the requirement;
-- `btn_pray` once the requirement is met.
+**Still open:** the exact animation callback branch that selects the success animation (which creates the buff flying object and calls `DropPrayItems`) versus the failure animation has not yet been captured as a direct call edge. `ChurchPulpit.DoBuffSuccessAnimation()` itself directly performs both buff-object creation and `DropPrayItems()`.
 
-Therefore **success probability is direct visible information in stock 1.407 and is not PrayerClarity's hidden-information problem**. Exact current Russian/English wording remains a localization task; the values and presentation structure are already direct facts.
+## Current Russian localization / presentation
 
-### Post-sermon report separates base values from prayer bonuses
+Direct runtime localization resolves the accepted families and UI. Important decision-screen strings:
 
-`PrayReportGUI.Open(PrayResult)` draws:
+- `Качество церкви: %1`
+- `Проповедь требует: %1`
+- `Шанс успеха: %1`
+- below threshold: `Попытка молитвы`
+- at/above threshold: `Молиться`
+- item requirement line: `%1 необходимо, чтобы гарантировать успех проповеди.`
 
-- people = `PrayResult.people`;
-- Faith = `PrayResult.faith`;
-- money = `PrayResult.money`;
-- success/failure;
-- success chance;
-- only on success, a separate Faith bonus row when `faith_bonus > 0`;
-- only on success, a separate money bonus row when `money_bonus != 0`.
+`PrayCraftGUI.RedrawTextValues` shows exactly church quality, selected sermon requirement, and success chance. It does not calculate a current Faith/donation forecast.
 
-The report does **not** combine base and bonus into one displayed Faith total or one displayed money total. This is presentation evidence: a player reading the report must understand that the bonus rows are additive to the base rows.
+The post-sermon report uses:
+- `Пришло посетителей`
+- `Веры получено`
+- `Пожертвования`
+- `Результат`
+- `Бонус веры`
+- `Бонус денег`
 
-### Pre-use outcome forecast remains unproved
+`PrayReportGUI.Open` displays base Faith and base money separately from success-only bonus rows; it does not show a single combined total.
 
-The selected-prayer information drawn by `PrayCraftGUI` is church quality, requirement, and success chance. Nothing in the inspected selection methods provides a current-state numerical forecast for:
+### Current prayer descriptions
 
-- final/base-plus-bonus Faith;
-- final/base-plus-bonus donations;
-- Souls-prayer Faith after current Soul Gratitude;
-- exact passive-buff magnitude/duration in a consistent quantitative form;
-- physical special outputs such as `blessing_commerce`.
+Several base-game passive descriptions are qualitative rather than quantitative:
 
-A complete tooltip/resource-picker audit is still needed before promoting this scoped absence to a final UX finding covering every pre-use surface.
+- `b_plant`: flavour text, no farming magnitude/duration;
+- `b_sins`: flavour text, no mechanical effect/duration;
+- `b_skull`: flavour/joke, no `body_max` effect/duration;
+- `b_sword`: rage wording, no `+5 damage` or duration;
+- `b_shield`: strength wording, no `+4 armor` or duration;
+- `b_pen`: inspiration wording, no `+0.7 craft_q` or duration;
+- `b_star`: hard-work wording, no `+0.2 craft_q` or duration.
 
-## Secondary localization mapping
+The Better Save Soul descriptions are comparatively more explicit:
+- `b_souls`: says more Soul Gratitude gives more Faith;
+- `b_grat_points_incr`: states `(+10%)` Soul Gratitude gain;
+- `b_sin_shard`: states `x2` Sin Shards from successful soul healing.
 
-A public localization dump provides useful discovery mappings such as `b_faith` -> `Prayer for faith`, `b_money` -> `Prayer for donations`, `b_pen` -> `Prayer for imagination`, and `b_star` -> `Prayer for excellence`. It is not accepted as the canonical current 1.407 localization source, especially for DLC prayers that are absent from that dump.
+## Open questions
 
-Probe 0.1.0 attempted direct localization through `GJL` but searched only the Assembly-CSharp type list and did not resolve the type. The follow-up probe should search all loaded assemblies before falling back to secondary localization evidence.
-
-## Open questions for the next narrow pass
-
-1. Map all accepted internal families to exact current 1.407 English/Russian names and descriptions.
-2. Trace callers/wiring of `SpreadFaithIncome`, `SpreadMoneyIncome`, and `DropPrayItems` to close final payout semantics, including failed sermons.
-3. Trace the final `FlyingObject.CreateBuffFlyingObject -> BuffsLogics.AddBuff` call edge to close exact prayer-buff duration semantics.
-4. Trace consumers of `buff_sins`, `buff_pen.craft_q`, `buff_star.craft_q`, and `increase_gp_gain`.
-5. Determine the downstream use/effect of physical `blessing_commerce` items.
+1. Capture the full `soul_portal` graph to prove the exact `increase_gp_gain` arithmetic and Gratitude cap path.
+2. Find the gameplay consumer, if any, of `buff_sins`.
+3. Capture the prayer animation success/failure callback edge to prove that buffs and `_sermon_drops` are success-only end to end.
+4. Enumerate the exact craft scopes of `buff_pen`, `buff_star`, and `buff_plant` where useful for player-facing wording.
+5. Determine the exact downstream merchant effect/use path of `blessing_commerce`.
 6. Classify extra `PrayCraft` families as reachable content versus legacy/internal rows.
-7. Audit any final rounding/caps after `CalculatePray` and visitor distribution.
-8. Audit buff hover text and remaining resource-picker/item-tooltip surfaces for pre-use information.
+7. Audit buff-hover text and any remaining pre-use tooltip/resource-picker surfaces.
+8. Capture current English localization only if bilingual wording becomes a design requirement.
 
-No production PrayerClarity implementation is justified yet. A single narrow read-only follow-up probe is justified for the call edges and passive-consumer questions that the existing static/runtime evidence does not contain.
+No production PrayerClarity implementation is justified yet. The remaining unknowns are narrow enough for one more read-only static/runtime probe rather than gameplay experimentation.
