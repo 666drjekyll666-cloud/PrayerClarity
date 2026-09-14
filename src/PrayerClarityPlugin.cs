@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         internal const string PluginName = "PrayerClarity";
-        internal const string PluginVersion = "0.1.4";
+        internal const string PluginVersion = "0.1.5";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -57,16 +57,16 @@ namespace PrayerClarity
                 PrayerForecast.Result forecast = PrayerForecast.Build(__instance, chance);
                 if (forecast == null)
                 {
-                    PulpitPresentation.Hide(label);
+                    PulpitPresentation.Hide(label, __instance);
                     return;
                 }
 
                 string vanilla = R.Get(label, "text") as string ?? string.Empty;
-                PulpitPresentation.Render(label, KeepVanillaContext(vanilla), forecast);
+                PulpitPresentation.Render(label, __instance, KeepVanillaContext(vanilla), forecast);
             }
             catch (Exception ex)
             {
-                PulpitPresentation.Hide(label);
+                PulpitPresentation.Hide(label, __instance);
                 if (_runtimeErrorLogged) return;
                 _runtimeErrorLogged = true;
                 _log?.LogError("PrayerClarity forecast failed; vanilla pulpit UI remains available. " + ex);
