@@ -10,11 +10,11 @@
   "forecast.reward": "Nagroda: {0}",
   "buff.sword": "+{0:0.##} obrażeń · {1:0} min",
   "buff.shield": "+{0:0.##} pancerza · {1:0} min",
-  "buff.skull": "Osioł: zwłoki mogą być lepsze o {0:0.##} poziom · {1:0} min",
+  "buff.skull": "Osioł może przywieźć zwłoki o maksymalnie {0:0.##} poziom jakości wyżej (skull) · {1:0} min",
   "buff.pen": "Jakość pisania +{0:0.##} · {1:0} min",
   "buff.star": "Jakość objętych wytworów +{0:0.##} · {1:0} min",
   "buff.plant_inactive": "Wzrost roślin: efekt nie działa w vanilla 1.407 · buff {0:0} min",
   "buff.sins_unverified": "Nie znaleziono efektu specjalnego w vanilla 1.407 · buff {0:0} min",
-  "buff.gratitude": "+10% z leczenia dusz · {0:0} min",
+  "buff.gratitude": "+10% (gratitude_points) z leczenia dusz · {0:0} min",
   "buff.sin_shard": "×2 za udane leczenie duszy · {0:0} min"
 }
