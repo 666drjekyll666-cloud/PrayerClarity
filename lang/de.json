@@ -10,11 +10,11 @@
   "forecast.reward": "Belohnung: {0}",
   "buff.sword": "+{0:0.##} Schaden · {1:0} Min.",
   "buff.shield": "+{0:0.##} Rüstung · {1:0} Min.",
-  "buff.skull": "Esel: Leichen können {0:0.##} Stufe besser sein · {1:0} Min.",
+  "buff.skull": "Der Esel kann eine Leiche bis zu {0:0.##} Qualitätsstufe höher bringen (skull) · {1:0} Min.",
   "buff.pen": "Schreibqualität +{0:0.##} · {1:0} Min.",
   "buff.star": "Qualität betroffener Herstellungen +{0:0.##} · {1:0} Min.",
   "buff.plant_inactive": "Pflanzenwachstum: Effekt funktioniert in Vanilla 1.407 nicht · Buff {0:0} Min.",
   "buff.sins_unverified": "Spezialeffekt in Vanilla 1.407 nicht gefunden · Buff {0:0} Min.",
-  "buff.gratitude": "+10 % durch Seelenheilung · {0:0} Min.",
+  "buff.gratitude": "+10 % (gratitude_points) durch Seelenheilung · {0:0} Min.",
   "buff.sin_shard": "×2 bei erfolgreicher Seelenheilung · {0:0} Min."
 }
