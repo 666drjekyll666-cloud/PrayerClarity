@@ -1,14 +1,14 @@
 # PrayerClarity — Design Notes
 
-Status: product/design stage, 2026-09-14. Stock mechanics and the final presentation/confessional audit are sufficiently closed. No production implementation or rebalance numbers are accepted yet.
+Status: product/design stage, 2026-09-14. Stock mechanics, presentation/confessional audit, and the quantitative power-budget pass are sufficiently closed. No production implementation or rebalance numbers are accepted yet.
 
-Detailed prayer-by-prayer judgements live in `docs/PRAYER_DESIGN_AUDIT.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
+Detailed prayer-by-prayer judgements live in `docs/PRAYER_DESIGN_AUDIT.md`. Quantitative unlock/craft/opportunity-cost analysis lives in `docs/PRAYER_POWER_BUDGET.md`. Stock behavior remains canonical in `docs/PRAYER_MECHANICS.md`.
 
 ## Product problem
 
 Stock Graveyard Keeper 1.407 answers **“will this sermon succeed?”** reasonably well, but poorly answers **“what will this prayer actually do for me now?”**.
 
-The broader design problem is now also established: a prayer costs technology investment, crafting resources, prayer-quality effort, a church-quality success gate and—most importantly—the week's sermon opportunity. A prayer should therefore be a desirable strategic purchase/choice, not merely contain a non-zero buff.
+The broader design problem is now established quantitatively: a prayer costs technology investment, writing/crafting resources, prayer-quality effort, a success gate and—most importantly—the week's sermon opportunity. A prayer should therefore be a desirable strategic purchase/choice, not merely contain a non-zero buff.
 
 The design target is **temptation parity**: every prayer should present a compelling reason to want it in the stage/niche where it belongs. This does not mean equal numerical power or permanent end-game relevance.
 
@@ -56,39 +56,35 @@ Probe 0.1.6 closes the active-buff question: `BuffIcon.Draw` assigns the icon an
 
 Do not rely on after-use HUD as a substitute for decision-point clarity.
 
-## Rebalance philosophy
+## Quantitative balance findings
 
-A prayer's power budget includes:
+The direct 1.407 power-budget audit changes several earlier qualitative judgements.
 
-- technology/prerequisite depth and tech-point cost;
-- chapter vs book crafting class and Faith/material cost;
-- difficulty of producing bronze/silver/gold inputs;
-- church-quality success requirement;
-- reward/effect magnitude;
-- duration and whether it crosses future sermon weeks;
-- the stage where the effect is useful;
-- the weekly opportunity cost of not using another sermon.
+### Specialists vs Combo is the strongest systemic issue
 
-Bronze should already be credible. Silver/gold should provide meaningful additional value through magnitude, duration, outputs, thresholds or reduced effective weekly opportunity cost.
+Faith and Combo have the same Faith coefficient at equal quality: `.5 / 1 / 1.5`.
 
-Niche prayers may be stronger than the universal option inside their niche. Progression prayers may become obsolete naturally after doing their job.
+Donations and Combo have the same donation coefficient at equal quality: `.5 / 1 / 1.5`.
 
-Prefer making alternatives attractive over nerfing a familiar player-favourable result. Nerfs require a stronger justification than “the meta exists.”
+Donations and Combo are also unlocked together by `Price of faith`. Specialists therefore do not become *better specialists*; they only remain cheaper to craft (Chapter +5 Faith vs Hard Book +7 Faith) and easier to guarantee (q10/20/50 vs Combo q15/30/60).
 
-## Combo as structural reference
+Those are meaningful early gates, but once books and church quality are routine, Combo gains breadth without giving up target-resource effectiveness.
 
-Combo is not automatically “overpowered,” because it pays real costs: it is a book-sermon and has higher church-quality thresholds than Faith/Donations.
+**Preferred direction:** test a specialist premium before nerfing Combo. Combo should remain a strong generalist; Faith should be best at Faith and Donations best at money.
 
-However, it unlocks relatively early in Theology and, after the production gate is solved, combines the principal Faith and donation percentage bonuses in one universally convenient choice. Community discussion repeatedly shows it becoming the default.
+No coefficient is accepted yet. Candidate families must be simulated at representative progression values before selection.
 
-Therefore Combo is a legitimate **Rework candidate** at the choice-structure level.
+### Combat prayers pay a very high full budget
 
-Do not pick a nerf yet. Candidate approaches include:
+Retribution and Protection are two separate Hard-Book prayers unlocked only after a deep Smithing route. Each costs its own Book +7 Faith and its own weekly sermon slot.
 
-- strengthen dedicated Faith/Donation specialization while leaving Combo unchanged;
-- apply a generalist tax so Combo is good at both but best at neither;
-- increase Combo's church-quality gate;
-- make niche prayers sufficiently powerful that choosing them over Combo is exciting rather than self-handicapping.
+Their raw +5 damage/+4 armor are not tiny, but the full proposition is weak enough to justify redesign work: deep unlock, expensive quality, limited sustained-combat demand, and one-dimensional effects that cautious play/consumables can partially replace.
+
+Treat this as a **package-design problem**, not merely “increase +5 to +10.”
+
+### Strong niche prayers are the benchmark
+
+Prosperity, Imagination, high-Gratitude BSS Soul's Repose and Thorough Cleansing demonstrate the desired pattern: a prayer can be narrow or progression-limited and still be exciting because its payoff is large in the relevant window.
 
 ## Broken prayer policy
 
@@ -106,27 +102,38 @@ The prayer creates `buff_sins`, but repeated code/data/FlowCanvas audits found n
 
 **Final classification:** the role is recoverable, the magnitude/algorithm is not. A working Repentance must therefore be an explicit **Balance / Rework** design, not presented as Vanilla Fix.
 
-## Combat prayers — structural rework question
+`15% -> 30%` is now recorded only as the first benchmark: it cleanly doubles the stock chance but may be too modest for a dedicated prayer, finite buff and weekly slot. Candidate quality-scaled families such as `30/45/60%` and `30/50/70%` should be evaluated against actual confessional throughput/rewards before acceptance.
 
-Retribution and Protection are two separate book-sermons unlocked together by Martial Skills. Each individually costs the weekly sermon choice.
+## Requirements as balancing levers
 
-Their stock magnitudes are not trivial (+5 damage and +4 armor) and their 36/72/108-minute durations are much longer than normal consumable buffs. But raw stat size is not the complete value proposition: sustained combat demand is limited and much of the need can be replaced by cautious play or consumables.
+### Church quality
 
-This makes them legitimate **Rework candidates** even without proving their raw values are numerically small.
+Church quality remains the natural universal **sermon delivery/success** gate. Stronger reworked prayers may justifiably require a stronger church.
 
-Future options to compare include consolidating them into a stronger combat package, broadening each into a distinct multi-effect offensive/defensive role, or making quality progression materially deepen the combat package. Do not choose an implementation until available stock parameters and progression impact are inspected.
+### Thematic state requirements
+
+A prayer may also have a thematic requirement where the relationship is obvious and useful rather than decorative.
+
+Prayer for Donations is the strongest candidate because **graveyard quality already creates the donation baseline**. However, directly replacing church-based success with graveyard-based success risks breaking the game's universal sermon grammar and double-scaling the same stat.
+
+Preferred design order:
+
+1. keep church quality as the success gate;
+2. use graveyard quality as a threshold/scaler for the **specialist premium** of Donations;
+3. consider a clear hybrid church + graveyard gate if needed;
+4. reserve graveyard-only sermon success for a later option if the simpler designs fail.
+
+This gives the player an intuitive rule: **the church determines whether you can deliver the sermon; the relevant system determines how much a specialist prayer can exploit its niche.**
+
+Do not add thematic gates to every prayer merely for symmetry.
 
 ## Quality progression
 
+Bronze should already feel worthwhile. Silver/gold should create meaningful additional value through some combination of magnitude, duration, output, thresholds and reduced effective weekly opportunity cost.
+
 Duration-only scaling can be meaningful when it crosses weekly boundaries. For 36/72/108-minute buffs, silver/gold can remain active into later sermon weeks, letting the player choose a different sermon while the old buff persists.
 
-Use this pattern deliberately. Do not automatically add magnitude scaling where duration already creates a strong strategic upgrade; conversely, do not treat duration as sufficient where the real use window makes extra time irrelevant.
-
-## Church/graveyard requirements
-
-Church quality is the natural general sermon-success gate because stock mechanics and UI already support it. Stronger reworked prayers may justify higher church requirements.
-
-Do not use graveyard quality as an arbitrary universal gate. Use it only where the relationship is mechanically/thematically clear and player-facing presentation can explain it.
+Use this deliberately. Where the useful activity is short, additional duration alone is not sufficient reason to pursue higher quality.
 
 ## Preferred Clarity UI
 
@@ -144,8 +151,13 @@ Do **not** call `PrayLogics.CalculatePray` merely to preview results; the previe
 
 ## Current design gate
 
-Do not start broad production code yet.
+The quantitative power-budget pass is complete enough to stop gathering broad mechanics/cost data. No additional game probe or user runtime test is currently justified.
 
-Next build a quantitative prayer power-budget/progression matrix covering unlock depth/cost, crafting class, quality difficulty, church requirements, weekly opportunity cost, effect/duration, progression window and community use. Then design candidate changes prayer-by-prayer.
+Next produce a **candidate rebalanced roster** for the Tier-1 design problems:
 
-The first runtime prototype should be built only after the Clarity model and first accepted rework/fix specification agree on the effective prayer system.
+1. Faith / Donations / Combo specialist-generalist relationship;
+2. Repentance confession-throughput design;
+3. Retribution / Protection combat-package structure;
+4. Shoots and Roots after the known -20% Vanilla Fix.
+
+For each family, compare 2–3 coherent bronze/silver/gold options at representative progression states and select a preferred design hypothesis. Only after that should the first integrated runtime prototype be implemented.
