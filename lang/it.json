@@ -10,11 +10,11 @@
   "forecast.reward": "Ricompensa: {0}",
   "buff.sword": "+{0:0.##} danni · {1:0} min",
   "buff.shield": "+{0:0.##} armatura · {1:0} min",
-  "buff.skull": "Asino: i cadaveri possono essere migliori di {0:0.##} livello · {1:0} min",
+  "buff.skull": "L’asino può portare un cadavere fino a {0:0.##} livello di qualità superiore (skull) · {1:0} min",
   "buff.pen": "Qualità di scrittura +{0:0.##} · {1:0} min",
   "buff.star": "Qualità delle creazioni interessate +{0:0.##} · {1:0} min",
   "buff.plant_inactive": "Crescita: effetto non funzionante in vanilla 1.407 · bonus {0:0} min",
   "buff.sins_unverified": "Effetto speciale non trovato in vanilla 1.407 · bonus {0:0} min",
-  "buff.gratitude": "+10% dalla cura delle anime · {0:0} min",
+  "buff.gratitude": "+10% (gratitude_points) dalla cura delle anime · {0:0} min",
   "buff.sin_shard": "×2 con cura dell’anima riuscita · {0:0} min"
 }
