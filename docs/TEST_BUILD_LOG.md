@@ -2,7 +2,7 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.1 — resolver-fix candidate
+## PrayerClarity 0.1.1 — runtime result: forecast path verified, presentation not accepted
 
 - Type: narrow follow-up production-architecture candidate; **Clarity only**, with no intended prayer-mechanics or balance changes.
 - Purpose: prove that the 0.1.0 pulpit forecast architecture works once the reflection resolver correctly closes the game's generic `GameBalance.GetData*<T>(string)` seam.
@@ -14,9 +14,10 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Workflow artifact ID: `10355544046` (`PrayerClarity-0.1.1-ci-bfa437a729cedebdad8c787fd663edfa5ed51630`).
 - Handoff filename: `PrayerClarity-0.1.1-ci.dll`.
 - Handoff DLL SHA-256: `f86dc5710b79c4f7db081f97a634f59ab25831ba964d856e8999d67006228987`.
-- Change from 0.1.0: `R.BalanceData` now resolves a one-string-parameter balance getter against the expected result type; it uses a compatible closed overload when present, otherwise binds the verified one-generic-argument method definition with `MakeGenericMethod(expectedType)` before invocation. Callers explicitly request `PrayEventDefinition` or `BuffDefinition`.
-- Requested user test: replace only the PrayerClarity production DLL with 0.1.1, keep the existing Test Harness, open the pulpit and select one ordinary/faith/combo prayer. Confirm that new forecast lines now appear below the vanilla `Church quality / Sermon requires / Success chance` block and return a screenshot plus log if an error remains.
-- Status: **ready for runtime verification; not accepted**.
+- Change from 0.1.0: `R.BalanceData` resolves a one-string-parameter balance getter against the expected result type; it uses a compatible closed overload when present, otherwise binds the verified one-generic-argument method definition with `MakeGenericMethod(expectedType)` before invocation. Callers explicitly request `PrayEventDefinition` or `BuffDefinition`.
+- Runtime evidence, 2026-09-14: forecast output now renders successfully in the live 1.407 pulpit UI and updates while the Test Harness switches prayer families and qualities. The supplied runtime log contains no recurring `PrayerClarity forecast failed` error for 0.1.1 and confirms synthetic selection across ordinary, Faith, Donations, Repose, Excellence and Roots examples without save/inventory mutation.
+- UX result: current append-only presentation is **not accepted**. Vanilla `Church quality / Sermon requires / Success chance` remains useful, but `Success | Failure` on one line is visually poor and separates probability from its corresponding outcome. Next presentation candidate should keep the first two vanilla lines, integrate probability directly into separate success/failure rows, and continue toward icon-first resource presentation.
+- Status: **forecast/runtime seam verified; superseded for UX iteration, not accepted for stable**.
 
 ## PrayerClarity 0.1.0 — runtime result: superseded
 
