@@ -153,6 +153,37 @@ Prefer concrete values, short dependency explanations and visual hierarchy over 
 
 Use one mod-owned semantic model for all prayer presentation surfaces so technology text, item tooltip, pulpit forecast, active-buff presentation and effective configured mechanics cannot contradict each other.
 
+## Localization / language support
+
+PrayerClarity is intended to be universal across the languages officially supported by Graveyard Keeper, not an English/Russian-only mod.
+
+Every PrayerClarity-owned player-facing string must ship in the same 11 interface languages as the base game:
+
+- English (`en`);
+- French (`fr`);
+- German (`de`);
+- Simplified Chinese (`zh-cn` / normalized `zh_cn`);
+- Spanish — Spain (`es`);
+- Portuguese — Brazil (`pt-br` / normalized `pt_br`);
+- Korean (`ko`);
+- Japanese (`ja`);
+- Russian (`ru`);
+- Italian (`it`);
+- Polish (`pl`).
+
+Localization requirements:
+
+- follow the current in-game language automatically;
+- use the game's current language state rather than OS locale or Steam language when the game exposes the active language;
+- normalize equivalent language-code separators/casing rather than maintaining duplicate translation logic;
+- keep English as the safe fallback for a missing locale or key;
+- reuse vanilla localized terminology/names where practical instead of retranslating game-owned terms;
+- keep dynamic numbers/formulas separate from translatable sentence templates;
+- do not hard-code player-facing prose in Harmony patches or mechanics code;
+- a candidate is not localization-complete if any new player-facing string exists only in English/Russian.
+
+Language switching must not introduce per-frame polling. Resolve/reload localization at an existing language/UI lifecycle boundary or lazily when rendering relevant UI.
+
 ## Runtime and performance constraints
 
 Production should be event-driven and cheap:
