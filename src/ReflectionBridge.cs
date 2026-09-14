@@ -117,15 +117,44 @@ namespace PrayerClarity
             return Float(method.Invoke(expression, new object[] { null, null }));
         }
 
-        internal static object BalanceData(string id, bool allowMissing)
+        internal static object BalanceData(string id, string expectedTypeName, bool allowMissing)
         {
             Type balanceType = GameType("GameBalance");
             object balance = GetStatic(balanceType, "me");
             if (balance == null) throw new InvalidOperationException("GameBalance.me unavailable");
+
+            Type expectedType = GameType(expectedTypeName);
+            if (expectedType == null) throw new MissingMemberException("Expected balance type unavailable: " + expectedTypeName);
+
             string methodName = allowMissing ? "GetDataOrNull" : "GetData";
-            MethodInfo method = Method(balance.GetType(), methodName, false, new[] { typeof(string) });
-            if (method == null) throw new MissingMethodException("GameBalanceBase." + methodName + "(string)");
+            MethodInfo method = ResolveBalanceGetter(balance.GetType(), methodName, expectedType);
+            if (method == null)
+                throw new MissingMethodException("GameBalanceBase." + methodName + "<" + expectedTypeName + ">(string)");
+
             return method.Invoke(balance, new object[] { id });
+        }
+
+        private static MethodInfo ResolveBalanceGetter(Type balanceRuntimeType, string methodName, Type expectedType)
+        {
+            MethodInfo[] candidates = balanceRuntimeType.GetMethods(Inst)
+                .Where(m => m.Name == methodName)
+                .Where(m =>
+                {
+                    ParameterInfo[] p = m.GetParameters();
+                    return p.Length == 1 && p[0].ParameterType == typeof(string);
+                })
+                .ToArray();
+
+            MethodInfo closed = candidates.FirstOrDefault(m =>
+                !m.ContainsGenericParameters && expectedType.IsAssignableFrom(m.ReturnType));
+            if (closed != null) return closed;
+
+            MethodInfo generic = candidates.FirstOrDefault(m =>
+                m.IsGenericMethodDefinition && m.GetGenericArguments().Length == 1);
+            if (generic == null) return null;
+
+            MethodInfo bound = generic.MakeGenericMethod(expectedType);
+            return bound.ContainsGenericParameters ? null : bound;
         }
 
         internal static float GameResGet(object gameRes, string key)
