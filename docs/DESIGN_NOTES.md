@@ -42,6 +42,22 @@ Preview calculations must be side-effect free; never call `PrayLogics.CalculateP
 
 Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
 
+## Localization architecture
+
+PrayerClarity must ship all mod-owned player-facing text for the full 11-language interface set supported by Graveyard Keeper: English, French, German, Simplified Chinese, Spanish (Spain), Portuguese (Brazil), Korean, Japanese, Russian, Italian and Polish.
+
+Implementation direction:
+
+- read the active game language from the game's own language state (`GameSettings._cur_lng` is the established current seam in the existing GK mod ecosystem);
+- normalize casing and `-`/`_` separators so variants such as `pt-BR`/`pt_BR` and `zh-CN`/`zh_CN` resolve to one locale;
+- use compact mod-owned key/value localization resources with English fallback;
+- keep dynamic values out of translated source strings except as explicit placeholders;
+- reuse vanilla localized prayer names, resources and game terminology where practical rather than maintaining duplicate translations of game-owned text;
+- refresh on an existing language/UI lifecycle boundary or lazily during relevant UI redraw, not through polling;
+- missing locale/key must fail visibly and safely to English rather than showing a blank or corrupting UI.
+
+The first Clarity prototype is localization-complete only when every new visible phrase used by that prototype exists in all 11 language resources. Translation quality can be refined later without changing mechanics, but unsupported-language placeholders are not an acceptable release state.
+
 ## Revised leading Rebalanced roster
 
 These remain design hypotheses pending runtime acceptance:
@@ -119,13 +135,25 @@ If merge is implemented:
 
 Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
+The next implementation slice is intentionally **Clarity-first**: it must not change prayer mechanics. Its purpose is to validate whether the pulpit can communicate verified prayer outcomes clearly enough at the actual decision point.
+
+Before writing that slice, the required cross-cutting contracts are now fixed:
+
+- one pure semantic/forecast model;
+- side-effect-free preview calculations;
+- pulpit redraw as the first UI boundary;
+- full 11-language localization with English fallback;
+- no hard-coded player-facing prose in patch code;
+- no polling or broad UI scans.
+
 Next:
 
-1. inspect exact UI lifecycle/Harmony targets for the shared semantic model;
-2. inspect only the narrow gameplay hooks needed for Roots, Repentance, Repose, Combat and quality-magnitude changes;
-3. verify save-safe combat alias/hide behavior;
-4. open a `dev/*` branch;
-5. implement the smallest coherent integrated prototype;
-6. build one numbered candidate when it is ready for an actual in-game acceptance test.
+1. open a `dev/*` branch from the current research baseline;
+2. scaffold the smallest production plugin and localization layer;
+3. implement the shared semantic/forecast model only for mechanics already directly evidenced;
+4. render a concise localized Clarity block on the pulpit selection surface;
+5. keep Combat, Roots, Repose, Repentance and other not-yet-closed rework hooks out of this first Clarity-only prototype;
+6. run hosted CI only when the coherent candidate reaches a compile/handoff boundary;
+7. build one numbered candidate when it is ready for an actual in-game acceptance test.
 
 No user runtime action is currently required.
