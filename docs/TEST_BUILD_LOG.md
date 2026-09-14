@@ -2,6 +2,25 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity 0.1.4 — vertical context/result pulpit candidate
+
+- Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
+- Purpose: replace the rejected 0.1.3 fixed-column/multi-widget layout with a single native-label vertical information block.
+- Frozen candidate ref: `candidate/0.1.4`.
+- Exact build source SHA: `cacdb1a544294c3e3601d2ee9022a137573963c7`.
+- GitHub Actions run: `34883623571`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10363439062` (`PrayerClarity-0.1.4-ci-cacdb1a544294c3e3601d2ee9022a137573963c7`).
+- Handoff filename: `PrayerClarity-0.1.4-ci.dll`.
+- Handoff DLL SHA-256: `bb0d6dfe80de07303c24756d0e3b21c0d9b522e517de8f7750a48556cf94eb07`.
+- Presentation change: reuse the existing vanilla `l_total_values` UILabel rather than creating a parallel UI hierarchy. The label is left-aligned and switched to NGUI `ResizeHeight` while the forecast is active, preserving its native panel/layer/font/symbol table and restoring original presentation when the forecast is removed.
+- Context block: preserves vanilla `Church quality` and `Sermon requires`, adds live `graveyard` zone quality via `WorldZone.GetZoneByID("graveyard", false).GetTotalQuality()`.
+- Result block: separate guaranteed Faith and donation lines, then separate success-only Faith/donation additions. Special prayer effect is a separate section.
+- Dependency note: subtle final note states that base Faith depends on church quality and donations on graveyard quality; the Souls-prayer variant also names Soul Gratitude.
+- Icon scope: 0.1.4 intentionally uses only already-native inline Faith/money presentation. The unused custom special-icon widget path from 0.1.3 was removed until the vertical geometry is accepted.
+- Requested user test: replace 0.1.3 with this DLL, keep Test Harness 0.1.0, and inspect ordinary/Donations or Combo plus one long special-effect prayer. Verify whether the vertical block stays inside the pulpit, keeps stable readable font size, shows current graveyard quality, and whether the expanded height collides with the prayer slot/button. Also verify the dependency note remains visually secondary but readable.
+- Status: **ready for runtime UX verification; not accepted**.
+
 ## PrayerClarity 0.1.3 — runtime result: fixed-column layout rejected
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
