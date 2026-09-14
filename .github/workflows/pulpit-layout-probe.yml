@@ -1,13 +1,10 @@
 name: Build PrayerClarity pulpit layout probe
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'candidate/pulpit-layout-probe-*'
-    paths:
-      - 'PrayerClarity.PulpitLayoutProbe.csproj'
-      - 'src/PrayerClarityPulpitLayoutProbe.cs'
-      - '.github/workflows/pulpit-layout-probe.yml'
 
 permissions:
   contents: read
