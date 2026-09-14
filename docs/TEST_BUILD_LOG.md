@@ -2,22 +2,19 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.3 — aligned pulpit presentation candidate
+## PrayerClarity 0.1.3 — runtime result: fixed-column layout rejected
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
 - Purpose: validate the 0.1.2 information model with a less dense, fixed-column pulpit layout and stable font sizing.
-- Source branch: `dev/clarity-pulpit-v0.1`.
 - Frozen candidate ref: `candidate/0.1.3`.
 - Exact build source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
 - GitHub Actions run: `34877867872`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
-- Workflow artifact ID: `10360339790` (`PrayerClarity-0.1.3-ci-dbbb6d26b2b87ee46819984e6ae50c60b44328e0`).
-- Handoff filename: `PrayerClarity-0.1.3-ci.dll`.
+- Workflow artifact ID: `10360339790`.
 - Handoff DLL SHA-256: `e24b93a6e70c69f6c440da08d7f2bdf91c9d6bafc2a979cd6307d0ae7092066c`.
-- Presentation change: replace the single forecast UILabel with separate labels for vanilla context, row labels, Faith, money and the special effect. Repeated resources use fixed columns; special-effect text uses height growth rather than shrinking the whole forecast.
-- Icon policy in this candidate: preserve native `(faith)` and `Trading.FormatMoney` rendering; for special buffs/rewards, resolve the verified native icon name lazily and cache the resulting sprite for the session, with text-only fallback if no useful sprite resolves.
-- Requested runtime test: keep Test Harness 0.1.0, replace only the PrayerClarity production prototype DLL, then inspect Ordinary, Combo/Donations, Retribution and Thorough Cleansing (plus Repose if convenient). Verify fixed resource alignment, readable unchanged font size, separation between context/results, absence of overlap with prayer slot/buttons, and whether native special-effect icons resolve cleanly.
-- Status: **ready for runtime UX verification; not accepted**.
+- Runtime evidence, 2026-09-14: PrayerClarity 0.1.3 and Test Harness 0.1.0 loaded successfully; synthetic prayer selection continued to work and no PrayerClarity forecast exception was observed. The rendered multi-label layout visibly drifted outside the pulpit window.
+- UX result: the fixed-column/multi-widget approach is **rejected**. It introduced brittle geometry without improving clarity enough to justify the extra UI hierarchy. The underlying `guaranteed + success bonus + special effect` information model remains accepted.
+- Next narrow candidate: reuse the existing vanilla pulpit UILabel instead of creating a parallel widget hierarchy; present a spacious vertical `context -> result -> effect -> dependency note` block, add live graveyard quality, and use `ResizeHeight` rather than shrinking text.
+- Status: **superseded for presentation; information model retained**.
 
 ## PrayerClarity 0.1.2 — runtime result: information model retained, single-label layout rejected
 
