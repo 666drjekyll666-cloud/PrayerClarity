@@ -4,7 +4,7 @@
     <LangVersion>7.3</LangVersion>
     <AssemblyName>PrayerClarity.AuditProbe</AssemblyName>
     <RootNamespace>PrayerClarityResearch</RootNamespace>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -15,7 +15,7 @@
     <RestoreAdditionalProjectSources>https://api.nuget.org/v3/index.json;https://nuget.bepinex.dev/v3/index.json</RestoreAdditionalProjectSources>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src/PrayerClarityConsumerProbe.cs" />
+    <Compile Include="src/PrayerClarityBridgeProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
