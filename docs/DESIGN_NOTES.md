@@ -20,10 +20,10 @@ The design target is therefore not “more tooltip text”. It is a compact whit
 | Faith notation | fixed Faith output is flat additive; `k_faith` is separate proportional bonus | `xN`-style quantity + percentage wording | `xN` can be read as multiplication | confirmed UX finding |
 | Donations | base donation pool uses graveyard quality; prayer bonus is separate | selection panel foregrounds church quality and chance; no current donation forecast | player may attribute money to church quality or per-person coin animations | confirmed UX finding |
 | Souls prayer | Faith baseline uses `church quality + Soul Gratitude` | description says more Gratitude gives more Faith, but no current result | dependency known, magnitude unpredictable | confirmed UX finding |
-| Passive magnitude | examples: +5 damage, +4 armor, +1 body_max, +0.7/+0.2 quality inputs | several descriptions are flavour-only | player cannot tell what buff actually does | confirmed UX finding |
+| Passive magnitude | examples: +5 damage, +4 armor, +0.7/+0.2 quality inputs; `buff_skull` exposes `body_max=1` but exact live corpse consumer remains to verify | several descriptions are flavour-only | player cannot tell what buff actually does | confirmed UX finding; Repose wording still gated on re-check |
 | Passive duration | prayer `dur_parameter` overrides default buff duration; common tiers 18/36/54 or 36/72/108 minutes | prayer descriptions omit duration | higher quality can be mistaken for stronger effect rather than longer effect | confirmed UX finding |
 | Post-sermon totals | base and bonus are separate internally and on result report | report shows separate base/bonus rows | player must mentally combine components | supporting UX issue |
-| Prayer of Repentance | timed `buff_sins` is attached; no consumer found in code, loaded graphs, or balance data | flavour description only | player can assume a meaningful special effect where none is detectable | mechanics defect / clarity risk; wording must be cautious |
+| Prayer of Repentance | timed `buff_sins` is attached; no consumer found in code, loaded graphs, or balance data; external wiki/player evidence also reports no apparent effect | flavour description only | player can assume a meaningful special effect where none is detectable | mechanics defect / clarity risk; wording must be cautious |
 
 ## Information the player should be able to obtain before committing
 
@@ -134,7 +134,12 @@ Concept: dedicated compact panel opened from prayer selection, containing full b
 
 ## Recommended prototype direction
 
-Prototype **option B**, but keep it narrow:
+Option B remains the preferred prototype direction, but the external cross-check exposed two special-effect paths that should be resolved before a **complete prayer-by-prayer** white-box prototype is treated as mechanically authoritative:
+
+- Prayer for Shoots and Roots: verify that active player `buff_plant` reaches the `WGOpar("buff_plant")` growth-time consumers that exist in current 1.407 balance data;
+- Prayer for Repose: trace the current corpse-generation consumer of `buff_skull`/`body_max` rather than relying only on external tier descriptions or save-migration code.
+
+After those narrow checks, prototype option B with these constraints:
 
 - preserve vanilla church-quality / requirement / success-chance lines;
 - add only prayer-specific/current-result information that vanilla omits;
@@ -172,7 +177,9 @@ Current evidence is unusual:
 
 - the prayer attaches `buff_sins`;
 - the buff exists and has duration;
-- no gameplay consumer was found across code literals, 180 loaded FlowCanvas graphs, or balance references beyond the buff definition and the three prayer crafts.
+- no gameplay consumer was found across code literals, 180 loaded FlowCanvas graphs, or balance references beyond the buff definition and the three prayer crafts;
+- the official community wiki still labels the effect broken/no apparent effect, and player testing/discussion through 2026 has not established a working confessional modifier;
+- a generic 1.301 patch note said `The prayers are fixed`, but does not identify Repentance and is outweighed for current behavior by the direct 1.407 runtime audit.
 
 Do not invent an effect.
 
@@ -183,6 +190,12 @@ Design possibilities, pending acceptance:
 3. treat this as a separate vanilla bug finding and keep PrayerClarity informational rather than repairing balance/mechanics.
 
 Preferred principle: **clarity mod first, rebalance/fix mod only by separate decision**.
+
+## Soul Contentment rounding
+
+External wiki evidence confirms the intended/current player-facing magnitude: `+10% Soul Gratitude` while Spiritual Blessing is active. The direct 1.407 graph also reads `increase_gp_gain` and rounds before adding Gratitude, but the precise connection order was not fully captured.
+
+For UI design this is not a blocker if the mod says `+10% Soul Gratitude`. It becomes relevant only if PrayerClarity promises an exact integer forecast for the next released soul; then the production preview must reproduce the game's exact rounding order rather than assume one.
 
 ## Prototype acceptance questions
 
@@ -198,6 +211,11 @@ Before any production merge, a prototype should answer:
 
 ## Current decision
 
-Research now supports moving to a **narrow UI prototype**, but not directly to a release mod.
+Research strongly supports **option B** as the UX direction, but the broad external cross-check changed the immediate technical order.
 
-Next technical step should be a presentation/layout prototype and inspection of the exact prayer-selection UI hierarchy/lifecycle needed to attach the dynamic block. No additional broad mechanics probe is justified at this stage.
+Before production/UI implementation, perform only two narrow mechanics re-checks:
+
+1. `buff_plant` end-to-end propagation for Prayer for Shoots and Roots;
+2. live `buff_skull` corpse-tier consumer for Prayer for Repose.
+
+The Repentance anomaly is sufficiently characterized for design purposes; Soul Contentment's +10% magnitude is sufficiently characterized unless exact next-soul integer forecasting becomes a requirement. No additional broad prayer probe is justified.
