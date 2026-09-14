@@ -24,8 +24,8 @@ The free starter `b_empty` Ordinary Prayer is **not** part of the Faith-speciali
 | Excellence `b_star` | **+0.2 / +0.5 / +1.0** linked-craft quality input, 18/36/54 min |
 | Prosperity `b_village` | stock 1/2/3 Blessings |
 | BSS Soul's Repose `b_souls` | stock mechanics; dynamic Faith forecast |
-| Soul Contentment | stock initially |
-| Thorough Cleansing | stock x2 Sin Shards |
+| Soul Contentment | stock initially; +20/+40/+60% is a new unmodeled candidate |
+| Thorough Cleansing | stock x2 initially; x2/x3/x4 is a new unmodeled candidate |
 
 These values are a **first integrated test roster**, not accepted balance.
 
@@ -130,6 +130,8 @@ Equivalent implementation: on each delivery, 50% force the best prayer-eligible 
 
 This satisfies the design requirement that silver sit genuinely between bronze and gold instead of being almost-gold in every progression state.
 
+For future Rebalanced presentation, a player-facing ladder such as `possible / very likely / guaranteed` is promising, but Clarity-only stock text must not use it before the mechanics actually change. Stock 1.407 exposes `body_max +1` at all prayer qualities; only duration differs.
+
 ## Imagination — global quality/cap check
 
 Stock Imagination adds `craft_q=+0.7` at every prayer quality. Writing recipes consume the same additive quality-score system as linked writing perks; current direct data includes Writer +0.3, Playwright/Good Writer +0.5 and Industriousness +0.2. The prayer buff is added to the same `value_perks` bucket used by those perks.
@@ -174,9 +176,18 @@ A +1.0 score does **not** mean every craft universally becomes gold. It means th
 - **Soul Contentment:** stock initially; explain +10% and duration.
 - **Thorough Cleansing:** stock x2 Sin Shards; benchmark for a strong narrow specialist.
 
+### New BSS balance hypotheses from UX review
+
+The following are **not promoted to the leading roster yet**. They arose because the current stock special effects make higher-quality copies feel weak when quality mostly buys duration:
+
+- **Soul Contentment:** candidate **+20 / +40 / +60% Soul Gratitude** from soul healing, instead of stock +10% at every quality.
+- **Thorough Cleansing:** candidate **x2 / x3 / x4 Sin Shards** from successful soul healing, instead of stock x2 at every quality.
+
+These are plausible specialist curves, but they interact directly with the Better Save Soul resource economy. Before implementation, compare their total resource output over the 36/72/108 minute windows against actual soul-healing cadence and the increased BSS progression costs. The current Clarity prototype must continue to report stock +10% / x2 until a Rebalanced profile explicitly changes those mechanics.
+
 ## Candidate status and next gate
 
-The first integrated non-production Rebalanced specification is now coherent enough for implementation-target discovery:
+The first integrated non-production Rebalanced specification is coherent enough for implementation-target discovery, with two new BSS candidates still awaiting budget modeling:
 
 - Ordinary stock;
 - Faith/Donations +100/+200/+300% target resource;
@@ -187,6 +198,7 @@ The first integrated non-production Rebalanced specification is now coherent eno
 - Repose: vanilla / midpoint-to-certainty / 100% best eligible tier;
 - Imagination +0.5/+0.7/+1.0;
 - Excellence +0.2/+0.5/+1.0;
-- Prosperity/BSS reference prayers stock initially.
+- Prosperity/BSS reference prayers stock initially;
+- Soul Contentment +20/+40/+60% and Thorough Cleansing x2/x3/x4 remain unmodeled follow-up hypotheses.
 
-These remain **design hypotheses pending runtime/user acceptance**. Next inspect only exact UI/lifecycle/Harmony targets needed for the shared Clarity semantic model and these narrow gameplay changes, then open a `dev/*` branch and build the first integrated candidate. No further broad mechanics research is justified before that implementation work.
+These remain **design hypotheses pending runtime/user acceptance**. The active implementation gate is still Clarity-only pulpit UX; do not fold these balance changes into the current presentation candidate. After the fixed-window Clarity layout is accepted, resume the narrow implementation-target work for the Rebalanced profile.
