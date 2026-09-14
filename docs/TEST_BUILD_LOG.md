@@ -2,6 +2,23 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity 0.1.3 — aligned pulpit presentation candidate
+
+- Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
+- Purpose: validate the 0.1.2 information model with a less dense, fixed-column pulpit layout and stable font sizing.
+- Source branch: `dev/clarity-pulpit-v0.1`.
+- Frozen candidate ref: `candidate/0.1.3`.
+- Exact build source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
+- GitHub Actions run: `34877867872`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10360339790` (`PrayerClarity-0.1.3-ci-dbbb6d26b2b87ee46819984e6ae50c60b44328e0`).
+- Handoff filename: `PrayerClarity-0.1.3-ci.dll`.
+- Handoff DLL SHA-256: `e24b93a6e70c69f6c440da08d7f2bdf91c9d6bafc2a979cd6307d0ae7092066c`.
+- Presentation change: replace the single forecast UILabel with separate labels for vanilla context, row labels, Faith, money and the special effect. Repeated resources use fixed columns; special-effect text uses height growth rather than shrinking the whole forecast.
+- Icon policy in this candidate: preserve native `(faith)` and `Trading.FormatMoney` rendering; for special buffs/rewards, resolve the verified native icon name lazily and cache the resulting sprite for the session, with text-only fallback if no useful sprite resolves.
+- Requested runtime test: keep Test Harness 0.1.0, replace only the PrayerClarity production prototype DLL, then inspect Ordinary, Combo/Donations, Retribution and Thorough Cleansing (plus Repose if convenient). Verify fixed resource alignment, readable unchanged font size, separation between context/results, absence of overlap with prayer slot/buttons, and whether native special-effect icons resolve cleanly.
+- Status: **ready for runtime UX verification; not accepted**.
+
 ## PrayerClarity 0.1.2 — runtime result: information model retained, single-label layout rejected
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
@@ -41,8 +58,8 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Frozen candidate ref: `candidate/0.1.0`.
 - Exact source SHA: `6321da4ca868998c166a115d77d2d634e372ffde`.
 - GitHub Actions run: `34860993438`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
-- Workflow artifact ID: `10353769580` (`PrayerClarity-0.1.0-ci-6321da4ca868998c166a115d77d2d634e372ffde`).
+- Workflow result: success on `ubuntu-latest`; `net472`, all 11 embedded-locale markers, artifact staging and upload passed.
+- GitHub Actions artifact ID: `10353769580` (`PrayerClarity-0.1.0-ci-6321da4ca868998c166a115d77d2d634e372ffde`).
 - Handoff filename: `PrayerClarity-0.1.0-ci.dll`.
 - Handoff DLL SHA-256: `dc47501e5a9d444309954f4b2a58c230f2bc1c8a725c1163eb43944576b6c949`.
 - Supported target identity: Graveyard Keeper 1.407 Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`; other MVIDs fail closed before patching.
