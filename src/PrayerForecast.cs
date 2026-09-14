@@ -21,7 +21,7 @@ namespace PrayerClarity
 
             Localization.UseCurrentGameLanguage();
 
-            object prayEvent = R.BalanceData(eventId, false);
+            object prayEvent = R.BalanceData(eventId, "PrayEventDefinition", false);
             int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
             float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
 
@@ -89,7 +89,7 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(buffId)) return null;
 
-            object buff = R.BalanceData(buffId, true);
+            object buff = R.BalanceData(buffId, "BuffDefinition", true);
             object res = buff == null ? null : R.Get(buff, "res");
 
             switch (buffId)
