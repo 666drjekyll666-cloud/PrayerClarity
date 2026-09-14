@@ -31,9 +31,9 @@ Do not assume `prayer`, `sermon`, localized names, item IDs, `PrayCraft`, or `Pr
 
 Use this sequence unless new evidence justifies a narrower detour:
 
-`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> design/role audit -> quantitative power-budget audit -> narrow prototype -> runtime test -> accept`
+`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> design/role audit -> quantitative power-budget audit -> candidate roster/spec -> narrow prototype -> runtime test -> accept`
 
-Do not write broad production behavior before the relevant mechanic, UI surface, design rule, and acceptance condition are established.
+Do not write broad production behavior before the relevant mechanic, UI surface, design rule, candidate specification and acceptance condition are established.
 
 ## Evidence labels
 
@@ -133,6 +133,8 @@ Compare unlock timing/cost, chapter vs book recipe class, quality difficulty, al
 Prefer making alternatives attractive over reducing familiar player rewards. Nerfs require stronger justification than existence of a meta choice.
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
+`docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
+`docs/PRAYER_REBALANCE_OPTIONS.md` contains candidate rebalanced rules only; nothing there is accepted until explicitly narrowed, implemented and runtime-tested as required.
 
 ## Player-facing clarity target
 
@@ -169,6 +171,8 @@ Long-lived findings belong primarily in:
 - `docs/PRAYER_MECHANICS.md` — stock 1.407 mechanics;
 - `docs/PLAYER_UX_RESEARCH.md` — presentation/player evidence;
 - `docs/PRAYER_DESIGN_AUDIT.md` — role/balance/fix judgements;
+- `docs/PRAYER_POWER_BUDGET.md` — quantitative full-cost/progression analysis;
+- `docs/PRAYER_REBALANCE_OPTIONS.md` — candidate rebalanced roster options, explicitly non-accepted until narrowed/tested;
 - `docs/DESIGN_NOTES.md` — product/UI architecture and accepted design direction;
 - `docs/TEST_BUILD_LOG.md` — only when distributable/testable production candidates exist.
 
