@@ -19,8 +19,11 @@ namespace PrayerClarity
             internal int Height;
         }
 
+        private static readonly Dictionary<string, Sprite> SpecialSpriteCache =
+            new Dictionary<string, Sprite>(StringComparer.Ordinal);
+        private static MethodInfo _getSpriteMethod;
+
         private static object _template;
-        private static object _gui;
         private static PrayerForecast.Result _forecast;
 
         private static Transform _window;
@@ -39,6 +42,7 @@ namespace PrayerClarity
         private static Vector3 _closeButtonPosition;
         private static Vector3 _closeButton2Position;
 
+        private static Transform _forecastRoot;
         private static object _resultHeaderLabel;
         private static object _resultRowsLabel;
         private static object _effectLabel;
@@ -50,7 +54,6 @@ namespace PrayerClarity
         {
             if (template == null || gui == null || forecast == null) return;
             _template = template;
-            _gui = gui;
             _forecast = forecast;
 
             Capture(template);
@@ -144,6 +147,12 @@ namespace PrayerClarity
             if (_container == null) return;
             Transform root = _container.Find("PrayerClarity.PulpitForecast");
             if (root == null) return;
+
+            if (!ReferenceEquals(_forecastRoot, root))
+            {
+                _forecastRoot = root;
+                _resultHeaderLabel = null;
+            }
 
             _resultRowsLabel = GetLabel(root.Find("PrayerClarity.Result"), template.GetType());
             _effectLabel = GetLabel(root.Find("PrayerClarity.Effect"), template.GetType());
@@ -442,14 +451,27 @@ namespace PrayerClarity
         private static Sprite ResolveSpriteDirect(string iconName)
         {
             if (string.IsNullOrEmpty(iconName)) return null;
+
+            Sprite cached;
+            if (SpecialSpriteCache.TryGetValue(iconName, out cached)) return cached;
+
             try
             {
-                Type type = R.GameType("EasySpritesCollection");
-                MethodInfo getSprite = R.Method(type, "GetSprite", true,
-                    new[] { typeof(string), typeof(bool), typeof(string) });
-                return getSprite == null
+                if (_getSpriteMethod == null)
+                {
+                    Type type = R.GameType("EasySpritesCollection");
+                    _getSpriteMethod = R.Method(type, "GetSprite", true,
+                        new[] { typeof(string), typeof(bool), typeof(string) });
+                }
+
+                Sprite sprite = _getSpriteMethod == null
                     ? null
-                    : getSprite.Invoke(null, new object[] { iconName, false, string.Empty }) as Sprite;
+                    : _getSpriteMethod.Invoke(null, new object[] { iconName, false, string.Empty }) as Sprite;
+
+                // Cache only a successful resolve. If the game's atlas is not ready yet,
+                // a later relevant UI redraw gets one more chance; there is no frame loop.
+                if (sprite != null) SpecialSpriteCache[iconName] = sprite;
+                return sprite;
             }
             catch { return null; }
         }
