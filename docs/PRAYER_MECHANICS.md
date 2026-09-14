@@ -1,8 +1,8 @@
 # Prayer Mechanics — Graveyard Keeper 1.407
 
-Status: research evidence map, updated 2026-09-14 after read-only probes 0.1.0–0.1.3.
+Status: mechanics evidence map, updated 2026-09-14 after read-only probes 0.1.0–0.1.5.
 
-This document records verified mechanics before any PrayerClarity production implementation. `prayer item`, `PrayCraft`, `PrayEventDefinition`, localized prayer name, buff, and sermon flow remain distinct concepts unless direct evidence maps them.
+This document records verified mechanics before PrayerClarity production implementation. `prayer item`, `PrayCraft`, `PrayEventDefinition`, localized prayer name, buff, sermon FlowCanvas, and downstream consumers remain distinct layers unless direct evidence maps them.
 
 ## Evidence basis
 
@@ -14,25 +14,23 @@ Primary evidence comes from the user's installed Graveyard Keeper 1.407 runtime:
 - runtime `GameBalance` definitions;
 - current Russian localization;
 - serialized/loaded FlowCanvas graphs;
-- narrow read-only reflection probes 0.1.0–0.1.3.
+- narrow read-only probes 0.1.0–0.1.5.
 
 The probes contain no Harmony patches, do not execute FlowCanvas graphs, and do not intentionally mutate game/save state. Proprietary assemblies, full decompilations, and raw game assets are not committed.
 
-Community pages and wikis are UX/discovery evidence, not authority for mechanics when direct 1.407 evidence exists.
+Community pages and wikis are cross-check / UX evidence, not authority for mechanics when direct 1.407 evidence exists.
 
-## Internal model
+## Internal sermon model
 
-A sermon spans several layers:
+A sermon spans:
 
 1. prayer item, e.g. `b_faith:1`;
 2. `CraftDefinition` with `craft_type = PrayCraft`;
-3. craft `linked_sub_id` -> `PrayEventDefinition`;
+3. `linked_sub_id` -> `PrayEventDefinition`;
 4. event expressions for base `people`, `faith`, `money`;
 5. prayer fields such as `needs_quality`, `k_faith`, `k_money`, fixed outputs, optional `buff`, `dur_parameter`;
 6. `FlowCanvas/pray` distribution/animation graph;
 7. downstream visitor, item-drop, and buff consumers.
-
-Do not collapse these layers into one notion of “prayer”.
 
 ## Core prayer calculation
 
@@ -63,8 +61,8 @@ For `needs_quality == 0`, success is 100%.
 
 On success:
 
-- fixed `faith` output -> `faith_bonus += value`;
-- fixed `money` output -> `money_bonus += value / 100`;
+- fixed Faith output -> `faith_bonus += value`;
+- fixed money output -> `money_bonus += value / 100`;
 - `k_faith` -> `faith_bonus += RoundToInt(base_faith * k_faith)`;
 - `k_money` -> `money_bonus += Round(base_money * k_money * 100) / 100`;
 - non-Faith/non-money outputs remain in `_sermon_drops`.
@@ -76,13 +74,7 @@ On failure:
 
 Base event values remain intact.
 
-`Flow_CalculatePrayEvent` exposes downstream:
-
-- `people`;
-- base `faith`;
-- `faith_bonus` separately;
-- `money = base_money + money_bonus`;
-- `success`.
+`Flow_CalculatePrayEvent` exposes downstream `people`, base `faith`, separate `faith_bonus`, combined `money = base_money + money_bonus`, and `success`.
 
 ## Final sermon payout wiring
 
@@ -90,34 +82,31 @@ Probe 0.1.2 captured the stock `FlowCanvas/pray` graph.
 
 ### Faith
 
-Base Faith is sent to `Flow_SpreadFaithIncome` before the success/failure reaction stage. A second `Flow_SpreadFaithIncome` later receives `faith_bonus`.
+Base Faith is sent to `Flow_SpreadFaithIncome` before the success/failure reaction stage. A second `Flow_SpreadFaithIncome` receives `faith_bonus` later.
 
 Therefore:
 
-- successful sermon: `Faith delivered = base_faith + faith_bonus`;
-- failed sermon: `Faith delivered = base_faith`.
+- success: `Faith delivered = base_faith + faith_bonus`;
+- failure: `Faith delivered = base_faith`.
 
-Failure does **not** remove base Faith.
+Failure does not remove base Faith.
 
 ### Money
 
-The graph passes combined money to `Flow_SpreadMoneyIncome`. Its `chance` input is:
+The graph passes combined money to `Flow_SpreadMoneyIncome`. Its `chance` input is `1.0` on success and `0.5` on failure.
 
-- success -> `1.0`;
-- failure -> `0.5`.
+However, `SpreadMoneyIncome` tests visitors with the integer overload `UnityEngine.Random.Range(0,1)`. That overload always returns `0`, so both `0 < 1.0` and `0 < 0.5` are true. In stock 1.407 all visitors are therefore selected in both branches.
 
-However, `SpreadMoneyIncome` selects visitors using the integer overload `UnityEngine.Random.Range(0,1)`. That overload can only return `0`, so both `0 < 1.0` and `0 < 0.5` are always true. In stock 1.407 all visitors are selected in both branches.
+Actual result:
 
-Therefore the actual result is:
+- success: `money delivered = base_money + money_bonus`;
+- failure: `money delivered = base_money`.
 
-- successful sermon: `money delivered = base_money + money_bonus`;
-- failed sermon: `money delivered = base_money`.
-
-The graph appears structured as though failure should reduce donation participation, but the current helper implementation does not do so. Record this as an implementation mismatch, not as asserted developer intent.
+This is an implementation mismatch: the graph looks structured to reduce donation participation on failure, but the current helper does not do so.
 
 ### Distribution details
 
-`SpreadFaithIncome(prayers, faith)` assigns each Faith unit independently to a random valid visitor by incrementing that visitor's `_faith`.
+`SpreadFaithIncome(prayers, faith)` assigns each Faith unit independently to a random valid visitor.
 
 `SpreadMoneyIncome(prayers, money, success_percent)`:
 
@@ -125,7 +114,7 @@ The graph appears structured as though failure should reduce donation participat
 2. gives each selected visitor `floor(money*100/selected_count)/100`;
 3. distributes leftover cents randomly until the requested total is reached.
 
-Visible per-person coin drops are therefore distribution of a total pool, not the formula that creates the pool.
+Visible per-person coin drops are distribution of a total pool, not the formula creating the pool.
 
 ## Verified PrayEventDefinition catalogue
 
@@ -148,13 +137,13 @@ Notation:
 | `pray_for_souls_2` | same | same | `CQ*0.34` |
 | `pray_for_souls_3` | same | same | `CQ*0.34` |
 
-Direct consequences:
+Consequences:
 
 - ordinary base Faith depends on church quality;
 - base donations depend on graveyard quality;
 - Eloquence changes base Faith;
 - Cardinal changes the ordinary donation coefficient;
-- Souls prayer uses current Soul Gratitude in its Faith baseline.
+- Souls prayer adds current Soul Gratitude to the Faith baseline.
 
 Without Eloquence, Souls base Faith is `(CQ + GP)/10` before integer rounding.
 
@@ -168,17 +157,17 @@ Without Eloquence, Souls base Faith is `(CQ + GP)/10` before integer rounding.
 | `b_faith` | Молитва веры | `default_1/2/3` | 10/20/50 | .5/1/1.5 | .2/.2/.2 | fixed Faith + money |
 | `b_money` | Молитва о пожертвованиях | `default_1/2/3` | 10/20/50 | .2/.2/.2 | .5/1/1.5 | fixed Faith + money |
 | `b_faith_money` | Комбо-молитва | `default_1/2/3` | 15/30/60 | .5/1/1.5 | .5/1/1.5 | fixed Faith + money |
-| `b_plant` | Молитва о корнях и побегах | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | `buff_plant`; 36/72/108 min |
-| `b_sins` | Молитва о покаянии | `default_1/2/3` | 10/20/40 | .25/.5/.75 | .1/.1/.1 | `buff_sins`; 18/36/54 min; no consumer found in final audit |
-| `b_skull` | Молитва об упокоении | `default_1/2/3` | 20/40/50 | .1/.1/.1 | .25/.5/.75 | `buff_skull`; 18/36/54 min |
-| `b_sword` | Молитва о возмездии | `default_1/2/3` | 10/20/40 | .25/.25/.25 | .25/.25/.25 | `buff_sword`; 36/72/108 min |
-| `b_shield` | Защитная молитва | `default_1/2/3` | 10/20/40 | .25/.25/.25 | .25/.25/.25 | `buff_shield`; 36/72/108 min |
-| `b_pen` | Молитва воображения | `default_1/2/3` | 10/40/60 | .25/.5/.75 | .1/.1/.1 | `buff_pen`; 18/36/54 min |
-| `b_star` | Молитва о совершенстве | `default_1/2/3` | 10/40/60 | .25/.5/.75 | .1/.1/.1 | `buff_star`; 18/36/54 min |
+| `b_plant` | Молитва о корнях и побегах | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | `buff_plant`; 36/72/108 min; growth-speed wiring mismatch in stock 1.407 |
+| `b_sins` | Молитва о покаянии | `default_1/2/3` | 10/20/40 | .25/.5/.75 | .1/.1/.1 | `buff_sins`; 18/36/54 min; no gameplay consumer found |
+| `b_skull` | Молитва об упокоении | `default_1/2/3` | 20/40/50 | .1/.1/.1 | .25/.5/.75 | `buff_skull`; +1 Donkey maximum corpse tier; 18/36/54 min |
+| `b_sword` | Молитва о возмездии | `default_1/2/3` | 10/20/40 | .25/.25/.25 | .25/.25/.25 | `buff_sword`; +5 damage; 36/72/108 min |
+| `b_shield` | Защитная молитва | `default_1/2/3` | 10/20/40 | .25/.25/.25 | .25/.25/.25 | `buff_shield`; +4 armor; 36/72/108 min |
+| `b_pen` | Молитва воображения | `default_1/2/3` | 10/40/60 | .25/.5/.75 | .1/.1/.1 | `buff_pen`; `craft_q=0.7`; 18/36/54 min |
+| `b_star` | Молитва о совершенстве | `default_1/2/3` | 10/40/60 | .25/.5/.75 | .1/.1/.1 | `buff_star`; `craft_q=0.2`; 18/36/54 min |
 | `b_village` | Молитва о процветании | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | Faith 1/2/3; money 1/2/3 silver; `blessing_commerce` x1/x2/x3 |
 | `b_souls` | Молитва за упокой душ | `pray_for_souls_1/2/3` | 15/30/60 | .5/1/1.5 | .25/.25/.25 | Souls-specific baseline |
-| `b_grat_points_incr` | Молитва о довольстве душ | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | `buff_gp_increase`; 36/72/108 min |
-| `b_sin_shard` | Молитва за тщательное очищение душ | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | `buff_sin_shard`; 36/72/108 min |
+| `b_grat_points_incr` | Молитва о довольстве душ | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | `increase_gp_gain=1`; +10% before rounding; 36/72/108 min |
+| `b_sin_shard` | Молитва за тщательное очищение душ | `default_1/2/3` | 10/20/30 | .25/.25/.25 | .25/.25/.25 | doubles Sin Shards; 36/72/108 min |
 
 Better Save Soul technology `soul_church_additions` directly unlocks `b_souls`, `b_grat_points_incr`, and `b_sin_shard`.
 
@@ -192,7 +181,7 @@ Better Save Soul technology `soul_church_additions` directly unlocks `b_souls`, 
 
 Faith/money become bonus fields on success. `blessing_commerce` remains in `_sermon_drops` and is handled as a physical sermon drop.
 
-Current RU item name/description identifies it as `Благословение коммерции`, sold to a merchant to raise that merchant's level. Exact merchant-side implementation remains open.
+Current RU item text identifies it as `Благословение коммерции`, sold to a merchant to raise that merchant's level. Exact merchant-side implementation is outside the present prayer-selection UX scope.
 
 ### Unclassified PrayCraft rows
 
@@ -204,17 +193,17 @@ These remain internal/unclassified until unlock/item/UI reachability proves play
 
 | Buff ID | Direct data | Verified meaning/status |
 | --- | --- | --- |
-| `buff_plant` | `buff_plant=1` | inspected growing crafts contain `-0.2*WGOpar("buff_plant")` craft-time term; full affected set not yet enumerated |
-| `buff_sins` | `buff_sins=1` | buff is created by Prayer of Repentance, but final reference audit found no gameplay consumer |
-| `buff_skull` | `body_max=1` | +1 `body_max` while active |
+| `buff_plant` | `buff_plant=1` | intended-looking `-0.2*WGOpar("buff_plant")` growth term exists, but prayer writes the param to the player while the craft expression reads the growing/workbench WGO; no propagation path found |
+| `buff_sins` | `buff_sins=1` | timed buff exists; no gameplay consumer found in final reference audit |
+| `buff_skull` | `body_max=1` | raises live Donkey `Tier max` by exactly 1 while active |
 | `buff_sword` | `add_damage=5` | +5 damage |
 | `buff_shield` | `add_armor=4` | +4 armor |
 | `buff_pen` | `craft_q=0.7` | +0.7 input to linked-buff multi-quality calculation |
 | `buff_star` | `craft_q=0.2` | +0.2 input to linked-buff multi-quality calculation |
 | `buff_sin_shard` | `increase_sin_shard_drop=1` | doubles Sin Shards from soul healing |
-| `buff_gp_increase` | `increase_gp_gain=1` | read by `soul_portal`; current item text states +10%; exact graph connection/rounding remains open |
+| `buff_gp_increase` | `increase_gp_gain=1` | `GP_awarded = RoundToInt(GP_base * 1.1)` |
 
-### `buff_sins` final reference audit
+## Prayer of Repentance (`buff_sins`)
 
 Probe 0.1.3 searched three independent surfaces in the running 1.407 installation:
 
@@ -226,29 +215,75 @@ Results:
 
 - no game-code method contains a `buff_sins` literal consumer;
 - 180 loaded FlowCanvas graphs contained zero `buff_sins` hits;
-- GameBalance hits were only:
-  - the `buff_sins` definition itself;
-  - `pray:b_sins:1` -> `buff_sins`;
-  - `pray:b_sins:2` -> `buff_sins`;
-  - `pray:b_sins:3` -> `buff_sins`.
+- GameBalance hits were only the buff definition and the three `b_sins` prayer crafts.
 
-**Fact:** the prayer produces/attaches a timed `buff_sins`, but no consumer was found in the inspected runtime code, loaded graphs, or balance data.
+**Fact:** the prayer produces/attaches a timed `buff_sins`, but no consumer was found on the inspected runtime surfaces.
 
-**Strong hypothesis:** the special gameplay effect of Prayer of Repentance is inert/unimplemented in stock 1.407. Keep this wording as a hypothesis rather than claiming mathematical impossibility of an unknown dynamic indirection.
+**Strong hypothesis:** the special gameplay effect is inert/unimplemented in stock 1.407. External wiki/community reports independently point in the same direction, but the direct runtime audit is the primary evidence.
+
+## Prayer for Shoots and Roots (`buff_plant`) — confirmed wiring mismatch
+
+The current balance contains many growth/planting craft-time expressions such as:
+
+`1440 * (1 - 0.2*WGOpar("grow_time") - 0.2*WGOpar("buff_plant"))`
+
+and simpler forms such as:
+
+`1080 * (1 - 0.2*WGOpar("buff_plant"))`.
+
+Affected definitions include ordinary garden crops, vineyard crops, refugee-garden planting, berry bushes, apple/tree growth, flowers, and other plant respawn/growth crafts.
+
+Probe 0.1.5 resolved `WGOpar` exactly:
+
+`WGOpar(name) -> SmartExpression._wgo.GetParam(name, 0)`.
+
+CraftComponent evaluates `current_craft.craft_time` with the workbench/growing `WorldGameObject` as the first (`wgo`) argument and the player as the character argument. Therefore the `WGOpar("buff_plant")` term reads the growing/workbench object's parameter.
+
+But prayer buff application adds `BuffDefinition.res` to `MainGame.me.player.data`; for `buff_plant`, that puts `buff_plant=1` on the player. The 0.1.4 scan found no loaded FlowCanvas reference and no separate stock propagation path copying that player parameter onto growing WGOs.
+
+**Facts:**
+
+- the `-20%` craft-time term exists;
+- the prayer buff writes `buff_plant=1` to the player;
+- the term reads `buff_plant` from the growing/workbench WGO;
+- no propagation path was found between those scopes.
+
+**Conclusion for stock 1.407:** the normal prayer path does not feed its `buff_plant` value into the growth-time formula. The advertised/intended-looking special growth-speed effect is therefore effectively inert under the inspected stock wiring. This is a concrete parameter-scope mismatch, not merely a wiki claim.
+
+Do not silently “fix” this in PrayerClarity; changing behavior would be a separate balance/bug-fix product decision.
+
+## Prayer for Repose (`buff_skull`) — live Donkey consumer closed
+
+Prayer buff application adds `body_max=1` to the player's parameters while active.
+
+Probe 0.1.5 captured the complete loaded `npc_donkey` graph. Its live corpse-generation path wires:
+
+- `body_min` + `add_body_min` -> `Flow_DropBody.Tier min`;
+- `body_max` + `add_body_max` -> `Flow_DropBody.Tier max`.
+
+`add_body_min`/`add_body_max` are separate progression/event modifiers. The prayer changes `body_max` itself.
+
+Therefore, while Prayer for Repose is active:
+
+`Donkey Tier max = normal body_max + 1 + add_body_max`
+
+while the minimum tier is unchanged by the prayer.
+
+**Fact:** Prayer for Repose raises the maximum corpse tier the Donkey can generate by exactly one tier for 18/36/54 minutes depending on prayer quality. Prayer quality changes duration, not the +1 magnitude.
 
 ## Multi-quality buffs
 
-`CraftDefinition.GetBuffValue(buff_id)` returns 0 when the buff is inactive and otherwise returns `BuffDefinition.craft_q`.
+`CraftDefinition.GetBuffValue(buff_id)` returns 0 when a buff is inactive and otherwise returns `BuffDefinition.craft_q`.
 
 `CraftDefinition.GetMultiqualityResult(...)` consumes linked buff IDs through this accessor. Therefore `buff_pen=0.7` and `buff_star=0.2` are real additive quality inputs for crafts whose definitions explicitly list those buffs.
 
-Do not generalize the affected craft set until `linked_buffs` are enumerated.
+Do not generalize their affected craft set until `linked_buffs` are enumerated if exact wording requires that scope.
 
 ## Sin Shards
 
 Soul-healing output starts from `sins_count` and adds:
 
-`increase_sin_shard_drop * sins_count`
+`increase_sin_shard_drop * sins_count`.
 
 With `buff_sin_shard=1`:
 
@@ -267,9 +302,17 @@ Thus:
 
 `GP_base = 5 * effective_durability + 5 * sins_count`.
 
-Probe 0.1.2 observed the loaded `soul_portal` graph reading `increase_gp_gain`, passing values through multiply/add/multiply nodes, `Mathf.RoundToInt`, and then adding to `gratitude_points`. Current Russian prayer text states `+10%` Gratitude gain.
+Probe 0.1.4 captured the full loaded `soul_portal` graph and its connections. The prayer modifier is applied before integer rounding:
 
-Probe 0.1.3 could not reacquire `soul_portal` through `CustomFlowScript.GetGraph("soul_portal")` (`Graph=null`), so the exact connection order and rounding semantics of that +10% remain unproved. This is now a narrow non-blocking mechanics detail, not a reason for another broad probe.
+`GP_awarded = RoundToInt(GP_base * (1 + 0.1 * increase_gp_gain))`.
+
+For `buff_gp_increase`, `increase_gp_gain=1`, so:
+
+`GP_awarded = RoundToInt(GP_base * 1.1)`.
+
+The rounded award is then added to current `gratitude_points`; the graph also enforces the Souls-zone-quality limit on the resulting total.
+
+The previously open `+10%` rounding-order question is closed.
 
 ## Prayer buff application and duration
 
@@ -279,7 +322,7 @@ The stock path is closed:
 2. `PlayerComponent.CreatePrayBuffFlyingObject(pos)` passes non-zero `dur_parameter` as duration override.
 3. `FlyingObject.CreateBuffFlyingObject(...)` stores the override.
 4. `FlyingObject.ReallyGiveBuff(...)` calls `BuffsLogics.AddBuff(buff.id, override)`.
-5. `AddBuff` uses the override instead of the BuffDefinition default when supplied.
+5. `AddBuff` uses the override instead of the BuffDefinition default when supplied and adds `BuffDefinition.res` to player data.
 6. `PlayerBuff.GetTimerText()` uses the same 450-second game-time basis.
 
 Prayer durations therefore map directly to displayed game-timer minutes:
@@ -287,18 +330,16 @@ Prayer durations therefore map directly to displayed game-timer minutes:
 - `18/36/54` -> 18/36/54 minutes;
 - `36/72/108` -> 36 min / 1 h 12 min / 1 h 48 min.
 
-Higher prayer quality can therefore increase duration while the underlying buff magnitude remains unchanged.
+Higher prayer quality can therefore increase duration while buff magnitude remains unchanged.
 
 ### Success animation / physical-drop path
 
-Probe 0.1.3 adds:
+Probe 0.1.3 established:
 
 - `BaseCharacterComponent.StartPrayAnimation(success)` writes Animator bool `success`;
-- `ChurchPulpit.DoBuffSuccessAnimation()` directly calls both:
-  - `PlayerComponent.CreatePrayBuffFlyingObject(...)`;
-  - `PrayLogics.DropPrayItems()`.
+- `ChurchPulpit.DoBuffSuccessAnimation()` calls both `PlayerComponent.CreatePrayBuffFlyingObject(...)` and `PrayLogics.DropPrayItems()`.
 
-No C# caller exists for `DoBuffSuccessAnimation`, which is consistent with a Unity AnimationEvent callback. The exact animation-asset edge was not inspected.
+No C# caller exists for `DoBuffSuccessAnimation`, consistent with a Unity AnimationEvent callback. The exact animation-asset edge was not inspected.
 
 **Fact:** buff creation and physical sermon drops are grouped in the method explicitly named `DoBuffSuccessAnimation`, while the Animator receives the sermon success flag.
 
@@ -306,7 +347,7 @@ No C# caller exists for `DoBuffSuccessAnimation`, which is consistent with a Uni
 
 ## Current Russian presentation
 
-Selection UI strings/values:
+Selection UI shows:
 
 - `Качество церкви: %1`
 - `Проповедь требует: %1`
@@ -314,21 +355,13 @@ Selection UI strings/values:
 - below threshold: `Попытка молитвы`
 - at/above threshold: `Молиться`
 
-Prayer item description also appends `%1 необходимо, чтобы гарантировать успех проповеди.`
+Prayer item descriptions also append `%1 необходимо, чтобы гарантировать успех проповеди.`
 
 `PrayCraftGUI.RedrawTextValues` shows church quality, requirement, and success chance only. It does not forecast current Faith/donation output or quantify passive effects/duration.
 
 Post-sermon report shows base Faith/money plus separate success-only bonus rows; it does not show one combined Faith total or donation total.
 
-Several passive prayer descriptions are qualitative only:
-
-- `b_plant`: no farming magnitude/duration;
-- `b_sins`: no mechanical effect/duration;
-- `b_skull`: no `body_max` effect/duration;
-- `b_sword`: no `+5 damage`/duration;
-- `b_shield`: no `+4 armor`/duration;
-- `b_pen`: no exact writing-quality effect/duration;
-- `b_star`: no exact craft-quality effect/duration.
+Several passive prayer descriptions are qualitative only, including `b_plant`, `b_sins`, `b_skull`, `b_sword`, `b_shield`, `b_pen`, and `b_star`.
 
 Better Save Soul descriptions are clearer:
 
@@ -336,20 +369,26 @@ Better Save Soul descriptions are clearer:
 - `b_grat_points_incr`: states `+10%` Gratitude gain;
 - `b_sin_shard`: states `x2` Sin Shards.
 
-## Remaining narrow questions
+## Remaining non-blocking scope questions
 
-These no longer block UX design:
+The mechanics questions that blocked a truthful player-facing explanation are now closed. Remaining research is peripheral to the first PrayerClarity UX prototype:
 
-1. exact `soul_portal` +10% connection order/rounding;
-2. exact craft scopes for `buff_pen`, `buff_star`, `buff_plant` where wording needs it;
-3. merchant-side implementation of `blessing_commerce`;
-4. reachability classification for extra PrayCraft rows;
-5. buff-hover text if post-use presentation becomes relevant;
-6. English localization only if bilingual support becomes a requirement;
-7. Animator asset edge for success callback only if implementation needs that lifecycle target.
+1. exact linked-craft scope for `buff_pen` / `buff_star` only if player-facing wording needs exhaustive lists;
+2. merchant-side implementation of `blessing_commerce`;
+3. reachability classification for extra internal PrayCraft rows;
+4. buff-hover text if post-use presentation becomes part of scope;
+5. English localization only if bilingual support is required;
+6. exact Animator asset edge only if implementation needs that lifecycle target.
+
+No additional static probe or user in-game mechanics test is currently justified.
 
 ## Research-stage conclusion
 
-The core sermon calculation, payout behavior, quality requirements, principal buff durations, major buff magnitudes, Souls baseline, Sin Shard effect, and current selection/report presentation are sufficiently verified to move from mechanics discovery to **UX design options**.
+The core sermon calculation, success/failure payout behavior, requirements, player prayer catalogue, principal buff durations/magnitudes, Souls mechanics, live Donkey Repose consumer, Roots/Shoots wiring mismatch, Sin Shard effect, and current selection/report presentation are sufficiently verified to move to the **narrow UX prototype** stage.
 
-Do not start production implementation yet. Next step is an explicit actual-mechanics -> vanilla-information -> player-interpretation matrix and a narrow UI design hypothesis.
+Two stock-1.407 prayer anomalies must be represented truthfully rather than “fixed” by an information mod:
+
+- Prayer of Repentance: timed buff exists, no gameplay consumer found;
+- Prayer for Shoots and Roots: `-20%` growth formula exists, but prayer buff and formula read/write different parameter owners.
+
+Production behavior changes remain out of scope unless separately accepted.
