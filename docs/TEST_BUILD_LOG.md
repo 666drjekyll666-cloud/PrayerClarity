@@ -2,27 +2,44 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.6 — live pulpit calibration candidate
+## PrayerClarity 0.1.7 — deterministic frame calibration candidate
 
 - Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
-- Purpose: stop iterating pulpit coordinates through rebuilds. Expose the relevant NGUI layout values through BepInEx Configuration Manager so the real installed game can calibrate the layout live, then convert the accepted geometry back into fixed production defaults.
+- Purpose: retain the useful live Configuration Manager calibration from 0.1.6 while replacing its broken aspect-ratio-sensitive frame stretching, refining success-bonus arrow semantics, and closing the visible BSS special-effect gaps found in runtime.
+- Frozen candidate ref: `candidate/0.1.7`.
+- Exact build source SHA: `4df3d204866afc39ee0b848c14bb724101a29761`.
+- GitHub Actions run: `34895350258`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10368661089` (`PrayerClarity-0.1.7-ci-4df3d204866afc39ee0b848c14bb724101a29761`).
+- Handoff filename: `PrayerClarity-0.1.7-ci.dll`.
+- Handoff DLL SHA-256: `3742468ee5fef4190ad631933e4c0da220657e14aab46b3246fd9799ea99d4f2`.
+- Calibration section: moved to `Prototype pulpit layout tuning v2`, intentionally resetting rejected 0.1.6 experimental values rather than silently inheriting them.
+- New calibration controls: independent extra window width/height; context/result/effect/note X/Y and font sizes; effect-icon size; selected-prayer-slot X/Y; prayer-button X/Y. Effect X now reaches -220 local units.
+- Frame change: every tuning application starts from captured stock dimensions/positions. Before changing dimensions, PrayerClarity sets the NGUI aspect policy to `Free` and uses `UIWidget.SetDimensions(int,int)` when the runtime exposes it. The top/header remains fixed; bottom/center pieces and controller tips move by deterministic fractions of the requested height instead of accumulating offsets.
+- Button terminology: the F1 controls now say `Prayer button` rather than `Craft button`. PrayerClarity does not replace the actual in-game action text; stock 1.407 already supplies localized `btn_pray` / `btn_try_pray` strings such as Russian `Молиться` / `Попытка молитвы`.
+- Success-bonus cue: `(up)` is now resource-specific. Faith prayer places it immediately before Faith; Donations places it immediately before money; Ordinary, Combo and all other prayer families receive no success-row arrow.
+- Soul's Repose: its effect row now reuses vanilla localized `b_souls_d`, exposing the otherwise hidden fact that Soul Gratitude contributes to Faith. The native Soul Gratitude sprite is used as the effect icon candidate.
+- Soul Contentment: the +10% text is explicitly paired with the native Soul Gratitude token/icon so the percentage has a visible noun.
+- Thorough Cleansing: the effect icon now prefers the actual `sin_shard` item icon over the generic buff icon.
+- Requested user test: replace 0.1.6 with this DLL, keep Test Harness and Configuration Manager, open the pulpit and F1 -> PrayerClarity. First vary `Window extra height` and `Window extra width` to confirm the frame no longer explodes sideways or moves in disconnected jumps. Then place `Prayer selector`, `Prayer button`, `Effect`, `Result` and `Note` as desired. Check Faith, Donations, Combo, Soul's Repose, Soul Contentment and Thorough Cleansing. Confirm the arrow targets only the specialist resource and the two BSS effect icons/descriptions are understandable.
+- Status: **ready for runtime UX verification; not accepted**.
+
+## PrayerClarity 0.1.6 — runtime result: live tuning useful, frame/arrow design rejected
+
+- Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
 - Frozen candidate ref: `candidate/0.1.6`.
 - Exact build source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
 - GitHub Actions run: `34891988740`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
 - Workflow artifact ID: `10367390730` (`PrayerClarity-0.1.6-ci-adf752e1a04c93172bdedc54b913d4b926413c0d`).
 - Handoff filename: `PrayerClarity-0.1.6-ci.dll`.
 - Handoff DLL SHA-256: `cd741f905510db6dc968cdf87a0c2ca6f74e507bc9deb29b3bd801b2685e0a8d`.
-- Calibration controls: Configuration Manager exposes live X/Y/font-size controls for context, result, effect and dependency-note blocks; effect icon size; craft-button Y; and an experimental downward pulpit-frame extension. Changes are applied only when a PrayerClarity forecast is active and do not require reopening the pulpit.
-- Coordinate model: controls use the game's local NGUI coordinates rather than raw display pixels. The user's 2560x1440 calibration is therefore expected to be more portable than screen-pixel offsets, but cross-resolution portability is **not accepted until separately tested**.
-- Context change: the low-value `Sermon context` / `Контекст проповеди` heading is removed from the rendered block. The section contains only church quality, sermon requirement and graveyard quality.
-- Dependency note: obvious resource/source nouns are icon-first. Faith uses `(faith)`, church quality `(cross)`, donations `(slv)`, graveyard quality `(wskull)`, and the Souls variant also uses `(gratitude_points)`.
-- Success-bonus cue: one native `(up)` green-arrow symbol prefixes the **whole success-bonus resource group**, rather than drawing one arrow per Faith/money resource. This avoids double-arrow clutter on Combo while still communicating that all following values are improvements over the guaranteed row.
-- Special-effect icon: the earlier verified native `BuffDefinition.GetIconName` / item-icon resolver is restored and cached. Thorough Cleansing explicitly falls back to the `sin_shard` item icon when its buff does not provide one.
-- Effect grammar remains conservative: 0.1.6 does **not** mechanically replace every `+` in buff descriptions with an up arrow. Additive stat/effect iconography will be decided after the main layout is accepted so reductions such as Roots are not represented misleadingly.
-- Experimental frame extension: stock pulpit background/decor widgets are stretched downward while preserving their measured top edge, and controller tips move down by the same amount. This is a presentation hypothesis; visible sprite distortion or bad anchoring is grounds to set `Window extra height` to zero and replace the frame strategy.
-- Requested user test: install 0.1.6 in place of 0.1.5, keep Test Harness and Configuration Manager, open the pulpit and F1 -> PrayerClarity. Tune primarily `Window extra height`, `Context Y`, `Result Y`, `Effect Y`, `Note Y` and `Craft button Y`; use X/font/icon-size controls only if useful. Test at least Faith, Combo, Thorough Cleansing and one Souls/long-effect prayer. Confirm that controls apply live, the Sin Shard effect icon appears, and no cumulative drift returns. Return a pulpit screenshot plus the final visible PrayerClarity setting values.
-- Status: **ready for runtime UX calibration; not accepted**.
+- Runtime evidence, 2026-09-14: PrayerClarity 0.1.6 loaded successfully in Graveyard Keeper 1.407 at 2560x1440 alongside Test Harness 0.1.0 and the user's normal mod set. The supplied log contains no reported PrayerClarity forecast exception while the harness switched repeatedly across prayer families/qualities.
+- Accepted evidence: live Configuration Manager changes apply while the pulpit is open, so runtime calibration is a better iteration tool than rebuild-per-coordinate guessing. The earlier cumulative prayer-switch drift did not return.
+- Rejected frame behavior: `Window extra height` was not coherent. Increasing it could make the pulpit explode horizontally, and decorative/frame parts appeared to jump or move independently. This invalidates the 0.1.6 frame-resize implementation, not the general idea of live calibration.
+- Rejected arrow grammar: one `(up)` before the whole success-bonus group reads as if it modifies the first resource. This is misleading on Donations, where Faith is printed first but money is the specialization. Ordinary and non-resource-specialist prayers also do not benefit from an up-arrow cue.
+- Additional UX findings: Effect X needed a much wider negative range; the prayer selector and prayer button also need live X/Y controls; Soul's Repose had no special-effect explanation; Soul Contentment's `+10%` lacked an obvious noun; Thorough Cleansing did not present the intended Sin Shard icon.
+- Context/dependency direction remains useful: removing `Контекст проповеди` reduced clutter, and icon-first source relationships remain preferable.
+- Status: **superseded by 0.1.7; not accepted for stable**.
 
 ## PrayerClarity 0.1.5 — runtime result: stable geometry, layout rejected
 
