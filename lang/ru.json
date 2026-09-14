@@ -1,5 +1,7 @@
 {
-  "forecast.outcomes": "Успех: {0} (faith), {1} | Неудача: {2} (faith), {3}",
+  "forecast.always": "Всегда: {0} (faith), {1}",
+  "forecast.on_success": "При успехе ({0}%): {1}",
+  "forecast.no_bonus": "без дополнительной награды",
   "forecast.effect": "Эффект: {0}",
   "forecast.reward": "Награда: {0}",
   "buff.sword": "+{0:0.##} к урону на {1:0} мин.",

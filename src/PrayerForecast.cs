@@ -8,7 +8,7 @@ namespace PrayerClarity
 {
     internal static class PrayerForecast
     {
-        internal static string Build(object prayGui)
+        internal static string Build(object prayGui, float chance)
         {
             object craft = R.Get(prayGui, "pray_craft");
             if (craft == null) return null;
@@ -21,7 +21,7 @@ namespace PrayerClarity
 
             Localization.UseCurrentGameLanguage();
 
-            object prayEvent = R.BalanceData(eventId, "PrayEventDefinition", false);
+            object prayEvent = R.BalanceData(eventId, false, "PrayEventDefinition");
             int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
             float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
 
@@ -33,17 +33,33 @@ namespace PrayerClarity
             float kFaith = R.Float(R.Get(craft, "k_faith"));
             float kMoney = R.Float(R.Get(craft, "k_money"));
 
-            int successFaith = baseFaith + fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
-            float successMoney = baseMoney + fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
+            int bonusFaith = fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
+            float bonusMoney = fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
 
-            string outcomes = Localization.F("forecast.outcomes",
-                successFaith,
-                R.FormatMoney(successMoney),
-                baseFaith,
-                R.FormatMoney(baseMoney));
-
+            string always = Localization.F("forecast.always", baseFaith, R.FormatMoney(baseMoney));
             string special = BuildSpecial(craft, rewards);
-            return string.IsNullOrEmpty(special) ? outcomes : outcomes + "\n" + special;
+            string success = BuildSuccessLine(chance, bonusFaith, bonusMoney, special, out bool specialConsumed);
+
+            if (string.IsNullOrEmpty(special) || specialConsumed) return always + "\n" + success;
+            return always + "\n" + success + "\n" + special;
+        }
+
+        private static string BuildSuccessLine(float chance, int bonusFaith, float bonusMoney, string special, out bool specialConsumed)
+        {
+            List<string> parts = new List<string>();
+            if (bonusFaith != 0) parts.Add("+" + bonusFaith.ToString(CultureInfo.InvariantCulture) + " (faith)");
+            if (Math.Abs(bonusMoney) >= 0.0001f) parts.Add("+" + R.FormatMoney(bonusMoney));
+
+            specialConsumed = false;
+            if (parts.Count == 0 && !string.IsNullOrEmpty(special))
+            {
+                parts.Add(special);
+                specialConsumed = true;
+            }
+            if (parts.Count == 0) parts.Add(Localization.T("forecast.no_bonus"));
+
+            int chancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f);
+            return Localization.F("forecast.on_success", chancePercent, string.Join(" · ", parts.ToArray()));
         }
 
         private static void CollectOutputs(object craft, ref int fixedFaith, ref float fixedMoney, List<RewardItem> rewards)
@@ -82,14 +98,14 @@ namespace PrayerClarity
                 parts.Add(Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray())));
             }
 
-            return string.Join(" | ", parts.ToArray());
+            return string.Join(" · ", parts.ToArray());
         }
 
         private static string BuildBuffEffect(string buffId, float duration)
         {
             if (string.IsNullOrEmpty(buffId)) return null;
 
-            object buff = R.BalanceData(buffId, "BuffDefinition", true);
+            object buff = R.BalanceData(buffId, true, "BuffDefinition");
             object res = buff == null ? null : R.Get(buff, "res");
 
             switch (buffId)

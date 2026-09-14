@@ -1,5 +1,7 @@
 {
-  "forecast.outcomes": "Success: {0} (faith), {1} | Failure: {2} (faith), {3}",
+  "forecast.always": "Always: {0} (faith), {1}",
+  "forecast.on_success": "On success ({0}%): {1}",
+  "forecast.no_bonus": "no additional reward",
   "forecast.effect": "Effect: {0}",
   "forecast.reward": "Reward: {0}",
   "buff.sword": "+{0:0.##} damage for {1:0} min",

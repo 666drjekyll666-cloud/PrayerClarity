@@ -49,7 +49,7 @@ jobs:
             }
           done
           mkdir -p dist
-          asset='PrayerClarity-0.1.1-ci.dll'
+          asset='PrayerClarity-0.1.2-ci.dll'
           cp "$dll" "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           {
@@ -65,7 +65,7 @@ jobs:
       - name: Upload prototype build evidence
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-0.1.1-ci-${{ github.sha }}
+          name: PrayerClarity-0.1.2-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.asset }}
             dist/BUILD_INFO.txt

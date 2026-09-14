@@ -42,6 +42,20 @@ Preview calculations must be side-effect free; never call `PrayLogics.CalculateP
 
 Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
 
+### Accepted pulpit information model after 0.1.1 runtime UX test
+
+The pulpit should preserve vanilla's useful current context but avoid duplicating the same probability in a detached row:
+
+1. keep vanilla `Church quality`;
+2. keep vanilla `Sermon requires`;
+3. suppress the standalone vanilla `Success chance` line once a Clarity forecast is available;
+4. show `Always` = the base Faith and donations delivered regardless of sermon success;
+5. show `On success (N%)` = only the additional Faith/donations and success-only special reward/effect supplied by the selected prayer.
+
+Do not add a separate failure row: the `Always` line is the failure/base outcome and also the guaranteed component of a successful sermon. This teaches the important stock rule that sermon failure is not zero reward while keeping the layout compact.
+
+Presentation should be icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, church quality, damage or armor; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle. Prefer native inline tokens. If a native token is unavailable, resolve the required native sprite lazily at the first relevant UI lifecycle point after atlases are ready and cache that reference for the session; never repeat atlas/global searches on redraw or per frame.
+
 ## Localization architecture
 
 PrayerClarity must ship all mod-owned player-facing text for the full 11-language interface set supported by Graveyard Keeper: English, French, German, Simplified Chinese, Spanish (Spain), Portuguese (Brazil), Korean, Japanese, Russian, Italian and Polish.
@@ -135,9 +149,9 @@ If merge is implemented:
 
 Broad research is done. No additional general probe or community search is justified before implementation-target work.
 
-The next implementation slice is intentionally **Clarity-first**: it must not change prayer mechanics. Its purpose is to validate whether the pulpit can communicate verified prayer outcomes clearly enough at the actual decision point.
+The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The 0.1.1 runtime test proved the pulpit redraw seam and forecast calculations but rejected the one-line `Success | Failure` presentation. The next candidate validates the accepted `Always` / `On success (N%)` model before expanding Clarity to prayer-item tooltips, technology text or active-buff presentation.
 
-Before writing that slice, the required cross-cutting contracts are now fixed:
+Cross-cutting contracts remain:
 
 - one pure semantic/forecast model;
 - side-effect-free preview calculations;
@@ -145,15 +159,3 @@ Before writing that slice, the required cross-cutting contracts are now fixed:
 - full 11-language localization with English fallback;
 - no hard-coded player-facing prose in patch code;
 - no polling or broad UI scans.
-
-Next:
-
-1. open a `dev/*` branch from the current research baseline;
-2. scaffold the smallest production plugin and localization layer;
-3. implement the shared semantic/forecast model only for mechanics already directly evidenced;
-4. render a concise localized Clarity block on the pulpit selection surface;
-5. keep Combat, Roots, Repose, Repentance and other not-yet-closed rework hooks out of this first Clarity-only prototype;
-6. run hosted CI only when the coherent candidate reaches a compile/handoff boundary;
-7. build one numbered candidate when it is ready for an actual in-game acceptance test.
-
-No user runtime action is currently required.

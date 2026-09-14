@@ -1,5 +1,7 @@
 {
-  "forecast.outcomes": "成功：{0} (faith)，{1} | 失败：{2} (faith)，{3}",
+  "forecast.always": "始终：{0} (faith)，{1}",
+  "forecast.on_success": "成功时（{0}%）：{1}",
+  "forecast.no_bonus": "无额外奖励",
   "forecast.effect": "效果：{0}",
   "forecast.reward": "奖励：{0}",
   "buff.sword": "伤害 +{0:0.##}，持续 {1:0} 分钟",
