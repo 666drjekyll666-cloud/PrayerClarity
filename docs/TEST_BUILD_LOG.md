@@ -2,29 +2,56 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity 0.1.8 — fixed-window wrapping candidate
+## PrayerClarity 0.1.9 — real-window resize / pulpit layout candidate
+
+- Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
+- Purpose: replace the disproved child-art resizing attempts with live resizing of the verified real Pray GUI `window`/`container`, retain the game's native sliced frame behavior, separate the `Result` heading from result rows, and repair the remaining special-prayer presentation defects found in the 0.1.8 test.
+- Development branch: `dev/pulpit-window-resize-0.1.9`.
+- Frozen candidate ref: `candidate/0.1.9`.
+- Exact build source SHA: `7bc60963e3eb589ed14b7fe011d9c9338aa38dd9`.
+- GitHub Actions run: `34908149431`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10373317657` (`PrayerClarity-0.1.9-ci-7bc60963e3eb589ed14b7fe011d9c9338aa38dd9`).
+- Handoff filename: `PrayerClarity-0.1.9-ci.dll`.
+- Handoff DLL SHA-256: `3bd34f80d7082ed728732df1e8b9f92f01c567b4f17a427f0383b5735bd2f378`.
+- Real-window controls: Configuration Manager section `Prototype pulpit layout tuning v4` exposes `Window extra width` and `Window extra height`. These modify the actual `UI Root/Pray GUI/window` and anchored `container`, not merely decorative child sprites.
+- Frame architecture: the verified stock `back` (`Sliced`, border 30), `decore_back` (`Sliced`, border 15) and `header` (`Sliced`, border 65/5/65/5) are resized from captured vanilla dimensions. The `pulpit_bench_back` `Simple` decoration is deliberately not stretched. Header/close controls and controller tips move relative to the enlarged frame.
+- Layout calibration: latest 0.1.8 user values are the v4 starting point: context `8/72/14`, Result heading `8/20/14`, result rows `16/4/14`, effect `-122/-30/12` with icon `10`, note `-6/-87/9`, selector `70/45`, prayer button `0/-120`. All remain temporary live tuning controls.
+- Result grammar: heading is now an independently positioned/font-sized label; resource rows contain only `Guaranteed` and the shorter `On success (N%)` wording. Specialist arrows remain attached only to the resource actually improved by Faith or Donations.
+- Repose wording: stock Clarity uses the player-facing Donkey/body formulation with native `(up)` and `(skull)` symbols; it still does not claim the future Rebalanced bronze/silver/gold reliability ladder.
+- Vanilla localization fix: direct audit evidence places `GJL` in `Assembly-CSharp-firstpass`; `R.VanillaLocalize` now resolves `GJL.L(string)` across loaded assemblies once and caches the method. This fixes raw localization IDs such as `blessing_commerce` and the blank Soul's Repose description caused by the old Assembly-CSharp-only resolver.
+- Prosperity: uses the vanilla localized `Blessing of commerce` name/description and the stock output count, without the redundant `Reward:` prefix inside an `Effect:` row.
+- Soul's Repose: explicitly reuses vanilla `b_souls_d` after the localization resolver fix.
+- Thorough Cleansing: still requests verified native sprite `i_sin_shard`; the v4 effect-icon path lazily resolves it and caches only successful sprite lookups, allowing a later UI redraw to recover if the atlas was not ready on the first attempt.
+- Localization: all changed PrayerClarity-owned wording is present in the same 11 interface locales as the base game.
+- Requested user test: replace 0.1.8 with 0.1.9 and remove the completed frame-slice probe. Keep Test Harness 0.1.0. First adjust only `Window extra width/height` and confirm the *actual frame* grows without stretching the pulpit bench artwork or accumulating drift. Then tune Result heading/rows, selector, prayer button, effect and note as desired. Finally switch Faith -> Donations -> Combo -> Repose -> Prosperity -> Soul's Repose -> Soul Contentment -> Thorough Cleansing and report screenshots plus final F1 values. No sermon execution is required.
+- Status: **ready for runtime UX/geometry verification; not accepted**.
+
+## PrayerClarity Pulpit Frame Slice Probe 0.1.0 — completed runtime evidence
+
+- Type: research-only, read-only UI geometry probe; no intended save/player/world mutation.
+- Exact source SHA: `74f617ae4ea051e60324b2504611e0b3764e60dc`.
+- GitHub Actions run: `34906052752`.
+- Workflow artifact ID: `10372548949`.
+- Probe DLL SHA-256: `b8c3cc5e82b2e09371f1050100d6834ef41ef834152bea49c0ee4caea64872cd`.
+- Runtime evidence, 2026-09-15: the real `UI Root/Pray GUI/window` is a `UIWidget` 274x241; its anchored `container` is 274x199. The visible frame is not one simple bitmap: `back` is an NGUI `UI2DSprite` already configured `Sliced` with 30 px borders; `decore_back` is `Sliced` with 15 px borders; `header` is `Sliced` with 65/5/65/5 borders. `decore` / `pulpit_bench_back` is `Simple` and therefore must not be stretched as the frame grows.
+- Consequence: the earlier 0.1.6/0.1.7 failures targeted child artwork rather than the real window boundary. The next resize implementation may legitimately change the root window/container dimensions and use the stock sliced frame contract instead of inventing a custom texture/frame system.
+- Status: **question answered; remove probe after capture**.
+
+## PrayerClarity 0.1.8 — runtime result: information improved, fixed-window layout not accepted
 
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
-- Purpose: retain the workable fixed-window composition found by the user in 0.1.7, remove the disproved frame-resize controls, add localization-safe effect wrapping, and repair several misleading/blank special-effect rows.
 - Frozen candidate ref: `candidate/0.1.8`.
 - Exact build source SHA: `46f5d9954d710a160308e393f2cb1bf91e28e82a`.
 - GitHub Actions run: `34899841772`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
 - Workflow artifact ID: `10369988505` (`PrayerClarity-0.1.8-ci-46f5d9954d710a160308e393f2cb1bf91e28e82a`).
 - Handoff filename: `PrayerClarity-0.1.8-ci.dll`.
 - Handoff DLL SHA-256: `8b78d5bf6b3bd395b0b8399e016f6e49b894e08ad6e509f50c4f4da2d5eb9656`.
-- Layout baseline: the 0.1.7 user calibration from the second supplied screenshot is now the default starting point at 2560x1440: context `8/72/12`, result `8/20/13`, effect `-122/-35/10` with icon size `10`, note `-6/-87/9`, prayer selector `90/55`, prayer button `0/-120`.
-- Removed controls: `Window extra width` and `Window extra height` are gone. Runtime proved they only resize child artwork and do not enlarge the actual pulpit window.
-- Config isolation: layout controls now live under `Prototype pulpit layout tuning v3`, so rejected v2 width/height values cannot carry into this candidate.
-- Effect wrapping: the mod-owned effect label now uses a fixed width with top-left `ResizeHeight`. Only the new effect label expands downward; the stock center-pivot `l_total_values` widget that caused 0.1.4 cumulative drift is not resized.
-- Repose copy: stock Clarity now describes the verified `body_max +1` in terms of the Donkey being able to bring a body one quality tier higher and uses the native inline white-skull symbol. It intentionally does **not** use bronze/silver/gold `possible/likely/guaranteed` language because that belongs to the future Rebalanced mechanics, not stock 1.407.
-- Prosperity: Commercial Blessing output now appends the game's own localized description explaining that it can be sold to a merchant to raise that merchant's level.
-- BSS Soul's Repose: detection now keys off the verified `pray_for_souls_*` event family, so the vanilla localized Soul Gratitude/Faith explanation should no longer be blank.
-- Soul Contentment: copy order is now `Effect: +10% (gratitude_points) ...`; the generic leading buff icon is suppressed to avoid duplicate/ambiguous icon grammar.
-- Thorough Cleansing: uses explicit `i_sin_shard`, the Sin Shard art referenced by the stock Sin Shard body-part craft rows. The `sin_shard` ItemDefinition itself has blank icon fields, which explains why the prior generic item-icon fallback failed.
-- Balance separation: the user-proposed Soul Contentment `+20/+40/+60%` and Thorough Cleansing `x2/x3/x4` curves are recorded as Rebalanced design hypotheses only. This candidate still reports and preserves stock `+10%` and `x2` behavior.
-- Requested user test: replace 0.1.7 with 0.1.8 and first leave the new v3 layout values untouched. Confirm that the pulpit opens close to the accepted second-screenshot composition and that Window width/height controls are absent. Then test Shoots & Roots and Repentance for automatic effect-line wrapping; Repose for clearer stock wording/white-skull cue; Prosperity for the merchant-level explanation; BSS Soul's Repose for a nonblank Effect row; Soul Contentment for `+10%` before the Soul Gratitude icon; and Thorough Cleansing for actual Sin Shard art. A quick Faith/Donations/Combo switch should confirm specialist-arrow semantics remain intact. No sermon execution is required.
-- Status: **ready for runtime UX verification; not accepted**.
+- Runtime result, 2026-09-15: the fixed-window composition is conceptually useful but cannot be finalized inside the stock frame. The user explicitly requested true window resizing before accepting final text placement.
+- Latest calibration from the supplied 0.1.8 screenshot: context `8/72/14`, result `8/20/14`, effect `-122/-30/12`, effect icon `10`, note `-6/-87/9`, selector `70/45`, prayer button `0/-120`.
+- UX findings: `Result` must be movable/font-sized independently from Guaranteed/Success rows; `Additional on success (100%)` is too long and should be shortened; long special effects need localization-safe wrapping; Repose should use a Donkey + higher-quality-body formulation with native upward/skull cues.
+- Remaining presentation defects observed in 0.1.8: Prosperity still exposed raw `blessing_commerce`/redundant `Effect: Reward:` wording; BSS Soul's Repose remained blank; Thorough Cleansing still lacked the expected Sin Shard icon. Soul Contentment ordering was reported as corrected.
+- Status: **superseded by 0.1.9; information model retained, fixed-window layout rejected**.
 
 ## PrayerClarity 0.1.7 — runtime result: fixed-window layout useful, frame resize rejected
 
@@ -69,8 +96,8 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Frozen candidate ref: `candidate/0.1.5`.
 - Exact build source SHA: `91cc03b7e1902814d651565ffd591e81338ae4f9`.
 - GitHub Actions run: `34888807911`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
-- Workflow artifact ID: `10366245690` (`PrayerClarity-0.1.5-ci-91cc03b7e1902814d651565ffd591e81338ae4f9`).
+- Workflow result: success on `ubuntu-latest`; `net472`, all 11 embedded-locale markers, artifact staging and upload passed.
+- GitHub Actions artifact ID: `10366245690` (`PrayerClarity-0.1.5-ci-91cc03b7e1902814d651565ffd591e81338ae4f9`).
 - Handoff filename: `PrayerClarity-0.1.5-ci.dll`.
 - Handoff DLL SHA-256: `5f5684dac333683bbf6a547ee4f4d97b5df81b0d25faf4dad7555d3b668b58fb`.
 - Geometry evidence: the stock `l_total_values` label is 242x68 at local `(-3,49)`, center pivot, 16 px font, `spacingY=-3`, `ShrinkContent`; the selected prayer item cell occupies the middle of the container and the craft button is at window-local `y=-85`.
@@ -87,8 +114,8 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Frozen candidate ref: `candidate/0.1.4`.
 - Exact build source SHA: `cacdb1a544294c3e3601d2ee9022a137573963c7`.
 - GitHub Actions run: `34883623571`.
-- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
-- Workflow artifact ID: `10363439062` (`PrayerClarity-0.1.4-ci-cacdb1a544294c3e3601d2ee9022a137573963c7`).
+- Workflow result: success on `ubuntu-latest`; `net472`, all 11 embedded-locale markers, artifact staging and upload passed.
+- GitHub Actions artifact ID: `10363439062` (`PrayerClarity-0.1.4-ci-cacdb1a544294c3e3601d2ee9022a137573963c7`).
 - Handoff filename: `PrayerClarity-0.1.4-ci.dll`.
 - Handoff DLL SHA-256: `bb0d6dfe80de07303c24756d0e3b21c0d9b522e517de8f7750a48556cf94eb07`.
 - Runtime UX evidence, 2026-09-14: the semantic content was useful, but the block overlapped the selected prayer slot/button and did not provide the intended paragraph/indent hierarchy.
