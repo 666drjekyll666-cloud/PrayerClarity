@@ -7,16 +7,6 @@ namespace PrayerClarity
 {
     internal static class PulpitPresentation
     {
-        private sealed class FramePart
-        {
-            internal Transform Transform;
-            internal object Widget;
-            internal int OriginalWidth;
-            internal int OriginalHeight;
-            internal Vector3 OriginalPosition;
-            internal object OriginalKeepAspectRatio;
-        }
-
         private static readonly Dictionary<string, Sprite> SpriteCache =
             new Dictionary<string, Sprite>(StringComparer.Ordinal);
 
@@ -44,18 +34,6 @@ namespace PrayerClarity
         private static bool _buttonCaptured;
 
         private static Transform _windowTransform;
-        private static FramePart _windowBack;
-        private static FramePart _decoreBack;
-        private static FramePart _decore;
-        private static FramePart _inactiveBack;
-        private static FramePart _header;
-        private static FramePart _headerLabel;
-        private static FramePart _headerLine;
-        private static FramePart _tips;
-        private static Transform _closeButton;
-        private static Transform _closeButtonAlt;
-        private static Vector3 _originalCloseButtonPosition;
-        private static Vector3 _originalCloseButtonAltPosition;
         private static Transform _selectorTable;
         private static Transform _pickLabelTransform;
         private static Vector3 _originalSelectorPosition;
@@ -83,7 +61,6 @@ namespace PrayerClarity
 
             MovePrayerButton();
             MovePrayerSelector();
-            ApplyFrameTuning();
             if (_root != null) _root.SetActive(true);
             _presentationActive = true;
         }
@@ -111,7 +88,6 @@ namespace PrayerClarity
 
             MovePrayerButton();
             MovePrayerSelector();
-            ApplyFrameTuning();
         }
 
         private static void Ensure(object template, object gui)
@@ -236,10 +212,13 @@ namespace PrayerClarity
                 iconGo.SetActive(false);
             }
 
+            // Configure the fixed wrapping width before assigning text. ResizeHeight is
+            // safe here because this is our own top-left label; unlike rejected 0.1.4
+            // it cannot move the stock center-pivot l_total_values block on redraw.
+            ConfigureEffectGeometry(showIcon);
+
             if (_effectLabel != null)
                 R.Set(_effectLabel, "text", hasText ? Localization.F("forecast.effect_header") + ": " + text : string.Empty);
-
-            ConfigureEffectGeometry(showIcon);
         }
 
         private static Sprite ResolveSprite(string iconName)
@@ -272,17 +251,12 @@ namespace PrayerClarity
             }
         }
 
-        private static int ContentWidth(int baseWidth)
-        {
-            return Math.Max(1, baseWidth + Mathf.RoundToInt(PulpitTuning.WindowExtraWidth.Value));
-        }
-
         private static void ConfigureContext(object label)
         {
             ConfigureLabel(label,
                 PulpitTuning.ContextX.Value,
                 PulpitTuning.ContextY.Value,
-                ContentWidth(258),
+                258,
                 44,
                 "Top",
                 "Left",
@@ -296,7 +270,7 @@ namespace PrayerClarity
             ConfigureLabel(label,
                 PulpitTuning.ResultX.Value,
                 PulpitTuning.ResultY.Value,
-                ContentWidth(258),
+                258,
                 40,
                 "Top",
                 "Left",
@@ -317,11 +291,11 @@ namespace PrayerClarity
             ConfigureLabel(_effectLabel,
                 x + iconSpace,
                 y,
-                Math.Max(1, ContentWidth(258) - Mathf.RoundToInt(iconSpace)),
-                24,
+                Math.Max(1, 258 - Mathf.RoundToInt(iconSpace)),
+                20,
                 "TopLeft",
                 "Left",
-                "ShrinkContent",
+                "ResizeHeight",
                 PulpitTuning.EffectFontSize.Value,
                 -1);
 
@@ -338,7 +312,7 @@ namespace PrayerClarity
             ConfigureLabel(label,
                 PulpitTuning.NoteX.Value,
                 PulpitTuning.NoteY.Value,
-                ContentWidth(266),
+                266,
                 20,
                 "Top",
                 "Center",
@@ -473,123 +447,11 @@ namespace PrayerClarity
             if (ReferenceEquals(_windowTransform, window) && _windowCaptured) return;
 
             _windowTransform = window;
-            _windowBack = CaptureFramePart(window.Find("back"));
-            _decoreBack = CaptureFramePart(window.Find("decore_back"));
-            _decore = CaptureFramePart(window.Find("decore"));
-            _inactiveBack = CaptureFramePart(window.Find("back for inactive stuff"));
-
-            Transform headerTransform = window.Find("header");
-            _header = CaptureFramePart(headerTransform);
-            _headerLabel = CaptureFramePart(headerTransform == null ? null : headerTransform.Find("header label"));
-            _headerLine = CaptureFramePart(headerTransform == null ? null : headerTransform.Find("pixel line"));
-
-            _closeButton = headerTransform == null ? null : headerTransform.Find("close button");
-            _closeButtonAlt = headerTransform == null ? null : headerTransform.Find("close button (1)");
-            _originalCloseButtonPosition = _closeButton == null ? Vector3.zero : _closeButton.localPosition;
-            _originalCloseButtonAltPosition = _closeButtonAlt == null ? Vector3.zero : _closeButtonAlt.localPosition;
-
-            _tips = CaptureFramePart(window.Find("buttons tips"));
-
-            _selectorTable = container == null ? null : container.Find("table");
-            _pickLabelTransform = container == null ? null : container.Find("txt_pick_a_res");
+            _selectorTable = container.Find("table");
+            _pickLabelTransform = container.Find("txt_pick_a_res");
             _originalSelectorPosition = _selectorTable == null ? Vector3.zero : _selectorTable.localPosition;
             _originalPickLabelPosition = _pickLabelTransform == null ? Vector3.zero : _pickLabelTransform.localPosition;
-
             _windowCaptured = true;
-        }
-
-        private static FramePart CaptureFramePart(Transform transform)
-        {
-            if (transform == null) return null;
-
-            Type widgetType = R.AnyType("UIWidget");
-            object widget = widgetType == null ? null : transform.gameObject.GetComponent(widgetType);
-            return new FramePart
-            {
-                Transform = transform,
-                Widget = widget,
-                OriginalWidth = widget == null ? 0 : Math.Max(1, R.Int(R.Get(widget, "width"))),
-                OriginalHeight = widget == null ? 0 : Math.Max(1, R.Int(R.Get(widget, "height"))),
-                OriginalPosition = transform.localPosition,
-                OriginalKeepAspectRatio = widget == null ? null : R.Get(widget, "keepAspectRatio")
-            };
-        }
-
-        private static void ApplyFrameTuning()
-        {
-            if (!_windowCaptured) return;
-
-            float extraWidth = Mathf.Max(0f, PulpitTuning.WindowExtraWidth.Value);
-            float extraHeight = Mathf.Max(0f, PulpitTuning.WindowExtraHeight.Value);
-            int addWidth = Mathf.RoundToInt(extraWidth);
-            int addHeight = Mathf.RoundToInt(extraHeight);
-
-            ResizeFramePart(_windowBack, addWidth, addHeight,
-                new Vector3(-extraWidth * 0.5f, 0f, 0f));
-            ResizeFramePart(_decoreBack, addWidth, addHeight,
-                new Vector3(0f, -extraHeight, 0f));
-            ResizeFramePart(_decore, addWidth, addHeight,
-                new Vector3(0f, -extraHeight * 0.5f, 0f));
-            ResizeFramePart(_inactiveBack, addWidth, addHeight,
-                new Vector3(0f, -extraHeight * 0.5f, 0f));
-
-            ResizeFramePart(_header, addWidth, 0, Vector3.zero);
-            ResizeFramePart(_headerLabel, addWidth, 0, Vector3.zero);
-            ResizeFramePart(_headerLine, addWidth, 0, Vector3.zero);
-
-            if (_closeButton != null)
-            {
-                Vector3 p = _originalCloseButtonPosition;
-                _closeButton.localPosition = new Vector3(p.x + extraWidth * 0.5f, p.y, p.z);
-            }
-            if (_closeButtonAlt != null)
-            {
-                Vector3 p = _originalCloseButtonAltPosition;
-                _closeButtonAlt.localPosition = new Vector3(p.x + extraWidth * 0.5f, p.y, p.z);
-            }
-
-            ResizeFramePart(_tips, addWidth, 0,
-                new Vector3(0f, -extraHeight, 0f));
-        }
-
-        private static void ResizeFramePart(FramePart part, int addWidth, int addHeight, Vector3 positionDelta)
-        {
-            if (part == null || part.Transform == null) return;
-
-            if (part.Widget != null && part.OriginalWidth > 0 && part.OriginalHeight > 0)
-            {
-                SetWidgetDimensions(
-                    part.Widget,
-                    Math.Max(1, part.OriginalWidth + addWidth),
-                    Math.Max(1, part.OriginalHeight + addHeight));
-            }
-
-            Vector3 p = part.OriginalPosition;
-            part.Transform.localPosition = new Vector3(
-                p.x + positionDelta.x,
-                p.y + positionDelta.y,
-                p.z + positionDelta.z);
-        }
-
-        private static void SetWidgetDimensions(object widget, int width, int height)
-        {
-            if (widget == null) return;
-
-            // 0.1.6 proved that assigning sprite height while its aspect-ratio policy is
-            // still active can explode the other dimension. Force Free for calibration,
-            // then use NGUI's direct dimension setter when available.
-            SetEnumMember(widget, "keepAspectRatio", "Free");
-
-            MethodInfo setDimensions = R.Method(widget.GetType(), "SetDimensions", false,
-                new[] { typeof(int), typeof(int) });
-            if (setDimensions != null)
-            {
-                setDimensions.Invoke(widget, new object[] { width, height });
-                return;
-            }
-
-            TrySet(widget, "width", width);
-            TrySet(widget, "height", height);
         }
 
         private static void MovePrayerSelector()
@@ -617,34 +479,8 @@ namespace PrayerClarity
         private static void RestoreWindow()
         {
             if (!_windowCaptured) return;
-
-            RestoreFramePart(_windowBack);
-            RestoreFramePart(_decoreBack);
-            RestoreFramePart(_decore);
-            RestoreFramePart(_inactiveBack);
-            RestoreFramePart(_header);
-            RestoreFramePart(_headerLabel);
-            RestoreFramePart(_headerLine);
-            RestoreFramePart(_tips);
-
-            if (_closeButton != null) _closeButton.localPosition = _originalCloseButtonPosition;
-            if (_closeButtonAlt != null) _closeButtonAlt.localPosition = _originalCloseButtonAltPosition;
             if (_selectorTable != null) _selectorTable.localPosition = _originalSelectorPosition;
             if (_pickLabelTransform != null) _pickLabelTransform.localPosition = _originalPickLabelPosition;
-        }
-
-        private static void RestoreFramePart(FramePart part)
-        {
-            if (part == null || part.Transform == null) return;
-
-            if (part.Widget != null && part.OriginalWidth > 0 && part.OriginalHeight > 0)
-            {
-                SetWidgetDimensions(part.Widget, part.OriginalWidth, part.OriginalHeight);
-                if (part.OriginalKeepAspectRatio != null)
-                    TrySet(part.Widget, "keepAspectRatio", part.OriginalKeepAspectRatio);
-            }
-
-            part.Transform.localPosition = part.OriginalPosition;
         }
 
         private static void RestoreTemplate(object template)
@@ -672,18 +508,6 @@ namespace PrayerClarity
         {
             if (obj == null || value == null) return;
             try { R.Set(obj, name, value); }
-            catch { }
-        }
-
-        private static void SetEnumMember(object obj, string name, string value)
-        {
-            if (obj == null) return;
-            try
-            {
-                object current = R.Get(obj, name);
-                if (current == null || !current.GetType().IsEnum) return;
-                R.Set(obj, name, Enum.Parse(current.GetType(), value));
-            }
             catch { }
         }
 
