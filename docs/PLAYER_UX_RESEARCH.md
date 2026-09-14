@@ -1,6 +1,6 @@
 # Player UX Research — Prayer/Sermon System
 
-Status: evidence map, updated 2026-09-14 after direct 1.407 presentation/mechanics probes 0.1.0–0.1.3.
+Status: evidence map, updated 2026-09-14 after direct 1.407 presentation/mechanics probes 0.1.0–0.1.3 and an external wiki/community mechanics cross-check.
 
 This document records **player-experience evidence and UX findings**. Authoritative mechanics live in `PRAYER_MECHANICS.md`; design options live in `DESIGN_NOTES.md`.
 
@@ -151,7 +151,7 @@ Verified examples:
 
 - `b_sword`: +5 damage;
 - `b_shield`: +4 armor;
-- `b_skull`: +1 `body_max`;
+- `b_skull`: +1 `body_max` internal parameter while active; exact corpse-selection consumer still needs current-path verification;
 - `b_pen`: fixed `craft_q=0.7` quality input;
 - `b_star`: fixed `craft_q=0.2` quality input.
 
@@ -231,6 +231,90 @@ Sources:
 
 **Status:** useful negative evidence, not proof of novelty.
 
+## External mechanics cross-check — 2026-09-14
+
+Purpose: use wiki/community material as an independent consistency check against the direct 1.407 runtime model. External sources do not override direct runtime evidence; disagreements are re-check triggers.
+
+### Broad agreement
+
+The current official community wiki agrees with the runtime catalogue on the important prayer requirements/coefficients and passive magnitudes checked here:
+
+- Faith prayer: q 10/20/50, Faith +50/+100/+150%, donations +20%;
+- Combo: q 15/30/60, Faith and donations +50/+100/+150%;
+- Imagination: fixed +0.7 writing-quality contribution, quality changes duration 18/36/54 rather than magnitude;
+- Excellence: fixed +0.2 selected-craft quality contribution, duration 18/36/54;
+- Retribution: +5 damage, duration 36/72/108;
+- Protection: +4 defense, duration 36/72/108;
+- Soul Contentment: +10% Soul Gratitude, duration 36/72/108 on the Effects page;
+- Thorough Cleansing: x2 Sin Shards, duration 36/72/108.
+
+The March 2026 Soul's Repose discussion independently derives `CQ/5 + (SG-CQ)/10`, which algebraically reduces to `(CQ+SG)/10`. That matches the direct 1.407 Souls baseline when Eloquence is absent. This is unusually strong community cross-validation of the recovered runtime formula.
+
+Sources:
+
+- https://graveyardkeeper.fandom.com/wiki/Sermon
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_faith
+- https://graveyardkeeper.fandom.com/wiki/Combo_prayer
+- https://graveyardkeeper.fandom.com/ru/wiki/Молитва_воображения
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_excellence
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_retribution
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_protection
+- https://graveyardkeeper.fandom.com/wiki/Effects
+- https://www.reddit.com/r/GraveyardKeeper/comments/1rsjmat/the_effect_of_prayer_for_souls_repose_is_secretly/
+
+### Repentance: external evidence reinforces the inert-effect hypothesis
+
+The wiki still marks Prayer for Repentance as `Broken – no apparent effect (Confirmed v1.124)` and says the intended effect is increased confessional use. A 2019–2024 Steam testing thread reports no statistically significant increase; a May 2026 Reddit discussion still asks whether the prayer affects confessional chance because the effect remains unestablished externally.
+
+There is one historical contradiction: official version 1.301 release notes (2020-10-28) say only `The prayers are fixed.` This is nonspecific and later player evidence does not establish that Repentance became functional. Direct 1.407 runtime evidence therefore remains the stronger current source: the timed `buff_sins` exists, but no consumer was found.
+
+Sources:
+
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_repentance
+- https://steamcommunity.com/app/599140/discussions/0/1637542851358404514/
+- https://www.reddit.com/r/GraveyardKeeper/comments/1t303jw/what_is_the_chance_per_day_of_getting_faith_from/
+- https://store.steampowered.com/news/posts/?appids=599140&enddate=1603904514&feed=steam_community_announcements
+
+The wiki page itself also contains stale/internal inconsistency: its sermon table lists 27/36/81 for the effect, while its Effect section lists 18/36/54. Direct 1.407 runtime data proves 18/36/54.
+
+### Soul Contentment: magnitude confirmed, exact rounding still externally unresolved
+
+The current wiki consistently describes Spiritual Blessing as `10% more Soul Gratitude from releasing souls through the Soul Portal` and the Effects page gives the same 36/72/108 durations as runtime. No located wiki, Steam, Reddit, or guide source specifies the exact multiply/round/add order.
+
+Therefore the external cross-check confirms the **player-facing magnitude (+10%)**, but does not close the narrow implementation detail of whether the +10% is applied before/after a particular intermediate rounding operation. That detail matters only for exact integer forecasts at fractional boundaries.
+
+Sources:
+
+- https://graveyardkeeper.fandom.com/wiki/Effects
+- https://graveyardkeeper.fandom.com/wiki/Sermon
+
+### Re-check trigger 1: Shoots and Roots
+
+The wiki still marks Prayer for Shoots and Roots as broken/no apparent effect (old v1.124 confirmation), and older/community testing reports no perceived growth change. An official Lazy Bear reply in April 2022 states the intended mechanic is reduced garden-crop growth time and that zombie beds are affected.
+
+Direct current 1.407 balance data, however, contains many live craft-time expressions with `-0.2*WGOpar("buff_plant")`, including ordinary crops, zombie-garden crafts, refugee-garden crops, and some natural respawn crafts. This is stronger current evidence that an effect path **exists** than the stale wiki warning. What is not yet closed is the end-to-end propagation from the player's active `buff_plant` to the WGO parameter consumed by those growth expressions.
+
+Sources:
+
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_shoots_and_roots
+- https://steamcommunity.com/app/599140/discussions/0/3190243624323744636/
+- https://steamcommunity.com/app/599140/discussions/0/1734336452556299084/
+
+**Status:** do not label this prayer broken or working yet. The discrepancy justifies a narrow end-to-end verification before player-facing wording claims `20% faster growth`.
+
+### Re-check trigger 2: Prayer for Repose
+
+Current wiki/community descriptions consistently say the Difficult Corpses effect temporarily raises the corpse tier/range available from Donkey; recent experienced-player reports describe it as effectively +1 tier/range and useless once the final tier is unlocked.
+
+Our direct runtime work has verified `buff_skull` and its internal `body_max=1`, but the previously surfaced `body_max`/`buff_skull` code was in `GameSave.LateSaveFixer`, i.e. migration logic rather than a current corpse-generation consumer. The external description is plausible and semantically consistent with `body_max`, but the exact live consumer still needs tracing before `+1 corpse tier` is promoted to direct fact.
+
+Sources:
+
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_repose
+- https://www.reddit.com/r/GraveyardKeeper/comments/1lkyyyx/
+- https://www.reddit.com/r/GraveyardKeeper/comments/1ty6zka/does_prayer_for_repose_increase_the_chance_that_a/
+- https://steamcommunity.com/app/599140/discussions/0/1637542851358404514/
+
 ## White-box information target
 
 Before committing, the player should be able to answer:
@@ -246,6 +330,11 @@ The internal implementation may require formulas, but player presentation should
 
 ## Design transition
 
-The research phase has now identified enough concrete gaps to justify design work. `docs/DESIGN_NOTES.md` compares three solution classes and currently favors a **compact dynamic breakdown in the existing prayer-selection context**.
+The research phase has identified concrete UX gaps, but the external cross-check exposed two special-effect paths that deserve narrow verification before a complete prayer-by-prayer white-box prototype is treated as mechanically closed:
 
-Production code is still premature. The next step is a narrow UI/layout/lifecycle prototype, not another broad mechanics probe.
+1. end-to-end `buff_plant` propagation for Prayer for Shoots and Roots;
+2. the current corpse-generation consumer of `buff_skull` for Prayer for Repose.
+
+Prayer of Repentance is now externally corroborated as apparently inert/broken; Soul Contentment's +10% magnitude is externally corroborated while exact rounding remains a narrow non-blocking detail.
+
+`docs/DESIGN_NOTES.md` still favors a **compact dynamic breakdown in the existing prayer-selection context**, but production code should wait until the two re-check triggers above are resolved or explicitly scoped out.
