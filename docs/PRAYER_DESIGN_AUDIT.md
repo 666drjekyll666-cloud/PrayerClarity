@@ -59,8 +59,8 @@ This is an explicit product policy, not a claim about original developer intent.
 | `b_plant` Shoots and Roots | intended-looking -20% growth-time formula exists, but stock prayer writes `buff_plant` to player while formula reads growing WGO | **proven stock wiring defect** | **Vanilla Fix candidate: reconnect existing -20% effect; reassess only after repair** |
 | `b_sins` Repentance | prayer creates timed `buff_sins`; no consumer found. Base confessional logic sets `confession_probability=0.15`; no prayer linkage found so far | role is recoverable (increase confessional use), magnitude is not yet recoverable | **repair role desirable; magnitude remains design-gated. Do not call an invented multiplier a Vanilla Fix** |
 | `b_skull` Repose | +1 maximum Donkey corpse tier, 18/36/54 min; becomes useless after final corpse tier | clear progression accelerator with a natural expiry point | **keep; clarity should disclose current relevance/obsolescence where practical** |
-| `b_sword` Retribution | +5 damage, 36/72/108 min; quality extends duration only | functioning but repeatedly perceived as hard to justify against weekly sermon opportunity, especially with finite/easy dungeon and consumable substitutes | **Rebalance candidate; no value chosen yet** |
-| `b_shield` Protection | +4 armor, 36/72/108 min; quality extends duration only | same structural problem as Retribution | **Rebalance candidate; no value chosen yet** |
+| `b_sword` Retribution | +5 damage, 36/72/108 min; same magnitude as Sword Master and common +damage food/potion buff, but far longer duration; early/steel/damask swords have 10/15/25 damage | magnitude is substantial; perceived weakness is mainly the limited need for a week-long combat choice in a finite/easy dungeon | **keep initially; clarity first, no automatic buff** |
+| `b_shield` Protection | +4 armor, 36/72/108 min; same +4 as armor food/potion buff and close to best lamellar armor's 5 armor | magnitude is substantial; same opportunity-cost/context issue as Retribution | **keep initially; clarity first, no automatic buff** |
 | `b_pen` Imagination | +0.7 writing-quality input, 18/36/54 min; enables concentrated writing production | strong, distinct production-window niche; recent player evidence shows it can be extremely valuable | **keep; clarity only** |
 | `b_star` Excellence | +0.2 linked-craft quality input, 18/36/54 min; narrow set of quality crafts | narrow but meaningful late-game/quality-crafting role | **keep; clarity first; enumerate affected crafts for player wording if needed** |
 | `b_village` Prosperity | produces Commercial Blessings, permanently advancing merchant tiers | strong progression utility that naturally loses value after vendors are advanced | **keep; no nerf planned** |
@@ -110,23 +110,36 @@ Current evidence gives:
 - the prayer creates `buff_sins` for 18/36/54 min;
 - no current `buff_sins` consumer was found in code literals, 180 loaded graphs, or balance references beyond the buff/prayer definitions.
 
-The intended role is plausibly “more confessions”, supported by game/community text. But the intended **magnitude/algorithm** is still absent. A change such as `15% -> 30%` would therefore be a new balance design unless a remaining confessional audit recovers a dormant coefficient or branch.
+The intended role is plausibly “more confessions”, supported by game/community text. But the intended **magnitude/algorithm** is still absent. A change such as `15% -> 30%` would therefore be a new balance design unless the remaining confessional audit recovers a dormant coefficient or branch.
 
 Do not hide this distinction behind the label `bug fix`.
 
-## Working-prayer rebalance candidates
+## Combat-prayer comparison — no balance change justified yet
 
-### Retribution and Protection
+Static stock comparison changes the initial suspicion that Retribution/Protection might simply be numerically weak.
 
-These are the strongest current candidates for tuning because:
+### Retribution
 
-- their special effects are functioning and mechanically simple;
-- higher prayer quality increases duration but not magnitude;
-- they compete with a once-per-week general-purpose sermon;
-- long-running player discussion describes the finite/easy dungeon and health potions as making a weekly combat sermon difficult to justify;
-- unlike Imagination/Prosperity/BSS prayers, there is not yet comparably strong evidence of a compelling recurring niche.
+- Prayer: `+5 damage` for 36/72/108 min.
+- Sword Master perk: `+5 damage` permanently after unlock.
+- common damage food: `+5 damage` for 2 min.
+- ordinary damage potion: `+5 damage` for 5 min.
+- berserk damage buff: `+15 damage` for 5 min, paired with its poison tradeoff.
+- representative sword damage: 10 (`sword_1`), 15 (`sword_steel`), 25 (`sword_damask_gem`).
 
-This establishes a **design question**, not a chosen fix. Before selecting values, compare the +5 damage/+4 armor against actual player damage, enemy damage, dungeon progression windows, potion availability, and duration opportunity cost. Possible design levers include magnitude, duration, or quality scaling; do not choose one by aesthetics alone.
+Thus the prayer is roughly +50% over a 10-damage sword, +33% over 15 and +20% over 25 before other additive bonuses. The prayer's distinctive asset is not peak burst but **very long duration**.
+
+### Protection
+
+- Prayer: `+4 armor` for 36/72/108 min.
+- armor food: `+4 armor` for 2 min.
+- armor potion: `+4 armor` for 5 min.
+- Big Guy perk: `+2 armor` (and +2 damage).
+- lamellar armor values found in current item data: 2 and 5.
+
+So `+4 armor` is also a large stat increment. Again, the unresolved design question is whether the game contains enough sustained combat to justify spending the weekly sermon opportunity on that long window, not whether `+4` is trivially small.
+
+**Current verdict:** do not tune either combat prayer yet. First expose their exact magnitude/duration clearly. Revisit only if player testing or stronger evidence shows that the *role* remains unattractive after the UI stops hiding what the prayer actually provides.
 
 ## UI implications
 
@@ -146,7 +159,6 @@ Before production balance code:
 1. close the exact active-buff hover presentation so we know what vanilla already communicates after use;
 2. close `church_budka_roll` / `confession_probability` as far as current runtime data allows;
 3. decide whether Repentance has a recoverable Vanilla Fix or needs an explicitly designed Rebalance value;
-4. quantify Retribution/Protection against combat context before choosing any buff;
-5. only then select the first narrow runtime implementation slice.
+4. only then select the first narrow runtime implementation slice.
 
-The likely first implementation slice remains **Clarity + the proven Shoots/Roots wiring repair**, unless the final confessional audit exposes an equally evidence-backed Repentance repair.
+Current evidence does **not** justify a general rebalance pass. The likely first implementation slice remains **Clarity + the proven Shoots/Roots wiring repair**, unless the final confessional audit exposes an equally evidence-backed Repentance repair.
