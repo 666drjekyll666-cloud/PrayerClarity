@@ -10,11 +10,11 @@
   "forecast.reward": "Récompense : {0}",
   "buff.sword": "+{0:0.##} dégâts · {1:0} min",
   "buff.shield": "+{0:0.##} armure · {1:0} min",
-  "buff.skull": "Âne : les cadavres peuvent gagner {0:0.##} niveau · {1:0} min",
+  "buff.skull": "L’âne peut livrer un cadavre jusqu’à {0:0.##} niveau de qualité supérieur (skull) · {1:0} min",
   "buff.pen": "Qualité d’écriture +{0:0.##} · {1:0} min",
   "buff.star": "Qualité des fabrications concernées +{0:0.##} · {1:0} min",
   "buff.plant_inactive": "Croissance : effet inactif dans la version vanilla 1.407 · bonus {0:0} min",
   "buff.sins_unverified": "Effet spécial introuvable dans la version vanilla 1.407 · bonus {0:0} min",
-  "buff.gratitude": "+10 % via le soin des âmes · {0:0} min",
+  "buff.gratitude": "+10 % (gratitude_points) via le soin des âmes · {0:0} min",
   "buff.sin_shard": "×2 lors d’un soin d’âme réussi · {0:0} min"
 }
