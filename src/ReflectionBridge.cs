@@ -187,7 +187,10 @@ namespace PrayerClarity
 
         internal static string VanillaLocalize(string key)
         {
-            Type type = GameType("GJL");
+            // Direct audit evidence places GJL in Assembly-CSharp-firstpass on 1.407,
+            // not in Assembly-CSharp. Search the loaded assemblies just like the
+            // compatibility boundary already does for NGUI/Harmony types.
+            Type type = AnyType("GJL");
             MethodInfo method = Method(type, "L", true, new[] { typeof(string) });
             if (method == null) return key;
             object value = method.Invoke(null, new object[] { key });
