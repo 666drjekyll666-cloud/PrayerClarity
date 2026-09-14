@@ -15,12 +15,12 @@ namespace PrayerClarityResearch
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public sealed class PrayerClarityFollowupProbe : BaseUnityPlugin
     {
-        public const string PluginGuid = "prayerclarity.auditprobe.followup";
-        public const string PluginName = "PrayerClarity Follow-up Audit Probe";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginGuid = "prayerclarity.auditprobe.flowgraph";
+        public const string PluginName = "PrayerClarity FlowGraph Audit Probe";
+        public const string PluginVersion = "0.1.2";
 
         private bool _completed;
-        private float _startedAt;
+        private float _gameReadyAt = -1f;
         private static readonly OpCode[] OneByte = new OpCode[256];
         private static readonly OpCode[] TwoByte = new OpCode[256];
 
@@ -38,126 +38,260 @@ namespace PrayerClarityResearch
 
         private void Awake()
         {
-            _startedAt = Time.realtimeSinceStartup;
-            Logger.LogInfo("PrayerClarity Follow-up Audit Probe 0.1.1 loaded: read-only reflection/IL only; no Harmony or game-state mutation.");
+            Logger.LogInfo("PrayerClarity FlowGraph Audit Probe 0.1.2 loaded: read-only reflection only; no Harmony, graph execution, or game-state mutation.");
         }
 
         private void Update()
         {
-            if (_completed || Time.realtimeSinceStartup - _startedAt < 8f) return;
-            Assembly asm = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Assembly-CSharp");
-            if (asm == null) return;
+            if (_completed) return;
+            Assembly gameAsm = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Assembly-CSharp");
+            if (gameAsm == null || !IsGameStarted(gameAsm)) return;
+            if (_gameReadyAt < 0f) { _gameReadyAt = Time.realtimeSinceStartup; return; }
+            if (Time.realtimeSinceStartup - _gameReadyAt < 5f) return;
+
             _completed = true;
-            try { RunAudit(asm); }
-            catch (Exception ex) { Logger.LogError("PrayerClarity follow-up audit failed: " + ex); }
+            try { RunAudit(gameAsm); }
+            catch (Exception ex) { Logger.LogError("PrayerClarity flowgraph audit failed: " + ex); }
         }
 
-        private void RunAudit(Assembly asm)
+        private static bool IsGameStarted(Assembly gameAsm)
         {
-            StringBuilder sb = new StringBuilder(256 * 1024);
-            sb.AppendLine("PRAYERCLARITY — FOLLOW-UP READ-ONLY PRAYER AUDIT");
+            Type mainGame = SafeGetTypes(gameAsm).FirstOrDefault(t => t.Name == "MainGame" || t.FullName == "MainGame");
+            if (mainGame == null) return false;
+            FieldInfo field = mainGame.GetField("game_started", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            if (field == null || field.FieldType != typeof(bool)) return false;
+            try { return (bool)field.GetValue(null); } catch { return false; }
+        }
+
+        private void RunAudit(Assembly gameAsm)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Type[] gameTypes = SafeGetTypes(gameAsm);
+            Type[] allTypes = assemblies.SelectMany(SafeGetTypes).ToArray();
+            StringBuilder sb = new StringBuilder(512 * 1024);
+
+            sb.AppendLine("PRAYERCLARITY — FLOWGRAPH READ-ONLY PRAYER AUDIT");
             sb.AppendLine("ProbeVersion=" + PluginVersion);
             sb.AppendLine("GeneratedUtc=" + DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
-            sb.AppendLine("GameAssembly=" + asm.FullName);
-            sb.AppendLine("ModuleVersionId=" + asm.ManifestModule.ModuleVersionId);
-            sb.AppendLine("Contract=READ_ONLY_REFLECTION_IL_NO_MUTATION");
-            sb.AppendLine("Questions=final payout wiring; sermon distribution callers; exact prayer-buff handoff/duration; passive buff consumers; current localization");
+            sb.AppendLine("GameAssembly=" + gameAsm.FullName);
+            sb.AppendLine("ModuleVersionId=" + gameAsm.ManifestModule.ModuleVersionId);
+            sb.AppendLine("Contract=READ_ONLY_REFLECTION_NO_GRAPH_EXECUTION_NO_MUTATION");
+            sb.AppendLine("Questions=pray graph reward/failure wiring; success-only buff/drop branch; gratitude gain arithmetic; buff_sins consumer");
             sb.AppendLine();
 
-            Type[] types = GetTypesSafe(asm);
-
-            sb.AppendLine("=== TARGET METHODS ===");
-            DumpType(sb, FindType(types, "PrayCraftGUI"), new[] { "DoPrayForBuff", "OnPrayButtonPressed", "RedrawTextValues" });
-            DumpType(sb, FindType(types, "PlayerComponent"), new[] { "StartPrayAnimation", "CreatePrayBuffFlyingObject", "OnMiddlePrayBuffAnimation", "OnFinishedPrayBuffAnimation" });
-            DumpType(sb, FindType(types, "FlyingObject"), new[] { "CreateBuffFlyingObject" });
-            foreach (Type type in types.Where(t => t.FullName != null && t.FullName.StartsWith("FlowCanvas.Nodes.Flow_PrayForBuff", StringComparison.Ordinal)).OrderBy(t => t.FullName))
-                DumpType(sb, type, null);
-            sb.AppendLine("=== END TARGET METHODS ===");
+            sb.AppendLine("=== TARGET IL ===");
+            DumpType(sb, FindType(allTypes, "FlowCanvas.Nodes.Souls.Flow_CalculateGratitudePoints"), null);
+            DumpType(sb, FindType(allTypes, "SoulsHelper"), new[] { "CalculatePointsAfterSoulRelease" });
+            DumpType(sb, FindType(allTypes, "CustomFlowScript"), new[] { "GetGraph" });
+            DumpCallers(sb, allTypes, FindType(allTypes, "SoulsHelper"), "CalculatePointsAfterSoulRelease");
+            DumpStringLiteralUsers(sb, allTypes, new[] { "buff_sins", "increase_gp_gain" });
+            sb.AppendLine("=== END TARGET IL ===");
             sb.AppendLine();
 
-            DumpMethodCallCrossReferences(sb, types);
-            DumpBalanceExpressionHits(sb, types);
-            DumpLocalization(sb);
+            DumpPrayGraph(sb, allTypes);
+            DumpLoadedGraphKeywordHits(sb, allTypes, new[] { "buff_sins", "increase_gp_gain", "gratitude_points" });
 
-            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-audit-0.1.1.txt");
+            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-audit-0.1.2.txt");
             File.WriteAllText(path, sb.ToString(), new UTF8Encoding(false));
-            Logger.LogInfo("PrayerClarity follow-up audit complete: " + path);
+            Logger.LogInfo("PrayerClarity flowgraph audit complete: " + path);
         }
 
-        private static Type[] GetTypesSafe(Assembly asm)
+        private static void DumpPrayGraph(StringBuilder sb, Type[] allTypes)
         {
-            try { return asm.GetTypes(); }
+            sb.AppendLine("=== PRAY FLOW GRAPH ===");
+            Type customFlow = FindType(allTypes, "CustomFlowScript");
+            if (customFlow == null) { sb.AppendLine("CustomFlowScript missing"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+
+            MethodInfo getGraph = customFlow.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
+                .FirstOrDefault(m => m.Name == "GetGraph" && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(string));
+            if (getGraph == null) { sb.AppendLine("GetGraph(string) missing"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+            sb.AppendLine("GetGraph=" + Signature(getGraph) + " static=" + getGraph.IsStatic);
+            if (!getGraph.IsStatic) { sb.AppendLine("Refusing to instantiate/execute CustomFlowScript for read-only audit."); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+
+            object graph;
+            try { graph = getGraph.Invoke(null, new object[] { "pray" }); }
+            catch (Exception ex) { sb.AppendLine("GetGraph(pray) failed=" + ex.GetType().Name + ":" + ex.Message); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+            if (graph == null) { sb.AppendLine("GetGraph(pray)=null"); sb.AppendLine("=== END PRAY FLOW GRAPH ==="); return; }
+
+            sb.AppendLine("GraphType=" + graph.GetType().FullName);
+            sb.AppendLine("GraphName=" + TryUnityName(graph));
+            string serialized = GetSerializedGraph(graph);
+            sb.AppendLine("SerializedLength=" + (serialized == null ? -1 : serialized.Length));
+            if (!string.IsNullOrEmpty(serialized))
+            {
+                sb.AppendLine("PRAY_GRAPH_SERIALIZED_BEGIN");
+                sb.AppendLine(serialized);
+                sb.AppendLine("PRAY_GRAPH_SERIALIZED_END");
+            }
+            DumpNodeSummary(sb, graph);
+            sb.AppendLine("=== END PRAY FLOW GRAPH ===");
+            sb.AppendLine();
+        }
+
+        private static void DumpLoadedGraphKeywordHits(StringBuilder sb, Type[] allTypes, string[] needles)
+        {
+            sb.AppendLine("=== LOADED FLOW GRAPH KEYWORD HITS ===");
+            Type graphType = FindType(allTypes, "NodeCanvas.Framework.Graph");
+            if (graphType == null || !typeof(UnityEngine.Object).IsAssignableFrom(graphType))
+            {
+                sb.AppendLine("NodeCanvas.Framework.Graph unavailable");
+                sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ===");
+                return;
+            }
+
+            UnityEngine.Object[] graphs;
+            try { graphs = Resources.FindObjectsOfTypeAll(graphType); }
+            catch (Exception ex) { sb.AppendLine("FindObjectsOfTypeAll failed=" + ex.GetType().Name); sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ==="); return; }
+
+            int graphHits = 0;
+            foreach (UnityEngine.Object graph in graphs)
+            {
+                if (graph == null) continue;
+                string serialized = GetSerializedGraph(graph);
+                if (string.IsNullOrEmpty(serialized)) continue;
+                List<string> hitNeedles = needles.Where(n => serialized.IndexOf(n, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                if (hitNeedles.Count == 0) continue;
+                graphHits++;
+                sb.AppendLine("GRAPH_HIT name=" + Quote(graph.name) + " type=" + graph.GetType().FullName + " needles=" + string.Join(",", hitNeedles.ToArray()) + " length=" + serialized.Length);
+                foreach (string needle in hitNeedles)
+                {
+                    int start = 0;
+                    int occurrence = 0;
+                    while (occurrence < 5)
+                    {
+                        int index = serialized.IndexOf(needle, start, StringComparison.OrdinalIgnoreCase);
+                        if (index < 0) break;
+                        occurrence++;
+                        int left = Math.Max(0, index - 900);
+                        int len = Math.Min(serialized.Length - left, 1800);
+                        sb.AppendLine("SNIPPET needle=" + needle + " occurrence=" + occurrence);
+                        sb.AppendLine(serialized.Substring(left, len));
+                        start = index + needle.Length;
+                    }
+                }
+            }
+            sb.AppendLine("LoadedGraphCount=" + graphs.Length + " MatchingGraphCount=" + graphHits);
+            sb.AppendLine("=== END LOADED FLOW GRAPH KEYWORD HITS ===");
+        }
+
+        private static string GetSerializedGraph(object graph)
+        {
+            if (graph == null) return null;
+            Type t = graph.GetType();
+            while (t != null)
+            {
+                FieldInfo field = t.GetField("_serializedGraph", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (field != null && field.FieldType == typeof(string))
+                {
+                    try { return field.GetValue(graph) as string; } catch { return null; }
+                }
+                t = t.BaseType;
+            }
+            return null;
+        }
+
+        private static void DumpNodeSummary(StringBuilder sb, object graph)
+        {
+            if (graph == null) return;
+            PropertyInfo prop = FindProperty(graph.GetType(), "allNodes");
+            if (prop == null) { sb.AppendLine("allNodes property missing"); return; }
+            IEnumerable nodes;
+            try { nodes = prop.GetValue(graph, null) as IEnumerable; } catch { nodes = null; }
+            if (nodes == null) { sb.AppendLine("allNodes unavailable"); return; }
+            Dictionary<string, int> counts = new Dictionary<string, int>();
+            int total = 0;
+            foreach (object node in nodes)
+            {
+                if (node == null) continue;
+                total++;
+                string name = node.GetType().FullName;
+                int count;
+                counts.TryGetValue(name, out count);
+                counts[name] = count + 1;
+            }
+            sb.AppendLine("NodeCount=" + total);
+            foreach (KeyValuePair<string, int> kv in counts.OrderBy(k => k.Key)) sb.AppendLine("NODETYPE " + kv.Value + " x " + kv.Key);
+        }
+
+        private static PropertyInfo FindProperty(Type type, string name)
+        {
+            while (type != null)
+            {
+                PropertyInfo prop = type.GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (prop != null) return prop;
+                type = type.BaseType;
+            }
+            return null;
+        }
+
+        private static string TryUnityName(object value)
+        {
+            UnityEngine.Object obj = value as UnityEngine.Object;
+            return obj == null ? "<not UnityEngine.Object>" : obj.name;
+        }
+
+        private static void DumpCallers(StringBuilder sb, Type[] allTypes, Type targetType, string targetName)
+        {
+            if (targetType == null) { sb.AppendLine("CALLERS target type missing: " + targetName); return; }
+            MethodBase[] targets = targetType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
+                .Where(m => m.Name == targetName).Cast<MethodBase>().ToArray();
+            foreach (MethodBase target in targets) sb.AppendLine("CALLER_TARGET " + Signature(target));
+            foreach (Type type in allTypes)
+            {
+                MethodBase[] methods = GetDeclaredMethods(type);
+                foreach (MethodBase method in methods)
+                {
+                    List<Instruction> il;
+                    try { il = Read(method); } catch { continue; }
+                    if (!il.Any(i => targets.Any(t => Same(i.Member as MethodBase, t)))) continue;
+                    DumpMethod(sb, method, "CALLS=" + targetType.FullName + "." + targetName);
+                }
+            }
+        }
+
+        private static void DumpStringLiteralUsers(StringBuilder sb, Type[] allTypes, string[] needles)
+        {
+            foreach (Type type in allTypes)
+            {
+                foreach (MethodBase method in GetDeclaredMethods(type))
+                {
+                    List<Instruction> il;
+                    try { il = Read(method); } catch { continue; }
+                    List<string> hits = il.Where(i => i.StringValue != null && needles.Any(n => string.Equals(i.StringValue, n, StringComparison.OrdinalIgnoreCase)))
+                        .Select(i => i.StringValue).Distinct().ToList();
+                    if (hits.Count > 0) DumpMethod(sb, method, "STRING_HITS=" + string.Join(",", hits.ToArray()));
+                }
+            }
+        }
+
+        private static MethodBase[] GetDeclaredMethods(Type type)
+        {
+            if (type == null) return new MethodBase[0];
+            const BindingFlags f = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+            try { return type.GetMethods(f).Cast<MethodBase>().Concat(type.GetConstructors(f).Cast<MethodBase>()).ToArray(); }
+            catch { return new MethodBase[0]; }
+        }
+
+        private static Type[] SafeGetTypes(Assembly assembly)
+        {
+            if (assembly == null) return new Type[0];
+            try { return assembly.GetTypes(); }
             catch (ReflectionTypeLoadException ex) { return ex.Types.Where(t => t != null).ToArray(); }
+            catch { return new Type[0]; }
         }
 
-        private static Type FindType(IEnumerable<Type> types, string name)
+        private static Type FindType(IEnumerable<Type> types, string fullOrShortName)
         {
-            return types.FirstOrDefault(t => t.Name == name || t.FullName == name);
+            return types.FirstOrDefault(t => t != null && (t.FullName == fullOrShortName || t.Name == fullOrShortName));
         }
 
         private static void DumpType(StringBuilder sb, Type type, string[] names)
         {
             if (type == null) { sb.AppendLine("MISSING TYPE"); return; }
-            sb.AppendLine("TYPE " + type.FullName);
-            const BindingFlags f = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-            IEnumerable<MethodBase> methods = type.GetMethods(f).Cast<MethodBase>().Concat(type.GetConstructors(f).Cast<MethodBase>());
+            sb.AppendLine("TYPE " + type.FullName + " assembly=" + type.Assembly.GetName().Name);
+            IEnumerable<MethodBase> methods = GetDeclaredMethods(type);
             if (names != null) methods = methods.Where(m => names.Contains(m.Name));
             foreach (MethodBase method in methods.OrderBy(m => m.MetadataToken)) DumpMethod(sb, method, null);
-        }
-
-        private static void DumpMethodCallCrossReferences(StringBuilder sb, Type[] types)
-        {
-            sb.AppendLine("=== METHOD-CALL CROSS-REFERENCES ===");
-            List<MethodBase> targets = new List<MethodBase>();
-            AddMethods(targets, types, "PrayLogics", "SpreadFaithIncome");
-            AddMethods(targets, types, "PrayLogics", "SpreadMoneyIncome");
-            AddMethods(targets, types, "PrayLogics", "DropPrayItems");
-            AddMethods(targets, types, "CraftDefinition", "GetBuffValue");
-            AddMethods(targets, types, "BuffsLogics", "AddBuff");
-            AddMethods(targets, types, "FlyingObject", "CreateBuffFlyingObject");
-            AddMethods(targets, types, "PrayCraftGUI", "DoPrayForBuff");
-
-            Dictionary<string, Hit> hits = new Dictionary<string, Hit>();
-            const BindingFlags f = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-            foreach (Type type in types)
-            {
-                MethodBase[] methods;
-                try { methods = type.GetMethods(f).Cast<MethodBase>().Concat(type.GetConstructors(f).Cast<MethodBase>()).ToArray(); }
-                catch { continue; }
-
-                foreach (MethodBase method in methods)
-                {
-                    List<Instruction> il;
-                    try { il = Read(method); } catch { continue; }
-                    List<string> reasons = new List<string>();
-                    foreach (Instruction ins in il)
-                    {
-                        MethodBase called = ins.Member as MethodBase;
-                        if (called == null) continue;
-                        foreach (MethodBase target in targets)
-                            if (Same(called, target)) reasons.Add("call:" + Signature(target));
-                    }
-                    if (reasons.Count == 0) continue;
-                    string key = method.Module.ModuleVersionId + ":" + method.MetadataToken.ToString("X8", CultureInfo.InvariantCulture);
-                    Hit hit;
-                    if (!hits.TryGetValue(key, out hit)) { hit = new Hit { Method = method }; hits.Add(key, hit); }
-                    foreach (string reason in reasons.Distinct()) if (!hit.Reasons.Contains(reason)) hit.Reasons.Add(reason);
-                }
-            }
-
-            foreach (Hit hit in hits.Values.OrderBy(h => h.Method.DeclaringType.FullName).ThenBy(h => h.Method.MetadataToken))
-                DumpMethod(sb, hit.Method, "HITS=" + string.Join(" | ", hit.Reasons.ToArray()));
-            sb.AppendLine("CrossReferenceMethodCount=" + hits.Count);
-            sb.AppendLine("=== END METHOD-CALL CROSS-REFERENCES ===");
-            sb.AppendLine();
-        }
-
-        private static void AddMethods(List<MethodBase> list, Type[] types, string typeName, string methodName)
-        {
-            Type type = FindType(types, typeName);
-            if (type == null) return;
-            const BindingFlags f = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-            list.AddRange(type.GetMethods(f).Where(m => m.Name == methodName).Cast<MethodBase>());
         }
 
         private static bool Same(MemberInfo a, MemberInfo b)
@@ -165,206 +299,12 @@ namespace PrayerClarityResearch
             return a != null && b != null && a.Module == b.Module && a.MetadataToken == b.MetadataToken;
         }
 
-        private static void DumpBalanceExpressionHits(StringBuilder sb, Type[] types)
-        {
-            sb.AppendLine("=== BALANCE SMART-EXPRESSION HITS ===");
-            Type gameBalanceType = FindType(types, "GameBalance");
-            Type smartType = FindType(types, "SmartExpression");
-            if (gameBalanceType == null || smartType == null)
-            {
-                sb.AppendLine("GameBalance or SmartExpression missing");
-                sb.AppendLine("=== END BALANCE SMART-EXPRESSION HITS ===");
-                return;
-            }
-
-            object gameBalance = null;
-            try
-            {
-                PropertyInfo me = gameBalanceType.GetProperty("me", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-                if (me != null) gameBalance = me.GetValue(null, null);
-            }
-            catch { }
-            if (gameBalance == null)
-            {
-                sb.AppendLine("GameBalance.me unavailable");
-                sb.AppendLine("=== END BALANCE SMART-EXPRESSION HITS ===");
-                return;
-            }
-
-            MethodInfo rawMethod = smartType.GetMethod("GetRawExpressionString", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            string[] needles = { "buff_sins", "buff_pen", "buff_star", "increase_gp_gain", "increase_sin_shard_drop", "gratitude_points" };
-            int hitCount = 0;
-            const BindingFlags instanceFields = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-
-            foreach (FieldInfo collectionField in gameBalanceType.GetFields(instanceFields).OrderBy(f => f.Name))
-            {
-                object collection;
-                try { collection = collectionField.GetValue(gameBalance); } catch { continue; }
-                IEnumerable enumerable = collection as IEnumerable;
-                if (enumerable == null || collection is string) continue;
-
-                int rowIndex = 0;
-                foreach (object row in enumerable)
-                {
-                    rowIndex++;
-                    if (row == null) continue;
-                    Type rowType = row.GetType();
-                    if (rowType.Assembly != gameBalanceType.Assembly) continue;
-                    string rowId = TryGetId(row);
-                    foreach (FieldInfo field in rowType.GetFields(instanceFields))
-                    {
-                        object value;
-                        try { value = field.GetValue(row); } catch { continue; }
-                        if (value == null) continue;
-
-                        if (smartType.IsInstanceOfType(value))
-                        {
-                            string raw = GetRawExpression(rawMethod, value);
-                            if (ContainsAny(raw, needles))
-                            {
-                                sb.Append("EXPR collection=").Append(collectionField.Name)
-                                  .Append(" row=").Append(rowIndex.ToString(CultureInfo.InvariantCulture))
-                                  .Append(" id=").Append(Quote(rowId))
-                                  .Append(" field=").Append(field.Name)
-                                  .Append(" raw=").AppendLine(Quote(raw));
-                                hitCount++;
-                            }
-                        }
-                        else
-                        {
-                            IEnumerable nested = value as IEnumerable;
-                            if (nested == null || value is string) continue;
-                            int nestedIndex = 0;
-                            foreach (object child in nested)
-                            {
-                                nestedIndex++;
-                                if (child == null || !smartType.IsInstanceOfType(child)) continue;
-                                string raw = GetRawExpression(rawMethod, child);
-                                if (!ContainsAny(raw, needles)) continue;
-                                sb.Append("EXPR collection=").Append(collectionField.Name)
-                                  .Append(" row=").Append(rowIndex.ToString(CultureInfo.InvariantCulture))
-                                  .Append(" id=").Append(Quote(rowId))
-                                  .Append(" field=").Append(field.Name).Append('[').Append(nestedIndex.ToString(CultureInfo.InvariantCulture)).Append(']')
-                                  .Append(" raw=").AppendLine(Quote(raw));
-                                hitCount++;
-                            }
-                        }
-                    }
-                }
-            }
-            sb.AppendLine("ExpressionHitCount=" + hitCount.ToString(CultureInfo.InvariantCulture));
-            sb.AppendLine("=== END BALANCE SMART-EXPRESSION HITS ===");
-            sb.AppendLine();
-        }
-
-        private static string GetRawExpression(MethodInfo rawMethod, object smartExpression)
-        {
-            if (rawMethod == null || smartExpression == null) return "";
-            try { return Convert.ToString(rawMethod.Invoke(smartExpression, null), CultureInfo.InvariantCulture) ?? ""; }
-            catch { return ""; }
-        }
-
-        private static bool ContainsAny(string value, IEnumerable<string> needles)
-        {
-            if (string.IsNullOrEmpty(value)) return false;
-            foreach (string needle in needles)
-                if (value.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0) return true;
-            return false;
-        }
-
-        private static string TryGetId(object row)
-        {
-            if (row == null) return "";
-            Type type = row.GetType();
-            FieldInfo field = type.GetField("id", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field != null)
-            {
-                try { return Convert.ToString(field.GetValue(row), CultureInfo.InvariantCulture) ?? ""; } catch { }
-            }
-            PropertyInfo prop = type.GetProperty("id", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            if (prop != null && prop.GetIndexParameters().Length == 0)
-            {
-                try { return Convert.ToString(prop.GetValue(row, null), CultureInfo.InvariantCulture) ?? ""; } catch { }
-            }
-            return "";
-        }
-
-        private static void DumpLocalization(StringBuilder sb)
-        {
-            sb.AppendLine("=== CURRENT LOCALIZATION ===");
-            Type gjl = null;
-            Assembly gjlAssembly = null;
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                Type[] types;
-                try { types = assembly.GetTypes(); }
-                catch (ReflectionTypeLoadException ex) { types = ex.Types.Where(t => t != null).ToArray(); }
-                catch { continue; }
-                gjl = types.FirstOrDefault(t => t.Name == "GJL" || t.FullName == "GJL");
-                if (gjl != null) { gjlAssembly = assembly; break; }
-            }
-            if (gjl == null)
-            {
-                sb.AppendLine("GJL missing across loaded assemblies");
-                sb.AppendLine("=== END CURRENT LOCALIZATION ===");
-                return;
-            }
-            sb.AppendLine("GJLAssembly=" + gjlAssembly.FullName);
-            MethodInfo[] methods = gjl.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "L").ToArray();
-            foreach (MethodInfo method in methods) sb.AppendLine("GJL_SIGNATURE " + Signature(method));
-
-            string[] keys = {
-                "preach_params", "pray_gui_church_q", "pray_gui_sermon_needs", "sermon_success_chance", "btn_try_pray", "btn_pray",
-                "serm_res_people", "serm_res_faith", "serm_res_money", "serm_res_success", "serm_res_faith_bonus", "serm_res_money_bonus",
-                "b_empty", "b_faith", "b_money", "b_faith_money", "b_plant", "b_sins", "b_skull", "b_sword", "b_shield", "b_pen", "b_star", "b_village",
-                "b_souls", "b_grat_points_incr", "b_sin_shard", "blessing_commerce",
-                "b_empty_d", "b_faith_d", "b_money_d", "b_faith_money_d", "b_plant_d", "b_sins_d", "b_skull_d", "b_sword_d", "b_shield_d", "b_pen_d", "b_star_d", "b_village_d",
-                "b_souls_d", "b_grat_points_incr_d", "b_sin_shard_d", "blessing_commerce_d"
-            };
-            foreach (string key in keys) sb.AppendLine("LOC " + key + "=" + Quote(TryLocalize(methods, key)));
-            sb.AppendLine("=== END CURRENT LOCALIZATION ===");
-        }
-
-        private static string TryLocalize(IEnumerable<MethodInfo> methods, string key)
-        {
-            foreach (MethodInfo method in methods)
-            {
-                ParameterInfo[] p = method.GetParameters();
-                if (p.Length == 0 || p[0].ParameterType != typeof(string)) continue;
-                object[] args = new object[p.Length];
-                args[0] = key;
-                bool ok = true;
-                for (int i = 1; i < p.Length; i++)
-                {
-                    if (p[i].IsOptional) args[i] = Type.Missing;
-                    else if (p[i].ParameterType == typeof(string)) args[i] = "";
-                    else if (p[i].ParameterType == typeof(object[])) args[i] = new object[0];
-                    else { ok = false; break; }
-                }
-                if (!ok) continue;
-                try
-                {
-                    object value = method.Invoke(null, args);
-                    if (value != null) return Convert.ToString(value, CultureInfo.InvariantCulture);
-                }
-                catch { }
-            }
-            return "<unresolved>";
-        }
-
-        private static string Quote(string value)
-        {
-            if (value == null) return "<null>";
-            return "\"" + value.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\"", "\\\"") + "\"";
-        }
-
         private static void DumpMethod(StringBuilder sb, MethodBase method, string reason)
         {
             sb.AppendLine("METHOD " + Signature(method));
             if (!string.IsNullOrEmpty(reason)) sb.AppendLine(reason);
             MethodBody body;
-            try { body = method.GetMethodBody(); }
-            catch (Exception ex) { sb.AppendLine("  <body error:" + ex.GetType().Name + ">"); return; }
+            try { body = method.GetMethodBody(); } catch { return; }
             if (body == null) { sb.AppendLine("  <no IL>"); return; }
             foreach (Instruction ins in Read(method))
                 sb.Append("  IL_").Append(ins.Offset.ToString("X4", CultureInfo.InvariantCulture)).Append(' ').Append(ins.Op.Name).Append(' ').AppendLine(ins.Text ?? "");
@@ -406,23 +346,12 @@ namespace PrayerClarityResearch
                     case OperandType.InlineR: text = BitConverter.ToDouble(bytes, p).ToString("R", CultureInfo.InvariantCulture); p += 8; break;
                     case OperandType.ShortInlineVar: text = bytes[p++].ToString(CultureInfo.InvariantCulture); break;
                     case OperandType.InlineVar: text = BitConverter.ToUInt16(bytes, p).ToString(CultureInfo.InvariantCulture); p += 2; break;
-                    case OperandType.ShortInlineBrTarget:
-                    {
-                        sbyte d = unchecked((sbyte)bytes[p++]);
-                        text = "IL_" + (p + d).ToString("X4", CultureInfo.InvariantCulture);
-                        break;
-                    }
-                    case OperandType.InlineBrTarget:
-                    {
-                        int d = BitConverter.ToInt32(bytes, p); p += 4;
-                        text = "IL_" + (p + d).ToString("X4", CultureInfo.InvariantCulture);
-                        break;
-                    }
+                    case OperandType.ShortInlineBrTarget: { sbyte d = unchecked((sbyte)bytes[p++]); text = "IL_" + (p + d).ToString("X4", CultureInfo.InvariantCulture); break; }
+                    case OperandType.InlineBrTarget: { int d = BitConverter.ToInt32(bytes, p); p += 4; text = "IL_" + (p + d).ToString("X4", CultureInfo.InvariantCulture); break; }
                     case OperandType.InlineString:
                     {
                         int token = BitConverter.ToInt32(bytes, p); p += 4;
-                        try { str = module.ResolveString(token); text = Quote(str); }
-                        catch { text = "string-token:0x" + token.ToString("X8", CultureInfo.InvariantCulture); }
+                        try { str = module.ResolveString(token); text = Quote(str); } catch { text = "string-token:0x" + token.ToString("X8", CultureInfo.InvariantCulture); }
                         break;
                     }
                     case OperandType.InlineField:
@@ -448,11 +377,7 @@ namespace PrayerClarityResearch
                         int count = BitConverter.ToInt32(bytes, p); p += 4;
                         int basePos = p + count * 4;
                         string[] targets = new string[count];
-                        for (int i = 0; i < count; i++)
-                        {
-                            int d = BitConverter.ToInt32(bytes, p); p += 4;
-                            targets[i] = "IL_" + (basePos + d).ToString("X4", CultureInfo.InvariantCulture);
-                        }
+                        for (int i = 0; i < count; i++) { int d = BitConverter.ToInt32(bytes, p); p += 4; targets[i] = "IL_" + (basePos + d).ToString("X4", CultureInfo.InvariantCulture); }
                         text = "[" + string.Join(",", targets) + "]";
                         break;
                     }
@@ -465,12 +390,18 @@ namespace PrayerClarityResearch
 
         private static string Resolved(MemberInfo member)
         {
-            FieldInfo field = member as FieldInfo;
-            if (field != null) return field.DeclaringType.FullName + "." + field.Name + " : " + (field.FieldType.FullName ?? field.FieldType.Name);
-            MethodBase method = member as MethodBase;
-            if (method != null) return Signature(method);
-            Type type = member as Type;
-            return type != null ? type.FullName : member.ToString();
+            FieldInfo f = member as FieldInfo;
+            if (f != null) return f.DeclaringType.FullName + "." + f.Name + " : " + (f.FieldType.FullName ?? f.FieldType.Name);
+            MethodBase m = member as MethodBase;
+            if (m != null) return Signature(m);
+            Type t = member as Type;
+            return t != null ? t.FullName : member.ToString();
+        }
+
+        private static string Quote(string value)
+        {
+            if (value == null) return "<null>";
+            return "\"" + value.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\"", "\\\"") + "\"";
         }
 
         private sealed class Instruction
@@ -480,12 +411,6 @@ namespace PrayerClarityResearch
             public string Text;
             public MemberInfo Member;
             public string StringValue;
-        }
-
-        private sealed class Hit
-        {
-            public MethodBase Method;
-            public readonly List<string> Reasons = new List<string>();
         }
     }
 }
