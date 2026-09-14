@@ -101,7 +101,9 @@ Use these classifications before changing a working prayer:
 
 Niche or progression-limited behavior is not automatically a defect. Repose is a useful example: +1 maximum Donkey corpse tier is meaningful before the final tier and naturally becomes obsolete afterwards. Prosperity similarly has a strong merchant-progression role and then exhausts itself. Imagination can be extremely strong when the player deliberately batches writing work.
 
-Current prayer-by-prayer preliminary verdicts are recorded in `docs/PRAYER_DESIGN_AUDIT.md`. The only functioning stock prayers presently promoted to **rebalance candidates** rather than “keep/clarify” are Retribution and Protection; no new values have been chosen.
+Current prayer-by-prayer preliminary verdicts are recorded in `docs/PRAYER_DESIGN_AUDIT.md`. After direct comparison with swords, armor, perks, food and potion buffs, even Retribution/Protection are **not currently justified balance changes**: their +5/+4 magnitudes are substantial and their distinctive benefit is very long duration. Their limitation is chiefly the amount of sustained combat the game asks of the player, not obviously bad numbers.
+
+At this stage no functioning stock prayer has been approved for tuning. The rebalance layer remains an available architecture, not a mandate to change something.
 
 ## Preferred UI — compact dynamic breakdown
 
@@ -188,4 +190,4 @@ After that result, choose the first implementation slice. Current likely order:
 1. shared Clarity model + compact pulpit presentation prototype;
 2. evidence-backed Shoots/Roots fix behind the Vanilla Fixes layer;
 3. Repentance repair only after classifying it correctly as vanilla recovery or explicit new balance;
-4. quantify and decide Retribution/Protection tuning separately.
+4. leave functioning-prayer numbers unchanged unless later runtime/player evidence establishes a concrete balance problem that clarity alone does not solve.
