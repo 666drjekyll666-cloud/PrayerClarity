@@ -1,0 +1,14 @@
+{
+  "forecast.outcomes": "Erfolg: {0} (faith), {1} | Fehlschlag: {2} (faith), {3}",
+  "forecast.effect": "Effekt: {0}",
+  "forecast.reward": "Belohnung: {0}",
+  "buff.sword": "+{0:0.##} Schaden für {1:0} Min.",
+  "buff.shield": "+{0:0.##} Rüstung für {1:0} Min.",
+  "buff.skull": "Esel: maximale Leichenstufe +{0:0.##} für {1:0} Min.",
+  "buff.pen": "Qualitätswert beim Schreiben +{0:0.##} für {1:0} Min.",
+  "buff.star": "Qualitätswert +{0:0.##} bei betroffenen Herstellungsprozessen für {1:0} Min.",
+  "buff.plant_inactive": "Der Wachstumsgeschwindigkeits-Effekt ist in Vanilla 1.407 inaktiv (Buff hält {0:0} Min.)",
+  "buff.sins_unverified": "Der Spezialeffekt konnte in Vanilla 1.407 nicht bestätigt werden (Buff hält {0:0} Min.)",
+  "buff.gratitude": "Erhaltene Seelendankbarkeit +10 % für {0:0} Min.",
+  "buff.sin_shard": "Sündensplitter aus erfolgreicher Seelenheilung ×2 für {0:0} Min."
+}

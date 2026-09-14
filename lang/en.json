@@ -1,0 +1,14 @@
+{
+  "forecast.outcomes": "Success: {0} (faith), {1} | Failure: {2} (faith), {3}",
+  "forecast.effect": "Effect: {0}",
+  "forecast.reward": "Reward: {0}",
+  "buff.sword": "+{0:0.##} damage for {1:0} min",
+  "buff.shield": "+{0:0.##} armor for {1:0} min",
+  "buff.skull": "Donkey: maximum corpse tier +{0:0.##} for {1:0} min",
+  "buff.pen": "Writing quality score +{0:0.##} for {1:0} min",
+  "buff.star": "Quality score +{0:0.##} on affected crafts for {1:0} min",
+  "buff.plant_inactive": "Growth-speed effect is inactive in vanilla 1.407 (buff lasts {0:0} min)",
+  "buff.sins_unverified": "Special effect could not be verified in vanilla 1.407 (buff lasts {0:0} min)",
+  "buff.gratitude": "Soul Gratitude gained +10% for {0:0} min",
+  "buff.sin_shard": "Sin Shards from successful soul healing ×2 for {0:0} min"
+}

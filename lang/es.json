@@ -1,0 +1,14 @@
+{
+  "forecast.outcomes": "Éxito: {0} (faith), {1} | Fallo: {2} (faith), {3}",
+  "forecast.effect": "Efecto: {0}",
+  "forecast.reward": "Recompensa: {0}",
+  "buff.sword": "+{0:0.##} de daño durante {1:0} min",
+  "buff.shield": "+{0:0.##} de armadura durante {1:0} min",
+  "buff.skull": "Burro: nivel máximo de cadáver +{0:0.##} durante {1:0} min",
+  "buff.pen": "Puntuación de calidad de escritura +{0:0.##} durante {1:0} min",
+  "buff.star": "Puntuación de calidad +{0:0.##} en las fabricaciones afectadas durante {1:0} min",
+  "buff.plant_inactive": "El efecto de velocidad de crecimiento está inactivo en la versión original 1.407 (el efecto dura {0:0} min)",
+  "buff.sins_unverified": "No se pudo verificar el efecto especial en la versión original 1.407 (el efecto dura {0:0} min)",
+  "buff.gratitude": "Gratitud de las almas obtenida +10 % durante {0:0} min",
+  "buff.sin_shard": "Fragmentos de pecado obtenidos al sanar un alma con éxito ×2 durante {0:0} min"
+}

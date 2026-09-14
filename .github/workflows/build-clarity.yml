@@ -1,0 +1,73 @@
+name: Build PrayerClarity prototype
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/clarity-pulpit-v0.1
+    paths:
+      - 'PrayerClarity.csproj'
+      - 'src/PrayerClarityPlugin.cs'
+      - 'src/ReflectionBridge.cs'
+      - 'src/PrayerForecast.cs'
+      - 'src/Localization.cs'
+      - 'lang/**'
+      - '.github/workflows/build-clarity.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayerclarity-prototype-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PrayerClarity.csproj
+      - name: Build prototype DLL
+        run: dotnet build PrayerClarity.csproj -c Release --no-restore
+      - name: Verify embedded locales and stage artifact
+        id: artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll='bin/Release/PrayerClarity.dll'
+          test -f "$dll"
+          for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
+            grep -a -q ".lang.${locale}.json" "$dll" || {
+              echo "Embedded locale marker missing: ${locale}" >&2
+              exit 1
+            }
+          done
+          mkdir -p dist
+          asset='PrayerClarity-0.1.0-ci.dll'
+          cp "$dll" "dist/$asset"
+          hash=$(sha256sum "dist/$asset" | awk '{print $1}')
+          {
+            echo "Source SHA: $GITHUB_SHA"
+            echo "DLL: $asset"
+            echo "SHA-256: $hash"
+            echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
+            echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
+          } > dist/BUILD_INFO.txt
+          echo "asset=$asset" >> "$GITHUB_OUTPUT"
+          echo "sha256=$hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity prototype SHA-256: $hash"
+      - name: Upload prototype build evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerClarity-0.1.0-ci-${{ github.sha }}
+          path: |
+            dist/${{ steps.artifact.outputs.asset }}
+            dist/BUILD_INFO.txt
+          if-no-files-found: error
+          retention-days: 7

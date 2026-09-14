@@ -1,0 +1,14 @@
+{
+  "forecast.outcomes": "Réussite : {0} (faith), {1} | Échec : {2} (faith), {3}",
+  "forecast.effect": "Effet : {0}",
+  "forecast.reward": "Récompense : {0}",
+  "buff.sword": "+{0:0.##} dégâts pendant {1:0} min",
+  "buff.shield": "+{0:0.##} armure pendant {1:0} min",
+  "buff.skull": "Âne : niveau maximal du cadavre +{0:0.##} pendant {1:0} min",
+  "buff.pen": "Score de qualité d’écriture +{0:0.##} pendant {1:0} min",
+  "buff.star": "Score de qualité +{0:0.##} pour les fabrications concernées pendant {1:0} min",
+  "buff.plant_inactive": "L’effet d’accélération de la croissance est inactif dans la version vanilla 1.407 (le bonus dure {0:0} min)",
+  "buff.sins_unverified": "L’effet spécial n’a pas pu être vérifié dans la version vanilla 1.407 (le bonus dure {0:0} min)",
+  "buff.gratitude": "Gratitude des âmes gagnée +10 % pendant {0:0} min",
+  "buff.sin_shard": "Éclats de péché obtenus lors d’un soin d’âme réussi ×2 pendant {0:0} min"
+}

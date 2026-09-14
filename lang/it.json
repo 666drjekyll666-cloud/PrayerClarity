@@ -1,0 +1,14 @@
+{
+  "forecast.outcomes": "Successo: {0} (faith), {1} | Fallimento: {2} (faith), {3}",
+  "forecast.effect": "Effetto: {0}",
+  "forecast.reward": "Ricompensa: {0}",
+  "buff.sword": "+{0:0.##} danni per {1:0} min",
+  "buff.shield": "+{0:0.##} armatura per {1:0} min",
+  "buff.skull": "Asino: livello massimo del cadavere +{0:0.##} per {1:0} min",
+  "buff.pen": "Punteggio qualità della scrittura +{0:0.##} per {1:0} min",
+  "buff.star": "Punteggio qualità +{0:0.##} nelle produzioni interessate per {1:0} min",
+  "buff.plant_inactive": "L’effetto sulla velocità di crescita è inattivo nella versione vanilla 1.407 (il bonus dura {0:0} min)",
+  "buff.sins_unverified": "Non è stato possibile verificare l’effetto speciale nella versione vanilla 1.407 (il bonus dura {0:0} min)",
+  "buff.gratitude": "Gratitudine delle anime ottenuta +10% per {0:0} min",
+  "buff.sin_shard": "Frammenti del peccato ottenuti curando con successo un’anima ×2 per {0:0} min"
+}
