@@ -1,6 +1,6 @@
 # Prayer Rebalance Options — design hypotheses
 
-Status: modeled candidate roster, 2026-09-14. **Nothing in this file is accepted gameplay behavior.** It translates verified stock mechanics and the quantitative power budget into concrete options before any production patch is written.
+Status: modeled candidate roster, 2026-09-14. **Nothing in this file is accepted gameplay behavior unless explicitly marked as an accepted product/design direction.** It translates verified stock mechanics and the quantitative power budget into concrete options before any production patch is written.
 
 Canonical stock behavior remains in `PRAYER_MECHANICS.md`. Cost/progression evidence lives in `PRAYER_POWER_BUDGET.md`.
 
@@ -11,6 +11,12 @@ Use **temptation parity**, not numerical parity.
 A prayer should be attractive enough to justify its unlock, craft/quality cost and weekly sermon slot in the stage/niche where it belongs. A narrow prayer may therefore be substantially stronger in its niche than Combo. Bronze should already be credible; silver/gold should create a visible reason to invest further.
 
 Prefer buffs/new reasons to choose alternatives over nerfing familiar player rewards.
+
+### Starter prayer boundary
+
+The free starter `b_empty` / Ordinary Prayer is **not** part of the specialist-premium proposal below. Do not accidentally turn the opening sermon into the `+100%` Faith specialist.
+
+The current rework target is the separately crafted `b_faith` Prayer for Faith. Keep Ordinary Prayer stock unless a later dedicated early-game analysis establishes a reason to change it.
 
 ---
 
@@ -196,7 +202,7 @@ The repaired effect applies broadly enough that its real power cannot be judged 
 
 ---
 
-## 4. Retribution / Protection
+## 4. Retribution / Protection — merge direction and save-safe migration
 
 ### Verified stock budget problem
 
@@ -209,55 +215,122 @@ Both are separate prayers:
 - Protection gives +4 armor;
 - duration 36/72/108 min.
 
-Combat formula evidence also makes their raw effects concrete:
+The user preference is now clear: if redesigning the game from scratch, these two one-stat sermons would be better represented by **one genuinely strong combat-preparation prayer**, potentially including regeneration.
 
-- weapon `damage` and player `add_damage` are additive sources in the player attack model;
-- incoming player damage subtracts equipped armor and then player `add_armor`, clamping at zero;
-- stock already contains short +5 damage, +15 berserk damage, +4 armor, 1-HP periodic healing and movement-speed buff primitives.
+The main mod-specific concern is migration: existing saves can already contain either or both prayer items.
 
-So the engine offers several stable primitives, but not every one is appropriate for a multi-day sermon buff.
+### Preferred architecture C-C2 — soft merge with legacy alias
 
-### Candidate C-A — quality-scaled single-stat prayers
+Do **not** delete or rewrite saved prayer items and do **not** require a third permanent item ID.
 
-Keep identities unchanged and make magnitude scale with quality as well as duration.
+Preferred Rebalanced-profile design:
 
-**Pros:** smallest mechanics/compatibility change.
+1. choose one existing ID (current candidate: `b_sword`) as the canonical **Combat Prayer**;
+2. give it the combined combat package (offense + defense + a bounded regeneration component, exact numbers still open);
+3. stop offering the old `b_shield` recipe/unlock as a separate new-player choice in the Rebalanced presentation;
+4. preserve every existing `b_shield` item already present in inventories/saves;
+5. treat `b_shield` at runtime as a **legacy alias** of the canonical Combat Prayer, mapping bronze/silver/gold to the same-quality combined effect;
+6. do not mutate the saved item ID merely to “clean up” the save;
+7. if the mod/profile is removed, vanilla sees the original IDs again and the save is not structurally damaged.
 
-**Cons:** still asks the player to buy/use a whole deep book-sermon for one stat; large armor values can trivialize low-damage enemies because armor is flat subtraction.
+This solves the transition problem without making existing crafted prayers disappear or become worthless.
 
-### Candidate C-B — two thematic packages
+A player who already crafted both simply owns two usable copies/qualities of the same effective combat sermon while Rebalanced is active. One can be sold/destroyed normally if redundant.
 
-Keep two recognizable prayers but broaden their role:
+**Accepted design direction:** use a compatibility alias/hide strategy rather than destructive item migration if the two combat prayers are merged.
 
-- **Retribution:** clearly offensive package;
-- **Protection:** clearly defensive/survival package.
+### Combat package constraints
 
-This remains the preferred architecture, but the static combat audit adds constraints:
+The combined bronze prayer can be substantially stronger than either stock half because it is replacing **two** deep book-sermons and still consumes a weekly slot.
 
-- `add_damage` is safe/understood and can remain the offensive core;
-- `add_armor` is safe/understood but must scale cautiously because it directly subtracts damage;
-- the existing 1-HP periodic-heal primitive is dangerous over 36/72/108 minutes and should **not** simply be copied into Protection;
-- the existing `speed_buff=1.5` would create a powerful general traversal benefit, not just combat identity, so it should **not** be casually attached to Retribution.
+A package containing damage + armor + regeneration is therefore a legitimate candidate, not automatically excessive.
 
-Therefore a “package” should not become a bag of unrelated potion buffs. Additional secondary effects need a real combat-role justification and bounded impact.
+However:
 
-### Candidate C-C — merge combat preparation, repurpose one prayer
+- armor is flat subtraction, so aggressive `+armor` quality scaling can trivialize low-damage enemies;
+- copying the stock restoring-potion tick unchanged across 36/72/108 minutes would provide far too much healing;
+- regeneration should therefore be a **mod-owned bounded value** or combat/dungeon-local rule rather than blindly reusing the short potion's full tick rate;
+- avoid attaching global movement speed merely to make the package longer; that changes traversal rather than combat identity.
 
-One sermon grants both offense and defense; the other prayer receives a distinct new role.
+Numbers remain intentionally open until the candidate combat package is modeled as a whole.
 
-**Pros:** directly addresses the user's concern that two separate expensive weeks are currently needed for the two halves of combat preparation.
+### Fallback C-A — keep two prayers
 
-**Cons:** requires inventing a second role and is the least vanilla-like option.
-
-### Current narrowing
-
-**C-B remains preferred conceptually, but it is not ready for numerical specification.** The narrow static audit rules out naïvely adding long regeneration or global speed. Before choosing secondary effects, inspect only the existing combat event/attack hooks needed to identify a bounded effect such as on-hit, kill-related, durability/energy, or another genuinely combat-local primitive.
-
-If no clean bounded secondary mechanism exists, prefer a transparent quality-scaled C-A over implementing a complicated custom combat subsystem.
+If hiding/aliasing an existing prayer proves technically fragile or creates unacceptable compatibility issues, fall back to two quality-scaled thematic prayers. This is no longer the preferred product design, but it remains the low-risk engineering fallback.
 
 ---
 
-## 5. Requirements / progression policy
+## 5. Prosperity / Repose / Imagination / Souls Repose — quality-value re-audit
+
+The earlier blanket “keep these healthy prayers stock” judgement was too broad. Their **roles** may be healthy while their bronze/silver/gold progression differs substantially.
+
+### Prosperity — keep stock unless runtime testing contradicts it
+
+Stock quality already changes the permanent output directly:
+
+- bronze: 1 Blessing of Commerce;
+- silver: 2;
+- gold: 3.
+
+Blessings can be spent across vendors and permanently accelerate access to higher vendor tiers. That gives bronze an immediate progression use and makes gold literally triple the special output.
+
+**Current verdict:** role and quality progression already satisfy temptation parity. The main Clarity work is to explain explicitly that quality changes **how many permanent merchant-progression items** are produced.
+
+Natural obsolescence after the relevant vendors are already developed is acceptable.
+
+### BSS Soul's Repose — keep stock unless dynamic preview exposes a real issue
+
+This prayer's special value is not a flat buff: Soul Gratitude enters the **Faith baseline itself**, after which prayer quality still applies the ordinary `.5 / 1 / 1.5` Faith-bonus progression.
+
+When Soul Gratitude is high relative to Church Quality, the entire baseline can already be far above ordinary sermons, so silver/gold amplify a stronger underlying value rather than merely extending a timer.
+
+**Current verdict:** mechanically healthy and potentially one of the strongest Faith choices. The primary defect is discoverability; the pulpit must show the actual current Faith outcome so the player can see when it beats Combo/Faith.
+
+### Imagination — role healthy, quality progression rework candidate
+
+Stock special magnitude is **+0.7 writing quality at every prayer tier**. Only duration changes 18/36/54 min (plus ordinary sermon reward scaling).
+
+The +0.7 itself is powerful: community examples show it can turn a planned writing batch into a major progression/profit burst. But this creates a quality-design problem: writing can be stockpiled and processed in a short planned session, so bronze's 18-minute window can already cover the activity; silver/gold duration may then have low marginal value.
+
+**Rework candidate I-A:** preserve stock bronze and let prayer quality also improve magnitude:
+
+- bronze `+0.7`;
+- silver `+1.0`;
+- gold `+1.3`;
+- keep 18/36/54 min initially.
+
+Because writing quality uses fractional tier math, +0.3 is roughly a 30-percentage-point shift toward the next quality when no integer boundary is crossed. This gives silver/gold a visible production advantage rather than only more spare time.
+
+The exact curve is a design hypothesis, not accepted behavior.
+
+### Repose — role healthy, stock quality progression is suspect
+
+Stock Repose always supplies `body_max +1`; prayer quality changes duration 18/36/54 min but **not** the corpse-tier magnitude.
+
+The user's proposed `+1/+2/+3` is attractive conceptually, but direct runtime/story evidence makes it risky: each `+1` is a whole Donkey corpse tier and the corpse-tier progression has only a few story steps. A gold `+3` could therefore leap several intended progression tiers rather than merely making the same niche stronger.
+
+Preferred design goal: make higher quality improve **consistency of better corpses without skipping more than the next story tier**.
+
+Candidate RPO-A:
+
+- bronze: stock behavior — extend the pool to the next tier (`max +1`);
+- silver: bias/raise the delivery floor as well as preserving access to the next tier, so low-tier results become less common;
+- gold: while the buff is active, make the Donkey reliably deliver from the best tier available under the prayer (`current story max +1`) rather than accessing `+2/+3` future story tiers;
+- retain 18/36/54 min initially.
+
+This makes gold genuinely desirable (“best boosted corpses reliably”) while preserving the prayer's natural obsolescence at the final corpse tier and avoiding major story/progression skips.
+
+Implementation can use the already verified live `Tier min` / `Tier max` Donkey path; exact probability/floor semantics must be specified before coding.
+
+### Excellence — reopen for the same quality reason
+
+Excellence is narrower than Imagination and stock magnitude is fixed `+0.2` at all qualities, again with only 18/36/54 min duration scaling. External/current player evidence shows real value for specific high-quality marble/chisel/book crafts, but not enough breadth to assume duration-only gold is satisfying.
+
+**Current status:** reopen as a second-tier quality-progression candidate after Imagination. A simple candidate family such as `+0.2 / +0.4 / +0.6` is worth modeling, but no value is selected yet.
+
+---
+
+## 6. Requirements / progression policy
 
 Stronger reworked prayers may justify higher requirements, but requirements should communicate theme rather than act as arbitrary taxes.
 
@@ -274,39 +347,34 @@ Donations/Graveyard Quality remains the first thematic candidate, but FDC-B shou
 
 ---
 
-## 6. What remains unchanged unless evidence changes
-
-A Rebalanced profile is allowed to leave many prayers numerically stock:
-
-- Ordinary — starter baseline;
-- Prosperity — strong merchant progression tool;
-- Repose — finite +1 corpse-tier progression tool;
-- Imagination — strong writing-production window;
-- Excellence — clarity first, then judge affected-craft usefulness;
-- BSS Soul's Repose — strong state-dependent Faith alternative;
-- Soul Contentment — clarity first;
-- Thorough Cleansing — strong x2 specialist benchmark.
-
----
-
 ## Current candidate roster status
 
-The first three families are now narrowed enough for an eventual integrated candidate:
+Current leading hypotheses/directions:
 
+- **Ordinary:** stock; explicitly excluded from Faith-specialist buff;
 - **Faith / Donations / Combo:** lead = **FDC-B** (`specialist target k = 1 / 2 / 3`, Combo stock);
 - **Repentance:** lead = **R-B** (`30% / 50% / 70%` confession chance, stock tier durations);
-- **Shoots and Roots:** lead = stock-intent **-20% Vanilla Fix**, no extra balance buff yet;
-- **Retribution / Protection:** architecture lead = **C-B**, numerical/package details still intentionally open.
+- **Shoots and Roots:** stock-intent **-20% Vanilla Fix**, no extra balance buff yet;
+- **Combat:** preferred architecture = **C-C2 soft merge** into one Combat Prayer with save-safe legacy alias; exact combat stats/regen open;
+- **Prosperity:** stock mechanics/quality scaling currently healthy;
+- **Repose:** rework candidate focused on quality/consistency, not `+1/+2/+3` story-tier skipping;
+- **Imagination:** magnitude quality-scaling candidate, lead for modeling `+0.7/+1.0/+1.3`;
+- **Excellence:** reopen quality scaling after Imagination;
+- **BSS Soul's Repose:** stock mechanics currently healthy; dynamic Clarity is the main change;
+- **Soul Contentment:** clarity first;
+- **Thorough Cleansing:** stock x2 remains the strong-specialist benchmark.
 
-None is accepted gameplay yet.
+None of the numerical rework curves are accepted gameplay yet.
 
 ## Next gate
 
 Before production implementation:
 
-1. perform one narrow combat-hook audit to determine whether C-B has a simple bounded secondary-effect path; if not, fall back to C-A;
-2. assemble a single complete non-production `Rebalanced` specification using FDC-B, R-B, repaired Roots, the chosen combat design, and stock values for healthy prayers;
-3. verify technology/item/pulpit wording can all be generated from the same semantic model;
-4. only then create a `dev/*` branch and first integrated runtime candidate.
+1. specify and model the combined Combat Prayer package, including a bounded regeneration rule;
+2. model Repose RPO-A against actual story corpse-tier ranges so gold is powerful without progression skipping;
+3. model Imagination I-A (and then Excellence) against real quality-crafting probabilities;
+4. assemble one complete non-production `Rebalanced` specification using FDC-B, R-B, repaired Roots, the combat merge, accepted quality reworks, and stock values for healthy prayers;
+5. verify technology/item/pulpit wording can all be generated from the same semantic model;
+6. only then create a `dev/*` branch and first integrated runtime candidate.
 
 No user in-game test is required until that candidate exists.
