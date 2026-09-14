@@ -1,29 +1,29 @@
 # Player UX Research — Prayer/Sermon System
 
-Status: initial evidence map, 2026-09-14.
+Status: initial evidence map, updated 2026-09-14.
 
 This document records **player-experience evidence**, not authoritative game mechanics. Mechanics are verified separately in `PRAYER_MECHANICS.md`.
 
 ## Method
 
-Sources are used to answer questions such as:
+Sources are used to identify:
 
 - what players cannot infer from the game;
-- what wording they misread;
-- which prayer comparisons repeatedly require outside arithmetic;
-- which dependencies (church, graveyard, Soul Gratitude, prayer quality) are not obvious at decision time;
-- which parts of the system have prompted calculators, tables, guides, or mods.
+- wording players repeatedly misread;
+- prayer comparisons that require outside arithmetic;
+- dependencies on church, graveyard, Soul Gratitude, prayer quality, or perks that are not obvious at decision time;
+- prayer effects that require wiki tables, calculators, save/reload testing, or forum explanations.
 
-A comment or thread is a **community signal**, not proof of a mechanic. Repetition across time strengthens evidence of a durable UX problem but is not called a consensus without stronger sampling.
+A comment or thread is a **community signal**, not proof of a mechanic. Repetition strengthens evidence of a durable UX problem but is not called a consensus without stronger sampling.
 
 ## Strong current signals
 
 | Date | Source | Player-experience signal | Classification / caveat |
 | --- | --- | --- | --- |
-| 2026-06-09 | Reddit — `Is Prayer for Faith in bronze quality worth using?` | New player reads `Faith (x2)` as “double base Faith” and `Faith (x1) (+50%)` as 150% of base, therefore initially concludes the upgraded Faith prayer may be worse than Casual Prayer. The post explicitly asks for the math behind the displayed line. | **community signal**; very current and directly about presentation semantics |
-| 2026-03-13 | Reddit — `The Effect of "Prayer for Soul's Repose" is Secretly Capped?` | Player observes a result that does not match their inferred formula, suspects a hidden cap, then updates the post after community members derive a different formula from testing. | **community signal**; current and especially relevant because direct 1.407 runtime data independently confirms the Souls base-Faith formula depends on both church quality and Soul Gratitude |
-| 2026-01 | Steam — `What does graveyard quality do (aside from finishing bishop quests)` | Player explicitly asks where the game explains what graveyard rating does and initially believes Faith/money both come from church quality. Replies say this information may not be shown and explain graveyard -> sermon donations, church -> Faith. | **community signal**; current, directly tests discoverability of a major dependency |
-| 2026-04 | Steam — `Why is my friend getting twice the donations with worse stats?` | Player compares two games and cannot explain different donations from visible church/graveyard stats. Explanation requires separating total donations, visitors, graveyard rating, prayer success, and perks. | **community signal**; current, demonstrates difficulty interpreting the visible donation animation/results |
+| 2026-06-09 | Reddit — `Is Prayer for Faith in bronze quality worth using?` | New player reads `Faith (x2)` as “double base Faith” and `Faith (x1) (+50%)` as 150% of base, initially concluding the upgraded Faith prayer may be worse than Casual Prayer. The post asks for the actual math behind the displayed line. | **community signal**; recent and directly about notation semantics |
+| 2026-03-13 | Reddit — `The Effect of "Prayer for Soul's Repose" is Secretly Capped?` | Player observes a result that does not match their inferred formula, suspects a hidden cap, then updates after other players derive a different formula from testing. | **community signal**; recent; direct 1.407 runtime independently confirms the Souls baseline uses both church quality and Soul Gratitude |
+| 2026-01-15 | Steam — `What does graveyard quality do (aside from finishing bishop quests)` | Player explicitly asks where the game explains graveyard rating and initially believes sermon Faith/money both come from church quality. Replies say the relationship may not be shown in-game and explain graveyard -> donations, church -> Faith. | **community signal**; recent, direct discoverability complaint |
+| 2026-04-12 | Steam — `Why is my friend getting twice the donations with worse stats?` | Player compares two games and cannot reconcile per-person donation animations with church/graveyard stats. Explanation requires separating total donations, visitor count, graveyard rating, prayer success, and perks. | **community signal**; recent; highlights that visible per-person coins can teach the wrong mental model |
 
 Source URLs:
 
@@ -34,17 +34,17 @@ Source URLs:
 
 ## Repeated historical/supporting signals
 
-These are useful for showing persistence, but older reports are not automatically assumed to describe the exact 1.407 UI.
+These help establish persistence but are not automatically treated as current-1.407 presentation evidence.
 
 | Date | Source | Signal | Caveat |
 | --- | --- | --- | --- |
-| 2021-03 | Reddit — `Please fix prayers descriptions` | Poster specifically argues that `x2 Faith` is interpreted as multiplication although observed behavior is additive; says prayer descriptions make comparisons difficult. | strong historical wording signal; current 2026 thread shows the same interpretation still occurs |
-| 2024-05 | Reddit — `Gold prayer for Faith vs Silver Combo Prayer?` | Player asks which prayer is better; one reply links an external sermon calculator spreadsheet to answer quantitatively. | supports “comparison requires external arithmetic” signal |
-| 2021-10 | Reddit — `FINALLY got my first sermon...` | Player expected visible Combo Prayer stats to imply a larger benefit; reply links a sermon-gain calculator. | older, but directly about expectation versus result |
-| 2023-12 | Reddit — `Beginner's guide to prayers?` | New player says they are trying to figure out how prayers work and cannot choose the next prayer from in-game understanding alone. | general discoverability signal, not evidence of one specific UI defect |
-| 2025-02 | Reddit — `What's the best prayer to use?` | Player says passive-effect prayers seem unreliable because they did not notice a difference from Repose/Repentance. | suggests weak effect feedback; exact cause still unknown |
-| 2023-12 | Steam — `How good Pray for soul's repose?` | Player asks how much Soul Gratitude changes Faith and how to compare it with ordinary prayer percentages. | supports Soul Gratitude predictability problem |
-| 2018-09 | Steam — `What do the different sermons do?` | Player says sermon details do not explain buff effects well and hovering the buff provides no useful description. | historical only; must revalidate current 1.407 buff UI before treating as current UX finding |
+| 2021-03 | Reddit — `Please fix prayers descriptions` | Poster says `x2 Faith` reads like multiplication although observed behavior is additive; says prayer descriptions make comparisons difficult. | strong historical wording signal; similar interpretation still appears in 2026 |
+| 2024-05 | Reddit — `Gold prayer for Faith vs Silver Combo Prayer?` | Quantitative comparison question; answer links an external sermon calculator spreadsheet. | supports “comparison requires outside arithmetic” signal |
+| 2021-10 | Reddit — first-sermon expectation mismatch | Player expects visible Combo Prayer stats to imply a larger benefit; reply links a sermon-gain calculator. | historical comparison signal |
+| 2023-12 | Reddit — `Beginner's guide to prayers?` | New player says they are trying to figure out how prayers work and cannot confidently choose the next prayer. | broad discoverability signal |
+| 2025-02 | Reddit — `What's the best prayer to use?` | Player says some passive-effect prayers seem unreliable because they did not notice a difference. | possible feedback/description problem; exact cause unproved |
+| 2023-12 | Steam — `How good Pray for soul's repose?` | Player asks how Soul Gratitude changes Faith and how to compare the Souls prayer with ordinary prayer percentages. | supports Souls predictability issue |
+| 2018-09 | Steam — `What do the different sermons do?` | Player complains buff effects are not explained well and buff hover does not answer the question. | historical only; current buff UI must be revalidated |
 
 Source URLs:
 
@@ -56,88 +56,117 @@ Source URLs:
 - https://steamcommunity.com/app/599140/discussions/0/4034726433730288491/
 - https://steamcommunity.com/app/599140/discussions/0/1733212454825720761/
 
+## Presentation audit changes the hypothesis
+
+Current 1.407 static evidence shows that the prayer-selection flow computes `current_church_quality / needs_quality`, passes the ratio to `PrayCraftGUI.RedrawTextValues`, and changes the action button from a risky `try pray` state to guaranteed `pray` at the threshold. The prayer item description also includes its required church-quality value.
+
+A public capture of the same Preaching UI family visibly shows `Church quality`, `Sermon needs`, and `Success chance`.
+
+Therefore **hidden success probability is not currently considered a likely PrayerClarity UX gap**. Exact current localization remains to be pinned down, but available evidence points away from spending mod UI on information the base interface already provides.
+
+This is important narrowing: the stronger candidate problems concern **what the reward notation means**, **which current-state values feed the reward**, and **whether the player can compare actual outcomes before committing**.
+
 ## Existing mod landscape — initial check
 
-A current Nexus mod, `Pray the Day Away`, was updated on 2026-05-19 and changes sermon frequency/consumption/pacing. It does not present itself as a prayer-effect clarity/forecast mod. This is useful evidence that sermon mechanics are an active mod surface, but it does **not** prove that no existing clarity mod exists.
+A current Nexus mod, `Pray the Day Away`, updated on 2026-05-19, changes sermon frequency/consumption/pacing. It is not presented as a prayer-effect clarity or forecast mod.
 
 Source:
 
 - https://www.nexusmods.com/graveyardkeeper/mods/72
 
-A broader mod inventory should be completed before claiming novelty.
+This only shows that sermons are an active mod surface. It does not yet prove novelty; the broader mod inventory remains open.
 
-## Provisional synthesis against verified mechanics
+## Provisional actual mechanics -> UI -> player-understanding synthesis
 
-These are candidate gaps, not final design requirements.
+These are candidate UX gaps, not final design requirements.
 
-### Candidate A — additive fixed reward is visually easy to read as a multiplier
+### Candidate A — `Faith (xN)` can communicate the wrong arithmetic
 
-**Actual mechanics:** `CalculatePray` treats fixed `faith` output as an additive Faith bonus, while `k_faith` separately adds a percentage-like bonus derived from base Faith.
+**Actual mechanics:** fixed `faith` output is added as a flat `faith_bonus`. The separate `k_faith` field adds a proportional bonus calculated from base Faith.
 
-**Player evidence:** both a 2021 report and a new 2026 report interpret `x1`/`x2` notation as multiplication. The 2026 player specifically reads `Faith (x1) (+50%)` as 150% of base and initially compares it incorrectly with `Faith (x2)`.
+**What the player appears to receive:** prayer descriptions/effect lines use an `xN`-style quantity alongside percentage bonuses for at least the common prayer families.
 
-**Potential UX gap, pending direct 1.407 localization/UI audit:**
+**Player interpretation:** both a 2021 report and a 2026 report read `x1/x2` as multiplication. In the recent case, `Faith (x1) (+50%)` is interpreted as 150% of base and compared incorrectly against `Faith (x2)`.
 
-> Before choosing between prayers, a player can interpret the fixed Faith quantity as a multiplier even though the game adds it as a flat amount, producing the wrong ranking of prayer outcomes.
+**Provisional UX finding:**
 
-This is currently the strongest candidate because the player interpretation is recent and the underlying additive mechanic is directly verified.
+> Before choosing between prayers, the player can read `Faith (xN)` as a multiplier of base Faith even though that component is a flat additive reward, which can reverse the apparent ranking of prayer options.
 
-### Candidate B — church rating and graveyard rating feed different sermon outputs
+This is currently the strongest candidate because both sides are supported: direct 1.407 calculation evidence and a recent concrete misinterpretation.
 
-**Actual mechanics:** ordinary event-base Faith uses church quality; event-base money uses graveyard quality. Church quality also participates in prayer success probability.
+### Candidate B — church and graveyard quality affect different outputs, but players build a single “church quality -> sermon reward” model
 
-**Player evidence:** January and April 2026 Steam threads show players trying to infer donations from church/graveyard stats and asking where the relationship is explained.
+**Actual mechanics:** ordinary event-base Faith uses church quality; base money uses graveyard quality. Church quality also determines sermon success probability.
 
-**Potential UX gap, pending direct presentation audit:**
+**Current presentation evidence:** church quality and sermon requirement are presented in the prayer-selection flow. We have not yet found equivalent pre-use presentation tying the current graveyard rating to expected donations.
 
-> Before selecting or upgrading a prayer, a player may not be able to tell that church rating primarily feeds Faith/success while graveyard rating feeds the base donation pool, so visible church improvements can be wrongly expected to raise sermon money directly.
+**Player interpretation:** current 2026 Steam threads explicitly ask what graveyard quality does, incorrectly attribute sermon money to church quality, or compare per-person donation animations as if they represented total sermon profitability.
 
-### Candidate C — Soul's Repose cannot be predicted from the visible percentage alone
+**Provisional UX finding:**
 
-**Actual mechanics:** the Souls event family calculates base Faith from `(church quality + gratitude_points) * 0.1 * (1 + 0.3*Eloquence)` before prayer-specific bonus terms.
+> Before choosing a prayer, the player may see enough church information to reason about success while lacking an equally clear connection between current graveyard quality and the total donation baseline, producing incorrect expectations about money gains.
 
-**Player evidence:** 2023 and 2026 discussions ask how Soul Gratitude affects the result; the 2026 player suspects a hidden cap before community members derive a formula.
+This still needs the full 1.407 selection/result-screen audit before final acceptance.
 
-**Potential UX gap, pending exact current description audit:**
+### Candidate C — Souls prayer baseline changes with Soul Gratitude in a way ordinary percentage notation does not teach
 
-> Before using the Souls prayer, the player cannot reliably predict its Faith baseline from the ordinary prayer percentage notation if the UI does not expose how current Soul Gratitude changes that baseline.
+**Actual mechanics:** Souls events calculate base Faith from `(church quality + gratitude_points) * 0.1 * (1 + 0.3*Eloquence)` before prayer-specific bonuses.
 
-### Candidate D — comparing Faith / Donations / Combo / Souls often requires external arithmetic
+**Player interpretation:** current and historical questions try to derive the effect from observed returns; a March 2026 player initially concludes the effect may be capped because their assumed formula does not match the result.
 
-**Actual mechanics:** the prayer result is composed from event-base values, fixed output, success probability, and proportional `k_faith` / `k_money` bonuses. Different prayers use different quality thresholds and event families.
+**Provisional UX finding:**
 
-**Player evidence:** comparison questions recur across 2021–2026, and multiple answers resort to external spreadsheets/calculators or manual save/reload testing.
+> Before using the Souls prayer, the player cannot reliably predict its Faith baseline from ordinary prayer percentage notation unless the UI exposes that current Soul Gratitude changes the baseline itself.
 
-**Potential UX gap:**
+Whether current 1.407 explicitly exposes this dependency remains an open presentation question.
 
-> At prayer-selection time, the UI may expose ingredients/percentages without exposing the actual expected Faith/money result for the player's current church/graveyard state, forcing arithmetic outside the game to make a quantitative comparison.
+### Candidate D — quantitative prayer comparison may require external arithmetic even when individual ingredients are shown
 
-This is not yet a final finding because PrayerClarity still needs to record exactly what 1.407 currently previews.
+**Actual mechanics:** final prayer-specific reward is composed from event-base values, fixed additive output, proportional coefficients, success state, perks, and for Souls prayers a different Faith baseline.
 
-### Candidate E — passive/buff prayer effects may lack sufficient explanation or feedback
+**Player evidence:** comparison questions recur across years; some answers use external calculators/spreadsheets or manual testing.
 
-Historical and 2025 reports say players do not understand or notice some passive sermon effects. Direct runtime data proves several prayers apply specific buff flags/resources, but the present-day tooltip and buff UI have not yet been audited.
+**Provisional UX finding:**
 
-Do not promote this to a current UX finding until the 1.407 descriptions, buff hover UI, and effect consumers are inspected.
+> At prayer-selection time, the base game may show requirements and effect ingredients without converting them into the actual Faith/donation outcome for the player's current state, forcing outside arithmetic for a quantitative choice.
+
+This candidate is precisely what the next UI audit must confirm or reject. If the base UI already supplies a current result forecast, this candidate disappears.
+
+### Candidate E — passive prayer effects may be quantitatively underexplained
+
+Direct runtime data proves concrete effects exist. For example, the `b_sin_shard` prayer's active buff sets `increase_sin_shard_drop = 1`, and the soul-healing consumer consequently doubles the base Sin Shard output. Other prayer buffs expose parameters such as +damage, +armor, `craft_q`, and growth flags.
+
+Historical/current player reports sometimes say they cannot tell whether passive-effect prayers work or how large the benefit is.
+
+**Status:** still a candidate, not an accepted UX finding. The current 1.407 item description and buff-hover presentation must be inspected before saying this information is hidden.
+
+## Current priority order
+
+1. **Notation semantics (`xN` flat vs multiplicative)** — strongest evidence already available.
+2. **Current-state outcome prediction / cross-prayer comparison** — high-value, presentation audit still incomplete.
+3. **Church vs graveyard dependency visibility** — strong recent community signal, needs exact UI comparison.
+4. **Soul Gratitude dependency visibility** — direct unusual mechanic + recent player confusion.
+5. **Passive-buff magnitude/duration** — potentially useful, but more consumer/UI evidence required.
+6. **Success chance** — deprioritized because the base UI appears to expose it already.
 
 ## What must be audited before design work
 
-1. Exact English/Russian current localization for every accepted prayer item.
-2. Exact prayer-selection panel content and how it formats fixed quantities, percentages, church requirement, and risk.
-3. Whether current Faith, donation, or success predictions exist anywhere before confirmation.
-4. Current buff descriptions / hover behavior for passive prayer effects.
-5. Result-screen wording: whether it distinguishes base versus prayer bonus clearly enough to teach the model after use.
-6. Whether Souls prayers surface current Soul Gratitude's quantitative role.
-7. Broader Nexus/mod inventory for existing prayer-information solutions.
+1. Exact current 1.407 English/Russian prayer names and descriptions.
+2. Exact `PrayCraftGUI.RedrawTextValues` output: what the selection panel displays numerically for the selected prayer.
+3. Whether any pre-use screen already forecasts final/current Faith or donation totals.
+4. Current buff descriptions and buff-hover behavior for passive prayers.
+5. Result-screen wording and whether it clearly separates base reward from prayer bonus.
+6. Whether Souls prayer UI surfaces current Soul Gratitude's quantitative role.
+7. Broader Nexus/GitHub mod inventory for existing prayer-information solutions.
 
 ## Design status
 
-No design has been accepted. In particular, this research does not yet justify assuming that “make the tooltip longer” is the right fix.
+No design is accepted and no production DLL is justified yet.
 
-The likely decision will depend on the presentation audit:
+The evidence now suggests three different-sized solution classes that must remain separate until the presentation audit is complete:
 
-- if the problem is mostly notation, a localization-sized clarification may be sufficient;
-- if the hidden problem is current-state arithmetic, a compact dynamic prediction/breakdown may be better;
-- if passive effects are the main gap, a contextual effect line or buff description may be enough.
+- if the confirmed problem is mainly `xN` notation, a very small wording clarification may be enough;
+- if players lack current-state outcome comparison, a compact dynamic forecast/breakdown may be justified;
+- if passive effects are the hidden part, a contextual quantitative effect line may solve more than changing the whole prayer panel.
 
-No production DLL is needed at this stage.
+Do not create a long tooltip, calculator panel, or production Harmony patch until the remaining presentation evidence distinguishes these cases.
