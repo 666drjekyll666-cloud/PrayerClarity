@@ -27,6 +27,9 @@ namespace PrayerClarity
             internal bool UsesSoulGratitude;
             internal BonusHighlight Highlight;
             internal string SpecialText;
+            // Leading effect icon only. For timed effects this is the exact
+            // BuffDefinition.GetIconName() used by vanilla BuffIcon.Draw.
+            // Concrete reward/resource icons are presentation-level inline nouns.
             internal string SpecialIconName;
         }
 
@@ -140,10 +143,7 @@ namespace PrayerClarity
             {
                 List<string> rewardParts = new List<string>();
                 foreach (RewardItem reward in rewards)
-                {
                     rewardParts.Add(BuildRewardText(reward));
-                    if (string.IsNullOrEmpty(iconName)) iconName = GetItemIconName(reward.Id);
-                }
                 parts.Add(Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray())));
             }
 
@@ -185,9 +185,6 @@ namespace PrayerClarity
                     break;
                 case "buff_skull":
                     text = NumberedResEffect("buff.skull", res, "body_max", duration);
-                    // The localized sentence uses the proven inline (skull) symbol. Do
-                    // not place a second, generic buff icon before the Effect label.
-                    iconName = null;
                     break;
                 case "buff_pen":
                     text = buff == null ? null : Localization.F("buff.pen", R.Float(R.Get(buff, "craft_q")), duration);
@@ -202,17 +199,10 @@ namespace PrayerClarity
                     text = Localization.F("buff.sins_unverified", duration);
                     break;
                 case "buff_gp_increase":
-                    // The text owns the Soul Gratitude symbol so the grammar reads
-                    // "Effect: +10% [gratitude] ..." instead of icon / Effect / icon.
                     text = Localization.F("buff.gratitude", duration);
-                    iconName = null;
                     break;
                 case "buff_sin_shard":
                     text = Localization.F("buff.sin_shard", duration);
-                    // Direct 1.407 balance data uses this exact icon on Sin Shard body-
-                    // part crafting rows while the sin_shard ItemDefinition itself has
-                    // blank icon fields.
-                    iconName = "i_sin_shard";
                     break;
                 default:
                     text = null;
@@ -236,18 +226,6 @@ namespace PrayerClarity
             MethodInfo method = R.Method(buff.GetType(), "GetIconName", false, 0);
             object value = method == null ? null : method.Invoke(buff, null);
             return value == null ? null : value.ToString();
-        }
-
-        private static string GetItemIconName(string itemId)
-        {
-            object item = R.BalanceData(itemId, "ItemDefinition", true);
-            if (item == null) return null;
-
-            string icon = R.Get(item, "icon") as string;
-            if (!string.IsNullOrEmpty(icon)) return icon;
-
-            icon = R.Get(item, "custom_ovr_icon") as string;
-            return string.IsNullOrEmpty(icon) ? null : icon;
         }
 
         private sealed class RewardItem

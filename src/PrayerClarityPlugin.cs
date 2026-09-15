@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         internal const string PluginName = "PrayerClarity";
-        internal const string PluginVersion = "0.1.11";
+        internal const string PluginVersion = "0.1.12";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -58,6 +58,7 @@ namespace PrayerClarity
                 PrayerForecast.Result forecast = PrayerForecast.Build(__instance, chance);
                 if (forecast == null)
                 {
+                    PulpitEffectIconPolicy.Restore();
                     PulpitPolish.Restore();
                     PulpitLayoutV4.Restore();
                     PulpitPresentation.Hide(label, __instance);
@@ -68,9 +69,11 @@ namespace PrayerClarity
                 PulpitPresentation.Render(label, __instance, KeepVanillaContext(vanilla), forecast);
                 PulpitLayoutV4.Apply(label, __instance, forecast);
                 PulpitPolish.Apply(label, __instance, forecast);
+                PulpitEffectIconPolicy.Apply(label, __instance, forecast);
             }
             catch (Exception ex)
             {
+                PulpitEffectIconPolicy.Restore();
                 PulpitPolish.Restore();
                 PulpitLayoutV4.Restore();
                 PulpitPresentation.Hide(label, __instance);

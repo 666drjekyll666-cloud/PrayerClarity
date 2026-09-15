@@ -6,7 +6,7 @@ namespace PrayerClarity
     internal static class PulpitTuning
     {
         // v4 keys are retained so an existing calibration remains readable, but the
-        // defaults now reflect the accepted 0.1.10 2560x1440 working composition.
+        // defaults now reflect the accepted 0.1.10/0.1.11 2560x1440 working composition.
         private const string Section = "Prototype pulpit layout tuning v4";
 
         internal static ConfigEntry<float> WindowExtraWidth { get; private set; }
@@ -69,7 +69,7 @@ namespace PrayerClarity
             EffectFontSize = BindInt(config, "14 Effect font size", 12, 8, 20,
                 "Font size for the special-effect row.");
             EffectIconSize = BindInt(config, "15 Effect icon size", 10, 8, 32,
-                "Size of a verified native special-effect icon when one is available.");
+                "Size of verified native effect/resource icons.");
 
             NoteX = BindFloat(config, "16 Note X", -6f, -300f, 300f,
                 "Horizontal position of the dependency note.");
@@ -80,13 +80,13 @@ namespace PrayerClarity
 
             PrayerSelectorX = BindFloat(config, "19 Prayer selector X", 0f, -240f, 240f,
                 "Horizontal position of the selected-prayer slot. The Choose sermon label follows it.");
-            PrayerSelectorY = BindFloat(config, "20 Prayer selector Y", 45f, -240f, 180f,
+            PrayerSelectorY = BindFloat(config, "20 Prayer selector Y", 40f, -240f, 180f,
                 "Vertical position of the selected-prayer slot. The Choose sermon label follows it.");
 
             PrayerButtonX = BindFloat(config, "21 Prayer button X", 0f, -240f, 240f,
-                "Horizontal position of the stock Pray / Try prayer button while PrayerClarity forecast is active.");
+                "Experimental horizontal position of the stock Pray / Try prayer button.");
             PrayerButtonY = BindFloat(config, "22 Prayer button Y", -120f, -320f, 100f,
-                "Vertical position of the stock Pray / Try prayer button while PrayerClarity forecast is active.");
+                "Experimental vertical position of the stock Pray / Try prayer button.");
 
             Watch(WindowExtraWidth);
             Watch(WindowExtraHeight);
@@ -134,6 +134,7 @@ namespace PrayerClarity
             PulpitPresentation.ApplyTuning();
             PulpitLayoutV4.ApplyTuning();
             PulpitPolish.ApplyTuning();
+            PulpitEffectIconPolicy.ApplyTuning();
         }
     }
 }
