@@ -17,5 +17,5 @@
   "buff.sins_unverified": "バニラ1.407では特殊効果を確認できず · バフ {0:0}分",
   "buff.souls_repose": "(gratitude_points)が多いほど、得られる(faith)が増えます。",
   "buff.gratitude": "魂の治療で +10% (gratitude_points) · {0:0}分",
-  "buff.sin_shard": "魂の治療成功時、罪の欠片 ×2 · {0:0}分"
+  "buff.sin_shard": "魂の治療成功時 ×2 · {0:0}分"
 }
