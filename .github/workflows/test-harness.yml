@@ -1,4 +1,4 @@
-# Frozen 0.1.3 test-harness candidate: synthetic timed-buff activation with stock pulpit button re-enabled.
+# Frozen 0.1.3 test-harness candidate build trigger: synthetic timed-buff activation with stock pulpit button re-enabled.
 name: Build PrayerClarity test harness
 
 on:
