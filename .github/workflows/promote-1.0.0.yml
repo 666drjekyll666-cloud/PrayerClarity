@@ -1,0 +1,52 @@
+name: Publish accepted PrayerClarity 1.0.0
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-1.0.0.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACCEPTED_SHA: 493d2168489af80b5c1305f7ff1435e2ee1dd0d7
+      EXPECTED_SHA256: dcf0338af520fe70989e6866bc6a724cbb3976337d7c9489c2ff9886e1e98580
+    steps:
+      - name: Download exact accepted candidate artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: 666drjekyll666-cloud/PrayerClarity
+          run-id: 35035167380
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-1.0.0-ci-493d2168489af80b5c1305f7ff1435e2ee1dd0d7
+          path: dist
+
+      - name: Verify accepted bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/PrayerClarity-1.0.0-ci.dll
+          actual=$(sha256sum dist/PrayerClarity-1.0.0-ci.dll | awk '{print $1}')
+          test "$actual" = "$EXPECTED_SHA256"
+          cp dist/PrayerClarity-1.0.0-ci.dll dist/PrayerClarity.dll
+
+      - name: Publish stable release without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.0 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'v1.0.0 already exists; leaving it unchanged.'
+            exit 0
+          fi
+          gh release create v1.0.0 dist/PrayerClarity.dll \
+            --repo 666drjekyll666-cloud/PrayerClarity \
+            --target "$ACCEPTED_SHA" \
+            --title 'PrayerClarity 1.0.0 — Clarity release' \
+            --notes 'Accepted Clarity-only release for Graveyard Keeper 1.407. Clarifies prayers at the pulpit, Technology tooltips, and Character -> Temporary Effects; removes prototype tuning controls; includes all 11 supported interface languages. No prayer balance or gameplay mechanics are changed.'

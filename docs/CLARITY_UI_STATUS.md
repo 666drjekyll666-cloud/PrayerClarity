@@ -1,14 +1,18 @@
 # PrayerClarity — Clarity UI status
 
-Status: **accepted Clarity baseline** for Graveyard Keeper 1.407.
+Status: **accepted stable Clarity release** for Graveyard Keeper 1.407.
 
-Accepted build: **PrayerClarity 0.1.21**  
-Accepted source: `ccfa329813233ea02482808a38bcb483ff844310`  
-Frozen ref: `accepted/clarity-0.1.21`  
-Build run: `35031015516`  
-DLL SHA-256: `bd77adbf36658146132a81452f14753e972e75e893acf05df50b7c04ae3cad06`
+Accepted build: **PrayerClarity 1.0.0**  
+Accepted runtime/source SHA: `493d2168489af80b5c1305f7ff1435e2ee1dd0d7`  
+Frozen candidate ref: `candidate/1.0.0`  
+Frozen accepted ref: `accepted/clarity-1.0.0`  
+Build run: `35035167380`  
+Artifact ID: `10423032814` (`PrayerClarity-1.0.0-ci-493d2168489af80b5c1305f7ff1435e2ee1dd0d7`)  
+DLL SHA-256: `dcf0338af520fe70989e6866bc6a724cbb3976337d7c9489c2ff9886e1e98580`
 
-The user runtime-tested the 0.1.21 Clarity presentation and accepted it as the final vanilla/UI baseline. This baseline is information-only: it contains **no Vanilla Fixes and no Balance/Rework mechanics**.
+The user runtime-tested the 1.0.0 release candidate on 2026-09-16 and explicitly accepted it as the final Clarity version. The supplied runtime log confirms Graveyard Keeper 1.407 loaded `PrayerClarity 1.0.0`, reports `PrayerClarity` with **no config entries**, and records representative synthetic prayer selection/buff activation during the final smoke test. No PrayerClarity runtime error was reported during the tested pulpit, Temporary Effects, and Technology-tree interaction sequence.
+
+This accepted release is information-only: it contains **no Vanilla Fixes and no Balance/Rework mechanics**.
 
 ## Accepted pulpit presentation
 
@@ -19,14 +23,24 @@ Accepted lower-block hierarchy:
 1. `Guaranteed` / localized equivalent;
 2. resource-source lines, icon-first (`Faith — from Church Quality`, `Donations — from Graveyard Quality`);
 3. `On success (N%)` / localized equivalent;
-4. prayer-owned success modifiers, grouped by resource (`(faith) +... +... | (slv) +... +...`);
+4. prayer-owned success modifiers, grouped by resource;
 5. separate `Effect` row for intrinsic/special prayer behavior.
 
-The redundant general `Result` heading is intentionally absent.
+The redundant general `Result` heading is intentionally absent. The upper context block remains the stock-derived current context: Church Quality, sermon requirement, and Graveyard Quality.
 
-The upper context block remains the stock-derived current context: Church Quality, sermon requirement, and Graveyard Quality.
+Temporary prayer durations shown before use are expressed in **in-game days**, using the effective game day length rather than a hard-coded vanilla constant. This follows compatible day-length changes such as Longer Days without a direct mod dependency.
 
-Temporary prayer durations shown before use are expressed in **in-game days**, using the effective game day length rather than a hard-coded vanilla constant. This therefore follows compatible day-length changes such as Longer Days without a direct mod dependency.
+### 1.0.0 release polish
+
+The final accepted polish pass removes prototype/developer residue from the player-facing build:
+
+- the accepted pulpit geometry is fixed in code; prototype layout sliders/configuration entries were removed;
+- Shoots & Roots and Repentance use concise player-facing wording for their verified broken/unresolved stock effects rather than developer/research language;
+- inactive/unverified effects do not advertise a misleading duration as though the missing mechanic were functioning;
+- Repose uses a clearer Donkey/body-quality explanation;
+- Imagination/Excellence use concise bonus wording;
+- Thorough Cleansing and other timed prayer effects use the common in-game-day presentation path;
+- stale/duplicate localization strings from earlier prototypes were removed while all 11 supported languages remain embedded.
 
 ## Accepted Technology presentation
 
@@ -56,7 +70,7 @@ PrayerClarity-owned player-facing strings ship in all 11 supported interface lan
 
 `en`, `fr`, `de`, `zh_cn`, `es`, `pt_br`, `ko`, `ja`, `ru`, `it`, `pl`.
 
-The accepted runtime work included 1920x1080 and 2560x1440 presentation checks plus language switching across representative Latin/Cyrillic/CJK locales. No remaining Clarity layout blocker was reported for 0.1.21.
+The accepted runtime work included 1920x1080 and 2560x1440 presentation checks plus language switching across representative Latin/Cyrillic/CJK locales. The 1.0.0 final smoke test used the Russian interface at 2560x1440 and reported no remaining Clarity layout blocker.
 
 ## Architecture / performance boundary
 
@@ -70,11 +84,11 @@ The accepted Clarity layer remains event/UI-refresh driven:
 
 ## Scope boundary
 
-This accepted baseline describes **stock 1.407 behavior clearly**. It is not evidence that every stock prayer mechanic is healthy.
+This accepted release describes **stock 1.407 behavior clearly**. It is not evidence that every stock prayer mechanic is healthy.
 
 Future work remains separated into:
 
 - **Vanilla Fixes** — only evidence-backed repairs where intended vanilla behavior/magnitude is recoverable;
 - **Balance / Rework** — explicit intentional tuning or redesigned behavior.
 
-Both later layers must feed their changed values through the already accepted shared UI model rather than creating separate presentation logic.
+Both later layers must feed their changed values through the accepted shared UI model rather than creating separate presentation logic.
