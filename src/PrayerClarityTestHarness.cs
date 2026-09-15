@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
@@ -14,7 +15,7 @@ namespace PrayerClarityTestHarness
     {
         private const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.testharness";
         private const string PluginName = "PrayerClarity Test Harness";
-        private const string PluginVersion = "0.1.1";
+        private const string PluginVersion = "0.1.2";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
 
         private static readonly BindingFlags Inst = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -81,9 +82,9 @@ namespace PrayerClarityTestHarness
             _log = Logger;
 
             _prayer = Config.Bind("Preview", "Prayer", PreviewPrayer.Off,
-                "TEST ONLY. Select a synthetic prayer to preview at the pulpit. No item or technology is granted to the save.");
+                "TEST ONLY. Select a synthetic prayer at the pulpit. Selection grants no item or technology. Timed-buff prayers expose a test button that activates the native prayer buff without running the normal sermon path.");
             _quality = Config.Bind("Preview", "Quality", PreviewQuality.Bronze,
-                "Quality tier used for the synthetic prayer preview.");
+                "Quality tier used for the synthetic prayer preview and native timed-buff duration.");
             _language = Config.Bind("Preview", "Language", PreviewLanguage.GameDefault,
                 "TEST ONLY. Temporarily load another Graveyard Keeper interface language so PrayerClarity layout/localization can be inspected without changing Steam language. GameDefault restores the language active when the harness loaded.");
             Config.SettingChanged += OnSettingChanged;
@@ -113,7 +114,7 @@ namespace PrayerClarityTestHarness
                 Patch(Method(prayGui, "OnPrayButtonPressed", 0), Method(typeof(PrayerClarityTestHarnessPlugin), nameof(OnPrayButtonPressedPrefix), true), null);
 
                 ApplyLanguageOverrideIfNeeded();
-                Logger.LogInfo("PrayerClarity Test Harness 0.1.1 loaded. Synthetic prayer and temporary language previews do not grant items/tech or change Steam language.");
+                Logger.LogInfo("PrayerClarity Test Harness 0.1.2 loaded. Synthetic selection grants no items/tech. Timed-buff prayers may activate a native test PlayerBuff without running the normal sermon path.");
             }
             catch (Exception ex)
             {
@@ -156,9 +157,88 @@ namespace PrayerClarityTestHarness
         {
             if (!_syntheticSelection || !ReferenceEquals(__instance, _openPrayGui)) return true;
 
-            _log?.LogWarning("Synthetic prayer preview cannot be preached. Set Preview > Prayer to Off or reopen the pulpit with the harness disabled to perform a real sermon.");
-            SetButtonText(__instance, "TEST PREVIEW — SERMON DISABLED");
+            string buffId = SelectedBuffId(__instance);
+            if (string.IsNullOrEmpty(buffId))
+            {
+                _log?.LogWarning("Synthetic prayer has no timed buff. The real sermon remains blocked so the harness cannot consume/grant gameplay resources.");
+                SetButtonText(__instance, "TEST PREVIEW — NO TIMED BUFF");
+                return false;
+            }
+
+            try
+            {
+                ActivateSelectedBuff(__instance, buffId);
+                SetButtonText(__instance, "TEST — BUFF ACTIVATED");
+                _log?.LogInfo("Synthetic prayer buff activated through native PrayCraftGUI.DoPrayForBuff: " + buffId + ". Normal sermon rewards/item consumption were bypassed. The created PlayerBuff is real and can persist if the game is saved while it is active.");
+            }
+            catch (Exception ex)
+            {
+                SetButtonText(__instance, "TEST — BUFF ACTIVATION FAILED");
+                _log?.LogError("Could not activate synthetic prayer buff; normal sermon remains blocked. " + ex);
+            }
             return false;
+        }
+
+        private static void ActivateSelectedBuff(object gui, string buffId)
+        {
+            MethodInfo method = ResolveDoPrayForBuff(gui == null ? null : gui.GetType());
+            if (method == null)
+                throw new MissingMethodException("Expected verified PrayCraftGUI.DoPrayForBuff(bool) or parameterless overload.");
+
+            ParameterInfo[] parameters = method.GetParameters();
+            object result;
+            if (parameters.Length == 0)
+                result = method.Invoke(gui, null);
+            else if (parameters.Length == 1 && parameters[0].ParameterType == typeof(bool))
+                result = method.Invoke(gui, new object[] { true });
+            else
+                throw new MissingMethodException("Unsupported PrayCraftGUI.DoPrayForBuff signature: " + MethodSignature(method));
+
+            IEnumerator routine = result as IEnumerator;
+            if (routine != null)
+            {
+                MonoBehaviour behaviour = gui as MonoBehaviour;
+                if (behaviour == null)
+                    throw new InvalidOperationException("DoPrayForBuff returned IEnumerator but PrayCraftGUI is not a MonoBehaviour.");
+                behaviour.StartCoroutine(routine);
+            }
+
+            _log?.LogInfo("Native timed-buff handoff requested for " + buffId + " via " + MethodSignature(method) + ".");
+        }
+
+        private static MethodInfo ResolveDoPrayForBuff(Type type)
+        {
+            if (type == null) return null;
+            MethodInfo[] methods = type.GetMethods(Inst).Where(m => m.Name == "DoPrayForBuff").ToArray();
+
+            MethodInfo oneBool = methods.FirstOrDefault(m =>
+            {
+                ParameterInfo[] p = m.GetParameters();
+                return p.Length == 1 && p[0].ParameterType == typeof(bool);
+            });
+            if (oneBool != null) return oneBool;
+
+            return methods.FirstOrDefault(m => m.GetParameters().Length == 0);
+        }
+
+        private static string MethodSignature(MethodInfo method)
+        {
+            if (method == null) return "<missing>";
+            string parameters = string.Join(", ", method.GetParameters().Select(p => p.ParameterType.Name).ToArray());
+            return method.DeclaringType?.Name + "." + method.Name + "(" + parameters + ")";
+        }
+
+        private static string SelectedBuffId(object gui)
+        {
+            object craft = Get(gui, "pray_craft");
+            return craft == null ? null : Get(craft, "buff") as string;
+        }
+
+        private static void RefreshSyntheticButtonText(object gui)
+        {
+            SetButtonText(gui, string.IsNullOrEmpty(SelectedBuffId(gui))
+                ? "TEST PREVIEW — NO TIMED BUFF"
+                : "TEST — ACTIVATE BUFF");
         }
 
         private static bool ApplyLanguageOverrideIfNeeded()
@@ -274,8 +354,8 @@ namespace PrayerClarityTestHarness
 
                 pick.Invoke(_openPrayGui, new[] { item });
                 _syntheticSelection = true;
-                SetButtonText(_openPrayGui, "TEST PREVIEW — SERMON DISABLED");
-                _log?.LogInfo("Synthetic pulpit preview selected: " + itemId + ". No inventory/save mutation performed.");
+                RefreshSyntheticButtonText(_openPrayGui);
+                _log?.LogInfo("Synthetic pulpit preview selected: " + itemId + ". Selection itself does not mutate inventory/save state.");
             }
             catch (Exception ex)
             {
