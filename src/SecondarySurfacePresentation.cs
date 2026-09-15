@@ -188,9 +188,12 @@ namespace PrayerClarity
             R.Set(header, "text", Localization.F("tech.prayer_details"));
             R.Set(body, "text", summary);
 
-            // Stock prayer tooltip puts the broad "X-Y required" line at the start of
-            // the immediately preceding description block. Our tier rows replace that
-            // mechanic, while the flavor/crafting description after the newline stays.
+            // Stock TechUnlock.GetTooltip builds the broad prayer requirement first and
+            // then concatenates the localized item description directly. Depending on
+            // the localization, the requirement may be newline-delimited or may touch
+            // the lore sentence with no whitespace at all. Our tier rows replace that
+            // mechanic, so remove only the verified leading requirement sentence and
+            // leave the flavor/crafting prose intact.
             if (headerIndex > 0)
             {
                 object previous = list[headerIndex - 1];
@@ -210,12 +213,43 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(text)) return text;
             string normalized = text.Replace("\r\n", "\n");
-            int newline = normalized.IndexOf('\n');
-            if (newline <= 0) return text;
 
-            string firstLine = normalized.Substring(0, newline);
-            if (firstLine.IndexOf("(cross)", StringComparison.Ordinal) < 0) return text;
-            return normalized.Substring(newline + 1).TrimStart();
+            int newline = normalized.IndexOf('\n');
+            if (newline > 0)
+            {
+                string firstLine = normalized.Substring(0, newline);
+                if (firstLine.IndexOf("(cross)", StringComparison.Ordinal) >= 0)
+                    return normalized.Substring(newline + 1).TrimStart();
+            }
+
+            // In 1.407 the same stock builder may concatenate the localized
+            // "(cross) X-Y required" sentence directly with the prayer lore text.
+            // The cross token near the start is the stable semantic marker; strip
+            // through the first sentence terminator rather than guessing wording.
+            int cross = normalized.IndexOf("(cross)", StringComparison.Ordinal);
+            if (cross < 0 || cross > 64) return text;
+
+            int end = FindSentenceTerminator(normalized, cross);
+            if (end < 0 || end + 1 >= normalized.Length) return text;
+            return normalized.Substring(end + 1).TrimStart();
+        }
+
+        private static int FindSentenceTerminator(string text, int start)
+        {
+            for (int i = Math.Max(0, start); i < text.Length; i++)
+            {
+                switch (text[i])
+                {
+                    case '.':
+                    case '!':
+                    case '?':
+                    case '。':
+                    case '！':
+                    case '？':
+                        return i;
+                }
+            }
+            return -1;
         }
 
         private static string BuildTechnologySummary(object techUnlock)
