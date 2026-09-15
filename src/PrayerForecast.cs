@@ -70,6 +70,8 @@ namespace PrayerClarity
             }
         }
 
+        private static MethodInfo _fromTimeKToSeconds;
+
         internal static Result Build(object prayGui, float chance)
         {
             object craft = R.Get(prayGui, "pray_craft");
@@ -267,46 +269,64 @@ namespace PrayerClarity
             switch (buffId)
             {
                 case "buff_sword":
-                    text = NumberedResEffect("buff.sword", res, "add_damage", duration);
+                    text = NumberedActiveResEffect("active.sword", res, "add_damage");
                     break;
                 case "buff_shield":
-                    text = NumberedResEffect("buff.shield", res, "add_armor", duration);
+                    text = NumberedActiveResEffect("active.shield", res, "add_armor");
                     break;
                 case "buff_skull":
-                    text = NumberedResEffect("buff.skull", res, "body_max", duration);
+                    text = NumberedActiveResEffect("active.skull", res, "body_max");
                     break;
                 case "buff_pen":
-                    text = buff == null ? null : Localization.F("buff.pen", R.Float(R.Get(buff, "craft_q")), duration);
+                    text = buff == null ? null : Localization.F("active.pen", R.Float(R.Get(buff, "craft_q")));
                     break;
                 case "buff_star":
-                    text = buff == null ? null : Localization.F("buff.star", R.Float(R.Get(buff, "craft_q")), duration);
+                    text = buff == null ? null : Localization.F("active.star", R.Float(R.Get(buff, "craft_q")));
                     break;
                 case "buff_plant":
-                    text = Localization.F("buff.plant_inactive", duration);
+                    text = Localization.F("active.plant_inactive");
                     break;
                 case "buff_sins":
-                    text = Localization.F("buff.sins_unverified", duration);
+                    text = Localization.F("active.sins_unverified");
                     break;
                 case "buff_gp_increase":
-                    text = Localization.F("buff.gratitude", duration);
+                    text = Localization.F("active.gratitude");
                     break;
                 case "buff_sin_shard":
-                    text = Localization.F("buff.sin_shard", duration);
+                    text = Localization.F("active.sin_shard");
                     break;
                 default:
                     text = null;
                     break;
             }
 
+            if (!string.IsNullOrEmpty(text) && duration > 0.0001f)
+                text += " · " + Localization.F("active.timer_days", DurationParameterToGameDays(duration));
+
             return string.IsNullOrEmpty(text) ? null : new SpecialInfo(text, iconName);
         }
 
-        private static string NumberedResEffect(string key, object res, string resKey, float duration)
+        private static float DurationParameterToGameDays(float durationMinutes)
         {
-            if (res == null) return null;
-            float value = R.GameResGet(res, resKey);
-            if (Math.Abs(value) < 0.0001f) return null;
-            return Localization.F(key, value, duration);
+            if (durationMinutes <= 0.0001f) return 0f;
+
+            if (_fromTimeKToSeconds == null)
+            {
+                Type timeOfDay = R.GameType("TimeOfDay");
+                _fromTimeKToSeconds = R.Method(timeOfDay, "FromTimeKToSeconds", true, new[] { typeof(float) });
+            }
+            if (_fromTimeKToSeconds == null)
+                throw new MissingMethodException("TimeOfDay.FromTimeKToSeconds(float)");
+
+            float secondsPerDay = R.Float(_fromTimeKToSeconds.Invoke(null, new object[] { 1f }));
+            if (secondsPerDay <= 0.0001f)
+                throw new InvalidOperationException("TimeOfDay.FromTimeKToSeconds(1) returned an invalid day length.");
+
+            // dur_parameter is the verified prayer-buff duration in real-time minutes.
+            // Convert it through the game's effective day length. Longer Days patches
+            // the same TimeOfDay method, so this automatically reflects that mod with
+            // no dependency or per-mod branch.
+            return durationMinutes * 60f / secondsPerDay;
         }
 
         private static string NumberedActiveResEffect(string key, object res, string resKey)
