@@ -17,5 +17,5 @@
   "buff.sins_unverified": "Спецэффект не обнаружен в ванильной 1.407 · бафф {0:0}\u00A0мин.",
   "buff.souls_repose": "Чем больше (gratitude_points), тем больше (faith).",
   "buff.gratitude": "+10% (gratitude_points) за лечение души · {0:0}\u00A0мин.",
-  "buff.sin_shard": "×2 осколков греха за успешное лечение души · {0:0}\u00A0мин."
+  "buff.sin_shard": "×2 за успешное лечение души · {0:0}\u00A0мин."
 }
