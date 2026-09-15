@@ -112,7 +112,8 @@ namespace PrayerClarity
                 if (!string.IsNullOrEmpty(tier.SpecialText)) parts.Add(tier.SpecialText);
 
                 string body = parts.Count == 0 ? "—" : string.Join(" · ", parts.ToArray());
-                lines.Add(QualityMarker(tier.QualityTier) + " " + body);
+                string quality = QualityLabel(tier.QualityTier);
+                lines.Add(string.IsNullOrEmpty(quality) ? body : quality + ": " + body);
             }
 
             return string.Join("\n", lines.ToArray());
@@ -122,6 +123,8 @@ namespace PrayerClarity
         {
             List<object> result = new List<object>();
             HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
+            if (techUnlock == null || R.Int(R.Get(techUnlock, "type")) != 0) return result;
+
             string unlockId = R.Get(techUnlock, "id") as string;
             if (string.IsNullOrEmpty(unlockId)) return result;
 
@@ -149,11 +152,6 @@ namespace PrayerClarity
                 }
 
                 object directDefinition = R.Get(item, "definition");
-                if (directDefinition == null)
-                {
-                    MethodInfo getter = R.Method(item.GetType(), "get_definition", false, 0);
-                    directDefinition = getter == null ? null : getter.Invoke(item, null);
-                }
                 AddLinkedPrayerCraft(result, seen, directDefinition);
             }
 
@@ -164,11 +162,6 @@ namespace PrayerClarity
         {
             if (itemDefinition == null) return;
             object linked = R.Get(itemDefinition, "linked_craft");
-            if (linked == null)
-            {
-                MethodInfo getter = R.Method(itemDefinition.GetType(), "get_linked_craft", false, 0);
-                linked = getter == null ? null : getter.Invoke(itemDefinition, null);
-            }
             AddPrayerCraft(result, seen, linked);
         }
 
@@ -227,14 +220,14 @@ namespace PrayerClarity
             return (value > 0f ? "+" : "−") + R.FormatMoney(Math.Abs(value));
         }
 
-        private static string QualityMarker(int qualityTier)
+        private static string QualityLabel(int qualityTier)
         {
             switch (qualityTier)
             {
-                case 1: return "(brz)";
-                case 2: return "(slv)";
-                case 3: return "(gld)";
-                default: return "•";
+                case 1: return Localization.F("quality.bronze");
+                case 2: return Localization.F("quality.silver");
+                case 3: return Localization.F("quality.gold");
+                default: return null;
             }
         }
 
@@ -278,7 +271,7 @@ namespace PrayerClarity
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
-            return _bubbleTextConstructor.Invoke(new[] { text, style, alignment, (object)(-1) });
+            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
         }
 
         private static void AddTooltipData(object tooltip, object data)
