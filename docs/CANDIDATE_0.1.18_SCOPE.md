@@ -1,8 +1,18 @@
 # PrayerClarity 0.1.18 candidate scope
 
-Status: pre-runtime candidate scope, 2026-09-15.
+Status: clean-built runtime candidate awaiting user in-game acceptance, 2026-09-15.
 
 0.1.18 remains Clarity-only. It does not intentionally change prayer mechanics, success probability, sermon rewards, buff magnitude, save data or balance.
+
+## Frozen build
+
+- Frozen ref: `candidate/0.1.18`.
+- Exact source SHA: `0a5860fe37c232da1b49e0094eb61141a62facdb`.
+- GitHub Actions run: `34998963930`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Artifact ID: `10409166056` (`PrayerClarity-0.1.18-ci-0a5860fe37c232da1b49e0094eb61141a62facdb`).
+- Handoff DLL SHA-256: `e30f3e8f3f2e4347505df25ec709dfd3f5357926d247cf47d92e21127bb82b5f`.
+- Supported verified game MVID: `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
 
 ## Runtime evidence carried forward from 0.1.17
 
