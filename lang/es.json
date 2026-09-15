@@ -3,15 +3,15 @@
   "forecast.result_header": "Resultado",
   "forecast.effect_header": "Efecto",
   "forecast.graveyard_quality": "Calidad del cementerio: (wskull) {0:0.#}",
-  "forecast.guaranteed": "Garantizado",
-  "forecast.success_bonus": "Bono al tener éxito ({0}%)",
-  "forecast.dependency_note": "(faith): calidad de la iglesia (cross); (slv): calidad del cementerio (wskull)",
-  "forecast.dependency_note_souls": "(faith): calidad de la iglesia (cross) + (gratitude_points); (slv): calidad del cementerio (wskull)",
+  "forecast.guaranteed": "Siempre",
+  "forecast.success_bonus": "El éxito ({0}%) añade",
+  "forecast.dependency_note": "(faith) La Fe depende de la calidad de la iglesia\n(slv) Las donaciones dependen de la calidad del cementerio",
+  "forecast.dependency_note_souls": "(faith) La Fe depende de la calidad de la iglesia y de (gratitude_points)\n(slv) Las donaciones dependen de la calidad del cementerio",
   "forecast.reward": "Recompensa: {0}",
   "format.of_base": "{0} de la base",
   "tech.prayer_details": "Detalles de la oración",
   "tech.base_reward": "Recompensa base: {0}",
-  "tech.success_bonus": "Bono al tener éxito",
+  "tech.success_bonus": "Se añade al tener éxito",
   "tech.requires": "Requiere (cross) {0}",
   "quality.bronze": "Bronce",
   "quality.silver": "Plata",
@@ -35,5 +35,5 @@
   "active.sins_unverified": "Efecto especial no encontrado en vanilla 1.407",
   "active.gratitude": "+10 % (gratitude_points) al sanar almas",
   "active.sin_shard": "Fragmentos de pecado ×2 al sanar un alma con éxito",
-  "active.timer_days": "≈{0:0.0} d"
+  "active.timer_days": "{0:0.0} días"
 }

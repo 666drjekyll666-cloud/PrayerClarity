@@ -12,15 +12,18 @@ namespace PrayerClarity
         internal static string BuildPulpitResultRows(PrayerForecast.Result forecast)
         {
             if (forecast == null) return string.Empty;
-            string guaranteed = "  " + Localization.F("forecast.guaranteed") + ": " +
-                                DependencyMap(forecast.UsesSoulGratitude);
-            string success = "  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " +
-                             FormatPrayerContribution(
-                                 forecast.FaithBonusRate,
-                                 forecast.FixedFaithBonus,
-                                 forecast.MoneyBonusRate,
-                                 forecast.FixedMoneyBonus);
-            return guaranteed + "\n" + success;
+
+            string dependencies = IndentMultiline(DependencyMap(forecast.UsesSoulGratitude), "    ");
+            string contribution = FormatPrayerContribution(
+                forecast.FaithBonusRate,
+                forecast.FixedFaithBonus,
+                forecast.MoneyBonusRate,
+                forecast.FixedMoneyBonus);
+
+            return "  " + Localization.F("forecast.guaranteed") + ":\n" +
+                   dependencies + "\n" +
+                   "  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ":\n" +
+                   "    " + contribution;
         }
 
         internal static string DependencyMap(bool usesSoulGratitude)
@@ -54,7 +57,10 @@ namespace PrayerClarity
             string money = FormatResourceContribution("(slv)", moneyRate, fixedMoney);
             if (!string.IsNullOrEmpty(money)) parts.Add(money);
 
-            return parts.Count == 0 ? "—" : string.Join("; ", parts.ToArray());
+            // A spaced vertical bar is an explicit visual divider between two
+            // independent resource groups. Avoid middots here because they can read as
+            // multiplication in a numeric expression.
+            return parts.Count == 0 ? "—" : string.Join(" | ", parts.ToArray());
         }
 
         private static string FormatResourceContribution(string icon, float rate, float fixedValue)
@@ -63,7 +69,7 @@ namespace PrayerClarity
 
             string value = icon;
             if (Math.Abs(rate) >= 0.0001f)
-                value += " " + Localization.F("format.of_base", FormatPercent(rate));
+                value += " " + FormatPercent(rate);
             if (Math.Abs(fixedValue) >= 0.0001f)
                 value += " " + FormatSignedNumber(fixedValue);
             return value;
@@ -81,6 +87,12 @@ namespace PrayerClarity
             if (Math.Abs(value) < 0.0001f) return "0";
             string sign = value > 0f ? "+" : "−";
             return sign + Math.Abs(value).ToString("0.##", CultureInfo.InvariantCulture);
+        }
+
+        private static string IndentMultiline(string text, string indent)
+        {
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            return indent + text.Replace("\r\n", "\n").Replace("\n", "\n" + indent);
         }
     }
 }

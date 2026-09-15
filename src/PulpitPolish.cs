@@ -123,8 +123,11 @@ namespace PrayerClarity
         {
             if (_resultRowsLabel == null || _forecast == null) return;
 
-            // Dependency information now lives directly in Guaranteed. Keep the old
-            // footer object inert so the same relationship is never shown twice.
+            // The 0.1.17 hierarchy intentionally uses several short scan lines. Let the
+            // label grow vertically rather than shrinking Combo and other long rows.
+            SetEnum(_resultRowsLabel, "overflowMethod", "ResizeHeight");
+            TrySet(_resultRowsLabel, "height", 40);
+
             if (_dependencyNoteObject != null) _dependencyNoteObject.SetActive(false);
             R.Set(_resultRowsLabel, "text", PresentationText.BuildPulpitResultRows(_forecast));
         }
@@ -175,16 +178,32 @@ namespace PrayerClarity
 
             int iconSize = PulpitTuning.EffectIconSize.Value;
             float labelX = PulpitTuning.EffectX.Value + (leadingVisible ? iconSize + 4f : 0f);
+            float effectY = ResolveEffectY();
             ConfigureWidget(_effectIcon,
                 PulpitTuning.EffectX.Value,
-                PulpitTuning.EffectY.Value - 1f,
+                effectY - 1f,
                 iconSize,
                 iconSize,
                 "TopLeft");
-            ConfigureLabelGeometry(labelX);
+            ConfigureLabelGeometry(labelX, effectY);
 
             _effectLabelObject.SetActive(true);
             R.Set(_effectLabel, "text", Localization.F("forecast.effect_header") + ": " + body);
+        }
+
+        private static float ResolveEffectY()
+        {
+            float desired = PulpitTuning.EffectY.Value;
+            if (_resultRowsLabel == null) return desired;
+
+            GameObject resultGo = R.Get(_resultRowsLabel, "gameObject") as GameObject;
+            if (resultGo == null) return desired;
+
+            int height = Math.Max(0, R.Int(R.Get(_resultRowsLabel, "height")));
+            if (height <= 0) return desired;
+
+            float belowResult = resultGo.transform.localPosition.y - height - 8f;
+            return Mathf.Min(desired, belowResult);
         }
 
         private static string GetBuffIconName(object craft)
@@ -234,7 +253,7 @@ namespace PrayerClarity
             }
         }
 
-        private static void ConfigureLabelGeometry(float labelX)
+        private static void ConfigureLabelGeometry(float labelX, float effectY)
         {
             int containerWidth = _containerWidget == null ? 274 : Math.Max(1, R.Int(R.Get(_containerWidget, "width")));
             float safeRight = containerWidth * 0.5f - 16f;
@@ -242,7 +261,7 @@ namespace PrayerClarity
             TrySet(_effectLabel, "width", width);
             _effectLabelObject.transform.localPosition = new Vector3(
                 labelX,
-                PulpitTuning.EffectY.Value,
+                effectY,
                 _effectLabelObject.transform.localPosition.z);
         }
 

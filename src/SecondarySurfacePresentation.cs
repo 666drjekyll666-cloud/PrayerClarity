@@ -57,6 +57,10 @@ namespace PrayerClarity
                 string text = PrayerForecast.BuildActiveBuffText(__0);
                 if (string.IsNullOrEmpty(text)) return;
 
+                float remainingDays;
+                if (TryGetRemainingPrayerDays(__0, out remainingDays) && remainingDays >= 1f)
+                    text += " · " + Localization.F("active.timer_days", remainingDays);
+
                 object description = R.Get(__instance, "txt_descr");
                 if (description == null) return;
                 R.Set(description, "text", text);
@@ -74,22 +78,18 @@ namespace PrayerClarity
         }
 
         // Probe 0.1.8 proved that end_time - MainGame.game_time is the remaining
-        // normalized game-day interval. Keep vanilla's precise timer inside the final
-        // day; before that, show the strategic quantity directly in game days.
+        // normalized game-day interval. The stock timer uses a compact special font
+        // that cannot render the localized day suffix reliably, so strategic day count
+        // lives in the normal description label. Inside the final day, keep vanilla's
+        // precise timer untouched.
         private static void PlayerBuffTimerPostfix(object __instance, ref string __result)
         {
             try
             {
-                if (__instance == null) return;
-                string buffId = _playerBuffIdField.GetValue(__instance) as string;
-                if (!IsPrayerTimedBuff(buffId)) return;
-
-                float endTime = Convert.ToSingle(_playerBuffEndTimeField.GetValue(__instance));
-                float gameTime = Convert.ToSingle(_gameTimeGetter.Invoke(null, null));
-                float remainingDays = endTime - gameTime;
+                float remainingDays;
+                if (!TryGetRemainingPrayerDays(__instance, out remainingDays)) return;
                 if (remainingDays < 1f) return;
-
-                __result = Localization.F("active.timer_days", remainingDays);
+                __result = string.Empty;
             }
             catch (Exception ex)
             {
@@ -97,6 +97,20 @@ namespace PrayerClarity
                 _timerErrorLogged = true;
                 _log?.LogError("PrayerClarity prayer-buff day timer failed; vanilla timer remains available. " + ex);
             }
+        }
+
+        private static bool TryGetRemainingPrayerDays(object playerBuff, out float remainingDays)
+        {
+            remainingDays = 0f;
+            if (playerBuff == null) return false;
+
+            string buffId = _playerBuffIdField.GetValue(playerBuff) as string;
+            if (!IsPrayerTimedBuff(buffId)) return false;
+
+            float endTime = Convert.ToSingle(_playerBuffEndTimeField.GetValue(playerBuff));
+            float gameTime = Convert.ToSingle(_gameTimeGetter.Invoke(null, null));
+            remainingDays = endTime - gameTime;
+            return true;
         }
 
         private static bool IsPrayerTimedBuff(string buffId)
@@ -225,27 +239,27 @@ namespace PrayerClarity
                 return q != 0 ? q : string.CompareOrdinal(a.CraftId, b.CraftId);
             });
 
-            bool usesSoulGratitude = tiers.Exists(t => t.UsesSoulGratitude);
-            List<string> lines = new List<string>
-            {
-                Localization.F("tech.base_reward", PresentationText.DependencyMap(usesSoulGratitude))
-            };
-
+            List<string> lines = new List<string>();
             foreach (PrayerForecast.TierDetails tier in tiers)
             {
-                List<string> parts = new List<string>();
-                if (tier.Requirement > 0)
-                    parts.Add(Localization.F("tech.requires", tier.Requirement));
+                string quality = QualityLabel(tier.QualityTier);
+                string requirement = tier.Requirement > 0
+                    ? Localization.F("tech.requires", tier.Requirement)
+                    : null;
+
+                if (!string.IsNullOrEmpty(quality) && !string.IsNullOrEmpty(requirement))
+                    lines.Add(quality + ": " + requirement);
+                else if (!string.IsNullOrEmpty(quality))
+                    lines.Add(quality);
+                else if (!string.IsNullOrEmpty(requirement))
+                    lines.Add(requirement);
 
                 string contribution = PresentationText.FormatPrayerContribution(tier);
                 if (!string.Equals(contribution, "—", StringComparison.Ordinal))
-                    parts.Add(Localization.F("tech.success_bonus") + ": " + contribution);
-                if (!string.IsNullOrEmpty(tier.SpecialText))
-                    parts.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialText);
+                    lines.Add(Localization.F("tech.success_bonus") + ": " + contribution);
 
-                string body = parts.Count == 0 ? "—" : string.Join(" · ", parts.ToArray());
-                string quality = QualityLabel(tier.QualityTier);
-                lines.Add(string.IsNullOrEmpty(quality) ? body : quality + ": " + body);
+                if (!string.IsNullOrEmpty(tier.SpecialText))
+                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialText);
             }
 
             return string.Join("\n", lines.ToArray());
@@ -307,7 +321,7 @@ namespace PrayerClarity
 
         private static string QualityLabel(int qualityTier)
         {
-            // Text remains the safe 0.1.16 fallback. The user prefers native quality
+            // Text remains the safe 0.1.17 fallback. The user prefers native quality
             // stars, but no verified inline quality-icon seam exists yet; do not guess
             // sprite IDs after the rejected item-icon experiment.
             switch (qualityTier)
