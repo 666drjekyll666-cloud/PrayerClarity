@@ -17,5 +17,5 @@
   "buff.sins_unverified": "바닐라 1.407에서 특수 효과를 찾지 못함 · 버프 {0:0}분",
   "buff.souls_repose": "(gratitude_points)이 많을수록 (faith)을 더 많이 얻습니다.",
   "buff.gratitude": "영혼 치유 시 +10% (gratitude_points) · {0:0}분",
-  "buff.sin_shard": "영혼 치유 성공 시 죄악의 파편 ×2 · {0:0}분"
+  "buff.sin_shard": "영혼 치유 성공 시 ×2 · {0:0}분"
 }
