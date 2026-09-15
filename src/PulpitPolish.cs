@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using UnityEngine;
 
@@ -9,14 +10,12 @@ namespace PrayerClarity
     // Final presentation pass for the live-tuned pulpit prototype. It runs only on
     // pulpit redraw/config changes, after PulpitLayoutV4 has applied window geometry.
     // Leading effect icons come from the same BuffDefinition.GetIconName() seam used
-    // by vanilla BuffIcon.Draw. Concrete reward/resource icons remain separate inline
-    // nouns inside the effect sentence.
+    // by vanilla BuffIcon.Draw. Item/resource nouns stay as localized text because the
+    // attempted inline-item sprite paths did not resolve in the verified 1.407 runtime.
     internal static class PulpitPolish
     {
         private static readonly Dictionary<string, Sprite> SpriteCache =
             new Dictionary<string, Sprite>(StringComparer.Ordinal);
-        private static readonly Dictionary<string, string> ItemIconNameCache =
-            new Dictionary<string, string>(StringComparer.Ordinal);
 
         private static object _template;
         private static object _gui;
@@ -30,15 +29,12 @@ namespace PrayerClarity
         private static Vector3 _craftButtonOriginalPosition;
         private static bool _craftButtonCaptured;
 
+        private static object _resultRowsLabel;
+        private static GameObject _dependencyNoteObject;
         private static object _effectLabel;
         private static GameObject _effectLabelObject;
         private static object _effectIcon;
-        private static object _inlineIcon;
         private static MethodInfo _getSpriteMethod;
-        private static MethodInfo _labelSizeCalcMethod;
-        private static ConstructorInfo _itemConstructor;
-        private static MethodInfo _itemGetIconMethod;
-        private static bool _itemIconPathResolved;
 
         internal static void Apply(object template, object gui, PrayerForecast.Result forecast)
         {
@@ -55,12 +51,12 @@ namespace PrayerClarity
             if (_template == null || _gui == null || _forecast == null) return;
             Capture();
             MovePrayerButton();
+            PolishResultRows();
             PolishEffectRow();
         }
 
         internal static void Restore()
         {
-            SetSprite(_inlineIcon, null);
             if (_craftButtonCaptured && _craftButton != null)
                 _craftButton.localPosition = _craftButtonOriginalPosition;
         }
@@ -88,15 +84,22 @@ namespace PrayerClarity
                 _craftButtonCaptured = _craftButton != null;
 
                 _root = null;
+                _resultRowsLabel = null;
+                _dependencyNoteObject = null;
                 _effectLabel = null;
                 _effectLabelObject = null;
                 _effectIcon = null;
-                _inlineIcon = null;
             }
 
             Transform root = _container == null ? null : _container.Find("PrayerClarity.PulpitForecast");
             if (root == null) return;
             _root = root;
+
+            Transform result = root.Find("PrayerClarity.Result");
+            _resultRowsLabel = result == null ? null : result.gameObject.GetComponent(_template.GetType());
+
+            Transform note = root.Find("PrayerClarity.DependencyNote");
+            _dependencyNoteObject = note == null ? null : note.gameObject;
 
             Transform effect = root.Find("PrayerClarity.Effect");
             if (effect != null)
@@ -106,11 +109,6 @@ namespace PrayerClarity
             }
 
             _effectIcon = GetComponent(root.Find("PrayerClarity.Effect.Icon"), "UI2DSprite");
-
-            Transform existingInline = root.Find("PrayerClarity.Effect.InlineIcon");
-            _inlineIcon = GetComponent(existingInline, "UI2DSprite");
-            if (_inlineIcon == null)
-                _inlineIcon = CreateInlineIcon(root);
         }
 
         private static void MovePrayerButton()
@@ -122,6 +120,75 @@ namespace PrayerClarity
                 _craftButtonOriginalPosition.z);
         }
 
+        private static void PolishResultRows()
+        {
+            if (_resultRowsLabel == null || _forecast == null) return;
+
+            // The dependency information now lives directly in the Guaranteed row, so
+            // the old footer note is redundant. Keep the object inert rather than
+            // maintaining a second copy of the same relationship.
+            if (_dependencyNoteObject != null) _dependencyNoteObject.SetActive(false);
+
+            string sourceKey = _forecast.UsesSoulGratitude
+                ? "forecast.dependency_note_souls"
+                : "forecast.dependency_note";
+            string guaranteed = "  " + Localization.F("forecast.guaranteed") + ": " +
+                                Localization.F(sourceKey);
+            string success = "  " + Localization.F("forecast.success_bonus", _forecast.ChancePercent) + ": " +
+                             FormatPrayerContribution(_forecast);
+            R.Set(_resultRowsLabel, "text", guaranteed + "\n" + success);
+        }
+
+        private static string FormatPrayerContribution(PrayerForecast.Result forecast)
+        {
+            List<string> parts = new List<string>();
+
+            if (Math.Abs(forecast.FaithBonusRate) >= 0.0001f || forecast.FixedFaithBonus != 0)
+            {
+                string prefix = forecast.Highlight == PrayerForecast.BonusHighlight.Faith ? "(up) " : string.Empty;
+                string value = "(faith)";
+                if (Math.Abs(forecast.FaithBonusRate) >= 0.0001f)
+                    value += " " + FormatPercent(forecast.FaithBonusRate);
+                if (forecast.FixedFaithBonus != 0)
+                    value += " " + FormatSignedInt(forecast.FixedFaithBonus);
+                parts.Add(prefix + value);
+            }
+
+            if (Math.Abs(forecast.MoneyBonusRate) >= 0.0001f || Math.Abs(forecast.FixedMoneyBonus) >= 0.0001f)
+            {
+                string prefix = forecast.Highlight == PrayerForecast.BonusHighlight.Money ? "(up) " : string.Empty;
+                string value = Math.Abs(forecast.MoneyBonusRate) >= 0.0001f ? "(slv) " + FormatPercent(forecast.MoneyBonusRate) : string.Empty;
+                if (Math.Abs(forecast.FixedMoneyBonus) >= 0.0001f)
+                {
+                    if (!string.IsNullOrEmpty(value)) value += " ";
+                    value += FormatSignedMoney(forecast.FixedMoneyBonus);
+                }
+                parts.Add(prefix + value);
+            }
+
+            return parts.Count == 0 ? "—" : string.Join(", ", parts.ToArray());
+        }
+
+        private static string FormatPercent(float rate)
+        {
+            float percent = rate * 100f;
+            string sign = percent > 0.0001f ? "+" : percent < -0.0001f ? "−" : string.Empty;
+            return sign + Math.Abs(percent).ToString("0.##", CultureInfo.InvariantCulture) + "%";
+        }
+
+        private static string FormatSignedInt(int value)
+        {
+            return value > 0 ? "+" + value.ToString(CultureInfo.InvariantCulture)
+                : value < 0 ? "−" + Math.Abs(value).ToString(CultureInfo.InvariantCulture)
+                : "0";
+        }
+
+        private static string FormatSignedMoney(float value)
+        {
+            if (Math.Abs(value) < 0.0001f) return string.Empty;
+            return (value > 0f ? "+" : "−") + R.FormatMoney(Math.Abs(value));
+        }
+
         private static void PolishEffectRow()
         {
             if (_effectLabel == null || _effectLabelObject == null) return;
@@ -130,6 +197,37 @@ namespace PrayerClarity
             string craftId = R.Id(craft) ?? string.Empty;
             string body = _forecast.SpecialText;
             if (string.IsNullOrEmpty(body)) body = "—";
+
+            // Preserve the readable text fallbacks accepted after the inline-item-icon
+            // experiment. These are item/resource nouns, not leading active-buff icons.
+            if (craftId.StartsWith("pray:b_village:", StringComparison.Ordinal))
+            {
+                int count = CountOutput(craft, "blessing_commerce");
+                if (count > 0)
+                {
+                    string itemName = R.VanillaLocalize("blessing_commerce");
+                    string description = R.VanillaLocalize("blessing_commerce_d");
+                    bool hasName = !string.IsNullOrEmpty(itemName) &&
+                                   !string.Equals(itemName, "blessing_commerce", StringComparison.Ordinal);
+                    bool hasDescription = !string.IsNullOrEmpty(description) &&
+                                          !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal);
+                    body = "×" + count +
+                           (hasName ? " " + itemName : string.Empty) +
+                           (hasDescription ? ". " + description : string.Empty);
+                }
+            }
+            else if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
+            {
+                float duration = R.Float(R.Get(craft, "dur_parameter"));
+                body = Localization.F("buff.sin_shard", duration);
+                string marker = FindMultiplierMarker(body);
+                if (!string.IsNullOrEmpty(marker))
+                {
+                    string resourceName = R.VanillaLocalize("sin_shard");
+                    if (!string.IsNullOrEmpty(resourceName) && !string.Equals(resourceName, "sin_shard", StringComparison.Ordinal))
+                        body = InsertAfterMarker(body, marker, " " + resourceName);
+                }
+            }
 
             string leadingIconName = body == "—" ? null : GetBuffIconName(craft);
             _forecast.SpecialIconName = leadingIconName;
@@ -145,81 +243,7 @@ namespace PrayerClarity
                 "TopLeft");
             ConfigureLabelGeometry(labelX);
 
-            string inlineSpriteName = null;
-            string marker = null;
-            string fallbackBody = body;
-
-            if (craftId.StartsWith("pray:b_village:", StringComparison.Ordinal))
-            {
-                int count = CountOutput(craft, "blessing_commerce");
-                if (count > 0)
-                {
-                    marker = "×" + count;
-                    string description = R.VanillaLocalize("blessing_commerce_d");
-                    bool hasDescription = !string.IsNullOrEmpty(description) &&
-                                          !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal);
-                    body = marker + (hasDescription ? ". " + description : string.Empty);
-
-                    string itemName = R.VanillaLocalize("blessing_commerce");
-                    fallbackBody = marker +
-                                   (string.IsNullOrEmpty(itemName) || string.Equals(itemName, "blessing_commerce", StringComparison.Ordinal)
-                                       ? string.Empty
-                                       : " " + itemName) +
-                                   (hasDescription ? ". " + description : string.Empty);
-                    inlineSpriteName = GetItemIconName("blessing_commerce");
-                }
-            }
-            else if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
-            {
-                float duration = R.Float(R.Get(craft, "dur_parameter"));
-                body = Localization.F("buff.sin_shard", duration);
-                marker = FindMultiplierMarker(body);
-                if (!string.IsNullOrEmpty(marker))
-                {
-                    string resourceName = R.VanillaLocalize("sin_shard");
-                    fallbackBody = InsertAfterMarker(body, marker,
-                        string.IsNullOrEmpty(resourceName) || string.Equals(resourceName, "sin_shard", StringComparison.Ordinal)
-                            ? string.Empty
-                            : " " + resourceName);
-                    inlineSpriteName = GetItemIconName("sin_shard");
-                }
-            }
-
             _effectLabelObject.SetActive(true);
-
-            Sprite inlineSprite = ResolveSprite(inlineSpriteName);
-            if (inlineSprite != null && !string.IsNullOrEmpty(marker))
-            {
-                float prefixWidth;
-                string prefix = Localization.F("forecast.effect_header") + ": " +
-                                body.Substring(0, body.IndexOf(marker, StringComparison.Ordinal) + marker.Length);
-                string gap = TryMeasure(prefix, out prefixWidth)
-                    ? BuildGap(prefix, iconSize + 3f)
-                    : null;
-
-                if (!string.IsNullOrEmpty(gap) && SetSprite(_inlineIcon, inlineSprite))
-                {
-                    int markerIndex = body.IndexOf(marker, StringComparison.Ordinal);
-                    body = body.Insert(markerIndex + marker.Length, gap);
-                    ConfigureWidget(_inlineIcon,
-                        labelX + prefixWidth + 1f,
-                        PulpitTuning.EffectY.Value - 1f,
-                        iconSize,
-                        iconSize,
-                        "TopLeft");
-                }
-                else
-                {
-                    SetSprite(_inlineIcon, null);
-                    body = fallbackBody;
-                }
-            }
-            else
-            {
-                SetSprite(_inlineIcon, null);
-                body = fallbackBody;
-            }
-
             R.Set(_effectLabel, "text", Localization.F("forecast.effect_header") + ": " + body);
         }
 
@@ -240,55 +264,6 @@ namespace PrayerClarity
             {
                 return null;
             }
-        }
-
-        private static string GetItemIconName(string itemId)
-        {
-            if (string.IsNullOrEmpty(itemId)) return null;
-
-            string cached;
-            if (ItemIconNameCache.TryGetValue(itemId, out cached)) return cached;
-
-            try
-            {
-                if (!_itemIconPathResolved)
-                {
-                    Type itemType = R.GameType("Item");
-                    _itemConstructor = itemType == null
-                        ? null
-                        : itemType.GetConstructor(R.Inst, null, new[] { typeof(string), typeof(int) }, null);
-                    _itemGetIconMethod = R.Method(itemType, "GetIcon", false, 0);
-                    _itemIconPathResolved = true;
-                }
-
-                if (_itemConstructor == null || _itemGetIconMethod == null) return null;
-                object item = _itemConstructor.Invoke(new object[] { itemId, 1 });
-                object value = _itemGetIconMethod.Invoke(item, null);
-                string iconName = value == null ? null : value.ToString();
-                if (!string.IsNullOrEmpty(iconName)) ItemIconNameCache[itemId] = iconName;
-                return iconName;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static object CreateInlineIcon(Transform root)
-        {
-            Type type = R.AnyType("UI2DSprite");
-            if (type == null || root == null) return null;
-
-            GameObject go = new GameObject("PrayerClarity.Effect.InlineIcon");
-            go.layer = _effectLabelObject == null ? root.gameObject.layer : _effectLabelObject.layer;
-            go.transform.SetParent(root, false);
-            go.transform.localScale = _effectLabelObject == null ? Vector3.one : _effectLabelObject.transform.localScale;
-
-            object sprite = go.AddComponent(type);
-            int depth = _effectLabel == null ? 0 : R.Int(R.Get(_effectLabel, "depth"));
-            TrySet(sprite, "depth", depth + 2);
-            go.SetActive(false);
-            return sprite;
         }
 
         private static Sprite ResolveSprite(string iconName)
@@ -317,47 +292,6 @@ namespace PrayerClarity
             {
                 return null;
             }
-        }
-
-        private static bool TryMeasure(string text, out float width)
-        {
-            width = 0f;
-            if (_effectLabel == null) return false;
-
-            try
-            {
-                if (_labelSizeCalcMethod == null)
-                {
-                    Type type = R.GameType("LabelSizeCalculator") ?? R.AnyType("LabelSizeCalculator");
-                    _labelSizeCalcMethod = R.Method(type, "Calc", true,
-                        new[] { _effectLabel.GetType(), typeof(string) });
-                }
-                if (_labelSizeCalcMethod == null) return false;
-
-                object measured = _labelSizeCalcMethod.Invoke(null, new object[] { _effectLabel, text });
-                if (!(measured is Vector2)) return false;
-                width = ((Vector2)measured).x;
-                return width >= 0f;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static string BuildGap(string prefix, float requiredWidth)
-        {
-            float baseWidth;
-            if (!TryMeasure(prefix, out baseWidth)) return null;
-
-            for (int n = 1; n <= 12; n++)
-            {
-                string spaces = new string(' ', n);
-                float width;
-                if (!TryMeasure(prefix + spaces, out width)) return null;
-                if (width - baseWidth >= requiredWidth) return spaces;
-            }
-            return null;
         }
 
         private static void ConfigureLabelGeometry(float labelX)

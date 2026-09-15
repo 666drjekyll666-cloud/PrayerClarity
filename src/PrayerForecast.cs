@@ -18,10 +18,20 @@ namespace PrayerClarity
 
         internal sealed class Result
         {
+            // Exact resolved values stay available for correctness/tests/balance work.
+            // Default pulpit rendering intentionally does not expose these totals.
             internal int BaseFaith;
             internal float BaseMoney;
             internal int BonusFaith;
             internal float BonusMoney;
+
+            // Prayer-owned success contribution, kept separate from resolved payout so
+            // presentation can explain the mechanic without spoiling sermon rewards.
+            internal float FaithBonusRate;
+            internal float MoneyBonusRate;
+            internal int FixedFaithBonus;
+            internal float FixedMoneyBonus;
+
             internal int ChancePercent;
             internal float GraveyardQuality;
             internal bool UsesSoulGratitude;
@@ -29,7 +39,6 @@ namespace PrayerClarity
             internal string SpecialText;
             // Leading effect icon only. For timed effects this is the exact
             // BuffDefinition.GetIconName() used by vanilla BuffIcon.Draw.
-            // Concrete reward/resource icons are presentation-level inline nouns.
             internal string SpecialIconName;
         }
 
@@ -70,6 +79,7 @@ namespace PrayerClarity
             float kFaith = R.Float(R.Get(craft, "k_faith"));
             float kMoney = R.Float(R.Get(craft, "k_money"));
 
+            // Preserve the verified exact side-effect-free calculator unchanged.
             int bonusFaith = fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
             float bonusMoney = fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
             SpecialInfo special = BuildSpecial(craft, eventId, rewards);
@@ -81,6 +91,10 @@ namespace PrayerClarity
                 BaseMoney = baseMoney,
                 BonusFaith = bonusFaith,
                 BonusMoney = bonusMoney,
+                FaithBonusRate = kFaith,
+                MoneyBonusRate = kMoney,
+                FixedFaithBonus = fixedFaith,
+                FixedMoneyBonus = fixedMoney,
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
                 GraveyardQuality = R.ZoneQuality("graveyard"),
                 UsesSoulGratitude = usesSoulGratitude,
