@@ -101,15 +101,43 @@ Reason: this separates two failure domains. UI-seam/layout problems can be diagn
 
 This does **not** mean every sentence written during stock Clarity is permanent. Profile-sensitive wording and quality-progression copy may be revised after Balance/Rework values are accepted. What should become stable now is the UI ownership, lifecycle, renderer contract and shared semantic-model shape.
 
+## Secondary-surface audit status
+
+Static/read-only evidence is now sufficient to narrow the implementation candidates substantially, but one exact Character-screen seam remains unresolved.
+
+Established facts:
+
+- the HUD `BuffIcon` surface is only icon + vanilla timer; it is not the Character/Temporary Effects detail surface;
+- the Character screen owns a distinct `InventoryGUI.perk_buff_item_prefab` / `PerkBuffItemGUI` path and `BuffsGUI.Redraw()` explicitly asks `InventoryGUI.RedrawBuffsAndPerks()` to refresh it when Inventory is open;
+- Technology nodes already build their native hover data through `TechTreeGUIItem.InitGamepadTooltip(...) -> TechUnlock.GetTooltip(Tooltip)`;
+- `TechUnlock.GetTooltip` already contains prayer-specific presentation logic and the generic `Tooltip` API supports `AddData`, so the current lowest-risk Technology candidate is a narrow prayer-only enrichment at that semantic tooltip seam rather than a broad `TechTreeGUI` replacement.
+
+Still unknown before production implementation:
+
+- the exact `PerkBuffItemGUI` draw/bind method and live prefab hierarchy used by Character -> Temporary Effects;
+- whether the same native `Tooltip` component is already attached to that row or whether the narrowest safe implementation should add one to the existing row.
+
+A single read-only **secondary-surface probe 0.1.7** was therefore created on `research/clarity-secondary-surfaces`. It dumps only the exact relevant IL/type metadata plus the inactive/live `perk_buff_item_prefab` hierarchy and writes `PrayerClarity-secondary-surfaces-0.1.7.txt`. It does not patch Harmony targets or mutate save/player/world state.
+
+Probe source/build identity:
+
+- source branch: `research/clarity-secondary-surfaces`;
+- build source SHA: `e9068634d85c1ab84eabca966f55bbc5101c6d3c`;
+- GitHub Actions run: `34967750857`;
+- build result: successful;
+- handed DLL SHA-256: `10a5351900066d7709a592edebe933ab5543187a66e0817c12dbb4cfa01ada42`.
+
+This is a research probe, not a production/test candidate and must not be promoted to `main` or recorded as accepted gameplay behaviour.
+
 ## Next work order
 
 1. Treat 0.1.14 as the end of the inline-item-icon experiment; no icon-chasing build.
 2. Treat the 1920x1080 + multi-language pulpit smoke as passed; no additional pulpit-resolution work is required before the secondary-surface audit.
-3. Perform a static/read-only audit of Character/Temporary Effects and technology-description UI seams, reusing existing 0.1.6 presentation evidence first.
-4. Record exact targets and the minimal text model for each surface.
+3. Run the narrow 0.1.7 read-only probe once and inspect `PrayerClarity-secondary-surfaces-0.1.7.txt` to close the Character/Temporary Effects seam.
+4. Record exact targets and the minimal text model for both secondary surfaces.
 5. Implement both Clarity surfaces in one coherent dev candidate together with removal of the dead inline-item-icon path.
 6. Runtime-test Character/Temporary Effects and technology screens.
 7. After those UI seams are accepted, proceed to Vanilla Fixes / Balance/Rework implementation and drive all changed presentation through the shared semantic model.
 8. Perform the final profile-consistency/localization smoke after gameplay changes are accepted.
 
-No hosted CI is required for this documentation/research step.
+No further hosted CI is required for research after the 0.1.7 probe build unless new evidence exposes another executable-only question.
