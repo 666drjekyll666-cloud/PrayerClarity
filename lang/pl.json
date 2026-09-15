@@ -17,5 +17,5 @@
   "buff.sins_unverified": "Nie znaleziono efektu specjalnego w vanilla 1.407 · buff {0:0}\u00A0min",
   "buff.souls_repose": "Więcej (gratitude_points) oznacza więcej (faith).",
   "buff.gratitude": "+10% (gratitude_points) z leczenia dusz · {0:0}\u00A0min",
-  "buff.sin_shard": "×2 odłamki grzechu za udane leczenie duszy · {0:0}\u00A0min"
+  "buff.sin_shard": "×2 za udane leczenie duszy · {0:0}\u00A0min"
 }
