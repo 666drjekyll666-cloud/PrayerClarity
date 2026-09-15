@@ -39,6 +39,24 @@ namespace PrayerClarity
 
         internal static string F(string key, params object[] args)
         {
+            // Two older presentation seams still ask for these legacy keys with a
+            // duration parameter. Render them through the same accepted day-based
+            // wording as the shared semantic model instead of exposing real-time
+            // minutes again.
+            if (string.Equals(key, "buff.skull", StringComparison.Ordinal) && args != null && args.Length >= 2)
+            {
+                float duration = Convert.ToSingle(args[1], CultureInfo.InvariantCulture);
+                return F("active.skull", args[0]) + " · " +
+                       F("active.timer_days", PrayerForecast.DurationParameterToGameDays(duration));
+            }
+
+            if (string.Equals(key, "buff.sin_shard", StringComparison.Ordinal) && args != null && args.Length >= 1)
+            {
+                float duration = Convert.ToSingle(args[0], CultureInfo.InvariantCulture);
+                return F("active.sin_shard") + " · " +
+                       F("active.timer_days", PrayerForecast.DurationParameterToGameDays(duration));
+            }
+
             string template = T(key);
             try { return string.Format(_culture, template, args); }
             catch (FormatException ex)

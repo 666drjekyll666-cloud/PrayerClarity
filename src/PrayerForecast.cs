@@ -264,6 +264,7 @@ namespace PrayerClarity
             object buff = R.BalanceData(buffId, "BuffDefinition", true);
             object res = buff == null ? null : R.Get(buff, "res");
             string iconName = GetBuffIconName(buff);
+            bool showDuration = true;
 
             string text;
             switch (buffId)
@@ -285,9 +286,11 @@ namespace PrayerClarity
                     break;
                 case "buff_plant":
                     text = Localization.F("active.plant_inactive");
+                    showDuration = false;
                     break;
                 case "buff_sins":
                     text = Localization.F("active.sins_unverified");
+                    showDuration = false;
                     break;
                 case "buff_gp_increase":
                     text = Localization.F("active.gratitude");
@@ -300,13 +303,13 @@ namespace PrayerClarity
                     break;
             }
 
-            if (!string.IsNullOrEmpty(text) && duration > 0.0001f)
+            if (showDuration && !string.IsNullOrEmpty(text) && duration > 0.0001f)
                 text += " · " + Localization.F("active.timer_days", DurationParameterToGameDays(duration));
 
             return string.IsNullOrEmpty(text) ? null : new SpecialInfo(text, iconName);
         }
 
-        private static float DurationParameterToGameDays(float durationMinutes)
+        internal static float DurationParameterToGameDays(float durationMinutes)
         {
             if (durationMinutes <= 0.0001f) return 0f;
 

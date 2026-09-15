@@ -1,4 +1,4 @@
-name: Build PrayerClarity prototype
+name: Build PrayerClarity candidate
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: prayerclarity-prototype-${{ github.ref }}
+  group: prayerclarity-candidate-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
           dotnet-version: '8.0.x'
       - name: Restore
         run: dotnet restore PrayerClarity.csproj
-      - name: Build prototype DLL
+      - name: Build Release DLL
         run: dotnet build PrayerClarity.csproj -c Release --no-restore
       - name: Verify embedded locales and stage artifact
         id: artifact
@@ -41,7 +41,7 @@ jobs:
             }
           done
           mkdir -p dist
-          asset='PrayerClarity-0.1.21-ci.dll'
+          asset='PrayerClarity-1.0.0-ci.dll'
           cp "$dll" "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           {
@@ -53,11 +53,11 @@ jobs:
           } > dist/BUILD_INFO.txt
           echo "asset=$asset" >> "$GITHUB_OUTPUT"
           echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity prototype SHA-256: $hash"
-      - name: Upload prototype build evidence
+          echo "PrayerClarity candidate SHA-256: $hash"
+      - name: Upload candidate build evidence
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-0.1.21-ci-${{ github.sha }}
+          name: PrayerClarity-1.0.0-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.asset }}
             dist/BUILD_INFO.txt

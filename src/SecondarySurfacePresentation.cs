@@ -57,8 +57,10 @@ namespace PrayerClarity
                 string text = PrayerForecast.BuildActiveBuffText(__0);
                 if (string.IsNullOrEmpty(text)) return;
 
+                string buffId = _playerBuffIdField.GetValue(__0) as string;
                 float remainingDays;
-                if (TryGetRemainingPrayerDays(__0, out remainingDays) && remainingDays >= 1f)
+                if (ShouldShowStrategicDuration(buffId) &&
+                    TryGetRemainingPrayerDays(__0, out remainingDays) && remainingDays >= 1f)
                     text += " · " + Localization.F("active.timer_days", remainingDays);
 
                 object description = R.Get(__instance, "txt_descr");
@@ -111,6 +113,14 @@ namespace PrayerClarity
             float gameTime = Convert.ToSingle(_gameTimeGetter.Invoke(null, null));
             remainingDays = endTime - gameTime;
             return true;
+        }
+
+        private static bool ShouldShowStrategicDuration(string buffId)
+        {
+            // For the two broken/unverified vanilla special effects, a strategic
+            // duration would read as if the non-working mechanic were meaningful.
+            return !string.Equals(buffId, "buff_plant", StringComparison.Ordinal) &&
+                   !string.Equals(buffId, "buff_sins", StringComparison.Ordinal);
         }
 
         private static bool IsPrayerTimedBuff(string buffId)
@@ -355,9 +365,8 @@ namespace PrayerClarity
 
         private static string QualityLabel(int qualityTier)
         {
-            // Text remains the safe 0.1.17 fallback. The user prefers native quality
-            // stars, but no verified inline quality-icon seam exists yet; do not guess
-            // sprite IDs after the rejected item-icon experiment.
+            // Probe 0.1.9 verified native small_font quality symbols, so all supported
+            // languages reuse the game's own bronze/silver/gold artwork inline.
             switch (qualityTier)
             {
                 case 1: return Localization.F("quality.bronze");
