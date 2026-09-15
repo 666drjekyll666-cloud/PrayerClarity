@@ -138,18 +138,26 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 ## Player-facing clarity target
 
-The intended end state is a **white-box player experience**, not a developer-facing formula viewer.
+The intended end state is a **white-box player experience**, not a developer-facing formula viewer and not a pre-sermon final-payout calculator.
 
 The UI should let the player answer:
 
 - what the prayer does;
 - what current values/conditions affect it;
-- what outcome/effect to expect now;
 - what changing prayer quality or inputs changes;
 - how it differs from alternatives;
 - when a selected profile repairs or intentionally changes vanilla behavior.
 
-Prefer concrete values, short dependency explanations and visual hierarchy over raw formulas.
+For the pulpit specifically, preserve the sermon as the reveal moment for the exact resolved Faith/donation payout. Default pre-sermon presentation should explain the dependency chain and the prayer's own contribution instead of displaying the fully computed current totals:
+
+- keep `guaranteed/base -> success-only prayer contribution -> special effect` as the semantic decomposition;
+- Guaranteed explains that base Faith comes from Church Quality and base donations from Graveyard Quality; BSS-specific dependencies such as Soul Gratitude remain explicit where verified;
+- success presentation keeps the exact success probability and shows exact prayer-owned modifiers such as Faith `+50%` or Donations `+25%`, plus fixed prayer-owned outputs where relevant;
+- exact intrinsic prayer mechanics remain exact: duration, growth reduction, damage, armor, regeneration, confession probability, Soul Gratitude/Sin Shard multipliers, Blessing counts and comparable prayer-owned properties;
+- do not replace real progression with qualitative `low / medium / high` buckets;
+- the side-effect-free semantic model may retain exact payout calculations for correctness/testing/balance, but default player-facing pulpit rendering must not expose the final current payout merely because it can be calculated.
+
+Prefer concrete intrinsic values, short dependency explanations and visual hierarchy over raw formulas. `docs/PULPIT_REVEAL_UX.md` is the canonical detailed rationale for this reward-reveal boundary.
 
 Use one mod-owned semantic model for all prayer presentation surfaces so technology text, item tooltip, pulpit forecast, active-buff presentation and effective configured mechanics cannot contradict each other.
 
@@ -205,6 +213,7 @@ Long-lived findings belong primarily in:
 - `docs/PRAYER_POWER_BUDGET.md` — quantitative full-cost/progression analysis;
 - `docs/PRAYER_REBALANCE_OPTIONS.md` — candidate rebalanced roster options, explicitly non-accepted until narrowed/tested;
 - `docs/DESIGN_NOTES.md` — product/UI architecture and accepted design direction;
+- `docs/PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary;
 - `docs/TEST_BUILD_LOG.md` — only when distributable/testable production candidates exist.
 
 Create additional design-analysis files only when they become durable sources of truth rather than temporary scratch work.
