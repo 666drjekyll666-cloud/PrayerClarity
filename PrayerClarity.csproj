@@ -21,7 +21,6 @@
     <Compile Include="src/PulpitPresentation.cs" />
     <Compile Include="src/PulpitLayoutV5.cs" />
     <Compile Include="src/PulpitPolish.cs" />
-    <Compile Include="src/PulpitEffectIconPolicy.cs" />
     <Compile Include="src/PulpitTuning.cs" />
     <Compile Include="src/Localization.cs" />
   </ItemGroup>

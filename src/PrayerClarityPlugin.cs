@@ -58,7 +58,6 @@ namespace PrayerClarity
                 PrayerForecast.Result forecast = PrayerForecast.Build(__instance, chance);
                 if (forecast == null)
                 {
-                    PulpitEffectIconPolicy.Restore();
                     PulpitPolish.Restore();
                     PulpitLayoutV4.Restore();
                     PulpitPresentation.Hide(label, __instance);
@@ -69,11 +68,9 @@ namespace PrayerClarity
                 PulpitPresentation.Render(label, __instance, KeepVanillaContext(vanilla), forecast);
                 PulpitLayoutV4.Apply(label, __instance, forecast);
                 PulpitPolish.Apply(label, __instance, forecast);
-                PulpitEffectIconPolicy.Apply(label, __instance, forecast);
             }
             catch (Exception ex)
             {
-                PulpitEffectIconPolicy.Restore();
                 PulpitPolish.Restore();
                 PulpitLayoutV4.Restore();
                 PulpitPresentation.Hide(label, __instance);

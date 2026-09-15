@@ -134,7 +134,6 @@ namespace PrayerClarity
             PulpitPresentation.ApplyTuning();
             PulpitLayoutV4.ApplyTuning();
             PulpitPolish.ApplyTuning();
-            PulpitEffectIconPolicy.ApplyTuning();
         }
     }
 }
