@@ -5,8 +5,9 @@ namespace PrayerClarity
 {
     internal static class PulpitTuning
     {
-        // v4 keys are retained so an existing calibration remains readable, but the
-        // defaults now reflect the accepted 0.1.10/0.1.11 2560x1440 working composition.
+        // v4 keys are retained so an existing calibration remains readable. Defaults
+        // track the latest accepted runtime composition rather than forcing users to
+        // reproduce prototype slider values by hand.
         private const string Section = "Prototype pulpit layout tuning v4";
 
         internal static ConfigEntry<float> WindowExtraWidth { get; private set; }
@@ -50,14 +51,14 @@ namespace PrayerClarity
 
             ResultHeaderX = BindFloat(config, "06 Result header X", 6f, -260f, 260f,
                 "Horizontal position of the Result heading.");
-            ResultHeaderY = BindFloat(config, "07 Result header Y", 5f, -240f, 180f,
+            ResultHeaderY = BindFloat(config, "07 Result header Y", 7f, -240f, 180f,
                 "Vertical position of the Result heading.");
-            ResultHeaderFontSize = BindInt(config, "08 Result header font size", 16, 8, 20,
+            ResultHeaderFontSize = BindInt(config, "08 Result header font size", 15, 8, 20,
                 "Font size of the Result heading.");
 
             ResultX = BindFloat(config, "09 Result rows X", -5f, -260f, 260f,
                 "Horizontal position of Guaranteed / Success bonus rows.");
-            ResultY = BindFloat(config, "10 Result rows Y", -20f, -260f, 160f,
+            ResultY = BindFloat(config, "10 Result rows Y", -8f, -260f, 160f,
                 "Vertical top position of Guaranteed / Success bonus rows.");
             ResultFontSize = BindInt(config, "11 Result rows font size", 14, 8, 20,
                 "Font size for Guaranteed / Success bonus rows.");
