@@ -17,5 +17,5 @@
   "buff.sins_unverified": "原版 1.407 中未找到特殊效果 · 增益 {0:0}分钟",
   "buff.souls_repose": "(gratitude_points)越多，获得的(faith)越多。",
   "buff.gratitude": "治愈灵魂时 +10% (gratitude_points) · {0:0}分钟",
-  "buff.sin_shard": "成功治愈灵魂时获得 ×2 罪恶碎片 · {0:0}分钟"
+  "buff.sin_shard": "成功治愈灵魂时 ×2 · {0:0}分钟"
 }
