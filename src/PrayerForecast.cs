@@ -42,6 +42,22 @@ namespace PrayerClarity
             internal string SpecialIconName;
         }
 
+        internal sealed class TierDetails
+        {
+            internal string CraftId;
+            internal string EventId;
+            internal int QualityTier;
+            internal int Requirement;
+            internal float FaithBonusRate;
+            internal float MoneyBonusRate;
+            internal int FixedFaithBonus;
+            internal float FixedMoneyBonus;
+            internal bool UsesSoulGratitude;
+            internal BonusHighlight Highlight;
+            internal string SpecialText;
+            internal string SpecialIconName;
+        }
+
         private sealed class SpecialInfo
         {
             internal readonly string Text;
@@ -57,6 +73,38 @@ namespace PrayerClarity
         internal static Result Build(object prayGui, float chance)
         {
             object craft = R.Get(prayGui, "pray_craft");
+            TierDetails tier = BuildTierDetails(craft);
+            if (tier == null) return null;
+
+            object prayEvent = R.BalanceData(tier.EventId, "PrayEventDefinition", false);
+            int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
+            float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
+
+            // Preserve the verified exact side-effect-free calculator unchanged.
+            int bonusFaith = tier.FixedFaithBonus + Mathf.RoundToInt(baseFaith * tier.FaithBonusRate);
+            float bonusMoney = tier.FixedMoneyBonus + Mathf.Round(baseMoney * tier.MoneyBonusRate * 100f) / 100f;
+
+            return new Result
+            {
+                BaseFaith = baseFaith,
+                BaseMoney = baseMoney,
+                BonusFaith = bonusFaith,
+                BonusMoney = bonusMoney,
+                FaithBonusRate = tier.FaithBonusRate,
+                MoneyBonusRate = tier.MoneyBonusRate,
+                FixedFaithBonus = tier.FixedFaithBonus,
+                FixedMoneyBonus = tier.FixedMoneyBonus,
+                ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
+                GraveyardQuality = R.ZoneQuality("graveyard"),
+                UsesSoulGratitude = tier.UsesSoulGratitude,
+                Highlight = tier.Highlight,
+                SpecialText = tier.SpecialText,
+                SpecialIconName = tier.SpecialIconName
+            };
+        }
+
+        internal static TierDetails BuildTierDetails(object craft)
+        {
             if (craft == null) return null;
 
             string craftId = R.Id(craft) ?? string.Empty;
@@ -67,41 +115,73 @@ namespace PrayerClarity
 
             Localization.UseCurrentGameLanguage();
 
-            object prayEvent = R.BalanceData(eventId, "PrayEventDefinition", false);
-            int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
-            float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
-
             int fixedFaith = 0;
             float fixedMoney = 0f;
             List<RewardItem> rewards = new List<RewardItem>();
             CollectOutputs(craft, ref fixedFaith, ref fixedMoney, rewards);
 
-            float kFaith = R.Float(R.Get(craft, "k_faith"));
-            float kMoney = R.Float(R.Get(craft, "k_money"));
-
-            // Preserve the verified exact side-effect-free calculator unchanged.
-            int bonusFaith = fixedFaith + Mathf.RoundToInt(baseFaith * kFaith);
-            float bonusMoney = fixedMoney + Mathf.Round(baseMoney * kMoney * 100f) / 100f;
             SpecialInfo special = BuildSpecial(craft, eventId, rewards);
-            bool usesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal);
-
-            return new Result
+            return new TierDetails
             {
-                BaseFaith = baseFaith,
-                BaseMoney = baseMoney,
-                BonusFaith = bonusFaith,
-                BonusMoney = bonusMoney,
-                FaithBonusRate = kFaith,
-                MoneyBonusRate = kMoney,
+                CraftId = craftId,
+                EventId = eventId,
+                QualityTier = ParseQualityTier(craftId),
+                Requirement = Mathf.Max(0, Mathf.RoundToInt(R.Float(R.Get(craft, "needs_quality")))),
+                FaithBonusRate = R.Float(R.Get(craft, "k_faith")),
+                MoneyBonusRate = R.Float(R.Get(craft, "k_money")),
                 FixedFaithBonus = fixedFaith,
                 FixedMoneyBonus = fixedMoney,
-                ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
-                GraveyardQuality = R.ZoneQuality("graveyard"),
-                UsesSoulGratitude = usesSoulGratitude,
+                UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
                 Highlight = GetBonusHighlight(craftId),
                 SpecialText = special == null ? null : special.Text,
                 SpecialIconName = special == null ? null : special.IconName
             };
+        }
+
+        internal static string BuildActiveBuffText(object playerBuff)
+        {
+            if (playerBuff == null) return null;
+            Localization.UseCurrentGameLanguage();
+
+            object buff = R.Get(playerBuff, "definition");
+            if (buff == null) return null;
+            string buffId = R.Id(buff) ?? string.Empty;
+            object res = R.Get(buff, "res");
+
+            switch (buffId)
+            {
+                case "buff_sword":
+                    return NumberedActiveResEffect("active.sword", res, "add_damage");
+                case "buff_shield":
+                    return NumberedActiveResEffect("active.shield", res, "add_armor");
+                case "buff_skull":
+                    return NumberedActiveResEffect("active.skull", res, "body_max");
+                case "buff_pen":
+                    return Localization.F("active.pen", R.Float(R.Get(buff, "craft_q")));
+                case "buff_star":
+                    return Localization.F("active.star", R.Float(R.Get(buff, "craft_q")));
+                case "buff_plant":
+                    return Localization.F("active.plant_inactive");
+                case "buff_sins":
+                    return Localization.F("active.sins_unverified");
+                case "buff_gp_increase":
+                    return Localization.F("active.gratitude");
+                case "buff_sin_shard":
+                    return Localization.F("active.sin_shard");
+                default:
+                    return null;
+            }
+        }
+
+        private static int ParseQualityTier(string craftId)
+        {
+            if (string.IsNullOrEmpty(craftId)) return 0;
+            int index = craftId.LastIndexOf(':');
+            if (index < 0 || index + 1 >= craftId.Length) return 0;
+            int tier;
+            return int.TryParse(craftId.Substring(index + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out tier)
+                ? tier
+                : 0;
         }
 
         private static BonusHighlight GetBonusHighlight(string craftId)
@@ -134,15 +214,10 @@ namespace PrayerClarity
             List<string> parts = new List<string>();
             string iconName = null;
 
-            // The PrayEventDefinition family is the verified semantic discriminator for
-            // the BSS prayer. Matching the event is more robust than relying on an item/
-            // craft spelling and is already used by the dependency-note path.
+            // The event family is the verified discriminator for the BSS prayer. Keep
+            // the player-facing mechanic concise instead of copying the flavor sentence.
             if (eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal))
-            {
-                string soulsText = R.VanillaLocalize("b_souls_d");
-                if (!string.IsNullOrEmpty(soulsText) && !string.Equals(soulsText, "b_souls_d", StringComparison.Ordinal))
-                    parts.Add(soulsText);
-            }
+                parts.Add(Localization.F("buff.souls_repose"));
 
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
@@ -232,6 +307,14 @@ namespace PrayerClarity
             float value = R.GameResGet(res, resKey);
             if (Math.Abs(value) < 0.0001f) return null;
             return Localization.F(key, value, duration);
+        }
+
+        private static string NumberedActiveResEffect(string key, object res, string resKey)
+        {
+            if (res == null) return null;
+            float value = R.GameResGet(res, resKey);
+            if (Math.Abs(value) < 0.0001f) return null;
+            return Localization.F(key, value);
         }
 
         private static string GetBuffIconName(object buff)
