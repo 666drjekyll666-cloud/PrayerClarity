@@ -1,3 +1,4 @@
+# Frozen 0.1.1 pulpit language-preview harness candidate.
 name: Build PrayerClarity test harness
 
 on:
