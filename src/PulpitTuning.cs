@@ -75,7 +75,7 @@ namespace PrayerClarity
                 "Horizontal position of the dependency note.");
             NoteY = BindFloat(config, "17 Note Y", -137f, -340f, 80f,
                 "Vertical top position of the dependency note.");
-            NoteFontSize = BindInt(config, "18 Note font size", 9, 6, 14,
+            NoteFontSize = BindInt(config, "18 Note font size", 10, 6, 14,
                 "Font size for the dependency note.");
 
             PrayerSelectorX = BindFloat(config, "19 Prayer selector X", 0f, -240f, 240f,
