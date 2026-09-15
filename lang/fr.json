@@ -17,5 +17,5 @@
   "buff.sins_unverified": "Effet spécial introuvable dans la version vanilla 1.407 · bonus {0:0}\u00A0min",
   "buff.souls_repose": "Plus il y a de (gratitude_points), plus vous obtenez de (faith).",
   "buff.gratitude": "+10 % (gratitude_points) via le soin des âmes · {0:0}\u00A0min",
-  "buff.sin_shard": "×2 éclats de péché lors d’un soin d’âme réussi · {0:0}\u00A0min"
+  "buff.sin_shard": "×2 lors d’un soin d’âme réussi · {0:0}\u00A0min"
 }
