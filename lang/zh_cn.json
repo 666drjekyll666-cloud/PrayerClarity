@@ -4,11 +4,14 @@
   "forecast.effect_header": "效果",
   "forecast.graveyard_quality": "墓地质量：(wskull) {0:0.#}",
   "forecast.guaranteed": "保证获得",
-  "forecast.success_bonus": "成功时（{0}%）",
-  "forecast.dependency_note": "(faith) 来自 (cross) · (slv) 来自 (wskull)",
-  "forecast.dependency_note_souls": "(faith) 来自 (cross) + (gratitude_points) · (slv) 来自 (wskull)",
+  "forecast.success_bonus": "成功奖励（{0}%）",
+  "forecast.dependency_note": "(faith)：教会质量 (cross)；(slv)：墓地质量 (wskull)",
+  "forecast.dependency_note_souls": "(faith)：教会质量 (cross) + (gratitude_points)；(slv)：墓地质量 (wskull)",
   "forecast.reward": "奖励：{0}",
+  "format.of_base": "{0} 基础值",
   "tech.prayer_details": "祈祷详情",
+  "tech.base_reward": "基础奖励：{0}",
+  "tech.success_bonus": "成功奖励",
   "tech.requires": "需要 (cross) {0}",
   "quality.bronze": "铜",
   "quality.silver": "银",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "植物生长：原版 1.407 中效果不生效",
   "active.sins_unverified": "原版 1.407 中未找到特殊效果",
   "active.gratitude": "治愈灵魂时 +10% (gratitude_points)",
-  "active.sin_shard": "罪恶碎片：成功治愈灵魂时 ×2"
+  "active.sin_shard": "罪恶碎片：成功治愈灵魂时 ×2",
+  "active.timer_days": "≈{0:0.0}天"
 }

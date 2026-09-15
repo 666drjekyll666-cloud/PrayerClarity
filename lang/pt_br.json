@@ -4,11 +4,14 @@
   "forecast.effect_header": "Efeito",
   "forecast.graveyard_quality": "Qualidade do cemitério: (wskull) {0:0.#}",
   "forecast.guaranteed": "Garantido",
-  "forecast.success_bonus": "Em caso de sucesso ({0}%)",
-  "forecast.dependency_note": "(faith) de (cross) · (slv) de (wskull)",
-  "forecast.dependency_note_souls": "(faith) de (cross) + (gratitude_points) · (slv) de (wskull)",
+  "forecast.success_bonus": "Bônus no sucesso ({0}%)",
+  "forecast.dependency_note": "(faith): qualidade da igreja (cross); (slv): qualidade do cemitério (wskull)",
+  "forecast.dependency_note_souls": "(faith): qualidade da igreja (cross) + (gratitude_points); (slv): qualidade do cemitério (wskull)",
   "forecast.reward": "Recompensa: {0}",
+  "format.of_base": "{0} da base",
   "tech.prayer_details": "Detalhes da oração",
+  "tech.base_reward": "Recompensa base: {0}",
+  "tech.success_bonus": "Bônus no sucesso",
   "tech.requires": "Requer (cross) {0}",
   "quality.bronze": "Bronze",
   "quality.silver": "Prata",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "Crescimento: efeito não funciona no vanilla 1.407",
   "active.sins_unverified": "Efeito especial não encontrado no vanilla 1.407",
   "active.gratitude": "+10% (gratitude_points) ao curar almas",
-  "active.sin_shard": "Fragmentos de pecado ×2 ao curar uma alma com sucesso"
+  "active.sin_shard": "Fragmentos de pecado ×2 ao curar uma alma com sucesso",
+  "active.timer_days": "≈{0:0.0} d"
 }

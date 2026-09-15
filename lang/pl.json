@@ -4,11 +4,14 @@
   "forecast.effect_header": "Efekt",
   "forecast.graveyard_quality": "Jakość cmentarza: (wskull) {0:0.#}",
   "forecast.guaranteed": "Gwarantowane",
-  "forecast.success_bonus": "Przy sukcesie ({0}%)",
-  "forecast.dependency_note": "(faith) z (cross) · (slv) z (wskull)",
-  "forecast.dependency_note_souls": "(faith) z (cross) + (gratitude_points) · (slv) z (wskull)",
+  "forecast.success_bonus": "Premia za sukces ({0}%)",
+  "forecast.dependency_note": "(faith): jakość kościoła (cross); (slv): jakość cmentarza (wskull)",
+  "forecast.dependency_note_souls": "(faith): jakość kościoła (cross) + (gratitude_points); (slv): jakość cmentarza (wskull)",
   "forecast.reward": "Nagroda: {0}",
+  "format.of_base": "{0} wartości bazowej",
   "tech.prayer_details": "Szczegóły modlitwy",
+  "tech.base_reward": "Nagroda bazowa: {0}",
+  "tech.success_bonus": "Premia za sukces",
   "tech.requires": "Wymaga (cross) {0}",
   "quality.bronze": "Brąz",
   "quality.silver": "Srebro",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "Wzrost roślin: efekt nie działa w vanilla 1.407",
   "active.sins_unverified": "Nie znaleziono efektu specjalnego w vanilla 1.407",
   "active.gratitude": "+10% (gratitude_points) z leczenia dusz",
-  "active.sin_shard": "Odłamki grzechu ×2 za udane leczenie duszy"
+  "active.sin_shard": "Odłamki grzechu ×2 za udane leczenie duszy",
+  "active.timer_days": "≈{0:0.0} d."
 }

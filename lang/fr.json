@@ -4,11 +4,14 @@
   "forecast.effect_header": "Effet",
   "forecast.graveyard_quality": "Qualité du cimetière : (wskull) {0:0.#}",
   "forecast.guaranteed": "Garanti",
-  "forecast.success_bonus": "En cas de réussite ({0} %)",
-  "forecast.dependency_note": "(faith) via (cross) · (slv) via (wskull)",
-  "forecast.dependency_note_souls": "(faith) via (cross) + (gratitude_points) · (slv) via (wskull)",
+  "forecast.success_bonus": "Bonus en cas de succès ({0} %)",
+  "forecast.dependency_note": "(faith) : qualité de l’église (cross) ; (slv) : qualité du cimetière (wskull)",
+  "forecast.dependency_note_souls": "(faith) : qualité de l’église (cross) + (gratitude_points) ; (slv) : qualité du cimetière (wskull)",
   "forecast.reward": "Récompense : {0}",
+  "format.of_base": "{0} de la base",
   "tech.prayer_details": "Détails de la prière",
+  "tech.base_reward": "Récompense de base : {0}",
+  "tech.success_bonus": "Bonus en cas de succès",
   "tech.requires": "Requiert (cross) {0}",
   "quality.bronze": "Bronze",
   "quality.silver": "Argent",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "Croissance : effet inactif dans la version vanilla 1.407",
   "active.sins_unverified": "Effet spécial introuvable dans la version vanilla 1.407",
   "active.gratitude": "+10 % (gratitude_points) via le soin des âmes",
-  "active.sin_shard": "Éclats de péché ×2 lors d’un soin d’âme réussi"
+  "active.sin_shard": "Éclats de péché ×2 lors d’un soin d’âme réussi",
+  "active.timer_days": "≈{0:0.0} j"
 }

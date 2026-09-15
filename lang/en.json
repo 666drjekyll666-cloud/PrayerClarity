@@ -4,11 +4,14 @@
   "forecast.effect_header": "Effect",
   "forecast.graveyard_quality": "Graveyard quality: (wskull) {0:0.#}",
   "forecast.guaranteed": "Guaranteed",
-  "forecast.success_bonus": "On success ({0}%)",
-  "forecast.dependency_note": "(faith) from (cross) · (slv) from (wskull)",
-  "forecast.dependency_note_souls": "(faith) from (cross) + (gratitude_points) · (slv) from (wskull)",
+  "forecast.success_bonus": "Success bonus ({0}%)",
+  "forecast.dependency_note": "(faith): Church Quality (cross); (slv): Graveyard Quality (wskull)",
+  "forecast.dependency_note_souls": "(faith): Church Quality (cross) + (gratitude_points); (slv): Graveyard Quality (wskull)",
   "forecast.reward": "Reward: {0}",
+  "format.of_base": "{0} of base",
   "tech.prayer_details": "Prayer details",
+  "tech.base_reward": "Base reward: {0}",
+  "tech.success_bonus": "Success bonus",
   "tech.requires": "Requires (cross) {0}",
   "quality.bronze": "Bronze",
   "quality.silver": "Silver",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "Plant growth: effect does not work in vanilla 1.407",
   "active.sins_unverified": "Special effect not found in vanilla 1.407",
   "active.gratitude": "+10% (gratitude_points) from soul healing",
-  "active.sin_shard": "Sin Shards ×2 from successful soul healing"
+  "active.sin_shard": "Sin Shards ×2 from successful soul healing",
+  "active.timer_days": "≈{0:0.0} d"
 }

@@ -4,11 +4,14 @@
   "forecast.effect_header": "効果",
   "forecast.graveyard_quality": "墓地の品質：(wskull) {0:0.#}",
   "forecast.guaranteed": "確定",
-  "forecast.success_bonus": "成功時（{0}%）",
-  "forecast.dependency_note": "(faith) は (cross) から · (slv) は (wskull) から",
-  "forecast.dependency_note_souls": "(faith) は (cross) + (gratitude_points) から · (slv) は (wskull) から",
+  "forecast.success_bonus": "成功ボーナス（{0}%）",
+  "forecast.dependency_note": "(faith)：教会の品質 (cross)；(slv)：墓地の品質 (wskull)",
+  "forecast.dependency_note_souls": "(faith)：教会の品質 (cross) + (gratitude_points)；(slv)：墓地の品質 (wskull)",
   "forecast.reward": "報酬：{0}",
+  "format.of_base": "基礎値の{0}",
   "tech.prayer_details": "祈りの詳細",
+  "tech.base_reward": "基本報酬：{0}",
+  "tech.success_bonus": "成功ボーナス",
   "tech.requires": "必要 (cross) {0}",
   "quality.bronze": "ブロンズ",
   "quality.silver": "シルバー",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "植物成長：バニラ1.407では効果なし",
   "active.sins_unverified": "バニラ1.407では特殊効果を確認できず",
   "active.gratitude": "魂の治療で +10% (gratitude_points)",
-  "active.sin_shard": "罪の欠片：魂の治療成功時 ×2"
+  "active.sin_shard": "罪の欠片：魂の治療成功時 ×2",
+  "active.timer_days": "≈{0:0.0}日"
 }

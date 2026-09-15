@@ -4,11 +4,14 @@
   "forecast.effect_header": "Effekt",
   "forecast.graveyard_quality": "Friedhofsqualität: (wskull) {0:0.#}",
   "forecast.guaranteed": "Garantiert",
-  "forecast.success_bonus": "Bei Erfolg ({0}%)",
-  "forecast.dependency_note": "(faith) von (cross) · (slv) von (wskull)",
-  "forecast.dependency_note_souls": "(faith) von (cross) + (gratitude_points) · (slv) von (wskull)",
+  "forecast.success_bonus": "Erfolgsbonus ({0}%)",
+  "forecast.dependency_note": "(faith): Kirchenqualität (cross); (slv): Friedhofsqualität (wskull)",
+  "forecast.dependency_note_souls": "(faith): Kirchenqualität (cross) + (gratitude_points); (slv): Friedhofsqualität (wskull)",
   "forecast.reward": "Belohnung: {0}",
+  "format.of_base": "{0} der Basis",
   "tech.prayer_details": "Gebetsdetails",
+  "tech.base_reward": "Grundbelohnung: {0}",
+  "tech.success_bonus": "Erfolgsbonus",
   "tech.requires": "Benötigt (cross) {0}",
   "quality.bronze": "Bronze",
   "quality.silver": "Silber",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "Pflanzenwachstum: Effekt funktioniert in Vanilla 1.407 nicht",
   "active.sins_unverified": "Spezialeffekt in Vanilla 1.407 nicht gefunden",
   "active.gratitude": "+10 % (gratitude_points) durch Seelenheilung",
-  "active.sin_shard": "Sündensplitter ×2 bei erfolgreicher Seelenheilung"
+  "active.sin_shard": "Sündensplitter ×2 bei erfolgreicher Seelenheilung",
+  "active.timer_days": "≈{0:0.0} T"
 }

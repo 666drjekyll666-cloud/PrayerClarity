@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using BepInEx.Logging;
 using UnityEngine;
@@ -13,9 +12,14 @@ namespace PrayerClarity
         private static ManualLogSource _log;
         private static bool _buffErrorLogged;
         private static bool _techErrorLogged;
+        private static bool _timerErrorLogged;
         private static ConstructorInfo _bubbleTextConstructor;
         private static MethodInfo _tooltipAddDataMethod;
         private static Type _blankSeparatorType;
+        private static Type _bubbleTextType;
+        private static FieldInfo _playerBuffIdField;
+        private static FieldInfo _playerBuffEndTimeField;
+        private static MethodInfo _gameTimeGetter;
 
         internal static void Install(string harmonyId, ManualLogSource log)
         {
@@ -25,14 +29,25 @@ namespace PrayerClarity
             Type playerBuff = R.GameType("PlayerBuff");
             Type techUnlock = R.GameType("TechUnlock");
             Type tooltip = R.GameType("Tooltip");
+            Type mainGame = R.GameType("MainGame");
 
             MethodInfo drawBuff = R.Method(perkBuffItemGui, "Draw", false, new[] { playerBuff });
             MethodInfo getTooltip = R.Method(techUnlock, "GetTooltip", false, new[] { tooltip });
+            MethodInfo getTimerText = R.Method(playerBuff, "GetTimerText", false, 0);
             if (drawBuff == null) throw new MissingMethodException("PerkBuffItemGUI.Draw(PlayerBuff)");
             if (getTooltip == null) throw new MissingMethodException("TechUnlock.GetTooltip(Tooltip)");
+            if (getTimerText == null) throw new MissingMethodException("PlayerBuff.GetTimerText()");
+
+            _playerBuffIdField = playerBuff.GetField("buff_id", R.Inst);
+            _playerBuffEndTimeField = playerBuff.GetField("end_time", R.Inst);
+            PropertyInfo gameTime = mainGame == null ? null : mainGame.GetProperty("game_time", R.Stat);
+            _gameTimeGetter = gameTime == null ? null : gameTime.GetGetMethod(true);
+            if (_playerBuffIdField == null || _playerBuffEndTimeField == null || _gameTimeGetter == null)
+                throw new MissingMemberException("Verified prayer-buff timer state is unavailable.");
 
             R.Patch(harmonyId + ".activeeffects", typeof(SecondarySurfacePresentation), drawBuff, nameof(PerkBuffDrawPostfix));
             R.Patch(harmonyId + ".technology", typeof(SecondarySurfacePresentation), getTooltip, nameof(TechUnlockTooltipPostfix));
+            R.Patch(harmonyId + ".prayertimer", typeof(SecondarySurfacePresentation), getTimerText, nameof(PlayerBuffTimerPostfix));
         }
 
         private static void PerkBuffDrawPostfix(object __instance, object __0)
@@ -58,6 +73,51 @@ namespace PrayerClarity
             }
         }
 
+        // Probe 0.1.8 proved that end_time - MainGame.game_time is the remaining
+        // normalized game-day interval. Keep vanilla's precise timer inside the final
+        // day; before that, show the strategic quantity directly in game days.
+        private static void PlayerBuffTimerPostfix(object __instance, ref string __result)
+        {
+            try
+            {
+                if (__instance == null) return;
+                string buffId = _playerBuffIdField.GetValue(__instance) as string;
+                if (!IsPrayerTimedBuff(buffId)) return;
+
+                float endTime = Convert.ToSingle(_playerBuffEndTimeField.GetValue(__instance));
+                float gameTime = Convert.ToSingle(_gameTimeGetter.Invoke(null, null));
+                float remainingDays = endTime - gameTime;
+                if (remainingDays < 1f) return;
+
+                __result = Localization.F("active.timer_days", remainingDays);
+            }
+            catch (Exception ex)
+            {
+                if (_timerErrorLogged) return;
+                _timerErrorLogged = true;
+                _log?.LogError("PrayerClarity prayer-buff day timer failed; vanilla timer remains available. " + ex);
+            }
+        }
+
+        private static bool IsPrayerTimedBuff(string buffId)
+        {
+            switch (buffId)
+            {
+                case "buff_sword":
+                case "buff_shield":
+                case "buff_skull":
+                case "buff_pen":
+                case "buff_star":
+                case "buff_plant":
+                case "buff_sins":
+                case "buff_gp_increase":
+                case "buff_sin_shard":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         private static void TechUnlockTooltipPostfix(object __instance, object __0)
         {
             try
@@ -66,6 +126,10 @@ namespace PrayerClarity
                 if (string.IsNullOrEmpty(summary) || __0 == null) return;
 
                 Localization.UseCurrentGameLanguage();
+                if (TryReplaceVanillaPrayerMechanics(__0, summary)) return;
+
+                // Safe fallback for an unexpected tooltip shape: keep vanilla data and
+                // append the Clarity block rather than deleting unknown content.
                 object blank = CreateBlankSeparator();
                 if (blank != null) AddTooltipData(__0, blank);
                 AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
@@ -77,6 +141,67 @@ namespace PrayerClarity
                 _techErrorLogged = true;
                 _log?.LogError("PrayerClarity technology-tooltip presentation failed; vanilla technology tooltip remains available. " + ex);
             }
+        }
+
+        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary)
+        {
+            object data = R.Get(tooltip, "data");
+            IList list = data == null ? null : R.Get(data, "data_list") as IList;
+            if (list == null || list.Count < 2) return false;
+
+            if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
+            if (_bubbleTextType == null) return false;
+
+            string vanillaHeader = R.VanillaLocalize("preach_params_2");
+            int headerIndex = -1;
+            for (int i = list.Count - 2; i >= 0; i--)
+            {
+                object item = list[i];
+                if (item == null || !_bubbleTextType.IsInstanceOfType(item)) continue;
+                string text = R.Get(item, "text") as string;
+                if (string.Equals(text, vanillaHeader, StringComparison.Ordinal))
+                {
+                    headerIndex = i;
+                    break;
+                }
+            }
+
+            if (headerIndex < 0 || headerIndex + 1 >= list.Count) return false;
+            object header = list[headerIndex];
+            object body = list[headerIndex + 1];
+            if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
+
+            R.Set(header, "text", Localization.F("tech.prayer_details"));
+            R.Set(body, "text", summary);
+
+            // Stock prayer tooltip puts the broad "X-Y required" line at the start of
+            // the immediately preceding description block. Our tier rows replace that
+            // mechanic, while the flavor/crafting description after the newline stays.
+            if (headerIndex > 0)
+            {
+                object previous = list[headerIndex - 1];
+                if (previous != null && _bubbleTextType.IsInstanceOfType(previous))
+                {
+                    string text = R.Get(previous, "text") as string;
+                    string trimmed = StripStockRequirementLine(text);
+                    if (!string.Equals(text, trimmed, StringComparison.Ordinal))
+                        R.Set(previous, "text", trimmed);
+                }
+            }
+
+            return true;
+        }
+
+        private static string StripStockRequirementLine(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            string normalized = text.Replace("\r\n", "\n");
+            int newline = normalized.IndexOf('\n');
+            if (newline <= 0) return text;
+
+            string firstLine = normalized.Substring(0, newline);
+            if (firstLine.IndexOf("(cross)", StringComparison.Ordinal) < 0) return text;
+            return normalized.Substring(newline + 1).TrimStart();
         }
 
         private static string BuildTechnologySummary(object techUnlock)
@@ -100,16 +225,23 @@ namespace PrayerClarity
                 return q != 0 ? q : string.CompareOrdinal(a.CraftId, b.CraftId);
             });
 
-            List<string> lines = new List<string>();
+            bool usesSoulGratitude = tiers.Exists(t => t.UsesSoulGratitude);
+            List<string> lines = new List<string>
+            {
+                Localization.F("tech.base_reward", PresentationText.DependencyMap(usesSoulGratitude))
+            };
+
             foreach (PrayerForecast.TierDetails tier in tiers)
             {
                 List<string> parts = new List<string>();
                 if (tier.Requirement > 0)
                     parts.Add(Localization.F("tech.requires", tier.Requirement));
 
-                string contribution = FormatPrayerContribution(tier);
-                if (!string.IsNullOrEmpty(contribution)) parts.Add(contribution);
-                if (!string.IsNullOrEmpty(tier.SpecialText)) parts.Add(tier.SpecialText);
+                string contribution = PresentationText.FormatPrayerContribution(tier);
+                if (!string.Equals(contribution, "—", StringComparison.Ordinal))
+                    parts.Add(Localization.F("tech.success_bonus") + ": " + contribution);
+                if (!string.IsNullOrEmpty(tier.SpecialText))
+                    parts.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialText);
 
                 string body = parts.Count == 0 ? "—" : string.Join(" · ", parts.ToArray());
                 string quality = QualityLabel(tier.QualityTier);
@@ -173,55 +305,11 @@ namespace PrayerClarity
             result.Add(craft);
         }
 
-        private static string FormatPrayerContribution(PrayerForecast.TierDetails tier)
-        {
-            List<string> parts = new List<string>();
-
-            if (Math.Abs(tier.FaithBonusRate) >= 0.0001f || tier.FixedFaithBonus != 0)
-            {
-                string value = "(faith)";
-                if (Math.Abs(tier.FaithBonusRate) >= 0.0001f)
-                    value += " " + FormatPercent(tier.FaithBonusRate);
-                if (tier.FixedFaithBonus != 0)
-                    value += " " + FormatSignedInt(tier.FixedFaithBonus);
-                parts.Add(value);
-            }
-
-            if (Math.Abs(tier.MoneyBonusRate) >= 0.0001f || Math.Abs(tier.FixedMoneyBonus) >= 0.0001f)
-            {
-                string value = "(slv)";
-                if (Math.Abs(tier.MoneyBonusRate) >= 0.0001f)
-                    value += " " + FormatPercent(tier.MoneyBonusRate);
-                if (Math.Abs(tier.FixedMoneyBonus) >= 0.0001f)
-                    value += " " + FormatSignedMoney(tier.FixedMoneyBonus);
-                parts.Add(value);
-            }
-
-            return parts.Count == 0 ? null : string.Join(", ", parts.ToArray());
-        }
-
-        private static string FormatPercent(float rate)
-        {
-            float percent = rate * 100f;
-            string sign = percent > 0.0001f ? "+" : percent < -0.0001f ? "−" : string.Empty;
-            return sign + Math.Abs(percent).ToString("0.##", CultureInfo.InvariantCulture) + "%";
-        }
-
-        private static string FormatSignedInt(int value)
-        {
-            return value > 0 ? "+" + value.ToString(CultureInfo.InvariantCulture)
-                : value < 0 ? "−" + Math.Abs(value).ToString(CultureInfo.InvariantCulture)
-                : "0";
-        }
-
-        private static string FormatSignedMoney(float value)
-        {
-            if (Math.Abs(value) < 0.0001f) return string.Empty;
-            return (value > 0f ? "+" : "−") + R.FormatMoney(Math.Abs(value));
-        }
-
         private static string QualityLabel(int qualityTier)
         {
+            // Text remains the safe 0.1.16 fallback. The user prefers native quality
+            // stars, but no verified inline quality-icon seam exists yet; do not guess
+            // sprite IDs after the rejected item-icon experiment.
             switch (qualityTier)
             {
                 case 1: return Localization.F("quality.bronze");

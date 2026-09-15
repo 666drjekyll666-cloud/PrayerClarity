@@ -4,11 +4,14 @@
   "forecast.effect_header": "효과",
   "forecast.graveyard_quality": "묘지 품질: (wskull) {0:0.#}",
   "forecast.guaranteed": "확정",
-  "forecast.success_bonus": "성공 시 ({0}%)",
-  "forecast.dependency_note": "(faith)은 (cross)에서 · (slv)는 (wskull)에서",
-  "forecast.dependency_note_souls": "(faith)은 (cross) + (gratitude_points)에서 · (slv)는 (wskull)에서",
+  "forecast.success_bonus": "성공 보너스 ({0}%)",
+  "forecast.dependency_note": "(faith): 교회 품질 (cross); (slv): 묘지 품질 (wskull)",
+  "forecast.dependency_note_souls": "(faith): 교회 품질 (cross) + (gratitude_points); (slv): 묘지 품질 (wskull)",
   "forecast.reward": "보상: {0}",
+  "format.of_base": "기본값의 {0}",
   "tech.prayer_details": "기도 세부 정보",
+  "tech.base_reward": "기본 보상: {0}",
+  "tech.success_bonus": "성공 보너스",
   "tech.requires": "필요 (cross) {0}",
   "quality.bronze": "브론즈",
   "quality.silver": "실버",
@@ -31,5 +34,6 @@
   "active.plant_inactive": "식물 성장: 바닐라 1.407에서 효과가 작동하지 않음",
   "active.sins_unverified": "바닐라 1.407에서 특수 효과를 찾지 못함",
   "active.gratitude": "영혼 치유 시 +10% (gratitude_points)",
-  "active.sin_shard": "죄의 파편: 영혼 치유 성공 시 ×2"
+  "active.sin_shard": "죄의 파편: 영혼 치유 성공 시 ×2",
+  "active.timer_days": "≈{0:0.0}일"
 }

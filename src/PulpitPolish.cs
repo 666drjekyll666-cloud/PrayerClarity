@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using UnityEngine;
 
@@ -124,69 +123,10 @@ namespace PrayerClarity
         {
             if (_resultRowsLabel == null || _forecast == null) return;
 
-            // The dependency information now lives directly in the Guaranteed row, so
-            // the old footer note is redundant. Keep the object inert rather than
-            // maintaining a second copy of the same relationship.
+            // Dependency information now lives directly in Guaranteed. Keep the old
+            // footer object inert so the same relationship is never shown twice.
             if (_dependencyNoteObject != null) _dependencyNoteObject.SetActive(false);
-
-            string sourceKey = _forecast.UsesSoulGratitude
-                ? "forecast.dependency_note_souls"
-                : "forecast.dependency_note";
-            string guaranteed = "  " + Localization.F("forecast.guaranteed") + ": " +
-                                Localization.F(sourceKey);
-            string success = "  " + Localization.F("forecast.success_bonus", _forecast.ChancePercent) + ": " +
-                             FormatPrayerContribution(_forecast);
-            R.Set(_resultRowsLabel, "text", guaranteed + "\n" + success);
-        }
-
-        private static string FormatPrayerContribution(PrayerForecast.Result forecast)
-        {
-            List<string> parts = new List<string>();
-
-            if (Math.Abs(forecast.FaithBonusRate) >= 0.0001f || forecast.FixedFaithBonus != 0)
-            {
-                string prefix = forecast.Highlight == PrayerForecast.BonusHighlight.Faith ? "(up) " : string.Empty;
-                string value = "(faith)";
-                if (Math.Abs(forecast.FaithBonusRate) >= 0.0001f)
-                    value += " " + FormatPercent(forecast.FaithBonusRate);
-                if (forecast.FixedFaithBonus != 0)
-                    value += " " + FormatSignedInt(forecast.FixedFaithBonus);
-                parts.Add(prefix + value);
-            }
-
-            if (Math.Abs(forecast.MoneyBonusRate) >= 0.0001f || Math.Abs(forecast.FixedMoneyBonus) >= 0.0001f)
-            {
-                string prefix = forecast.Highlight == PrayerForecast.BonusHighlight.Money ? "(up) " : string.Empty;
-                string value = Math.Abs(forecast.MoneyBonusRate) >= 0.0001f ? "(slv) " + FormatPercent(forecast.MoneyBonusRate) : string.Empty;
-                if (Math.Abs(forecast.FixedMoneyBonus) >= 0.0001f)
-                {
-                    if (!string.IsNullOrEmpty(value)) value += " ";
-                    value += FormatSignedMoney(forecast.FixedMoneyBonus);
-                }
-                parts.Add(prefix + value);
-            }
-
-            return parts.Count == 0 ? "—" : string.Join(", ", parts.ToArray());
-        }
-
-        private static string FormatPercent(float rate)
-        {
-            float percent = rate * 100f;
-            string sign = percent > 0.0001f ? "+" : percent < -0.0001f ? "−" : string.Empty;
-            return sign + Math.Abs(percent).ToString("0.##", CultureInfo.InvariantCulture) + "%";
-        }
-
-        private static string FormatSignedInt(int value)
-        {
-            return value > 0 ? "+" + value.ToString(CultureInfo.InvariantCulture)
-                : value < 0 ? "−" + Math.Abs(value).ToString(CultureInfo.InvariantCulture)
-                : "0";
-        }
-
-        private static string FormatSignedMoney(float value)
-        {
-            if (Math.Abs(value) < 0.0001f) return string.Empty;
-            return (value > 0f ? "+" : "−") + R.FormatMoney(Math.Abs(value));
+            R.Set(_resultRowsLabel, "text", PresentationText.BuildPulpitResultRows(_forecast));
         }
 
         private static void PolishEffectRow()
