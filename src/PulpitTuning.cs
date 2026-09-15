@@ -5,8 +5,8 @@ namespace PrayerClarity
 {
     internal static class PulpitTuning
     {
-        // v4 starts from the user's latest 0.1.8 calibration and adds live resizing
-        // of the verified real Pray GUI window/container rather than child-art stretching.
+        // v4 keys are retained so an existing calibration remains readable, but the
+        // defaults now reflect the accepted 0.1.10 2560x1440 working composition.
         private const string Section = "Prototype pulpit layout tuning v4";
 
         internal static ConfigEntry<float> WindowExtraWidth { get; private set; }
@@ -17,8 +17,6 @@ namespace PrayerClarity
         internal static ConfigEntry<float> ResultHeaderX { get; private set; }
         internal static ConfigEntry<float> ResultHeaderY { get; private set; }
         internal static ConfigEntry<int> ResultHeaderFontSize { get; private set; }
-        // Kept under the historic Result* property names because PulpitPresentation
-        // still uses them before the v4 layer splits the header from the rows.
         internal static ConfigEntry<float> ResultX { get; private set; }
         internal static ConfigEntry<float> ResultY { get; private set; }
         internal static ConfigEntry<int> ResultFontSize { get; private set; }
@@ -38,36 +36,35 @@ namespace PrayerClarity
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
 
-            WindowExtraWidth = BindFloat(config, "01 Window extra width", 0f, 0f, 360f,
+            WindowExtraWidth = BindFloat(config, "01 Window extra width", 10f, 0f, 360f,
                 "Extra width applied to the real Pray GUI window and sliced frame.");
-            WindowExtraHeight = BindFloat(config, "02 Window extra height", 0f, 0f, 360f,
+            WindowExtraHeight = BindFloat(config, "02 Window extra height", 100f, 0f, 360f,
                 "Extra height applied to the real Pray GUI window and sliced frame.");
 
-            // Latest user calibration from the 0.1.8 screenshot at 2560x1440.
-            ContextX = BindFloat(config, "03 Context X", 8f, -260f, 260f,
+            ContextX = BindFloat(config, "03 Context X", 60f, -260f, 260f,
                 "Horizontal position of church / sermon / graveyard context.");
-            ContextY = BindFloat(config, "04 Context Y", 72f, -240f, 220f,
+            ContextY = BindFloat(config, "04 Context Y", 137f, -240f, 220f,
                 "Vertical top position of church / sermon / graveyard context.");
-            ContextFontSize = BindInt(config, "05 Context font size", 14, 8, 20,
+            ContextFontSize = BindInt(config, "05 Context font size", 15, 8, 20,
                 "Font size for church / sermon / graveyard context.");
 
-            ResultHeaderX = BindFloat(config, "06 Result header X", 8f, -260f, 260f,
+            ResultHeaderX = BindFloat(config, "06 Result header X", 6f, -260f, 260f,
                 "Horizontal position of the Result heading.");
-            ResultHeaderY = BindFloat(config, "07 Result header Y", 20f, -240f, 180f,
+            ResultHeaderY = BindFloat(config, "07 Result header Y", 5f, -240f, 180f,
                 "Vertical position of the Result heading.");
-            ResultHeaderFontSize = BindInt(config, "08 Result header font size", 14, 8, 20,
+            ResultHeaderFontSize = BindInt(config, "08 Result header font size", 16, 8, 20,
                 "Font size of the Result heading.");
 
-            ResultX = BindFloat(config, "09 Result rows X", 16f, -260f, 260f,
-                "Horizontal position of Guaranteed / On success rows.");
-            ResultY = BindFloat(config, "10 Result rows Y", 4f, -260f, 160f,
-                "Vertical top position of Guaranteed / On success rows.");
+            ResultX = BindFloat(config, "09 Result rows X", -5f, -260f, 260f,
+                "Horizontal position of Guaranteed / Success bonus rows.");
+            ResultY = BindFloat(config, "10 Result rows Y", -20f, -260f, 160f,
+                "Vertical top position of Guaranteed / Success bonus rows.");
             ResultFontSize = BindInt(config, "11 Result rows font size", 14, 8, 20,
-                "Font size for Guaranteed / On success rows.");
+                "Font size for Guaranteed / Success bonus rows.");
 
-            EffectX = BindFloat(config, "12 Effect X", -122f, -300f, 300f,
+            EffectX = BindFloat(config, "12 Effect X", -128f, -300f, 300f,
                 "Horizontal position of the special-effect row and its icon.");
-            EffectY = BindFloat(config, "13 Effect Y", -30f, -300f, 160f,
+            EffectY = BindFloat(config, "13 Effect Y", -70f, -300f, 160f,
                 "Vertical top position of the special-effect row.");
             EffectFontSize = BindInt(config, "14 Effect font size", 12, 8, 20,
                 "Font size for the special-effect row.");
@@ -76,12 +73,12 @@ namespace PrayerClarity
 
             NoteX = BindFloat(config, "16 Note X", -6f, -300f, 300f,
                 "Horizontal position of the dependency note.");
-            NoteY = BindFloat(config, "17 Note Y", -87f, -340f, 80f,
+            NoteY = BindFloat(config, "17 Note Y", -137f, -340f, 80f,
                 "Vertical top position of the dependency note.");
             NoteFontSize = BindInt(config, "18 Note font size", 9, 6, 14,
                 "Font size for the dependency note.");
 
-            PrayerSelectorX = BindFloat(config, "19 Prayer selector X", 70f, -240f, 240f,
+            PrayerSelectorX = BindFloat(config, "19 Prayer selector X", 0f, -240f, 240f,
                 "Horizontal position of the selected-prayer slot. The Choose sermon label follows it.");
             PrayerSelectorY = BindFloat(config, "20 Prayer selector Y", 45f, -240f, 180f,
                 "Vertical position of the selected-prayer slot. The Choose sermon label follows it.");
@@ -134,10 +131,9 @@ namespace PrayerClarity
 
         private static void OnSettingChanged(object sender, EventArgs e)
         {
-            // Keep old presentation controls live first, then let the v4 geometry layer
-            // apply the final real-window dimensions / split result layout.
             PulpitPresentation.ApplyTuning();
             PulpitLayoutV4.ApplyTuning();
+            PulpitPolish.ApplyTuning();
         }
     }
 }
