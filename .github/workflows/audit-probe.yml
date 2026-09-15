@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - research/initial-audit
+      - research/clarity-secondary-surfaces
     paths:
       - 'PrayerClarity.AuditProbe.csproj'
-      - 'src/PrayerClarityPresentationProbe.cs'
+      - 'src/PrayerClaritySecondarySurfaceProbe.cs'
       - '.github/workflows/audit-probe.yml'
 
 permissions:
@@ -36,16 +36,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          asset='PrayerClarity.AuditProbe.0.1.6.dll'
+          asset='PrayerClarity.AuditProbe.0.1.7.dll'
           cp 'bin/Probe/PrayerClarity.AuditProbe.dll' "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           echo "asset=$asset" >> "$GITHUB_OUTPUT"
           echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity audit probe 0.1.6 SHA-256: $hash"
+          echo "PrayerClarity audit probe 0.1.7 SHA-256: $hash"
       - name: Upload probe DLL
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-AuditProbe-0.1.6
+          name: PrayerClarity-AuditProbe-0.1.7
           path: dist/${{ steps.artifact.outputs.asset }}
           if-no-files-found: error
           retention-days: 7
