@@ -1,4 +1,4 @@
-# Frozen test-harness candidate build.
+# Frozen 0.1.2 test-harness candidate: synthetic timed-buff activation without normal sermon execution.
 name: Build PrayerClarity test harness
 
 on:
