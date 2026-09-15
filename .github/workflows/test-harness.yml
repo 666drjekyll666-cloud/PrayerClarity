@@ -1,4 +1,4 @@
-# Frozen 0.1.1 pulpit language-preview harness candidate.
+# Frozen test-harness candidate build.
 name: Build PrayerClarity test harness
 
 on:
@@ -38,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          asset='PrayerClarity.TestHarness.0.1.1.dll'
+          asset='PrayerClarity.TestHarness.0.1.2.dll'
           cp 'bin/TestHarness/PrayerClarity.TestHarness.dll' "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           {
@@ -49,11 +49,11 @@ jobs:
           } > dist/BUILD_INFO.txt
           echo "asset=$asset" >> "$GITHUB_OUTPUT"
           echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity Test Harness 0.1.1 SHA-256: $hash"
+          echo "PrayerClarity Test Harness 0.1.2 SHA-256: $hash"
       - name: Upload test harness
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-TestHarness-0.1.1-${{ github.sha }}
+          name: PrayerClarity-TestHarness-0.1.2-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.asset }}
             dist/BUILD_INFO.txt
