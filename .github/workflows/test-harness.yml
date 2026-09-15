@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - research/pulpit-test-harness
+      - 'candidate/test-harness-*'
     paths:
       - 'PrayerClarity.TestHarness.csproj'
       - 'src/PrayerClarityTestHarness.cs'
@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: prayerclarity-test-harness-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -35,17 +35,26 @@ jobs:
         id: artifact
         shell: bash
         run: |
+          set -euo pipefail
           mkdir -p dist
-          asset='PrayerClarity.TestHarness.0.1.0.dll'
+          asset='PrayerClarity.TestHarness.0.1.1.dll'
           cp 'bin/TestHarness/PrayerClarity.TestHarness.dll' "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
+          {
+            echo "Source SHA: $GITHUB_SHA"
+            echo "DLL: $asset"
+            echo "SHA-256: $hash"
+            echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
+          } > dist/BUILD_INFO.txt
           echo "asset=$asset" >> "$GITHUB_OUTPUT"
           echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity Test Harness 0.1.0 SHA-256: $hash"
+          echo "PrayerClarity Test Harness 0.1.1 SHA-256: $hash"
       - name: Upload test harness
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-TestHarness-0.1.0-${{ github.sha }}
-          path: dist/${{ steps.artifact.outputs.asset }}
+          name: PrayerClarity-TestHarness-0.1.1-${{ github.sha }}
+          path: |
+            dist/${{ steps.artifact.outputs.asset }}
+            dist/BUILD_INFO.txt
           if-no-files-found: error
           retention-days: 7
