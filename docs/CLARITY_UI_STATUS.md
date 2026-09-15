@@ -1,12 +1,16 @@
 # PrayerClarity — Clarity UI status
 
-Status: research/product record after runtime test of PrayerClarity 0.1.14 on Graveyard Keeper 1.407, 2026-09-15.
+Status: research/product record after runtime testing of PrayerClarity 0.1.14 on Graveyard Keeper 1.407, 2026-09-15.
 
 This file tracks only the information-only **Clarity** layer. It does not accept or implement Vanilla Fixes or Balance/Rework mechanics.
 
 ## Current pulpit result
 
 Runtime evidence for 0.1.14 confirms the current pulpit forecast remains usable at 2560x1440 and the calibrated dependency-note font is 10.
+
+A second-resolution smoke at **1920x1080** also passed. The user switched at least Russian, German and Japanese in the Test Harness and the forecast remained contained inside the resized pulpit; wrapping and general geometry remained usable. 2560x1440 language switching had already remained usable as well.
+
+The current game/font presentation can look somewhat thin in some Latin/Cyrillic text at 1080p, while Japanese remains comparatively strong. This is not currently classified as a layout blocker. Do not introduce a custom font stack merely to improve weight before proving coverage/fallback behaviour for Cyrillic, CJK and the rest of the supported 11-language set.
 
 Accepted/retained presentation direction:
 
@@ -32,13 +36,13 @@ Do not create another numbered build solely for this cleanup; combine it with th
 
 ## Required remaining Clarity surfaces
 
-The pulpit is not the whole PrayerClarity product. Two additional surfaces are now required before Clarity can be considered complete.
+The pulpit is not the whole PrayerClarity product. Two additional surfaces are required before Clarity can be considered complete.
 
 ### 1. Character -> Temporary effects / active prayer buffs
 
 This is **required**, not an optional later enhancement.
 
-Existing direct audit already established that vanilla active prayer-buff presentation binds the `PlayerBuff`, icon and remaining timer, but does not expose the quantitative prayer mechanic itself.
+Existing direct audit established that vanilla active prayer-buff presentation binds the `PlayerBuff`, icon and remaining timer, but does not expose the quantitative prayer mechanic itself.
 
 Target player question while the buff is active:
 
@@ -81,13 +85,31 @@ Use one PrayerClarity-owned semantic model and render context-appropriate subset
 
 This rule is especially important before Vanilla Fixes/Rebalanced profiles exist, because every presentation surface must remain consistent with the selected mechanics profile.
 
+## Sequencing decision: finish Clarity surfaces before Balance/Rework implementation
+
+Do **not** implement all Balance/Rework mechanics first and postpone UI integration until afterward.
+
+Preferred order:
+
+1. finish and accept the **UI seams and rendering architecture** for pulpit, Technology and Temporary Effects while stock/Clarity mechanics are the reference state;
+2. keep the semantic model profile-aware so the renderer is not hard-wired to stock-only prose/constants;
+3. then implement Vanilla Fixes / Balance/Rework mechanics against their separately verified runtime seams;
+4. feed the changed values/relationships through the same semantic model rather than building new UI logic;
+5. perform a final consistency/localization pass after the selected gameplay profile is implemented.
+
+Reason: this separates two failure domains. UI-seam/layout problems can be diagnosed while mechanics are known and unchanged; later balance-runtime problems can be diagnosed without simultaneously wondering whether Technology/Temporary Effects rendering is wrong. It also prevents the future profiles from creating three separate copies of prayer formulas.
+
+This does **not** mean every sentence written during stock Clarity is permanent. Profile-sensitive wording and quality-progression copy may be revised after Balance/Rework values are accepted. What should become stable now is the UI ownership, lifecycle, renderer contract and shared semantic-model shape.
+
 ## Next work order
 
-1. Treat 0.1.14 as the end of the inline-item-icon experiment; no 0.1.15 icon-chasing build.
-2. Perform a static/read-only audit of the Character/Temporary Effects and technology-description UI seams, reusing existing 0.1.6 presentation evidence first.
-3. Record exact targets and the minimal text model for each surface.
-4. Implement both Clarity surfaces in one coherent dev candidate together with removal of the dead inline-item-icon path.
-5. Runtime-test the relevant Character/Temporary Effects and technology screens.
-6. Only after those surfaces are accepted, perform the remaining second-resolution/localization smoke tests and decide which pulpit tuning controls, if any, belong in the released product.
+1. Treat 0.1.14 as the end of the inline-item-icon experiment; no icon-chasing build.
+2. Treat the 1920x1080 + multi-language pulpit smoke as passed; no additional pulpit-resolution work is required before the secondary-surface audit.
+3. Perform a static/read-only audit of Character/Temporary Effects and technology-description UI seams, reusing existing 0.1.6 presentation evidence first.
+4. Record exact targets and the minimal text model for each surface.
+5. Implement both Clarity surfaces in one coherent dev candidate together with removal of the dead inline-item-icon path.
+6. Runtime-test Character/Temporary Effects and technology screens.
+7. After those UI seams are accepted, proceed to Vanilla Fixes / Balance/Rework implementation and drive all changed presentation through the shared semantic model.
+8. Perform the final profile-consistency/localization smoke after gameplay changes are accepted.
 
 No hosted CI is required for this documentation/research step.
