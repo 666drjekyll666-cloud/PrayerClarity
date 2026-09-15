@@ -1,4 +1,4 @@
-# Frozen 0.1.4 test-harness candidate build trigger: synthetic timed-buff activation via verified BuffsLogics.AddBuff.
+# Frozen 0.1.4 test-harness candidate: synthetic timed-buff activation via verified BuffsLogics.AddBuff.
 name: Build PrayerClarity test harness
 
 on:
