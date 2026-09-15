@@ -217,7 +217,7 @@ namespace PrayerClarity
             else
             {
                 SetSprite(_inlineIcon, null);
-                if (!string.IsNullOrEmpty(inlineSpriteName)) body = fallbackBody;
+                body = fallbackBody;
             }
 
             R.Set(_effectLabel, "text", Localization.F("forecast.effect_header") + ": " + body);
