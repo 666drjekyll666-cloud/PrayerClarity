@@ -17,5 +17,5 @@
   "buff.sins_unverified": "Efeito especial não encontrado no vanilla 1.407 · buff {0:0}\u00A0min",
   "buff.souls_repose": "Mais (gratitude_points) significa mais (faith).",
   "buff.gratitude": "+10% (gratitude_points) ao curar almas · {0:0}\u00A0min",
-  "buff.sin_shard": "×2 fragmentos de pecado ao curar uma alma com sucesso · {0:0}\u00A0min"
+  "buff.sin_shard": "×2 ao curar uma alma com sucesso · {0:0}\u00A0min"
 }
