@@ -51,6 +51,17 @@ namespace PrayerClarity
 
         private static string T(string key)
         {
+            // Probe 0.1.9 verified that the game's native small_font already owns
+            // universal inline quality symbols. Keep these as presentation glyphs,
+            // not translated words, so Technology rows reuse the exact vanilla art
+            // in every supported language without extra UI objects or custom assets.
+            switch (key)
+            {
+                case "quality.bronze": return "(s1)";
+                case "quality.silver": return "(s2)";
+                case "quality.gold": return "(s3)";
+            }
+
             string value = Lookup(_active, key) ?? Lookup(_english, key);
             if (value != null) return value;
             WarnOnce("missing:" + key, "Missing localization key '" + key + "'.");
