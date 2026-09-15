@@ -1,6 +1,6 @@
 # PrayerClarity 1.0.0 — accepted release evidence
 
-Status: **accepted / stable**.
+Status: **accepted / stable / published**.
 
 ## Identity
 
@@ -8,15 +8,13 @@ Status: **accepted / stable**.
 - Exact runtime/source SHA: `493d2168489af80b5c1305f7ff1435e2ee1dd0d7`
 - Frozen candidate ref: `candidate/1.0.0`
 - Frozen accepted ref: `accepted/clarity-1.0.0`
-- GitHub Actions run: `35035167380`
-- Workflow artifact ID: `10423032814`
-- Artifact: `PrayerClarity-1.0.0-ci-493d2168489af80b5c1305f7ff1435e2ee1dd0d7`
+- Candidate build run: `35035167380`
+- Candidate workflow artifact ID: `10423032814`
+- Candidate artifact: `PrayerClarity-1.0.0-ci-493d2168489af80b5c1305f7ff1435e2ee1dd0d7`
 - Artifact ZIP digest: `sha256:70ca68b6be93234b1046a53cb4f76bd914258557eef9b77513be762672a23c1c`
 - Candidate DLL: `PrayerClarity-1.0.0-ci.dll`
 - DLL SHA-256: `dcf0338af520fe70989e6866bc6a724cbb3976337d7c9489c2ff9886e1e98580`
 - Supported Assembly-CSharp MVID: `6f50b8e7-156b-49ac-bbe8-7505894b2364`
-
-The stable GitHub Release must publish these exact DLL bytes under the canonical installed filename `PrayerClarity.dll`; a filename-only rename does not change the hash.
 
 ## Build gate
 
@@ -28,7 +26,7 @@ Run `35035167380` completed successfully on `ubuntu-latest`:
 - all 11 embedded locale markers were verified;
 - the immutable candidate artifact above was uploaded from the exact accepted source SHA.
 
-No rebuild is required or permitted for the 1.0.0 stable asset while the accepted artifact remains available.
+No rebuild was used for stable publication.
 
 ## Final runtime acceptance
 
@@ -43,6 +41,16 @@ The supplied runtime evidence confirms:
 - no PrayerClarity runtime error was reported in the tested sequence.
 
 User verdict: all checked presentation and Configuration Manager behavior were correct; 1.0.0 was explicitly accepted as the final version.
+
+## Stable publication
+
+The exact accepted DLL was promoted without rebuilding by GitHub Actions run `35037420214`.
+
+- GitHub Release: `v1.0.0`
+- Release target: `493d2168489af80b5c1305f7ff1435e2ee1dd0d7`
+- Stable asset name: `PrayerClarity.dll`
+- Stable asset SHA-256: `dcf0338af520fe70989e6866bc6a724cbb3976337d7c9489c2ff9886e1e98580`
+- Release asset bytes therefore match the runtime-tested candidate exactly; only the filename changed to the canonical installed filename.
 
 ## Product scope
 
