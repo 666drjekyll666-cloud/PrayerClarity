@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace PrayerClarity
 {
-    // Final presentation pass for the live-tuned pulpit prototype. It runs only on
-    // pulpit redraw/config changes, after PulpitLayoutV4 has applied window geometry.
+    // Final presentation pass for the accepted pulpit layout. It runs only on pulpit
+    // redraw after PulpitLayoutV4 has applied the fixed window geometry.
     // Leading effect icons come from the same BuffDefinition.GetIconName() seam used
     // by vanilla BuffIcon.Draw. Item/resource nouns stay as localized text because the
     // attempted inline-item sprite paths did not resolve in the verified 1.407 runtime.
@@ -123,8 +123,6 @@ namespace PrayerClarity
         {
             if (_resultRowsLabel == null || _forecast == null) return;
 
-            // The 0.1.17 hierarchy intentionally uses several short scan lines. Let the
-            // label grow vertically rather than shrinking Combo and other long rows.
             SetEnum(_resultRowsLabel, "overflowMethod", "ResizeHeight");
             TrySet(_resultRowsLabel, "height", 40);
 
@@ -141,8 +139,8 @@ namespace PrayerClarity
             string body = _forecast.SpecialText;
             if (string.IsNullOrEmpty(body)) body = "—";
 
-            // Preserve the readable text fallbacks accepted after the inline-item-icon
-            // experiment. These are item/resource nouns, not leading active-buff icons.
+            // Prosperity is a physical sermon output rather than a timed buff, so use
+            // the game's localized item name and description as the readable fallback.
             if (craftId.StartsWith("pray:b_village:", StringComparison.Ordinal))
             {
                 int count = CountOutput(craft, "blessing_commerce");
@@ -157,18 +155,6 @@ namespace PrayerClarity
                     body = "×" + count +
                            (hasName ? " " + itemName : string.Empty) +
                            (hasDescription ? ". " + description : string.Empty);
-                }
-            }
-            else if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
-            {
-                float duration = R.Float(R.Get(craft, "dur_parameter"));
-                body = Localization.F("buff.sin_shard", duration);
-                string marker = FindMultiplierMarker(body);
-                if (!string.IsNullOrEmpty(marker))
-                {
-                    string resourceName = R.VanillaLocalize("sin_shard");
-                    if (!string.IsNullOrEmpty(resourceName) && !string.Equals(resourceName, "sin_shard", StringComparison.Ordinal))
-                        body = InsertAfterMarker(body, marker, " " + resourceName);
                 }
             }
 
@@ -306,23 +292,6 @@ namespace PrayerClarity
                 total += Math.Max(0, R.Int(R.Get(item, "value")));
             }
             return total;
-        }
-
-        private static string FindMultiplierMarker(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return null;
-            int start = text.IndexOf('×');
-            if (start < 0 || start + 1 >= text.Length) return null;
-            int end = start + 1;
-            while (end < text.Length && char.IsDigit(text[end])) end++;
-            return end == start + 1 ? null : text.Substring(start, end - start);
-        }
-
-        private static string InsertAfterMarker(string text, string marker, string insertion)
-        {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(marker) || string.IsNullOrEmpty(insertion)) return text;
-            int index = text.IndexOf(marker, StringComparison.Ordinal);
-            return index < 0 ? text : text.Insert(index + marker.Length, insertion);
         }
 
         private static object GetComponent(Transform transform, string typeName)
