@@ -22,8 +22,8 @@ namespace PrayerClarity
 
             return "  " + Localization.F("forecast.guaranteed") + ":\n" +
                    dependencies + "\n" +
-                   "  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ":\n" +
-                   "    " + contribution;
+                   "  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ":" +
+                   contribution;
         }
 
         internal static string DependencyMap(bool usesSoulGratitude)
@@ -57,10 +57,13 @@ namespace PrayerClarity
             string money = FormatResourceContribution("(slv)", moneyRate, fixedMoney);
             if (!string.IsNullOrEmpty(money)) parts.Add(money);
 
-            // A spaced vertical bar is an explicit visual divider between two
-            // independent resource groups. Avoid middots here because they can read as
-            // multiplication in a numeric expression.
-            return parts.Count == 0 ? "—" : string.Join(" | ", parts.ToArray());
+            // Success contribution is deliberately a dedicated indented row on every
+            // surface. This keeps the resource icons with their percentage/flat values
+            // and prevents narrow Technology tooltips from wrapping immediately after
+            // the icon. A spaced vertical bar separates the two independent resources.
+            return parts.Count == 0
+                ? "—"
+                : "\n    " + string.Join(" | ", parts.ToArray());
         }
 
         private static string FormatResourceContribution(string icon, float rate, float fixedValue)
