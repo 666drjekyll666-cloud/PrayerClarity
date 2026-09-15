@@ -15,6 +15,8 @@ namespace PrayerClarity
     {
         private static readonly Dictionary<string, Sprite> SpriteCache =
             new Dictionary<string, Sprite>(StringComparer.Ordinal);
+        private static readonly Dictionary<string, string> ItemIconNameCache =
+            new Dictionary<string, string>(StringComparer.Ordinal);
 
         private static object _template;
         private static object _gui;
@@ -34,6 +36,9 @@ namespace PrayerClarity
         private static object _inlineIcon;
         private static MethodInfo _getSpriteMethod;
         private static MethodInfo _labelSizeCalcMethod;
+        private static ConstructorInfo _itemConstructor;
+        private static MethodInfo _itemGetIconMethod;
+        private static bool _itemIconPathResolved;
 
         internal static void Apply(object template, object gui, PrayerForecast.Result forecast)
         {
@@ -161,7 +166,7 @@ namespace PrayerClarity
                                        ? string.Empty
                                        : " " + itemName) +
                                    (hasDescription ? ". " + description : string.Empty);
-                    inlineSpriteName = "i_scroll_3";
+                    inlineSpriteName = GetItemIconName("blessing_commerce");
                 }
             }
             else if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
@@ -176,7 +181,7 @@ namespace PrayerClarity
                         string.IsNullOrEmpty(resourceName) || string.Equals(resourceName, "sin_shard", StringComparison.Ordinal)
                             ? string.Empty
                             : " " + resourceName);
-                    inlineSpriteName = "i_sin_shard";
+                    inlineSpriteName = GetItemIconName("sin_shard");
                 }
             }
 
@@ -230,6 +235,38 @@ namespace PrayerClarity
                 MethodInfo method = R.Method(buff.GetType(), "GetIconName", false, 0);
                 object value = method == null ? null : method.Invoke(buff, null);
                 return value == null ? null : value.ToString();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string GetItemIconName(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return null;
+
+            string cached;
+            if (ItemIconNameCache.TryGetValue(itemId, out cached)) return cached;
+
+            try
+            {
+                if (!_itemIconPathResolved)
+                {
+                    Type itemType = R.GameType("Item");
+                    _itemConstructor = itemType == null
+                        ? null
+                        : itemType.GetConstructor(R.Inst, null, new[] { typeof(string), typeof(int) }, null);
+                    _itemGetIconMethod = R.Method(itemType, "GetIcon", false, 0);
+                    _itemIconPathResolved = true;
+                }
+
+                if (_itemConstructor == null || _itemGetIconMethod == null) return null;
+                object item = _itemConstructor.Invoke(new object[] { itemId, 1 });
+                object value = _itemGetIconMethod.Invoke(item, null);
+                string iconName = value == null ? null : value.ToString();
+                if (!string.IsNullOrEmpty(iconName)) ItemIconNameCache[itemId] = iconName;
+                return iconName;
             }
             catch
             {
