@@ -17,5 +17,5 @@
   "buff.sins_unverified": "Spezialeffekt in Vanilla 1.407 nicht gefunden · Buff {0:0}\u00A0Min.",
   "buff.souls_repose": "Mehr (gratitude_points) bedeutet mehr (faith).",
   "buff.gratitude": "+10 % (gratitude_points) durch Seelenheilung · {0:0}\u00A0Min.",
-  "buff.sin_shard": "×2 Sündensplitter bei erfolgreicher Seelenheilung · {0:0}\u00A0Min."
+  "buff.sin_shard": "×2 bei erfolgreicher Seelenheilung · {0:0}\u00A0Min."
 }
