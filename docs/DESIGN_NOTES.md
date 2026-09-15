@@ -8,7 +8,8 @@ Canonical documents:
 - `PLAYER_UX_RESEARCH.md` — player/presentation evidence;
 - `PRAYER_DESIGN_AUDIT.md` — role/design verdicts;
 - `PRAYER_POWER_BUDGET.md` — full investment/opportunity-cost model;
-- `PRAYER_REBALANCE_OPTIONS.md` — concrete current candidate roster.
+- `PRAYER_REBALANCE_OPTIONS.md` — concrete current candidate roster;
+- `PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary.
 
 ## Product architecture
 
@@ -29,42 +30,56 @@ Potential profiles remain `Vanilla + Clarity`, `Fixed Vanilla`, and `Rebalanced`
 
 ## Presentation architecture
 
-Technology unlock, prayer item, pulpit choice and active buff HUD are separate vanilla paths. Active timed buffs communicate essentially icon + remaining time, not quantitative meaning.
+Technology unlock, prayer item, pulpit choice and active-buff presentation are separate vanilla paths. Active timed buffs communicate essentially icon + remaining time, not quantitative meaning.
 
 Build one mod-owned semantic model and render context-appropriate subsets:
 
 - technology tree: role, why unlock it, quality progression;
 - prayer item: exact static tier properties;
-- pulpit: current guaranteed Faith/donations, success-only additions, special output/effect, duration and relevant probabilities;
-- active buff: optional later quantitative hover.
+- pulpit: reward dependencies, exact success probability, prayer-owned success modifiers/fixed outputs, special output/effect, duration and relevant probabilities — but not the fully resolved current Faith/donation payout;
+- active buff: the concrete meaning of the currently active prayer effect plus the game's existing remaining-time presentation.
 
-Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` merely to render information.
+Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` merely to render information. The exact side-effect-free calculator may remain available internally for correctness, tests, diagnostics and balance work even when its final payout totals are intentionally hidden from the default pulpit UI.
 
 Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
 
 ### Accepted pulpit information model
 
-Runtime testing through 0.1.2 established that the useful information model is:
+Runtime testing through 0.1.14 established the useful semantic split and workable geometry, but the exact-number rendering policy was revised after UX review.
 
-1. keep vanilla `Church quality`;
-2. keep vanilla `Sermon requires`;
-3. suppress the detached vanilla `Success chance` row once a Clarity forecast is available;
-4. show a **guaranteed** row containing the base Faith and donations received regardless of success;
-5. show a **success bonus (N%)** row containing only the additional Faith/donations supplied on sermon success;
-6. show special prayer effects separately from the two resource rows.
+Keep:
 
-Do not add a separate failure row: failure is already represented by the guaranteed row. This teaches the important stock rule that sermon failure is not zero reward while keeping the result model compact.
+1. vanilla `Church quality`;
+2. vanilla `Sermon requires`;
+3. exact sermon success probability inside the Clarity result presentation;
+4. the semantic decomposition `guaranteed/base -> success-only prayer contribution -> special effect`;
+5. exact intrinsic prayer mechanics, durations, caps, probabilities and fixed prayer-owned outputs.
 
-### Runtime layout evidence and current 0.1.9 real-window hypothesis
+Default pre-sermon rendering must now preserve the ceremony as the exact reward-reveal moment:
 
-The information model is accepted; final layout is still being calibrated.
+- **Guaranteed/base** explains the source relationship rather than showing the computed payout: base Faith is driven by Church Quality, base donations by Graveyard Quality, with verified BSS dependencies such as Soul Gratitude made explicit where relevant;
+- **On success (N%)** shows the prayer's own modifiers such as Faith `+50%` or Donations `+25%`, plus fixed prayer-owned additions when present, rather than a computed `+2 Faith / +31c` delta;
+- **Effect** continues to show exact prayer-owned effects such as duration, damage, armor, growth reduction, regeneration, confession probability, GP/Sin Shard multipliers or Blessing counts;
+- do not replace real progression with qualitative `low / medium / high` buckets;
+- do not add a separate failure row: failure is already represented by the guaranteed/base relationship.
+
+The verified mechanics/forecast model itself is unchanged by this UX decision. Exact BaseFaith/BaseMoney and success deltas may still be calculated internally; the change is which fields the default renderer exposes.
+
+If dependency relationships are visible directly in the Guaranteed row, the separate lower dependency note is redundant and should be removed unless runtime readability proves a need for it.
+
+Detailed rationale and examples are in `PULPIT_REVEAL_UX.md`.
+
+### Runtime layout evidence and current accepted pulpit geometry
+
+The earlier layout iterations established the final implementation seam and a usable composition:
 
 - **0.1.3:** fixed-column/multi-widget layout was rejected in runtime because its geometry drifted outside the pulpit.
 - **0.1.4:** replacing that hierarchy with one stock `l_total_values` label plus `ResizeHeight` was also rejected. It overlapped the selected prayer/button and accumulated a downward offset on repeated redraws.
 - **0.1.5:** fixed measured regions removed cumulative drift and repeated prayer switching stayed geometrically stable, but the composition remained crowded and the stock frame was too short.
 - **0.1.6:** live Configuration Manager tuning was useful and applied without rebuilds, but its frame-extension implementation was rejected. Changing height could explode width and decorative pieces moved inconsistently.
 - **0.1.7:** the second frame-resize attempt was rejected. It deterministically resized child artwork rather than the real window boundary. The user nevertheless found a workable internal composition by moving the prayer selector to the upper-right.
-- **0.1.8:** effect wrapping and the information hierarchy improved, but runtime confirmed that the fixed stock frame is still too restrictive to finalize the intended layout. The user explicitly requested true window sizing before final placement is accepted. Prosperity still exposed an internal localization ID, Soul's Repose remained blank, and the expected Sin Shard cue did not appear; these are presentation/resolver defects, not evidence that the underlying mechanics are unknown.
+- **0.1.8:** effect wrapping and the information hierarchy improved, but runtime confirmed that the fixed stock frame was still too restrictive.
+- **0.1.9–0.1.14:** the real window/container seam, sliced frame pieces and calibrated layout were implemented and iterated. The resulting 0.1.14 layout remained usable at 2560x1440 and passed a second-resolution 1920x1080 smoke with Russian, German and Japanese. Thin stock font rendering at 1080p is noted but is not a layout blocker.
 
 The original narrow layout probe established stock 1.407 geometry and inline symbols:
 
@@ -83,7 +98,7 @@ The original narrow layout probe established stock 1.407 geometry and inline sym
 
 The 0.1.4 probe observed Y progress `49 -> 35 -> 21 -> 7 -> -7 -> -21 -> -35` after the stock center-pivot label had been converted to 170/208 px `ResizeHeight`. 0.1.5 eliminated that mutable stock-label geometry path, and later repeated-switch tests confirmed the cumulative drift no longer occurs.
 
-A dedicated **Pulpit Frame Slice Probe 0.1.0** then closed the real-window question:
+A dedicated **Pulpit Frame Slice Probe 0.1.0** closed the real-window question:
 
 - `window/back`: `UI2DSprite`, already `Sliced`, border `30/30/30/30`, `288x240`, TopLeft pivot;
 - `window/decore_back`: `UI2DSprite`, already `Sliced`, border `15/15/15/15`, `270x202`, Bottom pivot;
@@ -92,37 +107,9 @@ A dedicated **Pulpit Frame Slice Probe 0.1.0** then closed the real-window quest
 - `window/decore` (`pulpit_bench_back`): `UI2DSprite` **Simple**, `244x186`; this decoration must not be stretched when the frame grows;
 - the container's four anchors target the real `window`, so the native hierarchy already contains the semantic seam required for a proper resize.
 
-This proves that the next experiment should resize the actual `window`/`container` and the already-sliced frame pieces. It should **not** introduce a custom replacement texture, stretch `pulpit_bench_back`, or iterate another child-art-only workaround.
+Current accepted/calibrated defaults from the 0.1.14 line include real-window extra size `10 / 100`, result/effect/note positioning, Prayer selector Y `40`, and Note font size `10`. Prayer button X/Y remains a non-blocking experimental control rather than a reason to delay the product.
 
-**Latest user calibration at 2560x1440 from the 0.1.8 runtime test:**
-
-- Context X/Y/font: `8 / 72 / 14`;
-- Result heading X/Y/font: initial v4 split `8 / 20 / 14`;
-- Result rows X/Y/font: initial v4 split `16 / 4 / 14`;
-- Effect X/Y/font/icon: `-122 / -30 / 12 / 10`;
-- Note X/Y/font: `-6 / -87 / 9`;
-- Prayer selector X/Y: `70 / 45`;
-- Prayer button X/Y: `0 / -120`.
-
-**0.1.9 presentation/geometry hypothesis:**
-
-- expose live `Window extra width` / `Window extra height` controls that modify the real root `window` and anchored `container` from captured vanilla dimensions;
-- resize `back`, `decore_back` and `header` using their verified native sliced configuration; do not stretch `pulpit_bench_back`;
-- move header/close controls and controller tips with the corresponding new frame edges;
-- calculate every live size/position from captured vanilla geometry so repeated slider changes cannot accumulate offsets;
-- keep the Configuration Manager controls temporary calibration instrumentation rather than product settings;
-- split the `Result` heading into its own label with independent X/Y/font controls; keep Guaranteed and success rows separately tunable;
-- shorten `Additional on success (N%)` to a language-appropriate equivalent of `On success (N%)` so resource values retain horizontal space;
-- keep `(up)` only on the resource specifically improved by Faith or Donations; Ordinary, Combo and non-resource specialists show no specialist arrow in the resource row;
-- use a player-facing Repose sentence based on the Donkey bringing a higher-quality body, with native `(up)` + `(skull)` cues, without advertising future Rebalanced reliability tiers;
-- fix game-owned localization reuse at the resolver boundary: direct audit places `GJL` in `Assembly-CSharp-firstpass`, so vanilla localization must resolve across loaded assemblies and cache the actual `GJL.L(string)` method rather than searching Assembly-CSharp only;
-- Prosperity should therefore render the vanilla-localized Blessing of Commerce name/description rather than `blessing_commerce`;
-- Soul's Repose should render the vanilla `b_souls_d` description rather than an empty Effect row;
-- Thorough Cleansing should request verified `i_sin_shard`; sprite lookup is lazy and session-cached after the first successful resolve, with no per-frame search.
-
-Once the real-window composition is accepted, perform at least one second-resolution check before freezing geometry or deciding whether any tuning control should remain public.
-
-Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle.
+Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle. Prosperity and Thorough Cleansing inline item icons were attempted through two seams and did not resolve in the 1.407 runtime; localized text is the accepted fallback rather than further icon-chasing.
 
 ## Localization architecture
 
@@ -145,7 +132,7 @@ The first Clarity prototype is localization-complete only when every new visible
 
 The direct mechanics are closed: `buff_pen` contributes `craft_q=0.7` to writing-linked multiquality recipes and `buff_star` contributes `craft_q=0.2` to explicitly linked crafts in stock 1.407. The same additive quality-score bucket is also used by perks such as Writer, Playwright/Good Writer, Jeweler and Industriousness.
 
-The current `Writing quality` / `Affected craft quality` Clarity copy is therefore mechanically defensible but still **provisional UX wording**. A community/wiki cross-check describes those perks simply as improving `Quality`, but that is not a substitute for direct recovery of the current Russian/game localization. Before final release wording, prefer the exact in-game perk terminology if direct localization evidence is recovered. Do not delay the pulpit geometry iteration for this copy refinement.
+The current `Writing quality` / `Affected craft quality` Clarity copy is therefore mechanically defensible but still **provisional UX wording**. A community/wiki cross-check describes those perks simply as improving `Quality`, but that is not a substitute for direct recovery of the current Russian/game localization. Before final release wording, prefer the exact in-game perk terminology if direct localization evidence is recovered.
 
 ## Revised leading Rebalanced roster
 
@@ -162,7 +149,7 @@ These remain design hypotheses pending runtime acceptance:
 - **Imagination:** +0.5/+0.7/+1.0 writing-quality input, 18/36/54 min.
 - **Excellence:** +0.2/+0.5/+1.0 linked-craft quality input, 18/36/54 min.
 - **Prosperity:** stock 1/2/3 Blessings.
-- **BSS Soul's Repose:** stock mechanics, dynamic Faith forecast.
+- **BSS Soul's Repose:** stock mechanics, dependency-aware Faith presentation.
 - **Soul Contentment:** stock initially; new **+20/+40/+60% Soul Gratitude** curve is a user-proposed design hypothesis pending BSS economy modeling.
 - **Thorough Cleansing:** stock x2 initially; new **x2/x3/x4 Sin Shards** curve is a user-proposed design hypothesis pending BSS economy modeling.
 
@@ -226,17 +213,27 @@ If merge is implemented:
 
 ## Current gate
 
-Broad research is done. No additional general probe or community search is justified before implementation-target work.
+Broad research is done. The pulpit geometry has passed 2560x1440 and 1920x1080 multi-language smoke testing; further generic pulpit-layout probing is not justified.
 
-The current implementation slice remains intentionally **Clarity-first** and does not change prayer mechanics. The forecast seam and `guaranteed + success bonus + special effect` information model are verified. The frame-slice probe has now closed the window-resize implementation target: stock 1.407 already provides a real root `window`, anchored `container`, and sliced frame pieces that can be resized without inventing replacement artwork.
+The active Clarity work has moved to the two remaining player-facing surfaces:
 
-The narrow gate is therefore **0.1.9 real-window runtime verification**. It must prove that live F1 width/height controls enlarge the actual pulpit frame without stretching `pulpit_bench_back`, exploding the opposite dimension, or accumulating offsets; then the user can calibrate the separate Result heading/rows and retest Repose, Prosperity, Soul's Repose and Thorough Cleansing. If this geometry is accepted, freeze the layout defaults and perform one second-resolution check before expanding Clarity beyond the pulpit.
+1. Character -> Temporary Effects / active prayer buffs;
+2. prayer-related Technology tooltip/unlock presentation.
+
+Technology already has a promising native tooltip seam through `TechUnlock.GetTooltip(Tooltip)`. Temporary Effects has a separate Inventory/`PerkBuffItemGUI` path rather than the HUD `BuffIcon` path; the narrow read-only secondary-surface probe exists to close the exact binding/tooltip seam before production code.
+
+The next coherent runtime candidate should therefore combine:
+
+- the revised pulpit reward-reveal presentation from `PULPIT_REVEAL_UX.md`;
+- removal of the redundant lower pulpit dependency note and dead inline-item-icon path;
+- the two secondary Clarity surfaces once their exact UI seams are closed;
+- no Vanilla Fixes or Balance/Rework mechanics yet.
 
 Cross-cutting contracts remain:
 
 - one pure semantic/forecast model;
 - side-effect-free preview calculations;
-- pulpit redraw as the first UI boundary;
 - full 11-language localization with English fallback;
 - no hard-coded player-facing prose in patch code;
-- no polling or broad UI scans.
+- no polling or broad UI scans;
+- unaccepted runtime behavior remains off `main`.
