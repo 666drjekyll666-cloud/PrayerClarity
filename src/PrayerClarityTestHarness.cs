@@ -4,6 +4,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using UnityEngine;
 
 namespace PrayerClarityTestHarness
 {
@@ -13,7 +14,7 @@ namespace PrayerClarityTestHarness
     {
         private const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.testharness";
         private const string PluginName = "PrayerClarity Test Harness";
-        private const string PluginVersion = "0.1.0";
+        private const string PluginVersion = "0.1.1";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
 
         private static readonly BindingFlags Inst = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -24,9 +25,12 @@ namespace PrayerClarityTestHarness
         private static Assembly _gameAssembly;
         private static object _openPrayGui;
         private static bool _syntheticSelection;
+        private static string _originalLanguage;
+        private static string _lastAppliedLanguage;
 
         private ConfigEntry<PreviewPrayer> _prayer;
         private ConfigEntry<PreviewQuality> _quality;
+        private ConfigEntry<PreviewLanguage> _language;
 
         private enum PreviewPrayer
         {
@@ -55,6 +59,22 @@ namespace PrayerClarityTestHarness
             Gold = 3
         }
 
+        private enum PreviewLanguage
+        {
+            GameDefault,
+            English,
+            French,
+            German,
+            ChineseSimplified,
+            Spanish,
+            PortugueseBrazil,
+            Korean,
+            Japanese,
+            Russian,
+            Italian,
+            Polish
+        }
+
         private void Awake()
         {
             _instance = this;
@@ -64,6 +84,8 @@ namespace PrayerClarityTestHarness
                 "TEST ONLY. Select a synthetic prayer to preview at the pulpit. No item or technology is granted to the save.");
             _quality = Config.Bind("Preview", "Quality", PreviewQuality.Bronze,
                 "Quality tier used for the synthetic prayer preview.");
+            _language = Config.Bind("Preview", "Language", PreviewLanguage.GameDefault,
+                "TEST ONLY. Temporarily load another Graveyard Keeper interface language so PrayerClarity layout/localization can be inspected without changing Steam language. GameDefault restores the language active when the harness loaded.");
             Config.SettingChanged += OnSettingChanged;
 
             try
@@ -83,11 +105,15 @@ namespace PrayerClarityTestHarness
                     return;
                 }
 
+                _originalLanguage = ReadCurrentLanguage();
+                _lastAppliedLanguage = _originalLanguage;
+
                 Type prayGui = GameType("PrayCraftGUI");
                 Patch(Method(prayGui, "Open", 1), null, Method(typeof(PrayerClarityTestHarnessPlugin), nameof(OpenPostfix), true));
                 Patch(Method(prayGui, "OnPrayButtonPressed", 0), Method(typeof(PrayerClarityTestHarnessPlugin), nameof(OnPrayButtonPressedPrefix), true), null);
 
-                Logger.LogInfo("PrayerClarity Test Harness loaded. It only synthesizes pulpit UI selections; save/inventory/tech state is not modified.");
+                ApplyLanguageOverrideIfNeeded();
+                Logger.LogInfo("PrayerClarity Test Harness 0.1.1 loaded. Synthetic prayer and temporary language previews do not grant items/tech or change Steam language.");
             }
             catch (Exception ex)
             {
@@ -98,19 +124,32 @@ namespace PrayerClarityTestHarness
         private void OnDestroy()
         {
             Config.SettingChanged -= OnSettingChanged;
+            try
+            {
+                if (!string.IsNullOrEmpty(_originalLanguage) &&
+                    !string.Equals(_lastAppliedLanguage, _originalLanguage, StringComparison.OrdinalIgnoreCase))
+                {
+                    ApplyLanguageCode(_originalLanguage);
+                }
+            }
+            catch { }
             if (ReferenceEquals(_instance, this)) _instance = null;
         }
 
         private void OnSettingChanged(object sender, SettingChangedEventArgs e)
         {
+            bool languageChanged = ApplyLanguageOverrideIfNeeded();
             TryApplyPreview();
+            if (languageChanged) RefontPulpitLabels();
         }
 
         private static void OpenPostfix(object __instance)
         {
             _openPrayGui = __instance;
             _syntheticSelection = false;
+            ApplyLanguageOverrideIfNeeded();
             TryApplyPreview();
+            RefontPulpitLabels();
         }
 
         private static bool OnPrayButtonPressedPrefix(object __instance)
@@ -120,6 +159,89 @@ namespace PrayerClarityTestHarness
             _log?.LogWarning("Synthetic prayer preview cannot be preached. Set Preview > Prayer to Off or reopen the pulpit with the harness disabled to perform a real sermon.");
             SetButtonText(__instance, "TEST PREVIEW — SERMON DISABLED");
             return false;
+        }
+
+        private static bool ApplyLanguageOverrideIfNeeded()
+        {
+            if (_instance == null || _instance._language == null || string.IsNullOrEmpty(_originalLanguage)) return false;
+            string target = LanguageCode(_instance._language.Value);
+            if (string.IsNullOrEmpty(target)) target = _originalLanguage;
+            if (string.Equals(target, _lastAppliedLanguage, StringComparison.OrdinalIgnoreCase)) return false;
+
+            try
+            {
+                ApplyLanguageCode(target);
+                _lastAppliedLanguage = target;
+                _log?.LogInfo("Temporary pulpit preview language: " + target + ". Original runtime language: " + _originalLanguage + ".");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("Could not apply temporary preview language '" + target + "': " + ex);
+                return false;
+            }
+        }
+
+        private static void ApplyLanguageCode(string code)
+        {
+            Type gjl = AnyType("GJL");
+            MethodInfo load = Method(gjl, "LoadLanguageResource", true, new[] { typeof(string) });
+            if (load == null) throw new MissingMethodException("GJL.LoadLanguageResource(string)");
+
+            load.Invoke(null, new object[] { code });
+            SetStatic(GameType("GameSettings"), "_cur_lng", code);
+            _lastAppliedLanguage = code;
+        }
+
+        private static string ReadCurrentLanguage()
+        {
+            object value = GetStatic(GameType("GameSettings"), "_cur_lng");
+            return value == null || string.IsNullOrWhiteSpace(value.ToString()) ? "en" : value.ToString();
+        }
+
+        private static string LanguageCode(PreviewLanguage language)
+        {
+            switch (language)
+            {
+                case PreviewLanguage.GameDefault: return _originalLanguage;
+                case PreviewLanguage.English: return "en";
+                case PreviewLanguage.French: return "fr";
+                case PreviewLanguage.German: return "de";
+                case PreviewLanguage.ChineseSimplified: return "zh-cn";
+                case PreviewLanguage.Spanish: return "es";
+                case PreviewLanguage.PortugueseBrazil: return "pt-br";
+                case PreviewLanguage.Korean: return "ko";
+                case PreviewLanguage.Japanese: return "ja";
+                case PreviewLanguage.Russian: return "ru";
+                case PreviewLanguage.Italian: return "it";
+                case PreviewLanguage.Polish: return "pl";
+                default: return _originalLanguage;
+            }
+        }
+
+        private static void RefontPulpitLabels()
+        {
+            if (_openPrayGui == null) return;
+            GameObject guiObject = Get(_openPrayGui, "gameObject") as GameObject;
+            if (guiObject == null) return;
+
+            Type labelType = AnyType("UILabel");
+            Type gjl = AnyType("GJL");
+            if (labelType == null || gjl == null) return;
+
+            MethodInfo ensure = Method(gjl, "EnsureLabelHasCorrectFont", true, new[] { labelType, typeof(bool) });
+            if (ensure == null) return;
+
+            Component[] labels;
+            try { labels = guiObject.GetComponentsInChildren(labelType, true); }
+            catch { return; }
+
+            foreach (Component label in labels)
+            {
+                if (label == null) continue;
+                try { ensure.Invoke(null, new object[] { label, false }); }
+                catch { }
+            }
         }
 
         private static void TryApplyPreview()
@@ -147,7 +269,7 @@ namespace PrayerClarityTestHarness
                 object definition = Get(item, "definition");
                 if (definition == null) throw new InvalidOperationException("Synthetic item definition missing: " + itemId);
 
-                MethodInfo pick = Method(_openPrayGui.GetType(), "OnResourcePickerClosed", new[] { itemType });
+                MethodInfo pick = Method(_openPrayGui.GetType(), "OnResourcePickerClosed", false, new[] { itemType });
                 if (pick == null) throw new MissingMethodException("PrayCraftGUI.OnResourcePickerClosed(Item)");
 
                 pick.Invoke(_openPrayGui, new[] { item });
@@ -168,7 +290,7 @@ namespace PrayerClarityTestHarness
             {
                 Set(_openPrayGui, "pray_craft", null);
                 Set(_openPrayGui, "_selected_item", null);
-                MethodInfo redraw = Method(_openPrayGui.GetType(), "RedrawTextValues", new[] { typeof(float), typeof(float) });
+                MethodInfo redraw = Method(_openPrayGui.GetType(), "RedrawTextValues", false, new[] { typeof(float), typeof(float) });
                 redraw?.Invoke(_openPrayGui, new object[] { 0f, 0f });
             }
             catch (Exception ex)
@@ -266,9 +388,9 @@ namespace PrayerClarityTestHarness
             return type.GetMethods(isStatic ? Stat : Inst).FirstOrDefault(m => m.Name == name);
         }
 
-        private static MethodInfo Method(Type type, string name, Type[] signature)
+        private static MethodInfo Method(Type type, string name, bool isStatic, Type[] signature)
         {
-            return type?.GetMethod(name, Inst, null, signature, null);
+            return type == null ? null : type.GetMethod(name, isStatic ? Stat : Inst, null, signature, null);
         }
 
         private static object Get(object obj, string name)
@@ -284,6 +406,18 @@ namespace PrayerClarityTestHarness
             return null;
         }
 
+        private static object GetStatic(Type type, string name)
+        {
+            for (Type current = type; current != null; current = current.BaseType)
+            {
+                FieldInfo field = current.GetField(name, Stat);
+                if (field != null) return field.GetValue(null);
+                PropertyInfo property = current.GetProperty(name, Stat);
+                if (property != null && property.CanRead) return property.GetValue(null, null);
+            }
+            return null;
+        }
+
         private static void Set(object obj, string name, object value)
         {
             if (obj == null) return;
@@ -294,6 +428,18 @@ namespace PrayerClarityTestHarness
                 PropertyInfo property = type.GetProperty(name, Inst);
                 if (property != null && property.CanWrite) { property.SetValue(obj, value, null); return; }
             }
+        }
+
+        private static void SetStatic(Type type, string name, object value)
+        {
+            for (Type current = type; current != null; current = current.BaseType)
+            {
+                FieldInfo field = current.GetField(name, Stat);
+                if (field != null) { field.SetValue(null, value); return; }
+                PropertyInfo property = current.GetProperty(name, Stat);
+                if (property != null && property.CanWrite) { property.SetValue(null, value, null); return; }
+            }
+            throw new MissingMemberException(type == null ? "<null>" : type.FullName, name);
         }
 
         private static void Patch(MethodInfo target, MethodInfo prefix, MethodInfo postfix)
