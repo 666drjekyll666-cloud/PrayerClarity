@@ -100,6 +100,7 @@ namespace PrayerClarity
             // Current-item details are a structured scanning block, not centered lore.
             // Replace only the mechanics body with a left-aligned native tooltip row.
             list[headerIndex + 1] = CreateTextData(summary, 4);
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
 
             if (headerIndex > 0)
             {

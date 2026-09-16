@@ -122,6 +122,7 @@ namespace PrayerClarity
                 lines.Add(BuildResourceBlock(
                     tiers,
                     "(faith)",
+                    "(faith)",
                     t => t.FaithBonusRate,
                     t => t.FixedFaithBonus,
                     comparative));
@@ -130,6 +131,7 @@ namespace PrayerClarity
                 lines.Add(BuildResourceBlock(
                     tiers,
                     "(slv) " + Localization.F("tech.donations"),
+                    "(slv)",
                     t => t.MoneyBonusRate,
                     t => t.FixedMoneyBonus,
                     comparative));
@@ -153,6 +155,7 @@ namespace PrayerClarity
         private static string BuildResourceBlock(
             List<PrayerForecast.TierDetails> tiers,
             string label,
+            string resourceIcon,
             Func<PrayerForecast.TierDetails, float> rate,
             Func<PrayerForecast.TierDetails, float> fixedValue,
             bool comparative)
@@ -181,20 +184,17 @@ namespace PrayerClarity
 
             if (!rateSame || !fixedSame)
             {
-                bool horizontal = (rateSame ? 0 : 1) + (fixedSame ? 0 : 1) == 1;
-                List<string> values = new List<string>();
-
                 foreach (PrayerForecast.TierDetails tier in tiers)
                 {
                     List<string> parts = new List<string>();
                     if (!rateSame) parts.Add(FormatPercent(rate(tier), true));
                     if (!fixedSame) parts.Add(FormatSignedNumber(fixedValue(tier), true));
-                    values.Add(TierPrefix(tier, true) + string.Join(" ", parts.ToArray()));
-                }
 
-                lines.Add(horizontal
-                    ? string.Join("   ", values.ToArray())
-                    : string.Join("\n", values.ToArray()));
+                    lines.Add(
+                        TierPrefix(tier, true) +
+                        string.Join(" ", parts.ToArray()) +
+                        " " + resourceIcon);
+                }
             }
 
             return string.Join("\n", lines.ToArray());
@@ -215,6 +215,9 @@ namespace PrayerClarity
 
         private static string BuildEffect(List<PrayerForecast.TierDetails> tiers, bool comparative)
         {
+            string reward = BuildStructuredRewardEffect(tiers, comparative);
+            if (!string.IsNullOrEmpty(reward)) return reward;
+
             bool any = false;
             foreach (PrayerForecast.TierDetails tier in tiers)
             {
@@ -238,6 +241,67 @@ namespace PrayerClarity
             List<string> lines = new List<string> { header };
             foreach (PrayerForecast.TierDetails tier in tiers)
                 lines.Add(TierPrefix(tier, true) + (string.IsNullOrEmpty(tier.SpecialCoreText) ? "—" : tier.SpecialCoreText));
+
+            return string.Join("\n", lines.ToArray());
+        }
+
+        private static string BuildStructuredRewardEffect(List<PrayerForecast.TierDetails> tiers, bool comparative)
+        {
+            List<TooltipSemanticModel.RewardDetails> rewards = new List<TooltipSemanticModel.RewardDetails>();
+            foreach (PrayerForecast.TierDetails tier in tiers)
+            {
+                TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
+                if (reward == null) return null;
+                rewards.Add(reward);
+            }
+            if (rewards.Count == 0) return null;
+
+            string rewardId = rewards[0].Id;
+            for (int i = 1; i < rewards.Count; i++)
+            {
+                if (!string.Equals(rewardId, rewards[i].Id, StringComparison.Ordinal)) return null;
+            }
+
+            List<string> lines = new List<string>
+            {
+                Localization.F("forecast.effect_header") + ":",
+                R.VanillaLocalize(rewardId)
+            };
+
+            bool sameCount = true;
+            int firstCount = rewards[0].Count;
+            for (int i = 1; i < rewards.Count; i++)
+            {
+                if (rewards[i].Count != firstCount)
+                {
+                    sameCount = false;
+                    break;
+                }
+            }
+
+            if (!comparative || tiers.Count == 1 || sameCount)
+            {
+                lines.Add(Localization.F("tech.quantity") + ": ×" + firstCount.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                List<string> values = new List<string>();
+                for (int i = 0; i < tiers.Count; i++)
+                {
+                    values.Add(
+                        TierPrefix(tiers[i], true) +
+                        "×" + rewards[i].Count.ToString(CultureInfo.InvariantCulture));
+                }
+                lines.Add(Localization.F("tech.quantity") + ":\n" + string.Join("   ", values.ToArray()));
+            }
+
+            if (string.Equals(rewardId, "blessing_commerce", StringComparison.Ordinal))
+            {
+                string description = R.VanillaLocalize("blessing_commerce_d");
+                if (!string.IsNullOrEmpty(description) &&
+                    !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal))
+                    lines.Add(description);
+            }
 
             return string.Join("\n", lines.ToArray());
         }
@@ -297,7 +361,9 @@ namespace PrayerClarity
                 values.Add(TierPrefix(tier, true) + value);
             }
 
-            return header + ":\n" + string.Join("   ", values.ToArray());
+            // One complete tier per line prevents NGUI from splitting a short unit
+            // suffix or quality symbol away from its value on narrower/localized text.
+            return header + ":\n" + string.Join("\n", values.ToArray());
         }
 
         private static string FormatCombined(float rate, float fixedValue, bool includeZeros)

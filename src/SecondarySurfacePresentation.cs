@@ -79,11 +79,6 @@ namespace PrayerClarity
             }
         }
 
-        // Probe 0.1.8 proved that end_time - MainGame.game_time is the remaining
-        // normalized game-day interval. The stock timer uses a compact special font
-        // that cannot render the localized day suffix reliably, so strategic day count
-        // lives in the normal description label. Inside the final day, keep vanilla's
-        // precise timer untouched.
         private static void PlayerBuffTimerPostfix(object __instance, ref string __result)
         {
             try
@@ -117,8 +112,6 @@ namespace PrayerClarity
 
         private static bool ShouldShowStrategicDuration(string buffId)
         {
-            // For the two broken/unverified vanilla special effects, a strategic
-            // duration would read as if the non-working mechanic were meaningful.
             return !string.Equals(buffId, "buff_plant", StringComparison.Ordinal) &&
                    !string.Equals(buffId, "buff_sins", StringComparison.Ordinal);
         }
@@ -152,8 +145,6 @@ namespace PrayerClarity
                 Localization.UseCurrentGameLanguage();
                 if (TryReplaceVanillaPrayerMechanics(__0, summary)) return;
 
-                // Safe fallback for an unexpected tooltip shape: keep vanilla data and
-                // append the Clarity block rather than deleting unknown content.
                 object blank = CreateBlankSeparator();
                 if (blank != null) AddTooltipData(__0, blank);
                 AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
@@ -196,17 +187,9 @@ namespace PrayerClarity
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
             R.Set(header, "text", Localization.F("tech.prayer_details"));
-            // Replace the stock body object so the PrayerClarity information block uses
-            // a verified left-aligned BubbleWidgetTextData constructor instead of
-            // inheriting the stock centered mechanics-body alignment.
             list[headerIndex + 1] = CreateTextData(summary, 4);
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
 
-            // Stock TechUnlock.GetTooltip builds the broad prayer requirement first and
-            // then concatenates the localized item description directly. Depending on
-            // the localization, the requirement may be newline-delimited or may touch
-            // the lore sentence with no whitespace at all. Our tier rows replace that
-            // mechanic, so remove only the verified leading requirement sentence and
-            // leave the flavor/crafting prose intact.
             if (headerIndex > 0)
             {
                 object previous = list[headerIndex - 1];
@@ -235,10 +218,6 @@ namespace PrayerClarity
                     return normalized.Substring(newline + 1).TrimStart();
             }
 
-            // In 1.407 the same stock builder may concatenate the localized
-            // "(cross) X-Y required" sentence directly with the prayer lore text.
-            // The cross token near the start is the stable semantic marker; strip
-            // through the first sentence terminator rather than guessing wording.
             int cross = normalized.IndexOf("(cross)", StringComparison.Ordinal);
             if (cross < 0 || cross > 64) return text;
 
@@ -374,7 +353,6 @@ namespace PrayerClarity
 
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
-            // NGUIText.Alignment: Automatic=0, Left=1.
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
             return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
         }
