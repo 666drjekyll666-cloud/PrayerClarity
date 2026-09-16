@@ -12,6 +12,7 @@
   "tech.success_reward_bonus": "Bonus in caso di successo",
   "tech.requires": "Richiede (cross) {0}",
   "tech.requires_header": "Richiede",
+  "tech.success_threshold": "Per il 100% di successo servono {0} (cross)",
   "tech.donations": "Donazioni",
   "tech.duration": "Durata",
   "tech.quantity": "Quantità",
