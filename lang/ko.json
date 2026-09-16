@@ -9,6 +9,7 @@
   "forecast.reward": "보상: {0}",
   "tech.prayer_details": "기도 세부 정보",
   "tech.success_bonus": "성공 시 추가",
+  "tech.success_reward_bonus": "성공 시 보상 보너스",
   "tech.requires": "필요 (cross) {0}",
   "tech.requires_header": "필요",
   "tech.donations": "기부금",
