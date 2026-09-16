@@ -10,7 +10,7 @@ namespace PrayerClarity
 {
     internal static class TechnologyTooltipViewportClamp
     {
-        private const float SafeMarginPixels = 16f;
+        private const float SafeMarginPixels = 24f;
         private const string GamepadTooltipPositionFixHarmonyId = "nikich.gyk.movegamepadtooltips";
 
         private sealed class Marker
