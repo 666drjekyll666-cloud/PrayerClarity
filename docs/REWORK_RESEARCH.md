@@ -1,6 +1,6 @@
 # PrayerClarity — Rework research
 
-Status: research/design synthesis, updated 2026-09-16 after user design review, Repentance lifecycle evidence, native visual-FX audit, and first visual audition. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
+Status: research/design synthesis, updated 2026-09-16 after user design review, Repentance lifecycle evidence, native visual-FX audit, and two visual auditions. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
 
 ## Baseline
 
@@ -117,11 +117,13 @@ Design intent:
 
 Armor remains deliberately conservative because stock armor is flat subtraction and can trivialize weak hits faster than regeneration does.
 
-### Visual power fantasy — accepted research direction
+### Visual power fantasy — accepted scope decision
 
-A subtle native visual effect is desirable if it can be implemented cheaply and event-driven. Combat is the strongest candidate for a persistent holy aura or weapon-like glow, but other prayers may also receive restrained thematic polish if a reusable game-native FX seam exists.
+Visual polish is **optional and out of the first Rebalanced production scope**.
 
-Do **not** justify per-frame scans, broad polling, custom heavy VFX systems or brittle asset surgery for this polish.
+Two runtime auditions showed that the obvious game-native ParticleSystem reuse paths do not produce a clean prayer aura or holy-weapon effect without further custom tuning. The gameplay rework must not wait for, depend on, or carry extra runtime complexity for decorative VFX.
+
+If a genuinely cheap, stable, event-driven native effect seam is discovered incidentally later, visual polish may be revisited as a separate enhancement. Do not spend further research/runtime-test cycles on VFX for the current roster.
 
 ### Repentance ladder — accepted design target
 
@@ -261,7 +263,7 @@ Still open: whether to remove every stock fixed/off-theme side reward. Faith cle
 
 ## Native visual FX audit — 2026-09-16
 
-The installed 1.407 runtime provides several reusable visual seams; no custom particle stack is required for first experimentation.
+The installed 1.407 runtime provides several reusable visual seams, but the obvious candidates did not translate into usable player-facing prayer VFX without extra tuning.
 
 Verified player hierarchy includes:
 
@@ -290,34 +292,28 @@ The first native-FX audition was tested by the user and **none of its candidates
 - F3 / stock `pray_track_fx` parented to the player: visually resembles slow golden hairs/micro-lightning growing upward, but emitted particles remain at their world positions. The player can walk away from them, so it fails as a persistent aura.
 - F5 / pulpit one-shot burst: too large, dirty and visually bulky; rejected as general blessing feedback.
 
-This is useful evidence rather than a failed direction. F2 establishes that the player-bound native FX seam itself works but needs a larger visual footprint. F3 specifically identifies particle simulation-space behavior as the reason it detaches from the moving Keeper.
+### Visual Audition 0.1.1 — user runtime finding
 
-### Visual Audition 0.1.1 — narrowed follow-up
+The narrowed follow-up also failed to produce a cheap acceptable result:
 
-Second audition scope:
+- F2 / enlarged `shard_charge_fx`: scaling the effect to make it readable expands the yellow treatment across essentially the entire visible screen. It no longer reads as a local player aura and is unusable.
+- F3 / prayer-track with local simulation space: the effect changes scale/behavior dramatically, producing huge screen-spanning curved streaks. It reads like an overlay/screen-space artifact rather than a Keeper-bound aura.
+- F5 / recolored tool-fire proxy: does not produce an attractive or convincing holy-weapon effect in actual movement/attack presentation.
 
-- F2: scale the player-native `shard_charge_fx` footprint substantially while preserving a soft gold treatment;
-- F3: force the prayer-track ParticleSystem into local simulation space so already-emitted particles move with the Keeper;
-- F4: combine those two only for comparison;
-- F5: test a restrained gold recolor/scale of the player's native tool-fire ParticleSystem attached to the animated front tool sprite, as a proxy for the desired holy-weapon-flame fantasy;
-- F6: disable audition effects.
+The user's screenshot of F2 confirms the failure mode visually: the world is broadly washed in yellow while the Keeper remains a tiny center point, so this is not a matter of minor tuning around an otherwise-correct aura.
 
-The follow-up remains research-only: temporary runtime clones, no save writes, no Harmony and no production commitment.
+### Visual conclusion — accepted scope decision
 
-### Visual design direction
+The visual experiments answered the intended research question: **there is no sufficiently cheap, obvious game-native FX reuse path worth pursuing for the first Rebalanced release**.
 
-Prefer restrained visual grammar:
+Do not continue iterating ParticleSystem scale/simulation-space tricks, create a custom heavy VFX stack, or spend further installed-game test cycles on decorative prayer polish. The gameplay and Clarity work have materially higher value.
 
-- persistent player-bound visual only for a prayer where the Keeper is continuously in an altered state; Combat is the strongest candidate;
-- contextual effects at the affected system (confessional, corpse, soul, plant) are preferable to a persistent Keeper aura when the prayer acts remotely;
-- bind production persistent FX to buff add/remove lifecycle, not polling;
-- the first audition rejects a large generic sermon burst, so do not add one merely for spectacle.
+This does not prohibit future visuals. If later implementation work exposes a trivial stable sprite/glow/native effect seam with negligible complexity, it may be considered as optional polish in a separate pass. It is not a roster, prototype, or release gate.
 
 ## Material open decisions / evidence gates
 
 1. **Faith/Donations cleanup:** decide exact fixed/off-theme reward removal after representative payout modeling.
 2. **Imagination:** 3 Silver / 3 Gold Stories is the leading accepted candidate; model once against actual quality-production economics before roster lock.
 3. **BSS quality:** quantify whether duration-only Silver/Gold value is genuinely useful.
-4. **Visual polish:** evaluate Visual Audition 0.1.1; choose or reject scaled aura, local prayer track, and weapon-flame directions.
 
-Implementation-only gates after roster lock remain Roots SmartExpression lifecycle, Repose corpse RNG seam, Combat damage/regen/visual lifecycle seams, Repentance daily-roll seam, and safe Protection recipe retirement.
+Implementation-only gates after roster lock remain Roots SmartExpression lifecycle, Repose corpse RNG seam, Combat damage/regen lifecycle seams, Repentance daily-roll seam, and safe Protection recipe retirement.
