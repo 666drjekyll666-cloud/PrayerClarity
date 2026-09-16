@@ -9,7 +9,7 @@
   "forecast.reward": "Награда: {0}",
   "tech.prayer_details": "Параметры молитвы",
   "tech.success_bonus": "При успехе добавляется",
-  "tech.success_reward_bonus": "Бонус к награде при успехе",
+  "tech.success_reward_bonus": "Бонусы при успехе",
   "tech.requires": "Требуется (cross) {0}",
   "tech.requires_header": "Требуется",
   "tech.donations": "Пожертвования",
