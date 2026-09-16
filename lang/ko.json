@@ -12,6 +12,7 @@
   "tech.success_reward_bonus": "성공 시 보너스",
   "tech.requires": "필요 (cross) {0}",
   "tech.requires_header": "필요",
+  "tech.success_threshold": "성공률 100%에는 {0} (cross) 필요",
   "tech.donations": "기부금",
   "tech.duration": "지속 시간",
   "tech.quantity": "수량",
