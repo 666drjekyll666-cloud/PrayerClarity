@@ -9,7 +9,7 @@
   "forecast.reward": "Belohnung: {0}",
   "tech.prayer_details": "Gebetsdetails",
   "tech.success_bonus": "Bei Erfolg zusätzlich",
-  "tech.success_reward_bonus": "Belohnungsbonus bei Erfolg",
+  "tech.success_reward_bonus": "Bonus bei Erfolg",
   "tech.requires": "Benötigt (cross) {0}",
   "tech.requires_header": "Benötigt",
   "tech.donations": "Spenden",
