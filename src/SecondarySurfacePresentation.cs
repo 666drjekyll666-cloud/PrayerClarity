@@ -145,12 +145,15 @@ namespace PrayerClarity
                 if (string.IsNullOrEmpty(summary) || __0 == null) return;
 
                 Localization.UseCurrentGameLanguage();
-                if (TryReplaceVanillaPrayerMechanics(__0, summary)) return;
+                if (!TryReplaceVanillaPrayerMechanics(__0, summary))
+                {
+                    object blank = CreateBlankSeparator();
+                    if (blank != null) AddTooltipData(__0, blank);
+                    AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
+                    AddTooltipData(__0, CreateTextData(summary, 4, TechnologyTooltipMaxWidth));
+                }
 
-                object blank = CreateBlankSeparator();
-                if (blank != null) AddTooltipData(__0, blank);
-                AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
-                AddTooltipData(__0, CreateTextData(summary, 4, TechnologyTooltipMaxWidth));
+                TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
             catch (Exception ex)
             {
