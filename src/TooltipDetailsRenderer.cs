@@ -7,6 +7,7 @@ namespace PrayerClarity
     internal static class TooltipDetailsRenderer
     {
         private const float Epsilon = 0.0001f;
+        private const string NoBreakSpace = "\u00A0";
 
         internal static string BuildComparative(List<PrayerForecast.TierDetails> tiers)
         {
@@ -91,13 +92,13 @@ namespace PrayerClarity
             List<string> values = new List<string>();
             foreach (PrayerForecast.TierDetails tier in tiers)
             {
-                values.Add(TierPrefix(tier, true) +
-                           tier.Requirement.ToString(CultureInfo.InvariantCulture) +
-                           " (cross)");
+                values.Add(
+                    TierPrefix(tier, false) + NoBreakSpace +
+                    tier.Requirement.ToString(CultureInfo.InvariantCulture) +
+                    NoBreakSpace + "(cross)");
             }
 
-            return Localization.F("tech.requires_header") + ":\n" +
-                   string.Join("   ", values.ToArray());
+            return Localization.F("tech.requires_header") + ":\n" + JoinAtomicSegments(values);
         }
 
         private static string BuildSuccess(List<PrayerForecast.TierDetails> tiers, bool comparative)
@@ -142,7 +143,6 @@ namespace PrayerClarity
                 resourceBlocks.Add(BuildComparativeResourceBlock(
                     tiers,
                     R.VanillaLocalize("faith"),
-                    "(faith)",
                     t => t.FaithBonusRate,
                     t => t.FixedFaithBonus));
 
@@ -150,7 +150,6 @@ namespace PrayerClarity
                 resourceBlocks.Add(BuildComparativeResourceBlock(
                     tiers,
                     Localization.F("tech.donations"),
-                    "(slv)",
                     t => t.MoneyBonusRate,
                     t => t.FixedMoneyBonus));
 
@@ -184,7 +183,6 @@ namespace PrayerClarity
         private static string BuildComparativeResourceBlock(
             List<PrayerForecast.TierDetails> tiers,
             string label,
-            string resourceIcon,
             Func<PrayerForecast.TierDetails, float> rate,
             Func<PrayerForecast.TierDetails, float> fixedValue)
         {
@@ -192,7 +190,7 @@ namespace PrayerClarity
             bool fixedSame = AllEqual(tiers, fixedValue);
             float firstRate = rate(tiers[0]);
             float firstFixed = fixedValue(tiers[0]);
-            string resourceHeader = resourceIcon + " " + label + ":";
+            string resourceHeader = label + ":";
 
             if (rateSame && fixedSame)
             {
@@ -212,11 +210,11 @@ namespace PrayerClarity
                 if (showFixed) parts.Add(FormatSignedNumber(fixedValue(tier), true));
 
                 values.Add(
-                    TierPrefix(tier, false) + ": " +
-                    string.Join(" ", parts.ToArray()));
+                    TierPrefix(tier, false) + ":" + NoBreakSpace +
+                    string.Join(NoBreakSpace, parts.ToArray()));
             }
 
-            return resourceHeader + "\n" + string.Join(" ", values.ToArray());
+            return resourceHeader + "\n" + JoinAtomicSegments(values);
         }
 
         private static bool AnyNonZero(
@@ -319,10 +317,10 @@ namespace PrayerClarity
                 for (int i = 0; i < tiers.Count; i++)
                 {
                     values.Add(
-                        TierPrefix(tiers[i], true) +
+                        TierPrefix(tiers[i], false) + NoBreakSpace +
                         "×" + rewards[i].Count.ToString(CultureInfo.InvariantCulture));
                 }
-                lines.Add(Localization.F("tech.quantity") + ":\n" + string.Join("   ", values.ToArray()));
+                lines.Add(Localization.F("tech.quantity") + ":\n" + JoinAtomicSegments(values));
             }
 
             if (string.Equals(rewardId, "blessing_commerce", StringComparison.Ordinal))
@@ -388,10 +386,17 @@ namespace PrayerClarity
                 string value = tier.HasSpecialDuration
                     ? Localization.F("active.timer_days", tier.SpecialDurationDays)
                     : "—";
-                values.Add(TierPrefix(tier, false) + ": " + value);
+                values.Add(
+                    TierPrefix(tier, false) + ":" + NoBreakSpace +
+                    value.Replace(" ", NoBreakSpace));
             }
 
-            return header + ":\n" + string.Join(" ", values.ToArray());
+            return header + ":\n" + JoinAtomicSegments(values);
+        }
+
+        private static string JoinAtomicSegments(List<string> segments)
+        {
+            return string.Join(" ", segments.ToArray());
         }
 
         private static string FormatCombined(float rate, float fixedValue, bool includeZeros)
