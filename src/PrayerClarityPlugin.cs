@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         internal const string PluginName = "PrayerClarity";
-        internal const string PluginVersion = "1.0.0";
+        internal const string PluginVersion = "1.0.1";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -48,7 +48,16 @@ namespace PrayerClarity
                     Logger.LogError("PrayerClarity secondary Clarity surfaces are disabled; pulpit Clarity remains active. " + ex);
                 }
 
-                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit, Technology and Temporary Effects presentation; no prayer mechanics are changed.");
+                try
+                {
+                    ItemTooltipPresentation.Install(PluginGuid, Logger);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("PrayerClarity prayer-item tooltip surface is disabled; other Clarity surfaces remain active. " + ex);
+                }
+
+                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit, Technology, prayer-item tooltip and Temporary Effects presentation; no prayer mechanics are changed.");
             }
             catch (Exception ex)
             {
