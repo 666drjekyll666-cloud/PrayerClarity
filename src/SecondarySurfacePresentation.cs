@@ -9,6 +9,8 @@ namespace PrayerClarity
 {
     internal static class SecondarySurfacePresentation
     {
+        private const int TechnologyTooltipMaxWidth = 300;
+
         private static ManualLogSource _log;
         private static bool _buffErrorLogged;
         private static bool _techErrorLogged;
@@ -148,7 +150,7 @@ namespace PrayerClarity
                 object blank = CreateBlankSeparator();
                 if (blank != null) AddTooltipData(__0, blank);
                 AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
-                AddTooltipData(__0, CreateTextData(summary, 4));
+                AddTooltipData(__0, CreateTextData(summary, 4, TechnologyTooltipMaxWidth));
             }
             catch (Exception ex)
             {
@@ -187,7 +189,7 @@ namespace PrayerClarity
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
             R.Set(header, "text", Localization.F("tech.prayer_details"));
-            list[headerIndex + 1] = CreateTextData(summary, 4);
+            list[headerIndex + 1] = CreateTextData(summary, 4, TechnologyTooltipMaxWidth);
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
 
             if (headerIndex > 0)
@@ -332,7 +334,7 @@ namespace PrayerClarity
             return _blankSeparatorType == null ? null : Activator.CreateInstance(_blankSeparatorType);
         }
 
-        private static object CreateTextData(string text, int styleValue)
+        private static object CreateTextData(string text, int styleValue, int maxWidth = -1)
         {
             if (_bubbleTextConstructor == null)
             {
@@ -354,7 +356,7 @@ namespace PrayerClarity
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
-            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
+            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, maxWidth });
         }
 
         private static void AddTooltipData(object tooltip, object data)
