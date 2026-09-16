@@ -1,0 +1,51 @@
+name: Build PrayerClarity quality-scope probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/rework-audit-2026-09-16
+    paths:
+      - 'PrayerClarity.QualityScopeProbe.csproj'
+      - 'src/PrayerClarityQualityScopeProbe.cs'
+      - '.github/workflows/quality-scope-probe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayerclarity-quality-scope-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PrayerClarity.QualityScopeProbe.csproj
+      - name: Build probe DLL
+        run: dotnet build PrayerClarity.QualityScopeProbe.csproj -c Release --no-restore
+      - name: Stage artifact
+        id: artifact
+        shell: bash
+        run: |
+          mkdir -p dist
+          asset='PrayerClarity.QualityScopeProbe.0.1.0.dll'
+          cp 'bin/QualityScopeProbe/PrayerClarity.QualityScopeProbe.dll' "dist/$asset"
+          hash=$(sha256sum "dist/$asset" | awk '{print $1}')
+          echo "asset=$asset" >> "$GITHUB_OUTPUT"
+          echo "sha256=$hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity QualityScope probe 0.1.0 SHA-256: $hash"
+      - name: Upload probe DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerClarity-QualityScopeProbe-0.1.0
+          path: dist/${{ steps.artifact.outputs.asset }}
+          if-no-files-found: error
+          retention-days: 7
