@@ -9,6 +9,7 @@
   "forecast.reward": "Recompensa: {0}",
   "tech.prayer_details": "Detalles de la oración",
   "tech.success_bonus": "Se añade al tener éxito",
+  "tech.success_reward_bonus": "Bonificación de recompensa al tener éxito",
   "tech.requires": "Requiere (cross) {0}",
   "tech.requires_header": "Requiere",
   "tech.donations": "Donaciones",
