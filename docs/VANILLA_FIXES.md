@@ -117,3 +117,20 @@ The integer-random mismatch remains documented as a stock implementation anomaly
 VF-01 is mechanically specified. The only blocker before a narrow production implementation is the exact `SmartExpression` replacement/recompile lifecycle on the verified 1.407 assembly.
 
 Resolve that lifecycle with direct assembly/type inspection first. If the current accepted evidence cannot expose it, use one read-only probe whose sole purpose is to dump the relevant `SmartExpression` constructors/fields/methods and the state of representative affected `craft_time` instances. Do not build a mechanics candidate until this gate is closed.
+
+## SmartExpression lifecycle probe 0.1.8 — ready for runtime evidence
+
+- Type: research-only, read-only inspection probe; it does not contain a Vanilla Fix or any Balance/Rework mechanics.
+- Research branch: `research/vanilla-fixes-roots`.
+- Exact build source SHA: `ff2267e4c87e28c2691e9406f8d4ade318bd1716`.
+- Frozen candidate ref: `candidate/smartexpression-probe-0.1.8`.
+- GitHub Actions run: `35038610148`.
+- Workflow result: successful `net472` build on `ubuntu-latest`, 0 warnings and 0 errors.
+- Artifact ID: `10423839476` (`PrayerClarity-SmartExpressionProbe-0.1.8`).
+- Artifact ZIP digest: `sha256:9ced7e06bceb22162e2f831adeee725d85a19dd24650b62645f53ea1a289dbda`.
+- Handoff DLL: `PrayerClarity.SmartExpressionProbe.0.1.8.dll`.
+- DLL SHA-256: `875ec7cf8e56152b71ac60b77c9ecb0026c267715abd750ba7860a9f7e80f8cd`.
+- Expected evidence file: `BepInEx/PrayerClarity-smartexpression-0.1.8.txt`.
+- Probe question only: enumerate the real 1.407 `SmartExpression` construction/reinitialization contract and loaded `buff_plant` expression state so the project can choose the least invasive safe repair seam.
+- Required user action: install this probe DLL alongside the stable PrayerClarity 1.0.0, launch Graveyard Keeper far enough for a save to load and remain in-game for several seconds, then return the generated text file. No sermon, crop planting, save modification, UI calibration, or controlled gameplay sequence is required.
+- Status: **ready for one runtime evidence capture; no mechanics acceptance test is requested yet**.
