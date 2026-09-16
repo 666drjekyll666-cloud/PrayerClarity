@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -69,9 +70,8 @@ namespace PrayerClarity
 
             R.Patch(harmonyId + ".techviewport.show", typeof(TechnologyTooltipViewportClamp), tooltipShow, nameof(TooltipShowPostfix));
             R.Patch(harmonyId + ".techviewport.clear", typeof(TechnologyTooltipViewportClamp), tooltipClear, nameof(TooltipClearPostfix));
-            R.Patch(
+            PatchAfter(
                 harmonyId + ".techviewport.update",
-                typeof(TechnologyTooltipViewportClamp),
                 bubbleUpdate,
                 nameof(BubbleUpdatePostfix),
                 new[] { GamepadTooltipPositionFixHarmonyId });
@@ -178,6 +178,51 @@ namespace PrayerClarity
             if (_runtimeFailed) return;
             _runtimeFailed = true;
             _log?.LogError("PrayerClarity Technology tooltip viewport safety disabled after failure while " + operation + ". Vanilla placement remains available. " + ex);
+        }
+
+        private static void PatchAfter(string harmonyId, MethodInfo target, string postfixName, string[] afterOwners)
+        {
+            Type harmonyType = R.AnyType("HarmonyLib.Harmony");
+            Type harmonyMethodType = R.AnyType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null) throw new InvalidOperationException("Harmony unavailable");
+
+            MethodInfo postfix = typeof(TechnologyTooltipViewportClamp).GetMethod(postfixName, R.Stat);
+            if (postfix == null) throw new MissingMethodException(typeof(TechnologyTooltipViewportClamp).FullName, postfixName);
+
+            object harmonyPostfix = Activator.CreateInstance(harmonyMethodType, new object[] { postfix });
+            bool ordered = false;
+
+            FieldInfo afterField = harmonyMethodType.GetField("after", R.Inst);
+            if (afterField != null && afterField.FieldType == typeof(string[]))
+            {
+                afterField.SetValue(harmonyPostfix, afterOwners);
+                ordered = true;
+            }
+            else
+            {
+                PropertyInfo afterProperty = harmonyMethodType.GetProperty("after", R.Inst);
+                if (afterProperty != null && afterProperty.CanWrite && afterProperty.PropertyType == typeof(string[]))
+                {
+                    afterProperty.SetValue(harmonyPostfix, afterOwners, null);
+                    ordered = true;
+                }
+            }
+
+            if (!ordered)
+                throw new MissingMemberException("HarmonyMethod.after is unavailable; viewport clamp ordering cannot be guaranteed.");
+
+            object harmony = Activator.CreateInstance(harmonyType, new object[] { harmonyId });
+            MethodInfo patch = harmonyType.GetMethods(R.Inst)
+                .FirstOrDefault(m => m.Name == "Patch" && m.GetParameters().Length >= 5 && typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = target;
+            args[1] = null;
+            args[2] = harmonyPostfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
         }
 
         private static MemberInfo RequireMember(Type type, string name)
