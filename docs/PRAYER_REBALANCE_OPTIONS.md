@@ -1,6 +1,6 @@
 # Prayer Rebalance Options — audited roster
 
-Status: design specification, final-audit pass 2026-09-16. Stock Graveyard Keeper 1.407 remains canonical in `PRAYER_MECHANICS.md`. Values below are deliberate Rebalanced design, not recovered vanilla behavior. Runtime-sensitive behavior is not an accepted result until implemented and tested where required.
+Status: design specification, roster-locked 2026-09-16. Stock Graveyard Keeper 1.407 remains canonical in `PRAYER_MECHANICS.md`. Values below are deliberate Rebalanced design, not recovered vanilla behavior. Runtime-sensitive behavior is not an accepted result until implemented and tested where required.
 
 `PRAYER_DESIGN_AUDIT.md` records the role/cross-roster rationale. `REWORK_RESEARCH.md` preserves the research history that led here.
 
@@ -32,7 +32,7 @@ Status: design specification, final-audit pass 2026-09-16. Stock Graveyard Keepe
 | Imagination `b_pen` | **+0.7 craft quality** at every tier; duration **18/36/54 min**; Silver successful sermon gives **3 Silver Stories**, Gold gives **3 Gold Stories**; q **10/40/60**. |
 | Excellence `b_star` | **+0.2/+0.5/+1.0** linked-craft quality, duration **18/36/54 min**, q **10/40/60**. |
 | Prosperity `b_village` | **Stock:** 1/2/3 Commercial Blessings and existing sermon outputs, q **10/20/30**. Natural progression obsolescence is accepted. |
-| BSS Soul's Repose `b_souls` | **REOPENED BY FINAL AUDIT.** Stock becomes dominated by the new Faith specialist over ordinary Soul Gratitude states. Recommended alignment is described below; user confirmation required. |
+| BSS Soul's Repose `b_souls` | **+250 / +350 / +450% Faith**, q **25/40/70**. Preserve Soul-Gratitude base formula and recipe; remove prayer-owned fixed/off-theme Faith/money extras. |
 | Soul Contentment `b_grat_points_incr` | **+20% Soul Gratitude** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis. |
 | Thorough Cleansing `b_sin_shard` | **x2 Sin Shards** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis; do not add x3/x4 without new evidence. |
 
@@ -82,11 +82,9 @@ Accepted target:
 - retain the normal event's base Faith;
 - retain **+1/+2/+3 silver** fixed money.
 
-The fixed money is not retained for symmetry. It is an early-game floor: deleting it would make low-Graveyard-Quality Donations weaker exactly in the progression window where church money matters most.
+The fixed money is an early-game floor: deleting it would make low-Graveyard-Quality Donations weaker exactly in the progression window where church money matters most.
 
 ### Requirement grammar
-
-The two families now read cleanly:
 
 - Combo q: **15 -> 30 -> 60**;
 - Specialist q: **25 -> 40 -> 70**.
@@ -95,41 +93,28 @@ The specialist row is the Combo row shifted upward by exactly 10 Church Quality 
 
 Two-week sanity check is intentional: rotating Faith specialist + Donations specialist must outperform simply repeating Combo when the player plans around the two separate goals. Combo pays for convenience/breadth; specialists pay back planning and higher success requirements.
 
-## BSS Soul's Repose — final-audit conflict
-
-Stock 1.407 uses:
-
-- base Faith `0.1 * (Church Quality + Soul Gratitude) * Eloquence factor`;
-- `k_faith = .5 / 1 / 1.5`;
-- q **15/30/60**;
-- fixed Faith/money outputs and `k_money=.25`;
-- Chapter + 5 Faith + 2 Sin Shards recipe.
-
-The newly accepted ordinary Faith specialist uses a much larger +250/+350/+450% ladder. Leaving BSS Soul's Repose stock would make the DLC prayer a weak Faith specialist through ordinary Soul Gratitude states, recreating the same specialist-domination problem previously caused by Combo.
-
-### Recommended repair of the role
+## BSS Soul's Repose — accepted specialist alignment
 
 Treat BSS Soul's Repose as the **Soul-Gratitude-dependent Faith specialist**:
 
-- use the same **+250/+350/+450% Faith** ladder as ordinary Faith;
-- use the same q **25/40/70** specialist ladder;
-- remove prayer-owned fixed Faith, fixed money and off-theme money percentage;
-- preserve its existing Soul-specific base formula and Chapter +5 Faith +2 Sin Shards recipe.
+- use **+250/+350/+450% Faith**;
+- use q **25/40/70**;
+- preserve base Faith `0.1 * (Church Quality + Soul Gratitude) * Eloquence factor`;
+- preserve Chapter +5 Faith +2 Sin Shards recipe;
+- remove prayer-owned fixed Faith, fixed money and off-theme donation percentage.
 
-This produces a particularly clean choice. Ignoring integer rounding, both bases share the same Eloquence factor:
+This creates a stable state-dependent comparison with ordinary Faith. Ignoring integer rounding:
 
 - ordinary Faith base: `0.2 * CQ`;
 - Soul's Repose base: `0.1 * (CQ + GP)`.
 
-With the same percentage multiplier and success requirement:
+Because both use the same specialist multiplier and q ladder:
 
-- **GP < CQ:** ordinary Faith produces more Faith;
+- **GP < CQ:** ordinary Faith wins;
 - **GP = CQ:** they tie on Faith output;
-- **GP > CQ:** Soul's Repose produces more Faith.
+- **GP > CQ:** Soul's Repose wins.
 
-The extra 2 Sin Shards then have a clear purpose: the DLC specialist becomes worthwhile when the player's Soul Gratitude development is actually strong enough to exploit it, instead of being automatically better or automatically worse.
-
-This recommendation is the one material balance decision reopened by the final audit and is **not accepted until the user confirms it**.
+The extra 2 Sin Shards are therefore paid to exploit sufficiently developed Soul Gratitude rather than to buy an automatically superior or inferior prayer.
 
 ## Repentance
 
@@ -140,9 +125,7 @@ Accepted daily-roll rework:
 - Gold **100%**;
 - duration 18/36/54 min.
 
-The stock roll occurs once per in-game day for each existing confessional. Gold intentionally guarantees each daily roll while active. With both confessionals, this produces a strong but interaction-heavy "confession week" rather than passive Faith generation.
-
-Do not reduce it merely because it also produces Stories: Imagination gives planned writing-quality power plus premium Stories immediately, while Repentance requires daily church use and returns a mixed Story distribution.
+The stock roll occurs once per in-game day for each existing confessional. Gold intentionally guarantees each daily roll while active. With both confessionals, this produces a strong but interaction-heavy confession week rather than passive Faith generation.
 
 ## Shoots & Roots
 
@@ -152,8 +135,6 @@ Do not reduce it merely because it also produces Stories: Imagination gives plan
 - duration 36/72/108 min.
 
 Implementation must preserve the game's additive growth expression and repair/scale the prayer term at the verified scope. Do not replace plant growth with an external timer system.
-
-The magnitude+duration scaling is intentionally strong: farming is a narrow weekly specialization and competes with fertilizer, zombies and simply waiting.
 
 ## Repose
 
@@ -229,24 +210,36 @@ The pure-resource specialists are deliberately cleaned because off-theme success
 
 Do **not** generalize that cleanup to every special-effect prayer merely for aesthetic symmetry. Small stock Faith/money contributions on Roots, Repentance, Repose, Combat, Imagination, Excellence, Contentment or Cleansing are part of the existing weekly opportunity-cost floor unless a specific prayer's final modeling shows a problem. Removing them globally would be a broad nerf without a demonstrated UX/balance need.
 
-## Remaining gates before implementation
+## Product split direction
 
-### User-owned design decision
+The intended user-facing product structure is **two separate Nexus mods**, backed by one shared source/design system rather than two drifting forks:
 
-1. Confirm or reject the recommended BSS Soul's Repose alignment above.
+1. **PrayerClarity** — Clarity-only for stock/vanilla prayer mechanics. It must not expose an optional balance mode that could silently change mechanics.
+2. **PrayerClarity Rebalanced** — the same Clarity experience plus the complete audited Rebalanced ruleset above.
 
-### Product/implementation decision
+A user should install one product or the other, not both. The exact plugin GUID/file-name/mutual-exclusion mechanism is an implementation question to verify later rather than guess now.
 
-2. Before shipping gameplay changes, choose how the single Rebalanced ruleset coexists with the accepted Clarity-only product: opt-in profile/toggle versus making Rebalanced the default. This is one profile-level decision, not per-prayer configuration.
+Prefer source sharing/build composition over copy-pasted forks. The Clarity-only artifact should remain mechanically inert by construction; Rebalanced adds the gameplay layer deliberately.
 
-### Implementation-only evidence gates
+## Implementation timing
 
-- base future `dev/*` work on current stable **PrayerClarity 1.0.1**, not the older research branch source;
+Do **not** start Rebalanced production from the old research branch or freeze it to today's 1.0.1 while Clarity is actively being changed in parallel.
+
+Wait until the current Clarity work reaches its next accepted stable baseline. Then:
+
+- create the Rebalanced `dev/*` line from that exact accepted Clarity source state;
+- carry forward this roster specification, not old research runtime source;
+- preserve every accepted Clarity surface from the chosen baseline;
+- build the Rebalanced product as a separate user-facing artifact/package while sharing source/model infrastructure where practical.
+
+## Implementation-only evidence gates after the Clarity baseline freezes
+
 - Roots SmartExpression lifecycle/scope seam;
 - Repose corpse RNG seam;
 - Combat tier capture, regeneration lifecycle and non-stacking legacy alias behavior;
 - Repentance daily-roll tier seam;
 - safe retirement/hiding of duplicate Protection crafting;
-- profile-aware semantic model so pulpit, Technology, item tooltip and Temporary Effects all report the same effective Rebalanced values.
+- shared semantic model so Rebalanced mechanics and all Clarity surfaces report the same effective values;
+- exact mutually-exclusive packaging/plugin identity for Clarity-only vs Rebalanced.
 
-No additional hosted CI is required for this documentation/audit pass.
+No additional hosted CI is required for this documentation/audit lock.
