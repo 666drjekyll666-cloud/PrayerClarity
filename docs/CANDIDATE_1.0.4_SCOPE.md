@@ -1,8 +1,21 @@
 # PrayerClarity 1.0.4 — compact success rows and local width candidate
 
-Status: **Clarity-only runtime candidate preparation**.
+Status: **clean-built runtime candidate awaiting user in-game review**.
 
 Baseline: accepted/published `PrayerClarity 1.0.1`. Immediate predecessor `candidate/1.0.3` was runtime-tested and superseded, not accepted.
+
+## Frozen build identity
+
+- Frozen candidate ref: `candidate/1.0.4`.
+- Exact build source SHA: `1c0311013216e339fbc7840f130e89c048920b5d`.
+- GitHub Actions run: `35089545865`.
+- Workflow result: success on `ubuntu-24.04`; restore, `net472` Release build, all 11 embedded-locale checks, artifact staging and upload passed with `0 warnings / 0 errors`.
+- Workflow artifact ID: `10443896227` (`PrayerClarity-1.0.4-ci-1c0311013216e339fbc7840f130e89c048920b5d`).
+- Artifact ZIP digest: `sha256:bef2a0ca6eae7a5ac0d0dbea2c1c893f6f81256f7f566d94f5dd9c33c29c1049`.
+- Handoff DLL: `PrayerClarity-1.0.4-ci.dll`.
+- Handoff DLL SHA-256: `e2e5543fc7429210cafc035c22f5b1c84ced508c487ee0e7bb70482c50dfbbca`.
+- Supported Assembly-CSharp MVID: `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- The downloaded artifact DLL was independently SHA-256 rechecked before handoff and matched the workflow-produced hash.
 
 ## Runtime feedback carried forward
 
@@ -78,3 +91,5 @@ At 2560x1440 inspect at minimum:
 5. One prayer item tooltip: confirm item width/grammar is unchanged.
 
 If 2560x1440 is clean, perform a 1920x1080 smoke test before considering stable acceptance.
+
+Stable promotion requires explicit runtime acceptance. `candidate/1.0.4` is immutable evidence and must not move after this build.
