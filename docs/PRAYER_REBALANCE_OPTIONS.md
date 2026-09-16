@@ -1,204 +1,229 @@
 # Prayer Rebalance Options — modeled candidate roster
 
-Status: design hypothesis, 2026-09-14. **Nothing here is accepted runtime behavior yet unless explicitly marked as an accepted product/design direction.** Stock 1.407 remains canonical in `PRAYER_MECHANICS.md`; full-cost context is in `PRAYER_POWER_BUDGET.md`.
+Status: design hypothesis, updated 2026-09-16. **Nothing here is accepted runtime behavior unless explicitly identified as a product/design rule.** Stock 1.407 remains canonical in `PRAYER_MECHANICS.md`; current rationale/evidence is in `REWORK_RESEARCH.md` and `PRAYER_POWER_BUDGET.md`.
 
-## Design objective
+## Product/design rules now treated as direction
 
-Use **temptation parity**, not numerical parity. A prayer should justify its technology/craft/quality investment and the weekly sermon slot in the stage or niche where it belongs. Bronze should already be credible; silver/gold should create a meaningful quality chase. Gold may deliberately create reliability or a very strong niche window. Prefer making alternatives attractive over nerfing familiar player rewards.
-
-The free starter `b_empty` Ordinary Prayer is **not** part of the Faith-specialist buff. Keep it stock.
+- Ship one coherent opinionated **Rebalanced** profile rather than per-prayer tuning sliders.
+- Rebalanced may contain the proven Shoots & Roots repair; do not maintain an artificial standalone Fixed Vanilla product merely for one fix.
+- A prayer must justify its technology/crafting burden **and** the weekly sermon slot with a clearly felt payoff.
+- Bronze should already be credible.
+- Silver/Gold must visibly justify their much harder quality-production cost through magnitude, reliability, useful duration, thematic output, or another clear benefit.
+- Do not nerf a healthy Bronze merely to create a symmetric tier ladder.
+- Duration-only quality is acceptable only when the extra duration materially increases useful expected value.
+- Preserve full base donations on failed sermons.
 
 ## Current candidate roster
 
-| Family | Leading Rebalanced candidate |
+| Family | Current Rebalanced direction |
 | --- | --- |
-| Ordinary `b_empty` | **stock** |
-| Faith `b_faith` | **+100 / +200 / +300% Faith** (`k_faith=1/2/3`), stock small money side-bonus |
-| Donations `b_money` | **+100 / +200 / +300% donations** (`k_money=1/2/3`), stock small Faith side-bonus |
-| Combo `b_faith_money` | **stock initially** (`+50/+100/+150%` both) |
-| Repentance `b_sins` | **30 / 50 / 70% confession chance**, stock 18/36/54 min |
-| Shoots & Roots `b_plant` | Fixed Vanilla: repaired **-20%** all tiers; Rebalanced candidate **-20 / -30 / -40% growth time** |
-| Repose `b_skull` | Bronze stock random; Silver halfway between current vanilla best-tier chance and 100%; Gold 100% best prayer-eligible tier; never exceed story max +1 |
-| Combat (`b_sword` + legacy `b_shield`) | save-safe merge; **+5/+8/+12 damage, +4 armor, regen 1 HP every 3/2/1.5 sec**, 36/72/108 min |
-| Imagination `b_pen` | **+0.5 / +0.7 / +1.0** writing-quality input, 18/36/54 min |
-| Excellence `b_star` | **+0.2 / +0.5 / +1.0** linked-craft quality input, 18/36/54 min |
+| Ordinary `b_empty` | stock |
+| Faith `b_faith` | **+100 / +200 / +300% Faith** as first percent model; evaluate removal of flat/off-theme rewards; stronger q ladder under study |
+| Donations `b_money` | **+100 / +200 / +300% donations** as first percent model; evaluate removal of flat/off-theme rewards; stronger q ladder under study |
+| Combo `b_faith_money` | stock percentage core **+50/+100/+150% both** initially; generic flat rewards may be removed as part of family cleanup |
+| Repentance `b_sins` | quality-scaled confession throughput; old **30/50/70%** remains benchmark only until cadence/reward path is closed |
+| Shoots & Roots `b_plant` | repair scope bug + **-20 / -30 / -40% growth time** |
+| Repose `b_skull` | Bronze stock selection; Silver halfway from stock best-tier probability to certainty; Gold guarantees best prayer-eligible tier; never exceed progression ceiling |
+| Combat (`b_sword` + possible `b_shield` legacy alias) | strong combined combat blessing recommended; former 3/2/1.5-sec regen candidate superseded as too cautious; model ~**1/2/3 HP per second** plus tier-scaled damage and conservative armor |
+| Imagination `b_pen` | **keep `craft_q=+0.7` at least at Bronze; current preferred exploration keeps +0.7 all tiers and adds thematic Silver/Gold writing rewards** |
+| Excellence `b_star` | **+0.2 / +0.5 / +1.0** remains leading magnitude curve after linked-craft scope verification |
 | Prosperity `b_village` | stock 1/2/3 Blessings |
-| BSS Soul's Repose `b_souls` | stock mechanics; dynamic Faith forecast |
-| Soul Contentment | stock initially; +20/+40/+60% is a new unmodeled candidate |
-| Thorough Cleansing | stock x2 initially; x2/x3/x4 is a new unmodeled candidate |
+| BSS Soul's Repose `b_souls` | stock initially; already has meaningful quality-scaled Faith coefficient |
+| Soul Contentment | magnitude stock initially; explicitly re-audit whether 36/72/108 duration alone justifies premium tiers |
+| Thorough Cleansing | keep stock x2 magnitude initially; explicitly re-audit whether 36/72/108 duration alone justifies premium tiers |
 
-These values are a **first integrated test roster**, not accepted balance.
+## Faith / Donations / Combo — clean percentage-first family
 
-## Faith / Donations / Combo
+### Terminology
 
-Stock specialists have the same target coefficients as Combo at equal quality (`.5/1/1.5`). Their advantages are only cheaper Chapter +5 Faith crafting and lower church-quality requirements versus Combo's Hard Book +7 Faith and q15/30/60. Donations and Combo are unlocked together by `Price of faith`.
+`k_faith` / `k_money` are proportional success modifiers:
 
-Leading candidate keeps Combo familiar and turns specialists into actual maxima:
+- `.5` = +50% of the relevant base;
+- `1` = +100%;
+- `2` = +200%;
+- `3` = +300%.
 
-- Faith target `k_faith = 1 / 2 / 3`;
-- Donations target `k_money = 1 / 2 / 3`;
-- keep the small stock secondary coefficient `.2`;
-- Combo stays `.5 / 1 / 1.5` for both resources.
+They are **not** the stock fixed Faith/money output items.
 
-Representative no-perk states used for design comparison:
+Stock specialists and Combo use the same target-resource percentages at equal quality (`.5/1/1.5`), which is the structural problem: Combo gets both resources without sacrificing specialist peak after its Book/q gates are solved.
 
-| State | Stock Combo | Faith specialist | Donations specialist |
-| --- | --- | --- | --- |
-| CQ20 / GQ50, bronze | 7 Faith / 3.25s | **9 / 2.8s** | **6 / 4.0s** |
-| CQ40 / GQ100, silver | 18 / 8.0s | **26 / 5.6s** | **12 / 11.0s** |
-| CQ80 / GQ200, gold | 43 / 18.0s | **67 / 10.2s** | **22 / 27.0s** |
+### Current first model
 
-This preserves Combo as generalist while making specialist quality worth pursuing.
+- Faith: `k_faith = 1 / 2 / 3`.
+- Donations: `k_money = 1 / 2 / 3`.
+- Combo: `.5 / 1 / 1.5` in both.
 
-Do **not** add a second Graveyard Quality gate initially. Base donations already scale with GQ, so stronger `k_money` naturally amplifies the value of a developed cemetery. Keep church quality as universal sermon-success gate; reserve an explicit GQ threshold only if runtime balance needs it.
+This gives a clean relationship:
+
+- specialist = best at one thing;
+- Combo = broad generalist at lower peak.
+
+### Cleanup option now preferred for modeling
+
+Stock also mixes in small fixed rewards and off-theme side percentages. This makes both the mechanics and PrayerClarity presentation harder to read.
+
+Model a cleaner family where:
+
+- Faith has only its Faith percentage premium;
+- Donations has only its donation percentage premium;
+- Combo has both percentage premiums;
+- the generic fixed Faith/money outputs and specialist off-theme `.2` side coefficients are removed.
+
+This is **not accepted yet**. Compare representative total payouts before choosing it.
+
+### Church-quality requirements
+
+If the specialist Gold ceiling rises to +300%, increasing guaranteed-success requirements is legitimate. The old q10/20/50 specialists need not be frozen merely because they are vanilla.
+
+Candidate shapes to model include, for example:
+
+- `10 / 30 / 60`;
+- `10 / 30 / 70`;
+- `15 / 35 / 70`.
+
+Do not tune against a theoretical maximum-candle church. The requirement should remain reachable in normal cathedral progression and should complement—not erase—the substantial cost of producing Silver/Gold prayer items.
+
+Combo q15/30/60 is a useful existing reference rather than an immutable target.
+
+## Shoots & Roots
+
+Rebalanced should directly include the verified wiring repair and quality curve:
+
+- Bronze: **-20% growth time**;
+- Silver: **-30%**;
+- Gold: **-40%**;
+- durations remain 36/72/108 min unless later playtesting shows an issue.
+
+Preserve the stock expression structure rather than replacing it with an external generic timer multiplier; existing independent terms such as `grow_time` must continue to compose correctly.
 
 ## Repentance
 
-Verified stock baseline: 15% confession probability; successful confession yields about 1 Faith + 1 Story; prayer duration is 18/36/54 min; `buff_sins` has no consumer in 1.407.
+Runtime probe 0.1.0 proves `church_budka_roll` independently rolls each of two confessionals against player `confession_probability`.
 
-Leading rework: **30 / 50 / 70%**. With two confessionals, rough continuous expected additional successful confessions over the full tier windows versus ordinary 15% are about **+0.72 / +3.36 / +7.92**. Actual rolls remain discrete/random and timing-dependent.
+The old `30 / 50 / 70%` candidate is therefore mechanically expressible, but **not yet quantitatively justified** because the probe did not close:
 
-## Shoots and Roots
+- invocation cadence;
+- exact Confessional I/II reward path;
+- the narrow production hook.
 
-### Fixed Vanilla profile
+Do not keep the old expected-confession totals as authoritative; they assumed a cadence that is not yet directly proven.
 
-Repair the proven parameter-scope bug only. Preserve the dormant stock coefficient: **-20% growth time** at every quality; quality continues to scale duration 36/72/108 min.
+Design target: Gold should feel like a genuine high-activity religious/confession period, not merely make an almost invisible event slightly more frequent.
 
-### Rebalanced profile
+## Combat Prayer — power-fantasy target
 
-The user's proposed quality curve is now the leading candidate:
+### Structural recommendation
 
-- bronze **-20% growth time**;
-- silver **-30%**;
-- gold **-40%**;
-- duration remains 36/72/108 min.
+The preferred architecture remains a save-safe soft merge:
 
-This corresponds to approximate cycle-throughput increases of +25%, +42.9% and +66.7% while active. Because the prayer is narrow and costs the weekly sermon slot, this is a reasonable first temptation-parity candidate rather than an obviously excessive buff.
+- `b_sword` becomes the canonical effective Combat Prayer in Rebalanced;
+- existing `b_shield` prayer items remain valid and can act as same-quality legacy aliases;
+- do not rewrite/delete saved IDs;
+- hide/retire duplicate new-player Protection crafting only after lifecycle inspection proves it safe;
+- profile/mod removal restores vanilla meaning.
 
-## Combat Prayer — save-safe soft merge
+The user has confirmed the required **power level/feel**, but the actual merge still needs explicit confirmation.
 
-### Accepted migration direction
+### Superseded candidate
 
-Do not delete or rewrite saved prayer items and do not add a third permanent prayer ID merely to merge combat roles.
+The former `+5/+8/+12 damage, +4 armor, 1 HP every 3/2/1.5 sec` package is no longer the leading balance target. The regeneration is too close to cheap consumable convenience for the prayer's full cost and narrow dungeon use.
 
-- `b_sword` is the canonical Combat Prayer in Rebalanced.
-- Existing `b_shield` items stay intact and act as same-quality **legacy aliases** to the effective Combat Prayer.
-- Retire/hide the redundant new-player Protection recipe only after lifecycle inspection proves that safe.
-- No save ID migration. Removing the mod/profile restores vanilla interpretation.
+### New first modeling point
 
-### Leading combat package
-
-Keep q10/20/40 and durations 36/72/108 initially.
+Use a deliberately stronger starting point:
 
 | Quality | Damage | Armor | Regeneration |
 | --- | ---: | ---: | ---: |
-| Bronze | +5 | +4 | **1 HP / 3 sec** |
-| Silver | +8 | +4 | **1 HP / 2 sec** |
-| Gold | +12 | +4 | **1 HP / 1.5 sec** |
+| Bronze | +5 | +4 | **~1 HP/sec** |
+| Silver | +10 | +4 | **~2 HP/sec** |
+| Gold | +15 | +4 | **~3 HP/sec** |
 
-Rationale:
+These exact values are **not accepted**. They encode the intended test target:
 
-- bronze includes at least the full stock offense and defense of the two prayers being merged;
-- armor stays +4 because incoming armor is flat subtraction and larger values can nullify low-damage enemies;
-- damage is the safer magnitude-scaling axis;
-- vanilla long-heal potion itself heals 1 HP every 1.5 seconds, so gold reaches an already-existing healing cadence rather than inventing a faster one;
-- the weekly sermon, deep unlock, expensive Book and combat-only niche justify a much stronger sustained-healing fantasy than the rejected 1 HP/min proposal.
+- ordinary enemy hits still matter;
+- player must still dodge;
+- after clearing a room, a short corridor should restore a noticeably useful chunk of health;
+- potion dependence should fall sharply while the weekly blessing is active;
+- Gold should feel exceptional enough that a player can reasonably craft/use it once or twice specifically for dungeon progression.
 
-The approximate raw healing ceilings are 20/30/40 HP per minute before the HP cap. This may make low-pressure combat extremely forgiving when combined with +4 armor; that is **intentional enough to test**, not sufficient reason to pre-nerf it. The aggressive fallback if gold still feels insufficient is 1 HP/sec; the conservative fallback is to lengthen only the gold tick to 2 sec.
+Keep armor conservative because stock armor is flat subtraction and high armor can trivialize low-damage hits much faster than regeneration does.
 
-## Repose — quality as reliability
+A holy aura / weapon-glow visual would support the fantasy if a cheap native/event-driven visual seam exists. Treat this as polish research, not a reason for polling or custom heavy effects.
 
-Direct runtime shows corpse generation randomly selects from all `BodyDefinition`s in the allowed tier range. Stock `body_max+1` therefore opens a better tier but does not guarantee the Donkey chooses it. In representative adjacent-tier pools, the stock chance of the newly opened best tier is roughly 80% on the first transition and ~55% on later transitions.
+## Repose — premium reliability
 
-Do not use `+1/+2/+3 max tier`: corpse tiers encode a short story progression and that would skip several stages.
+Do not scale by `+1/+2/+3 body_max`; that can skip short corpse-progression tiers.
 
-Instead keep the ceiling at **normal story max +1**, capped at the final normal corpse tier:
+Keep the prayer-eligible ceiling at normal story max +1, capped by final progression, and scale reliability:
 
-- **Bronze:** stock selection from the expanded pool.
-- **Silver:** exactly halfway between the current stock probability of the best prayer-eligible tier and certainty.
-- **Gold:** 100% best prayer-eligible tier.
+- Bronze: ordinary stock selection from the expanded pool.
+- Silver: `P(best) = 0.5 + 0.5 * P_vanilla(best)`.
+- Gold: 100% best prayer-eligible tier.
 
-Implementation rule for silver:
+Equivalent Silver implementation: 50% force best eligible tier, otherwise perform the normal stock selection.
 
-`P_silver(best) = 0.5 + 0.5 * P_vanilla(best)`.
+This gives Silver real premium value and Gold a clear promise without inventing tiers beyond normal progression.
 
-Equivalent implementation: on each delivery, 50% force the best prayer-eligible tier; otherwise perform the ordinary vanilla selection. Examples:
+## Imagination — preserve strength, reward premium quality differently
 
-- vanilla 80% -> silver **90%** -> gold 100%;
-- vanilla 55.6% -> silver **77.8%** -> gold 100%;
-- vanilla 54.5% -> silver **77.3%** -> gold 100%.
+Runtime scope probe confirms `buff_pen` is a broad **writing/prayer-production** buff. It links to Stories, Notes, Chapters, Soul-writing equivalents, and many/all prayer crafting recipes.
 
-This satisfies the design requirement that silver sit genuinely between bronze and gold instead of being almost-gold in every progression state.
+Stock `craft_q=+0.7` at Bronze is therefore a healthy meaningful effect. The old `+0.5/+0.7/+1.0` proposal is **superseded** because it nerfs a good Bronze solely for ladder symmetry.
 
-For future Rebalanced presentation, a player-facing ladder such as `possible / very likely / guaranteed` is promising, but Clarity-only stock text must not use it before the mechanics actually change. Stock 1.407 exposes `body_max +1` at all prayer qualities; only duration differs.
+Current preferred design exploration:
 
-## Imagination — global quality/cap check
+- Bronze: `craft_q=+0.7`, 18 min;
+- Silver: `craft_q=+0.7`, 36 min **plus a thematic writing reward**;
+- Gold: `craft_q=+0.7`, 54 min **plus a larger/premium writing reward**.
 
-Stock Imagination adds `craft_q=+0.7` at every prayer quality. Writing recipes consume the same additive quality-score system as linked writing perks; current direct data includes Writer +0.3, Playwright/Good Writer +0.5 and Industriousness +0.2. The prayer buff is added to the same `value_perks` bucket used by those perks.
+Multi-quality Stories are the strongest reward candidate so far:
 
-The output system has finite quality tiers, so extra score naturally saturates once the best available output is already guaranteed. This means late-game redundancy is real and acceptable: a Clarity preview should explicitly tell the player when a stronger Imagination tier no longer improves the selected writing craft.
+- they reinforce the same writing fantasy;
+- they remain useful inputs to Notes/Chapters;
+- they do not skip the complete cover/Book production chain.
 
-Leading curve adopts the user's proposal:
+Example notions such as several Silver Stories / several Gold Stories are **not accepted quantities**. Determine counts against actual writing recipes and the weekly opportunity cost.
 
-- bronze **+0.5**;
-- silver **+0.7** (stock magnitude moves here);
-- gold **+1.0**;
-- 18/36/54 min unchanged.
+A finished Silver/Gold Hard Book is a weaker design option because it bypasses too much of the premium production chain.
 
-Why this is preferable to the previous +0.7/+0.9/+1.1 candidate:
+## Excellence — magnitude progression remains appropriate
 
-- it avoids accelerating early writing as much as stock bronze currently can;
-- silver preserves vanilla special-effect strength while lasting longer;
-- gold adds a full quality-score point, which is a clear premium tier and can turn a near-next-tier roll into deterministic next quality where the recipe is not already capped;
-- if perks/input quality already guarantee gold output, the extra prayer magnitude is correctly worthless rather than creating a hidden fourth quality tier.
+Runtime scope probe confirms `buff_star` is narrower and distinct from Imagination. Verified linked examples include hard books, high-tier chisels, carved wood and marble work.
 
-The future UI should show the **actual predicted output probabilities/current cap**, not merely `+1.0`, whenever feasible.
+Leading curve remains:
 
-## Excellence — reliability is the point
+- Bronze **+0.2**;
+- Silver **+0.5**;
+- Gold **+1.0**;
+- durations 18/36/54 min.
 
-Stock Excellence adds `craft_q=+0.2` at every quality to explicitly linked multiquality crafts. Relevant permanent perk stars are already substantial in several craft families (for example Woodworker +0.5, Mason +0.5, Engineer +0.3, Jeweler +0.7, Industriousness +0.2), and the prayer contribution is additive with them.
+A Gold `+1.0` quality-score contribution may make reachable high-quality crafts deterministic; that is an intentional premium payoff for a narrow weekly specialist, not automatically overpowered. The finite quality cap still prevents a hidden fourth tier.
 
-Because Excellence is narrower than Imagination and consumes the same weekly sermon opportunity, making gold capable of turning a reachable high-quality craft into a deterministic result is an acceptable **feature**, not automatically an imbalance.
+## Stock-like reference prayers under the new quality rule
 
-Leading curve:
+### Prosperity
 
-- bronze **+0.2** (stock magnitude);
-- silver **+0.5**;
-- gold **+1.0**;
-- 18/36/54 min unchanged.
+Keep stock. The special output already scales 1/2/3 permanent Commercial Blessings, so Silver/Gold have obvious value.
 
-A +1.0 score does **not** mean every craft universally becomes gold. It means the prayer supplies a full quality-score point to crafts that explicitly link `buff_star`; input quality, recipe difficulty, linked perks and the finite output tiers still determine whether that crosses a threshold. If the selected craft is already capped/guaranteed, further score is wasted. Clarity should expose that rather than hiding it.
+### BSS Soul's Repose
 
-## Stock reference prayers
+Keep stock initially. Its Faith coefficient already scales with prayer quality and Soul Gratitude creates a meaningful state-dependent role.
 
-- **Prosperity:** keep stock; special output already scales 1/2/3 permanent Commercial Blessings.
-- **BSS Soul's Repose:** keep stock; Soul Gratitude raises the Faith baseline and quality scales its Faith bonus. Dynamic current-result forecast is the main improvement.
-- **Soul Contentment:** stock initially; explain +10% and duration.
-- **Thorough Cleansing:** stock x2 Sin Shards; benchmark for a strong narrow specialist.
+### Soul Contentment
 
-### New BSS balance hypotheses from UX review
+Do not inflate magnitude merely for symmetry yet. Stock +10% lasts 36/72/108 min, so Silver/Gold may already multiply the number of souls processed under the effect. Quantify actual practical soul cadence before deciding whether quality needs an additional magnitude/reward axis.
 
-The following are **not promoted to the leading roster yet**. They arose because the current stock special effects make higher-quality copies feel weak when quality mostly buys duration:
+### Thorough Cleansing
 
-- **Soul Contentment:** candidate **+20 / +40 / +60% Soul Gratitude** from soul healing, instead of stock +10% at every quality.
-- **Thorough Cleansing:** candidate **x2 / x3 / x4 Sin Shards** from successful soul healing, instead of stock x2 at every quality.
+Keep x2 magnitude initially because community behavior identifies it as a successful specialist. However, x2 at all tiers does **not automatically prove** that Silver/Gold are well-designed. Quantify how many additional soul-processing opportunities the 36/72/108-minute windows realistically cover. Only then decide whether duration alone sufficiently pays for premium prayer quality.
 
-These are plausible specialist curves, but they interact directly with the Better Save Soul resource economy. Before implementation, compare their total resource output over the 36/72/108 minute windows against actual soul-healing cadence and the increased BSS progression costs. The current Clarity prototype must continue to report stock +10% / x2 until a Rebalanced profile explicitly changes those mechanics.
+## Open decisions before roster lock
 
-## Candidate status and next gate
+1. Confirm or reject the **Combat soft merge** versus keeping Retribution and Protection as two separately powerful prayers.
+2. Decide whether Faith/Donations/Combo should remove stock fixed/off-theme success rewards for a percentage-only clean family.
+3. Choose the specialist q ladder after representative payout modeling.
+4. Choose Imagination Silver/Gold thematic reward type/count.
+5. Close Repentance cadence/reward evidence before locking its chance ladder.
+6. Quantify BSS duration-only quality value rather than assuming either stock or large magnitude scaling is correct.
 
-The first integrated non-production Rebalanced specification is coherent enough for implementation-target discovery, with two new BSS candidates still awaiting budget modeling:
-
-- Ordinary stock;
-- Faith/Donations +100/+200/+300% target resource;
-- Combo stock;
-- Repentance 30/50/70%;
-- Shoots & Roots: Fixed Vanilla -20%; Rebalanced -20/-30/-40%;
-- Combat soft merge: +5/+8/+12 damage, +4 armor, regen 3/2/1.5 sec;
-- Repose: vanilla / midpoint-to-certainty / 100% best eligible tier;
-- Imagination +0.5/+0.7/+1.0;
-- Excellence +0.2/+0.5/+1.0;
-- Prosperity/BSS reference prayers stock initially;
-- Soul Contentment +20/+40/+60% and Thorough Cleansing x2/x3/x4 remain unmodeled follow-up hypotheses.
-
-These remain **design hypotheses pending runtime/user acceptance**. The active implementation gate is still Clarity-only pulpit UX; do not fold these balance changes into the current presentation candidate. After the fixed-window Clarity layout is accepted, resume the narrow implementation-target work for the Rebalanced profile.
+Only after these are narrowed should implementation-only probes/hooks (Roots SmartExpression lifecycle, Repose RNG seam, Combat regen/visual seam) drive a `dev/*` candidate.
