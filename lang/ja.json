@@ -9,7 +9,7 @@
   "forecast.reward": "報酬：{0}",
   "tech.prayer_details": "祈りの詳細",
   "tech.success_bonus": "成功時に追加",
-  "tech.success_reward_bonus": "成功時の報酬ボーナス",
+  "tech.success_reward_bonus": "成功時のボーナス",
   "tech.requires": "必要 (cross) {0}",
   "tech.requires_header": "必要",
   "tech.donations": "寄付金",
