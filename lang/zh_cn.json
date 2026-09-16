@@ -12,6 +12,7 @@
   "tech.success_reward_bonus": "成功时加成",
   "tech.requires": "需要 (cross) {0}",
   "tech.requires_header": "需要",
+  "tech.success_threshold": "100% 成功需要 {0} (cross)",
   "tech.donations": "捐款",
   "tech.duration": "持续时间",
   "tech.quantity": "数量",
