@@ -9,7 +9,7 @@ namespace PrayerClarity
 {
     internal static class SecondarySurfacePresentation
     {
-        private const int TechnologyTooltipMaxWidth = 300;
+        private const int TechnologyTooltipMaxWidth = 360;
 
         private static ManualLogSource _log;
         private static bool _buffErrorLogged;
