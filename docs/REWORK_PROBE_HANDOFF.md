@@ -1,6 +1,6 @@
 # PrayerClarity — Rework research probe handoff
 
-Status: read-only research artifacts awaiting one runtime evidence capture. These are not production mechanics candidates.
+Status: research-artifact ledger. These probes/auditions are temporary evidence tools, not production mechanics candidates.
 
 ## Repentance probe 0.1.0
 
@@ -30,10 +30,32 @@ Status: read-only research artifacts awaiting one runtime evidence capture. Thes
 - Expected evidence: `BepInEx/PrayerClarity-quality-scope-0.1.0.txt`.
 - Contract: read-only GameBalance inspection; no Harmony and no intentional game/save mutation.
 
-## One-pass user capture
+## Visual Audition Probe 0.1.1 — 2026-09-16
 
-Both DLLs may be installed together beside stable PrayerClarity 1.0.0. Load any save and remain in-game for roughly ten seconds after the game is ready. No sermon, confession, crafting, crop growth, manual saving, UI interaction, or controlled gameplay is required.
+Purpose: compare three narrowed native-FX directions after Visual Audition 0.1.0 established that the first gold aura was too small, the prayer-track particles detached in world space, and the generic one-shot burst was visually unsuitable.
 
-Return the two generated text files. Remove the research probe DLLs after capture.
+- Exact source SHA: `a8f60c32695fb42332aa24004625114a942ec576`.
+- Frozen candidate ref: `candidate/visual-audition-probe-0.1.1`.
+- GitHub Actions run: `35080270944`.
+- Build: success on `ubuntu-latest`, `net472`, 0 warnings, 0 errors.
+- Artifact ID: `10440370353` (`PrayerClarity-VisualAuditionProbe-0.1.1`).
+- Artifact ZIP digest: `sha256:63878ce4333aa6d9a1cd193546b1cf9a81db02ed821fd469ff716c97d3e08747`.
+- DLL: `PrayerClarity.VisualAuditionProbe.0.1.1.dll`.
+- DLL SHA-256: `6d7e02a457e2415cab1324674525d70184fd15c0c159cbaaa17324947c7f3f91`.
+- Contract: temporary runtime visual clones only; no Harmony, no save writes, no production mechanic changes.
 
-The older SmartExpression Roots lifecycle probe is deliberately deferred: it is an implementation-seam question, not a blocker for the current rework roster/design pass.
+Runtime controls:
+
+- F2 — scaled soft-gold player `shard_charge_fx` aura;
+- F3 — pulpit `pray_track_fx` forced into local simulation space and attached to Keeper;
+- F4 — F2 + F3 together;
+- F5 — scaled/recolored native tool-fire ParticleSystem attached to the animated front tool sprite as a holy weapon/tool flame audition;
+- F6 — remove audition effects.
+
+User should remove older VisualAudition/VisualScheduler research DLLs before this test and keep stable PrayerClarity 1.0.0 installed.
+
+## Historical one-pass capture note
+
+The Repentance and Quality-scope DLLs were previously installable together beside stable PrayerClarity 1.0.0 for one short capture. Their evidence has since been returned and incorporated into current research.
+
+The older SmartExpression Roots lifecycle probe remains deliberately deferred: it is an implementation-seam question, not a blocker for the current rework roster/design pass.
