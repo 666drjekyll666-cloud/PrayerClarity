@@ -1,10 +1,23 @@
 # PrayerClarity 1.0.2 — tooltip polish candidate scope
 
-Status: **Clarity-only runtime candidate preparation**.
+Status: **clean-built runtime candidate awaiting user in-game review**.
 
 Baseline: accepted/published `PrayerClarity 1.0.1`, exact runtime source `7cf6d9287d2aa7cfa8c0529be98f62a3d87360ce`.
 
 Canonical design for this candidate: `docs/TOOLTIP_POLISH_1.0.2.md`.
+
+## Frozen build identity
+
+- Frozen candidate ref: `candidate/1.0.2`.
+- Exact build source SHA: `6bf5fec32feac3567c5bfe2f450c942cc8d5be19`.
+- GitHub Actions run: `35084090426`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` Release build, all 11 embedded-locale checks, artifact staging and upload passed with `0 warnings / 0 errors`.
+- Workflow artifact ID: `10441760708` (`PrayerClarity-1.0.2-ci-6bf5fec32feac3567c5bfe2f450c942cc8d5be19`).
+- Artifact ZIP digest: `sha256:a4487ce684c9556ae6380409267f9f49ef6b2c0f228abb31ab3c459a56238f8d`.
+- Handoff DLL: `PrayerClarity-1.0.2-ci.dll`.
+- Handoff DLL SHA-256: `734a0855abd1c808357b247740ca47afc85e1857a7cd4ab88d0be46eb88cbc6d`.
+- Supported Assembly-CSharp MVID: `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- The downloaded artifact DLL was independently SHA-256 rechecked before handoff and matched the workflow-produced hash.
 
 ## Product change
 
@@ -73,4 +86,4 @@ At minimum:
    - pulpit and Character -> Temporary Effects should behave exactly as in accepted 1.0.1;
    - no PrayerClarity runtime errors should appear.
 
-Stable promotion requires explicit runtime acceptance. `candidate/1.0.2`, once created, is immutable evidence and must not replace or move `candidate/1.0.1` or `accepted/clarity-1.0.1`.
+Stable promotion requires explicit runtime acceptance. `candidate/1.0.2` is immutable evidence and must not replace or move `candidate/1.0.1` or `accepted/clarity-1.0.1`.
