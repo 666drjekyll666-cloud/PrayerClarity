@@ -1,6 +1,6 @@
 # PrayerClarity 1.0.8 — Technology tooltip viewport safety
 
-Status: **Clarity-only runtime candidate preparation**.
+Status: **Clarity-only runtime candidate handed for verification**.
 
 Baseline: exact `candidate/1.0.7` source `972917f2a115e34eca6f1d476f911b6280ab0474`.
 
@@ -55,6 +55,20 @@ Bindings are resolved/compiled during plugin initialization. On each `WidgetsBub
 - No new localization strings are introduced.
 - The separate `Craft for sermon not found: ...` log-noise cleanup is intentionally not coupled to this candidate.
 
+## Frozen candidate / build evidence
+
+- Frozen ref: `candidate/1.0.8`.
+- Exact source SHA: `4ce32e11f782eef10ade0c8569d206ba7bca6df3`.
+- GitHub Actions run: `35106747551` — success.
+- Build result: `0 Warning(s)`, `0 Error(s)`.
+- Embedded locale gate passed for all 11 supported locales: `en`, `fr`, `de`, `zh_cn`, `es`, `pt_br`, `ko`, `ja`, `ru`, `it`, `pl`.
+- Workflow artifact ID: `10450444006`.
+- Artifact name: `PrayerClarity-1.0.8-ci-4ce32e11f782eef10ade0c8569d206ba7bca6df3`.
+- Artifact ZIP SHA-256: `4d7dbadab1705b4599f57d8919d395331ce85897c9beed208de612389acc58be`.
+- DLL filename in artifact: `PrayerClarity-1.0.8-ci.dll`.
+- DLL SHA-256: `200d6a8b40324d558a0ec4d7c8fe6ea6478082a50933a9d0665916abdffbc888`.
+- Handoff verification: the artifact was downloaded after CI, extracted, and the DLL SHA-256 was independently rechecked against `BUILD_INFO.txt` and CI output. A convenience copy named `PrayerClarity.dll` has identical bytes/hash; no rebuild was performed.
+
 ## Requested runtime acceptance
 
 Test the exact candidate DLL on Graveyard Keeper 1.407:
@@ -66,4 +80,4 @@ Test the exact candidate DLL on Graveyard Keeper 1.407:
 5. **One ordinary non-prayer Technology tooltip:** confirm its placement is unchanged.
 6. Check `BepInEx/LogOutput.log`: no PrayerClarity viewport-safety error should appear.
 
-Stable promotion still requires explicit user runtime acceptance. A numbered 1.0.8 DLL must correspond to one frozen `candidate/1.0.8` source ref and recorded artifact hash.
+Stable promotion still requires explicit user runtime acceptance. The frozen `candidate/1.0.8` ref remains at the exact runtime source SHA above; this post-freeze documentation update lives only on the dev workstream and does not alter candidate bytes.
