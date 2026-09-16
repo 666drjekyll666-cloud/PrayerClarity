@@ -113,30 +113,49 @@ namespace PrayerClarity
 
             if (!anyFaith && !anyMoney) return null;
 
-            List<string> lines = new List<string>
+            if (!comparative || tiers.Count == 1)
             {
-                Localization.F("tech.success_bonus") + ":"
-            };
+                List<string> singleLines = new List<string>
+                {
+                    Localization.F("tech.success_bonus") + ":"
+                };
 
+                if (anyFaith)
+                    singleLines.Add(BuildSingleResourceLine(
+                        tiers[0],
+                        "(faith)",
+                        t => t.FaithBonusRate,
+                        t => t.FixedFaithBonus));
+
+                if (anyMoney)
+                    singleLines.Add(BuildSingleResourceLine(
+                        tiers[0],
+                        "(slv) " + Localization.F("tech.donations"),
+                        t => t.MoneyBonusRate,
+                        t => t.FixedMoneyBonus));
+
+                return string.Join("\n", singleLines.ToArray());
+            }
+
+            List<string> resourceBlocks = new List<string>();
             if (anyFaith)
-                lines.Add(BuildResourceBlock(
+                resourceBlocks.Add(BuildComparativeResourceBlock(
                     tiers,
-                    "(faith)",
+                    R.VanillaLocalize("faith"),
                     "(faith)",
                     t => t.FaithBonusRate,
-                    t => t.FixedFaithBonus,
-                    comparative));
+                    t => t.FixedFaithBonus));
 
             if (anyMoney)
-                lines.Add(BuildResourceBlock(
+                resourceBlocks.Add(BuildComparativeResourceBlock(
                     tiers,
-                    "(slv) " + Localization.F("tech.donations"),
+                    Localization.F("tech.donations"),
                     "(slv)",
                     t => t.MoneyBonusRate,
-                    t => t.FixedMoneyBonus,
-                    comparative));
+                    t => t.FixedMoneyBonus));
 
-            return string.Join("\n", lines.ToArray());
+            return Localization.F("tech.success_bonus") + ":\n" +
+                   string.Join("\n\n", resourceBlocks.ToArray());
         }
 
         private static bool AnyContribution(
@@ -152,52 +171,63 @@ namespace PrayerClarity
             return false;
         }
 
-        private static string BuildResourceBlock(
+        private static string BuildSingleResourceLine(
+            PrayerForecast.TierDetails tier,
+            string label,
+            Func<PrayerForecast.TierDetails, float> rate,
+            Func<PrayerForecast.TierDetails, float> fixedValue)
+        {
+            string value = FormatCombined(rate(tier), fixedValue(tier), false);
+            return label + (string.IsNullOrEmpty(value) ? string.Empty : " " + value);
+        }
+
+        private static string BuildComparativeResourceBlock(
             List<PrayerForecast.TierDetails> tiers,
             string label,
             string resourceIcon,
             Func<PrayerForecast.TierDetails, float> rate,
-            Func<PrayerForecast.TierDetails, float> fixedValue,
-            bool comparative)
+            Func<PrayerForecast.TierDetails, float> fixedValue)
         {
-            if (!comparative || tiers.Count == 1)
-            {
-                PrayerForecast.TierDetails tier = tiers[0];
-                string value = FormatCombined(rate(tier), fixedValue(tier), false);
-                return label + (string.IsNullOrEmpty(value) ? string.Empty : " " + value);
-            }
-
             bool rateSame = AllEqual(tiers, rate);
             bool fixedSame = AllEqual(tiers, fixedValue);
-
-            List<string> common = new List<string>();
             float firstRate = rate(tiers[0]);
             float firstFixed = fixedValue(tiers[0]);
 
-            if (rateSame && Math.Abs(firstRate) >= Epsilon)
-                common.Add(FormatPercent(firstRate, false));
-            if (fixedSame && Math.Abs(firstFixed) >= Epsilon)
-                common.Add(FormatSignedNumber(firstFixed, false));
-
-            List<string> lines = new List<string>();
-            lines.Add(label + (common.Count == 0 ? string.Empty : " " + string.Join(" ", common.ToArray())));
-
-            if (!rateSame || !fixedSame)
+            if (rateSame && fixedSame)
             {
-                foreach (PrayerForecast.TierDetails tier in tiers)
-                {
-                    List<string> parts = new List<string>();
-                    if (!rateSame) parts.Add(FormatPercent(rate(tier), true));
-                    if (!fixedSame) parts.Add(FormatSignedNumber(fixedValue(tier), true));
-
-                    lines.Add(
-                        TierPrefix(tier, true) +
-                        string.Join(" ", parts.ToArray()) +
-                        " " + resourceIcon);
-                }
+                string common = FormatCombined(firstRate, firstFixed, false);
+                return label + ":" +
+                       (string.IsNullOrEmpty(common) ? string.Empty : " " + common + " " + resourceIcon);
             }
 
-            return string.Join("\n", lines.ToArray());
+            bool showRate = AnyNonZero(tiers, rate);
+            bool showFixed = AnyNonZero(tiers, fixedValue);
+            List<string> values = new List<string>();
+
+            foreach (PrayerForecast.TierDetails tier in tiers)
+            {
+                List<string> parts = new List<string>();
+                if (showRate) parts.Add(FormatPercent(rate(tier), true));
+                if (showFixed) parts.Add(FormatSignedNumber(fixedValue(tier), true));
+
+                values.Add(
+                    TierPrefix(tier, true) +
+                    string.Join(" ", parts.ToArray()) +
+                    " " + resourceIcon);
+            }
+
+            return label + ":\n" + string.Join("   ", values.ToArray());
+        }
+
+        private static bool AnyNonZero(
+            List<PrayerForecast.TierDetails> tiers,
+            Func<PrayerForecast.TierDetails, float> selector)
+        {
+            foreach (PrayerForecast.TierDetails tier in tiers)
+            {
+                if (Math.Abs(selector(tier)) >= Epsilon) return true;
+            }
+            return false;
         }
 
         private static bool AllEqual(
@@ -361,8 +391,6 @@ namespace PrayerClarity
                 values.Add(TierPrefix(tier, true) + value);
             }
 
-            // One complete tier per line prevents NGUI from splitting a short unit
-            // suffix or quality symbol away from its value on narrower/localized text.
             return header + ":\n" + string.Join("\n", values.ToArray());
         }
 
