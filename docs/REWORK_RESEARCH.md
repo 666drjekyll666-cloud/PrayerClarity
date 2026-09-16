@@ -1,6 +1,6 @@
 # PrayerClarity — Rework research
 
-Status: research/design synthesis, updated 2026-09-16 after user design review and Repentance lifecycle probe 0.1.1. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
+Status: research/design synthesis, updated 2026-09-16 after user design review, Repentance lifecycle evidence, and native visual-FX audit. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
 
 ## Baseline
 
@@ -139,7 +139,7 @@ Stock player parameter is `confession_probability = 0.15`.
 
 ### Probe 0.1.1 — lifecycle data and exact confession rewards
 
-Direct runtime data now establishes:
+Direct runtime data establishes:
 
 `LogicDefinition church_budka_roll`:
 
@@ -147,8 +147,6 @@ Direct runtime data now establishes:
 - `period_time = 1`;
 - executes `SetPpar("confession_probability", 0.15)`;
 - then executes script `church_budka_roll`.
-
-The unit/meaning of `start_time` and `period_time` is still an evidence gap until the scheduler consumer code is inspected. Do not yet label this “once per day” or “twice per day” as fact.
 
 Confessional I (`church_budka_1`) reward on `confession_available`:
 
@@ -162,9 +160,35 @@ Confessional II (`church_budka_2`) reward:
 - **70%** Story II (`story:2`);
 - **30%** Story III (`story:3`).
 
-This materially raises the value of Repentance compared with treating every confession as “1 Faith + one generic Story”. Final 30/50/70 or another chance ladder must be modeled only after scheduler cadence is proved.
+### Probe 0.1.0 visual/scheduler follow-up — scheduler semantics closed
 
-A combined visual/scheduler probe is now intended to close the scheduler-unit evidence without another dedicated Repentance-only probe.
+`LogicData.GetNextExecutionTime()` schedules directly in `MainGame.game_time` using `start_time + n * period_time`; `CheckPeriod()` executes when that game-time boundary is reached.
+
+Cross-checking the full stock `logics_data` table closes the unit semantics:
+
+- ordinary daily NPC spawn/despawn and Donkey logic use `period_time = 1`;
+- weekly Bishop/key-character logic uses `period_time = 6`;
+- Graveyard Keeper's week is six in-game days.
+
+**Fact:** `church_budka_roll period_time=1` is a **once-per-in-game-day** roll at a fixed daily phase. Each existing confessional is rerolled independently every day, and an unconsumed previous `confession_available` is removed before that day's new roll.
+
+The stock prayer-duration values 18/36/54 minutes correspond to approximately **2.4 / 4.8 / 7.2 stock game days** on the vanilla 450-second day timebase. Exact discrete roll count can differ by one depending on sermon timing relative to the daily roll, so balance should use expected ranges rather than promise an exact number of confessions.
+
+### Repentance quantitative implication
+
+With both confessionals built, expected confession opportunities over those duration windows are approximately:
+
+| Chance while active | Bronze 2.4d | Silver 4.8d | Gold 7.2d |
+| --- | ---: | ---: | ---: |
+| old 30 / 50 / 70% benchmark | 1.44 | 4.80 | 10.08 |
+| 40 / 70 / 100% model | 1.92 | 6.72 | 14.40 |
+| 50 / 75 / 100% model | 2.40 | 7.20 | 14.40 |
+
+With only Confessional I built, halve those expected counts.
+
+For both confessionals, expected Faith from consumed confessions is `3 * chance * active_days`, before valuing Stories. Thus a Gold 100% window is roughly **21.6 Faith plus ~14.4 Stories** if the player has both confessionals and actually checks/uses them every day. This is powerful, but it also demands daily church interaction and consumes a full weekly sermon slot.
+
+**Design judgement:** the old 30/50/70 benchmark is now probably too cautious at Gold. A leading direction is to make Gold **100% daily confession availability** and choose Bronze/Silver below it. `40/70/100` and `50/75/100` remain design hypotheses pending user choice; no final Repentance ladder is accepted yet.
 
 ## Imagination and Excellence scope
 
@@ -223,24 +247,46 @@ Still open: whether to remove every stock fixed/off-theme side reward. Faith cle
 - Soul Contentment: re-audit whether 36/72/108 useful duration alone justifies quality cost before increasing magnitude.
 - Thorough Cleansing: keep stock x2 magnitude initially; separately verify whether quality-duration alone adequately rewards Silver/Gold.
 
-## Visual FX research gate
+## Native visual FX audit — 2026-09-16
 
-Open-source Graveyard Keeper BepInEx projects confirm ordinary Unity object manipulation/instantiation and access to Unity particle-system modules are technically available, but no trustworthy existing public implementation of a player prayer aura has been found yet.
+The installed 1.407 runtime provides several reusable visual seams; no custom particle stack is required for first experimentation.
 
-Therefore the preferred evidence path is direct inspection of the installed 1.407 runtime:
+Verified player hierarchy includes:
 
-1. inspect exact `LogicDefinition` scheduler consumers;
-2. inspect `CreatePrayBuffFlyingObject` / buff/flying-object seams;
-3. inventory player hierarchy/anchors and loaded native ParticleSystem/effect prefabs;
-4. prefer reusing a native game effect over creating a custom VFX stack;
-5. only prototype visuals if lifecycle can be tied to buff add/remove or another event-driven boundary.
+- `Player(Clone)/content/character/char_hero/fx` — existing character FX sprite anchor;
+- `.../char_hero/shard_charge_fx` — existing player-bound looping ParticleSystem, normally present with emission disabled;
+- `.../char_hero/tool/fire/fire (1)` — native tool-attached flame ParticleSystem;
+- existing player light hierarchy under `Char light` and tool fire.
+
+Verified church pulpit `PrayFX` includes native prayer-themed effects:
+
+- `rays_fx` — one-shot pale rays;
+- `sparks_fx` — one-shot white sparks;
+- `calcine_fx` — one-shot pale calcine particles;
+- `cloud_fx` — short warm/golden cloud;
+- `pray_track_fx` and two `pray_track_fx_tst_sub` variants — looping prayer tracks with native sorting components.
+
+The game's `AuraEmitter/AuraReceiver` classes are gameplay radius/parameter systems, **not evidence of a graphical aura system**. Do not use them merely to draw prayer polish.
+
+The native sermon buff path already uses `PlayerComponent.CreatePrayBuffFlyingObject` -> `FlyingObject.CreateBuffFlyingObject`, which creates the buff icon at the pulpit and flies it to the Buffs UI. This is useful for sermon reveal but is not itself a persistent world aura.
+
+### Visual design direction
+
+Prefer restrained visual grammar:
+
+- persistent player-bound visual only for a prayer where the Keeper is continuously in an altered state; Combat is the strongest candidate;
+- one-shot native prayer burst at successful sermon activation can be shared more broadly without becoming visual clutter;
+- contextual effects at the affected system (confessional, corpse, soul, plant) are preferable to a persistent Keeper aura when the prayer acts remotely;
+- bind persistent FX to buff add/remove lifecycle, not polling.
+
+A dedicated **Visual Audition Probe 0.1.0** was built to compare stock-native candidates in-game before any production VFX decision. It performs no save writes and no Harmony patches; its temporary clones exist only for the current runtime session.
 
 ## Material open decisions / evidence gates
 
-1. **Repentance:** prove scheduler units/cadence, then choose final confession-probability ladder.
+1. **Repentance:** choose the final daily confession-probability ladder. Gold 100% is now the leading design direction; Bronze/Silver remain open between the modeled shapes.
 2. **Faith/Donations cleanup:** decide exact fixed/off-theme reward removal after representative payout modeling.
 3. **Imagination:** 3 Silver / 3 Gold Stories is the leading accepted candidate; model once against actual quality-production economics before roster lock.
 4. **BSS quality:** quantify whether duration-only Silver/Gold value is genuinely useful.
-5. **Visual polish:** determine whether a cheap native FX seam exists and which prayers deserve persistent/subtle versus one-shot feedback.
+5. **Visual polish:** user visual audition must decide whether native gold/player prayer FX are attractive enough for Combat and whether a one-shot prayer burst belongs in the general prayer grammar.
 
 Implementation-only gates after roster lock remain Roots SmartExpression lifecycle, Repose corpse RNG seam, Combat damage/regen/visual lifecycle seams, and safe Protection recipe retirement.
