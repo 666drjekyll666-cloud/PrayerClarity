@@ -9,7 +9,7 @@
   "forecast.reward": "Récompense : {0}",
   "tech.prayer_details": "Détails de la prière",
   "tech.success_bonus": "Ajouté en cas de succès",
-  "tech.success_reward_bonus": "Bonus de récompense en cas de succès",
+  "tech.success_reward_bonus": "Bonus en cas de succès",
   "tech.requires": "Requiert (cross) {0}",
   "tech.requires_header": "Requiert",
   "tech.donations": "Dons",
