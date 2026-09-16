@@ -154,7 +154,7 @@ namespace PrayerClarity
                     t => t.MoneyBonusRate,
                     t => t.FixedMoneyBonus));
 
-            return Localization.F("tech.success_bonus") + ":\n" +
+            return Localization.F("tech.success_reward_bonus") + ":\n" +
                    string.Join("\n\n", resourceBlocks.ToArray());
         }
 
@@ -192,12 +192,13 @@ namespace PrayerClarity
             bool fixedSame = AllEqual(tiers, fixedValue);
             float firstRate = rate(tiers[0]);
             float firstFixed = fixedValue(tiers[0]);
+            string resourceHeader = resourceIcon + " " + label + ":";
 
             if (rateSame && fixedSame)
             {
                 string common = FormatCombined(firstRate, firstFixed, false);
-                return label + ":" +
-                       (string.IsNullOrEmpty(common) ? string.Empty : " " + common + " " + resourceIcon);
+                return resourceHeader +
+                       (string.IsNullOrEmpty(common) ? string.Empty : " " + common);
             }
 
             bool showRate = AnyNonZero(tiers, rate);
@@ -211,12 +212,11 @@ namespace PrayerClarity
                 if (showFixed) parts.Add(FormatSignedNumber(fixedValue(tier), true));
 
                 values.Add(
-                    TierPrefix(tier, true) +
-                    string.Join(" ", parts.ToArray()) +
-                    " " + resourceIcon);
+                    TierPrefix(tier, false) + ": " +
+                    string.Join(" ", parts.ToArray()));
             }
 
-            return label + ":\n" + string.Join(" ", values.ToArray());
+            return resourceHeader + "\n" + string.Join(" ", values.ToArray());
         }
 
         private static bool AnyNonZero(
@@ -388,10 +388,10 @@ namespace PrayerClarity
                 string value = tier.HasSpecialDuration
                     ? Localization.F("active.timer_days", tier.SpecialDurationDays)
                     : "—";
-                values.Add(TierPrefix(tier, true) + value);
+                values.Add(TierPrefix(tier, false) + ": " + value);
             }
 
-            return header + ":\n" + string.Join("\n", values.ToArray());
+            return header + ":\n" + string.Join(" ", values.ToArray());
         }
 
         private static string FormatCombined(float rate, float fixedValue, bool includeZeros)
