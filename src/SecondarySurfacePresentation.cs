@@ -9,7 +9,8 @@ namespace PrayerClarity
 {
     internal static class SecondarySurfacePresentation
     {
-        private const int TechnologyTooltipMaxWidth = 360;
+        private const int TechnologyTooltipFallbackMaxWidth = 360;
+        private const float TechnologyTooltipViewportFraction = 0.72f;
 
         private static ManualLogSource _log;
         private static bool _buffErrorLogged;
@@ -19,6 +20,7 @@ namespace PrayerClarity
         private static MethodInfo _tooltipAddDataMethod;
         private static Type _blankSeparatorType;
         private static Type _bubbleTextType;
+        private static Type _uiRootType;
         private static FieldInfo _playerBuffIdField;
         private static FieldInfo _playerBuffEndTimeField;
         private static MethodInfo _gameTimeGetter;
@@ -32,6 +34,7 @@ namespace PrayerClarity
             Type techUnlock = R.GameType("TechUnlock");
             Type tooltip = R.GameType("Tooltip");
             Type mainGame = R.GameType("MainGame");
+            _uiRootType = R.AnyType("UIRoot");
 
             MethodInfo drawBuff = R.Method(perkBuffItemGui, "Draw", false, new[] { playerBuff });
             MethodInfo getTooltip = R.Method(techUnlock, "GetTooltip", false, new[] { tooltip });
@@ -145,12 +148,13 @@ namespace PrayerClarity
                 if (string.IsNullOrEmpty(summary) || __0 == null) return;
 
                 Localization.UseCurrentGameLanguage();
-                if (!TryReplaceVanillaPrayerMechanics(__0, summary))
+                int maxWidth = GetTechnologyTooltipMaxWidth(__0);
+                if (!TryReplaceVanillaPrayerMechanics(__0, summary, maxWidth))
                 {
                     object blank = CreateBlankSeparator();
                     if (blank != null) AddTooltipData(__0, blank);
                     AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
-                    AddTooltipData(__0, CreateTextData(summary, 4, TechnologyTooltipMaxWidth));
+                    AddTooltipData(__0, CreateTextData(summary, 4, maxWidth));
                 }
 
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
@@ -163,7 +167,7 @@ namespace PrayerClarity
             }
         }
 
-        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary)
+        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary, int maxWidth)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -192,7 +196,7 @@ namespace PrayerClarity
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
             R.Set(header, "text", Localization.F("tech.prayer_details"));
-            list[headerIndex + 1] = CreateTextData(summary, 4, TechnologyTooltipMaxWidth);
+            list[headerIndex + 1] = CreateTextData(summary, 4, maxWidth);
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
 
             if (headerIndex > 0)
@@ -249,6 +253,33 @@ namespace PrayerClarity
             return -1;
         }
 
+        private static int GetTechnologyTooltipMaxWidth(object tooltip)
+        {
+            try
+            {
+                Component component = tooltip as Component;
+                if (component == null || _uiRootType == null || Screen.height <= 0)
+                    return TechnologyTooltipFallbackMaxWidth;
+
+                Transform rootTransform = component.transform.root;
+                Component uiRoot = rootTransform == null ? null : rootTransform.GetComponent(_uiRootType);
+                if (uiRoot == null) return TechnologyTooltipFallbackMaxWidth;
+
+                int manualHeight = R.Int(R.Get(uiRoot, "manualHeight"));
+                Rect safe = Screen.safeArea;
+                if (manualHeight <= 0 || safe.width <= 0f)
+                    return TechnologyTooltipFallbackMaxWidth;
+
+                float logicalSafeWidth = safe.width * manualHeight / Screen.height;
+                int adaptive = Mathf.FloorToInt(logicalSafeWidth * TechnologyTooltipViewportFraction);
+                return Mathf.Max(TechnologyTooltipFallbackMaxWidth, adaptive);
+            }
+            catch
+            {
+                return TechnologyTooltipFallbackMaxWidth;
+            }
+        }
+
         private static string BuildTechnologySummary(object techUnlock)
         {
             List<object> crafts = ResolvePrayerCrafts(techUnlock);
@@ -262,7 +293,7 @@ namespace PrayerClarity
             }
             if (tiers.Count == 0) return null;
 
-            return TooltipDetailsRenderer.BuildComparative(tiers);
+            return TechnologyTooltipTierRenderer.Build(tiers);
         }
 
         private static List<object> ResolvePrayerCrafts(object techUnlock)
