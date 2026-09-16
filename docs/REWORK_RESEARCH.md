@@ -1,6 +1,6 @@
 # PrayerClarity — Rework research
 
-Status: research/design synthesis, updated 2026-09-16 after user design review, Repentance lifecycle evidence, and native visual-FX audit. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
+Status: research/design synthesis, updated 2026-09-16 after user design review, Repentance lifecycle evidence, native visual-FX audit, and first visual audition. No Balance/Rework mechanic here is accepted runtime behavior until implemented and runtime-tested where required.
 
 ## Baseline
 
@@ -123,6 +123,18 @@ A subtle native visual effect is desirable if it can be implemented cheaply and 
 
 Do **not** justify per-frame scans, broad polling, custom heavy VFX systems or brittle asset surgery for this polish.
 
+### Repentance ladder — accepted design target
+
+Rebalanced Repentance uses the daily-confession probability ladder:
+
+- Bronze: **50%**;
+- Silver: **75%**;
+- Gold: **100%**.
+
+Keep current durations 18/36/54 min initially.
+
+Gold intentionally means that every daily confession roll succeeds for each existing confessional while the buff is active. This makes premium quality a reliability progression rather than merely a longer timer.
+
 ## Repentance evidence
 
 ### Probe 0.1.0 — per-roll mechanism
@@ -176,19 +188,19 @@ The stock prayer-duration values 18/36/54 minutes correspond to approximately **
 
 ### Repentance quantitative implication
 
-With both confessionals built, expected confession opportunities over those duration windows are approximately:
+With both confessionals built, the accepted 50/75/100 ladder gives expected confession opportunities of roughly:
 
-| Chance while active | Bronze 2.4d | Silver 4.8d | Gold 7.2d |
+| Quality | Chance | Active window | Expected confession opportunities |
 | --- | ---: | ---: | ---: |
-| old 30 / 50 / 70% benchmark | 1.44 | 4.80 | 10.08 |
-| 40 / 70 / 100% model | 1.92 | 6.72 | 14.40 |
-| 50 / 75 / 100% model | 2.40 | 7.20 | 14.40 |
+| Bronze | 50% | ~2.4d | ~2.4 |
+| Silver | 75% | ~4.8d | ~7.2 |
+| Gold | 100% | ~7.2d | ~14.4 |
 
 With only Confessional I built, halve those expected counts.
 
 For both confessionals, expected Faith from consumed confessions is `3 * chance * active_days`, before valuing Stories. Thus a Gold 100% window is roughly **21.6 Faith plus ~14.4 Stories** if the player has both confessionals and actually checks/uses them every day. This is powerful, but it also demands daily church interaction and consumes a full weekly sermon slot.
 
-**Design judgement:** the old 30/50/70 benchmark is now probably too cautious at Gold. A leading direction is to make Gold **100% daily confession availability** and choose Bronze/Silver below it. `40/70/100` and `50/75/100` remain design hypotheses pending user choice; no final Repentance ladder is accepted yet.
+Implementation seam note: stock `church_budka_roll` writes `confession_probability=0.15` immediately before the roll, so Rebalanced must apply the effective tier probability at the roll boundary rather than relying on a one-time persistent player-param write when the buff starts.
 
 ## Imagination and Excellence scope
 
@@ -270,23 +282,42 @@ The game's `AuraEmitter/AuraReceiver` classes are gameplay radius/parameter syst
 
 The native sermon buff path already uses `PlayerComponent.CreatePrayBuffFlyingObject` -> `FlyingObject.CreateBuffFlyingObject`, which creates the buff icon at the pulpit and flies it to the Buffs UI. This is useful for sermon reveal but is not itself a persistent world aura.
 
+### Visual Audition 0.1.0 — user runtime finding
+
+The first native-FX audition was tested by the user and **none of its candidates is accepted as-is**:
+
+- F2 / recolored `shard_charge_fx`: technically follows the player, but is far too small/subtle; visually it mostly lights the belt area.
+- F3 / stock `pray_track_fx` parented to the player: visually resembles slow golden hairs/micro-lightning growing upward, but emitted particles remain at their world positions. The player can walk away from them, so it fails as a persistent aura.
+- F5 / pulpit one-shot burst: too large, dirty and visually bulky; rejected as general blessing feedback.
+
+This is useful evidence rather than a failed direction. F2 establishes that the player-bound native FX seam itself works but needs a larger visual footprint. F3 specifically identifies particle simulation-space behavior as the reason it detaches from the moving Keeper.
+
+### Visual Audition 0.1.1 — narrowed follow-up
+
+Second audition scope:
+
+- F2: scale the player-native `shard_charge_fx` footprint substantially while preserving a soft gold treatment;
+- F3: force the prayer-track ParticleSystem into local simulation space so already-emitted particles move with the Keeper;
+- F4: combine those two only for comparison;
+- F5: test a restrained gold recolor/scale of the player's native tool-fire ParticleSystem attached to the animated front tool sprite, as a proxy for the desired holy-weapon-flame fantasy;
+- F6: disable audition effects.
+
+The follow-up remains research-only: temporary runtime clones, no save writes, no Harmony and no production commitment.
+
 ### Visual design direction
 
 Prefer restrained visual grammar:
 
 - persistent player-bound visual only for a prayer where the Keeper is continuously in an altered state; Combat is the strongest candidate;
-- one-shot native prayer burst at successful sermon activation can be shared more broadly without becoming visual clutter;
 - contextual effects at the affected system (confessional, corpse, soul, plant) are preferable to a persistent Keeper aura when the prayer acts remotely;
-- bind persistent FX to buff add/remove lifecycle, not polling.
-
-A dedicated **Visual Audition Probe 0.1.0** was built to compare stock-native candidates in-game before any production VFX decision. It performs no save writes and no Harmony patches; its temporary clones exist only for the current runtime session.
+- bind production persistent FX to buff add/remove lifecycle, not polling;
+- the first audition rejects a large generic sermon burst, so do not add one merely for spectacle.
 
 ## Material open decisions / evidence gates
 
-1. **Repentance:** choose the final daily confession-probability ladder. Gold 100% is now the leading design direction; Bronze/Silver remain open between the modeled shapes.
-2. **Faith/Donations cleanup:** decide exact fixed/off-theme reward removal after representative payout modeling.
-3. **Imagination:** 3 Silver / 3 Gold Stories is the leading accepted candidate; model once against actual quality-production economics before roster lock.
-4. **BSS quality:** quantify whether duration-only Silver/Gold value is genuinely useful.
-5. **Visual polish:** user visual audition must decide whether native gold/player prayer FX are attractive enough for Combat and whether a one-shot prayer burst belongs in the general prayer grammar.
+1. **Faith/Donations cleanup:** decide exact fixed/off-theme reward removal after representative payout modeling.
+2. **Imagination:** 3 Silver / 3 Gold Stories is the leading accepted candidate; model once against actual quality-production economics before roster lock.
+3. **BSS quality:** quantify whether duration-only Silver/Gold value is genuinely useful.
+4. **Visual polish:** evaluate Visual Audition 0.1.1; choose or reject scaled aura, local prayer track, and weapon-flame directions.
 
-Implementation-only gates after roster lock remain Roots SmartExpression lifecycle, Repose corpse RNG seam, Combat damage/regen/visual lifecycle seams, and safe Protection recipe retirement.
+Implementation-only gates after roster lock remain Roots SmartExpression lifecycle, Repose corpse RNG seam, Combat damage/regen/visual lifecycle seams, Repentance daily-roll seam, and safe Protection recipe retirement.
