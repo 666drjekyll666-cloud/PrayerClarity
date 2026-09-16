@@ -2,6 +2,22 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity 1.0.10 — Technology tier-first UX candidate
+
+- Type: Clarity-only Technology presentation candidate; no prayer-mechanics or balance changes.
+- Development branch: `dev/technology-tooltip-ux-1.0.10`.
+- Frozen candidate ref: `candidate/1.0.10`.
+- Exact build source SHA: `f21674f0ddcc7e06a7d0d1b587faa57e2e5c0b1d`.
+- GitHub Actions run: `35160674466`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` Release build, all 11 embedded-locale markers, artifact staging and upload passed.
+- Workflow artifact ID: `10473296768` (`PrayerClarity-1.0.10-ci-f21674f0ddcc7e06a7d0d1b587faa57e2e5c0b1d`).
+- Artifact ZIP digest: `sha256:31dc000d9e1d70ba00d6bc93c7d56115eb27a11c97d725b0e693e07c5a7bbbab`.
+- Handoff filename: `PrayerClarity-1.0.10-ci.dll`.
+- Handoff DLL SHA-256: `10c04409124914529c962017a7829eecd4fc1e1c2ae376f0230aaa06446c2ff7`.
+- Scope: Technology comparison changes from property-first to `shared invariants -> per-tier snapshots`; uses native quality glyphs as tier headings; uses explicit localized `100% success requires` wording; separates proportional and flat success additions; omits the Commercial Blessing purpose paragraph from the comparison body; gives the Technology body an adaptive maximum width derived from 72% of logical safe-area width with the prior 360 value retained as fallback. The accepted 1.0.9 PrayerClarity-owned viewport clamp remains unchanged.
+- Requested user test: inspect Prayer for Prosperity first, then Faith or Donations, Combo and Shoots & Roots in Technology. Confirm the tier grouping is immediately readable, the `% + flat` ambiguity is gone, the threshold wording is clear, normal tier rows no longer wrap unnecessarily, and the bubble remains inside the viewport. Russian at the normal resolution is the primary gate; German and Japanese are useful spot checks if convenient. Ordinary non-prayer Technology tooltips should remain vanilla. No sermon execution is required.
+- Status: **ready for runtime UX/geometry verification; not accepted**.
+
 ## PrayerClarity 0.1.9 — real-window resize / pulpit layout candidate
 
 - Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
