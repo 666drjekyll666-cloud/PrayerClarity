@@ -196,7 +196,10 @@ namespace PrayerClarity
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
             R.Set(header, "text", Localization.F("tech.prayer_details"));
-            R.Set(body, "text", summary);
+            // Replace the stock body object so the PrayerClarity information block uses
+            // a verified left-aligned BubbleWidgetTextData constructor instead of
+            // inheriting the stock centered mechanics-body alignment.
+            list[headerIndex + 1] = CreateTextData(summary, 4);
 
             // Stock TechUnlock.GetTooltip builds the broad prayer requirement first and
             // then concatenates the localized item description directly. Depending on
@@ -275,38 +278,7 @@ namespace PrayerClarity
             }
             if (tiers.Count == 0) return null;
 
-            tiers.Sort((a, b) =>
-            {
-                int aq = a.QualityTier <= 0 ? int.MaxValue : a.QualityTier;
-                int bq = b.QualityTier <= 0 ? int.MaxValue : b.QualityTier;
-                int q = aq.CompareTo(bq);
-                return q != 0 ? q : string.CompareOrdinal(a.CraftId, b.CraftId);
-            });
-
-            List<string> lines = new List<string>();
-            foreach (PrayerForecast.TierDetails tier in tiers)
-            {
-                string quality = QualityLabel(tier.QualityTier);
-                string requirement = tier.Requirement > 0
-                    ? Localization.F("tech.requires", tier.Requirement)
-                    : null;
-
-                if (!string.IsNullOrEmpty(quality) && !string.IsNullOrEmpty(requirement))
-                    lines.Add(quality + ": " + requirement);
-                else if (!string.IsNullOrEmpty(quality))
-                    lines.Add(quality);
-                else if (!string.IsNullOrEmpty(requirement))
-                    lines.Add(requirement);
-
-                string contribution = PresentationText.FormatPrayerContribution(tier);
-                if (!string.Equals(contribution, "—", StringComparison.Ordinal))
-                    lines.Add(Localization.F("tech.success_bonus") + ": " + contribution);
-
-                if (!string.IsNullOrEmpty(tier.SpecialText))
-                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialText);
-            }
-
-            return string.Join("\n", lines.ToArray());
+            return TooltipDetailsRenderer.BuildComparative(tiers);
         }
 
         private static List<object> ResolvePrayerCrafts(object techUnlock)
@@ -363,19 +335,6 @@ namespace PrayerClarity
             result.Add(craft);
         }
 
-        private static string QualityLabel(int qualityTier)
-        {
-            // Probe 0.1.9 verified native small_font quality symbols, so all supported
-            // languages reuse the game's own bronze/silver/gold artwork inline.
-            switch (qualityTier)
-            {
-                case 1: return Localization.F("quality.bronze");
-                case 2: return Localization.F("quality.silver");
-                case 3: return Localization.F("quality.gold");
-                default: return null;
-            }
-        }
-
         private static void RepositionTextTable(object itemGui)
         {
             GameObject go = R.Get(itemGui, "gameObject") as GameObject;
@@ -415,6 +374,7 @@ namespace PrayerClarity
 
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
+            // NGUIText.Alignment: Automatic=0, Left=1.
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
             return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
         }

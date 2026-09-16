@@ -54,6 +54,17 @@ namespace PrayerClarity
             internal float FixedMoneyBonus;
             internal bool UsesSoulGratitude;
             internal BonusHighlight Highlight;
+
+            // Structured special-effect data for property-first tooltip comparison.
+            // SemanticKey excludes duration and is built from raw IDs/values before
+            // localization, so identical mechanics can be collapsed safely.
+            internal string SpecialSemanticKey;
+            internal string SpecialCoreText;
+            internal float SpecialDurationDays;
+            internal bool HasSpecialDuration;
+
+            // Existing combined representation remains for pulpit/other accepted
+            // surfaces so this tooltip polish does not change their grammar.
             internal string SpecialText;
             internal string SpecialIconName;
         }
@@ -61,12 +72,26 @@ namespace PrayerClarity
         private sealed class SpecialInfo
         {
             internal readonly string Text;
+            internal readonly string CoreText;
+            internal readonly string SemanticKey;
             internal readonly string IconName;
+            internal readonly float DurationDays;
+            internal readonly bool HasDuration;
 
-            internal SpecialInfo(string text, string iconName)
+            internal SpecialInfo(
+                string text,
+                string coreText,
+                string semanticKey,
+                string iconName,
+                float durationDays,
+                bool hasDuration)
             {
                 Text = text;
+                CoreText = coreText;
+                SemanticKey = semanticKey;
                 IconName = iconName;
+                DurationDays = durationDays;
+                HasDuration = hasDuration;
             }
         }
 
@@ -135,6 +160,10 @@ namespace PrayerClarity
                 FixedMoneyBonus = fixedMoney,
                 UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
                 Highlight = GetBonusHighlight(craftId),
+                SpecialSemanticKey = special == null ? null : special.SemanticKey,
+                SpecialCoreText = special == null ? null : special.CoreText,
+                SpecialDurationDays = special == null ? 0f : special.DurationDays,
+                HasSpecialDuration = special != null && special.HasDuration,
                 SpecialText = special == null ? null : special.Text,
                 SpecialIconName = special == null ? null : special.IconName
             };
@@ -213,32 +242,64 @@ namespace PrayerClarity
 
         private static SpecialInfo BuildSpecial(object craft, string eventId, List<RewardItem> rewards)
         {
-            List<string> parts = new List<string>();
+            List<string> displayParts = new List<string>();
+            List<string> coreParts = new List<string>();
+            List<string> semanticParts = new List<string>();
             string iconName = null;
+            float durationDays = 0f;
+            bool hasDuration = false;
 
             // The event family is the verified discriminator for the BSS prayer. Keep
             // the player-facing mechanic concise instead of copying the flavor sentence.
             if (eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal))
-                parts.Add(Localization.F("buff.souls_repose"));
+            {
+                string text = Localization.F("buff.souls_repose");
+                displayParts.Add(text);
+                coreParts.Add(text);
+                semanticParts.Add("event:pray_for_souls");
+            }
 
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
             SpecialInfo buff = BuildBuffEffect(buffId, duration);
             if (buff != null)
             {
-                if (!string.IsNullOrEmpty(buff.Text)) parts.Add(buff.Text);
+                if (!string.IsNullOrEmpty(buff.Text)) displayParts.Add(buff.Text);
+                if (!string.IsNullOrEmpty(buff.CoreText)) coreParts.Add(buff.CoreText);
+                if (!string.IsNullOrEmpty(buff.SemanticKey)) semanticParts.Add(buff.SemanticKey);
                 if (!string.IsNullOrEmpty(buff.IconName)) iconName = buff.IconName;
+                if (buff.HasDuration)
+                {
+                    hasDuration = true;
+                    durationDays = buff.DurationDays;
+                }
             }
 
             if (rewards.Count > 0)
             {
                 List<string> rewardParts = new List<string>();
+                List<string> rewardKeys = new List<string>();
                 foreach (RewardItem reward in rewards)
+                {
                     rewardParts.Add(BuildRewardText(reward));
-                parts.Add(Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray())));
+                    rewardKeys.Add(reward.Id + "=" + reward.Value.ToString(CultureInfo.InvariantCulture));
+                }
+                rewardKeys.Sort(StringComparer.Ordinal);
+
+                string rewardText = Localization.F("forecast.reward", string.Join(", ", rewardParts.ToArray()));
+                displayParts.Add(rewardText);
+                coreParts.Add(rewardText);
+                semanticParts.Add("rewards:" + string.Join(",", rewardKeys.ToArray()));
             }
 
-            return parts.Count == 0 ? null : new SpecialInfo(string.Join(" · ", parts.ToArray()), iconName);
+            if (displayParts.Count == 0) return null;
+            return new SpecialInfo(
+                string.Join(" · ", displayParts.ToArray()),
+                string.Join(" · ", coreParts.ToArray()),
+                string.Join("|", semanticParts.ToArray()),
+                iconName,
+                durationDays,
+                hasDuration);
         }
 
         private static string BuildRewardText(RewardItem reward)
@@ -265,25 +326,46 @@ namespace PrayerClarity
             object res = buff == null ? null : R.Get(buff, "res");
             string iconName = GetBuffIconName(buff);
             bool showDuration = true;
+            string semanticKey = "buff:" + buffId;
 
             string text;
             switch (buffId)
             {
                 case "buff_sword":
+                {
+                    float value = res == null ? 0f : R.GameResGet(res, "add_damage");
                     text = NumberedActiveResEffect("active.sword", res, "add_damage");
+                    semanticKey += ":add_damage=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
+                }
                 case "buff_shield":
+                {
+                    float value = res == null ? 0f : R.GameResGet(res, "add_armor");
                     text = NumberedActiveResEffect("active.shield", res, "add_armor");
+                    semanticKey += ":add_armor=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
+                }
                 case "buff_skull":
+                {
+                    float value = res == null ? 0f : R.GameResGet(res, "body_max");
                     text = NumberedActiveResEffect("active.skull", res, "body_max");
+                    semanticKey += ":body_max=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
+                }
                 case "buff_pen":
-                    text = buff == null ? null : Localization.F("active.pen", R.Float(R.Get(buff, "craft_q")));
+                {
+                    float value = buff == null ? 0f : R.Float(R.Get(buff, "craft_q"));
+                    text = buff == null ? null : Localization.F("active.pen", value);
+                    semanticKey += ":craft_q=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
+                }
                 case "buff_star":
-                    text = buff == null ? null : Localization.F("active.star", R.Float(R.Get(buff, "craft_q")));
+                {
+                    float value = buff == null ? 0f : R.Float(R.Get(buff, "craft_q"));
+                    text = buff == null ? null : Localization.F("active.star", value);
+                    semanticKey += ":craft_q=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
+                }
                 case "buff_plant":
                     text = Localization.F("active.plant_inactive");
                     showDuration = false;
@@ -303,10 +385,24 @@ namespace PrayerClarity
                     break;
             }
 
-            if (showDuration && !string.IsNullOrEmpty(text) && duration > 0.0001f)
-                text += " · " + Localization.F("active.timer_days", DurationParameterToGameDays(duration));
+            if (string.IsNullOrEmpty(text)) return null;
 
-            return string.IsNullOrEmpty(text) ? null : new SpecialInfo(text, iconName);
+            float durationDays = 0f;
+            bool hasDuration = showDuration && duration > 0.0001f;
+            string displayText = text;
+            if (hasDuration)
+            {
+                durationDays = DurationParameterToGameDays(duration);
+                displayText += " · " + Localization.F("active.timer_days", durationDays);
+            }
+
+            return new SpecialInfo(
+                displayText,
+                text,
+                semanticKey,
+                iconName,
+                durationDays,
+                hasDuration);
         }
 
         internal static float DurationParameterToGameDays(float durationMinutes)

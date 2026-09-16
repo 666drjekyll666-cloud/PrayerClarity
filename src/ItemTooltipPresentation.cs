@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Logging;
 
@@ -13,7 +12,6 @@ namespace PrayerClarity
         private static Type _bubbleTextType;
         private static Type _blankSeparatorType;
         private static ConstructorInfo _bubbleTextConstructor;
-        private static MethodInfo _nameWithoutQualitySuffix;
 
         internal static void Install(string harmonyId, ManualLogSource log)
         {
@@ -28,10 +26,6 @@ namespace PrayerClarity
             if (getTooltipData == null)
                 throw new MissingMethodException("ItemDefinition.GetTooltipData(Item, bool)");
 
-            _nameWithoutQualitySuffix = R.Method(itemDefinition, "GetNameWithoutQualitySuffix", false, 0);
-            if (_nameWithoutQualitySuffix == null)
-                throw new MissingMethodException("ItemDefinition.GetNameWithoutQualitySuffix()");
-
             R.Patch(harmonyId + ".itemtooltip", typeof(ItemTooltipPresentation), getTooltipData, nameof(ItemTooltipPostfix));
         }
 
@@ -42,17 +36,18 @@ namespace PrayerClarity
                 IList list = __result as IList;
                 if (__instance == null || list == null) return;
 
-                List<object> crafts = ResolvePrayerFamilyCrafts(__instance);
-                if (crafts.Count == 0) return;
+                object craft = ResolvePrayerCraft(__instance);
+                if (craft == null) return;
 
-                string summary = BuildPrayerDetailsSummary(crafts);
+                PrayerForecast.TierDetails tier = PrayerForecast.BuildTierDetails(craft);
+                string summary = TooltipDetailsRenderer.BuildSingle(tier);
                 if (string.IsNullOrEmpty(summary)) return;
 
                 Localization.UseCurrentGameLanguage();
                 if (TryReplaceVanillaPrayerMechanics(list, summary)) return;
 
                 // Unexpected vanilla shape: preserve everything already returned by the
-                // item tooltip and append the same Clarity block used by Technology.
+                // item tooltip and append current-item Clarity rather than deleting data.
                 object blank = CreateBlankSeparator();
                 if (blank != null) list.Add(blank);
                 list.Add(CreateTextData(Localization.F("tech.prayer_details"), 3));
@@ -66,92 +61,14 @@ namespace PrayerClarity
             }
         }
 
-        private static List<object> ResolvePrayerFamilyCrafts(object definition)
+        private static object ResolvePrayerCraft(object itemDefinition)
         {
-            List<object> result = new List<object>();
-            HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
-
-            AddLinkedPrayerCraft(result, seen, definition);
-            if (result.Count == 0) return result;
-
-            string root = _nameWithoutQualitySuffix.Invoke(definition, null) as string;
-            if (string.IsNullOrEmpty(root)) return result;
-
-            // Quality prayers use the verified root:1/root:2/root:3 item family. Resolve
-            // siblings only when they exist; ordinary prayer remains a single-item case.
-            for (int quality = 1; quality <= 3; quality++)
-            {
-                object sibling = R.BalanceData(root + ":" + quality, "ItemDefinition", true);
-                AddLinkedPrayerCraft(result, seen, sibling);
-            }
-
-            return result;
-        }
-
-        private static void AddLinkedPrayerCraft(List<object> result, HashSet<string> seen, object itemDefinition)
-        {
-            if (itemDefinition == null) return;
+            if (itemDefinition == null) return null;
             object craft = R.Get(itemDefinition, "linked_craft");
-            if (craft == null) return;
+            if (craft == null) return null;
 
             string craftId = R.Id(craft) ?? string.Empty;
-            if (!craftId.StartsWith("pray:", StringComparison.Ordinal) || !seen.Add(craftId)) return;
-            result.Add(craft);
-        }
-
-        private static string BuildPrayerDetailsSummary(List<object> crafts)
-        {
-            List<PrayerForecast.TierDetails> tiers = new List<PrayerForecast.TierDetails>();
-            foreach (object craft in crafts)
-            {
-                PrayerForecast.TierDetails tier = PrayerForecast.BuildTierDetails(craft);
-                if (tier != null) tiers.Add(tier);
-            }
-            if (tiers.Count == 0) return null;
-
-            tiers.Sort((a, b) =>
-            {
-                int aq = a.QualityTier <= 0 ? int.MaxValue : a.QualityTier;
-                int bq = b.QualityTier <= 0 ? int.MaxValue : b.QualityTier;
-                int q = aq.CompareTo(bq);
-                return q != 0 ? q : string.CompareOrdinal(a.CraftId, b.CraftId);
-            });
-
-            List<string> lines = new List<string>();
-            foreach (PrayerForecast.TierDetails tier in tiers)
-            {
-                string quality = QualityLabel(tier.QualityTier);
-                string requirement = tier.Requirement > 0
-                    ? Localization.F("tech.requires", tier.Requirement)
-                    : null;
-
-                if (!string.IsNullOrEmpty(quality) && !string.IsNullOrEmpty(requirement))
-                    lines.Add(quality + ": " + requirement);
-                else if (!string.IsNullOrEmpty(quality))
-                    lines.Add(quality);
-                else if (!string.IsNullOrEmpty(requirement))
-                    lines.Add(requirement);
-
-                string contribution = PresentationText.FormatPrayerContribution(tier);
-                if (!string.Equals(contribution, "—", StringComparison.Ordinal))
-                    lines.Add(Localization.F("tech.success_bonus") + ": " + contribution);
-
-                if (!string.IsNullOrEmpty(tier.SpecialText))
-                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialText);
-            }
-
-            return string.Join("\n", lines.ToArray());
-        }
-
-        private static string QualityLabel(int qualityTier)
-        {
-            switch (qualityTier)
-            {
-                case 1: return Localization.F("quality.bronze");
-                case 2: return Localization.F("quality.silver");
-                case 3: return Localization.F("quality.gold");
-                default: return null;
-            }
+            return craftId.StartsWith("pray:", StringComparison.Ordinal) ? craft : null;
         }
 
         private static bool TryReplaceVanillaPrayerMechanics(IList list, string summary)
@@ -180,7 +97,9 @@ namespace PrayerClarity
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
             R.Set(header, "text", Localization.F("tech.prayer_details"));
-            R.Set(body, "text", summary);
+            // Current-item details are a structured scanning block, not centered lore.
+            // Replace only the mechanics body with a left-aligned native tooltip row.
+            list[headerIndex + 1] = CreateTextData(summary, 4);
 
             if (headerIndex > 0)
             {
@@ -250,23 +169,24 @@ namespace PrayerClarity
                 if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
                 if (_bubbleTextType == null) throw new MissingMemberException("BubbleWidgetTextData");
 
-                ConstructorInfo[] constructors = _bubbleTextType.GetConstructors(R.Inst);
-                foreach (ConstructorInfo constructor in constructors)
+                foreach (ConstructorInfo constructor in _bubbleTextType.GetConstructors(R.Inst))
                 {
                     ParameterInfo[] p = constructor.GetParameters();
-                    if (p.Length == 2 && p[0].ParameterType == typeof(string) && p[1].ParameterType.IsEnum)
+                    if (p.Length == 4 && p[0].ParameterType == typeof(string) && p[3].ParameterType == typeof(int))
                     {
                         _bubbleTextConstructor = constructor;
                         break;
                     }
                 }
                 if (_bubbleTextConstructor == null)
-                    throw new MissingMethodException("BubbleWidgetTextData(string, style)");
+                    throw new MissingMethodException("BubbleWidgetTextData(string, TextStyle, Alignment, int)");
             }
 
-            Type styleType = _bubbleTextConstructor.GetParameters()[1].ParameterType;
-            object style = Enum.ToObject(styleType, styleValue);
-            return _bubbleTextConstructor.Invoke(new[] { (object)text, style });
+            ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
+            object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
+            // NGUIText.Alignment: Automatic=0, Left=1.
+            object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
+            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
         }
     }
 }
