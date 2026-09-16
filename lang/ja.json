@@ -13,6 +13,7 @@
   "tech.requires_header": "必要",
   "tech.donations": "寄付金",
   "tech.duration": "持続時間",
+  "tech.quantity": "数量",
   "buff.souls_repose": "(gratitude_points)が多いほど(faith)が増えます。",
   "active.sword": "ダメージ +{0:0.##}",
   "active.shield": "防御 +{0:0.##}",

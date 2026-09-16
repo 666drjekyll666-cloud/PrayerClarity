@@ -13,6 +13,7 @@
   "tech.requires_header": "필요",
   "tech.donations": "기부금",
   "tech.duration": "지속 시간",
+  "tech.quantity": "수량",
   "buff.souls_repose": "(gratitude_points)이 많을수록 (faith)이 증가합니다.",
   "active.sword": "피해 +{0:0.##}",
   "active.shield": "방어력 +{0:0.##}",

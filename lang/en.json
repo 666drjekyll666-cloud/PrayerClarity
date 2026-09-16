@@ -13,6 +13,7 @@
   "tech.requires_header": "Requires",
   "tech.donations": "Donations",
   "tech.duration": "Duration",
+  "tech.quantity": "Quantity",
   "buff.souls_repose": "More (gratitude_points) increases (faith).",
   "active.sword": "+{0:0.##} damage",
   "active.shield": "+{0:0.##} armor",
