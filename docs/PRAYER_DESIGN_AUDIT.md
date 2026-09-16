@@ -21,9 +21,9 @@ The audit specifically asked whether the new Faith/Donations specialist philosop
 
 ## Repository/baseline finding
 
-Current stable PrayerClarity is **1.0.1**, accepted source `7cf6d9287d2aa7cfa8c0529be98f62a3d87360ce`, including the accepted native prayer-item tooltip surface.
+Current stable PrayerClarity at the time of this audit is **1.0.1**, accepted source `7cf6d9287d2aa7cfa8c0529be98f62a3d87360ce`, including the accepted native prayer-item tooltip surface.
 
-The current `research/rework-audit-2026-09-16` branch diverged from `main` before that 1.0.1 work. Therefore future gameplay implementation must start from current stable `main` and carry the accepted research specification forward. Do not build Rebalanced production by treating the research branch's older Clarity source as the runtime base.
+The `research/rework-audit-2026-09-16` branch diverged from `main` before that work. In addition, Clarity is still being refined in parallel. Therefore Rebalanced production must **not** start from this research branch and must not freeze prematurely to 1.0.1. It should start from the next accepted Clarity baseline after the current Clarity work settles.
 
 No open PR currently carries Rebalanced production work.
 
@@ -40,15 +40,13 @@ No open PR currently carries Rebalanced production work.
 | Repose | **Accepted rework** | Reliability ladder improves premium quality without skipping story corpse tiers. |
 | Combat | **Accepted structural/numeric rework** | Offense+defense+regen belong to one narrow weekly combat-preparation fantasy. Strong power is intentional. |
 | Imagination | **Accepted rework** | Preserve healthy +0.7 core; premium tiers pay through duration and 3 Silver/3 Gold Stories. |
-| Excellence | **Accepted rework candidate** | +0.2/+0.5/+1.0 makes expensive upper tiers matter in a narrow quality-craft scope. |
+| Excellence | **Accepted first candidate** | +0.2/+0.5/+1.0 makes expensive upper tiers matter in a narrow quality-craft scope. |
 | Prosperity | **No change** | Existing 1/2/3 Blessings already provide a meaningful quality ladder and natural obsolescence. |
-| BSS Soul's Repose | **Reopened by audit** | New ordinary Faith specialist would dominate stock BSS Faith output through ordinary Soul Gratitude states. |
+| BSS Soul's Repose | **Accepted rework** | Aligns with specialist philosophy while preserving a clean Soul-Gratitude-dependent niche. |
 | Soul Contentment | **Accepted rework** | +20% all tiers; 36/72/108 min is the quality axis, avoiding magnitude×duration over-scaling. |
 | Thorough Cleansing | **No magnitude increase** | x2 is already strong; 36/72/108 min is sufficient premium scaling. |
 
-## Cross-family finding 1 — Faith / Donations / Combo is now coherent
-
-The accepted family has two distinct costs and two distinct benefits.
+## Cross-family finding 1 — Faith / Donations / Combo is coherent
 
 ### Combo
 
@@ -71,25 +69,21 @@ The q grammar is intentionally simple: specialists are Combo +10 Church Quality 
 
 The long-horizon design check is also intentional. Over two successful weeks, rotating Faith specialist then Donations specialist should outperform two repeated Combo sermons on each planned target resource. Otherwise there is no strategic reward for maintaining two prayers and planning around them.
 
-## Cross-family finding 2 — BSS Soul's Repose must be reconsidered
-
-This is the one material prayer decision invalidated by the new specialist philosophy.
+## Cross-family finding 2 — BSS Soul's Repose is now aligned
 
 Verified stock bases are:
 
 - ordinary Faith-family event: `0.2 * CQ * EloquenceFactor`;
 - BSS Soul's Repose event: `0.1 * (CQ + GP) * EloquenceFactor`.
 
-Stock BSS Soul's Repose only adds +50/+100/+150% Faith. Once ordinary Faith rises to +250/+350/+450%, stock BSS Soul's Repose is no longer a convincing Faith specialist through ordinary Soul Gratitude states.
+Stock BSS Soul's Repose only added +50/+100/+150% Faith, so the newly strengthened ordinary Faith specialist would have dominated it through ordinary Soul Gratitude states.
 
-### Recommended alignment
+Accepted correction:
 
-Give BSS Soul's Repose the same pure-specialist contract as ordinary Faith:
-
-- +250/+350/+450% Faith;
+- BSS Soul's Repose uses +250/+350/+450% Faith;
 - q25/40/70;
 - preserve the Soul-Gratitude-dependent base formula;
-- preserve the Chapter +5 Faith +2 Sin Shards recipe;
+- preserve Chapter +5 Faith +2 Sin Shards recipe;
 - remove prayer-owned fixed Faith/money and off-theme donation percentage.
 
 This creates a stable state-dependent comparison independent of tier and Eloquence:
@@ -98,9 +92,7 @@ This creates a stable state-dependent comparison independent of tier and Eloquen
 - GP = CQ -> equal Faith output before integer rounding;
 - GP > CQ -> Soul's Repose wins.
 
-That is a clearer niche than either permanent dominance or permanent inferiority. The 2 Sin Shards are then paid to exploit a sufficiently developed Soul Gratitude state.
-
-This alignment is a **design recommendation pending user confirmation**, not yet an accepted target.
+The 2 Sin Shards therefore buy access to a Faith specialist that becomes preferable only when the player's Soul Gratitude state is actually strong enough to exploit it.
 
 ## Cross-family finding 3 — no global q normalization
 
@@ -120,7 +112,7 @@ Uniform q would be aesthetic symmetry, not better balance.
 
 The clean resource-specialist design does **not** imply removing every stock Faith/money contribution from every special prayer.
 
-For Faith/Donations (and recommended BSS Soul's Repose), off-theme success bonuses blur the exact comparison the prayer exists to make.
+For Faith/Donations/BSS Soul's Repose, off-theme success bonuses blur the exact comparison the prayer exists to make.
 
 For Roots, Repentance, Repose, Combat, Imagination, Excellence and the BSS workflow prayers, small existing sermon-resource contributions are an opportunity-cost floor beside the special effect. No evidence shows that they cause choice compression, and deleting them would be a broad nerf for stylistic purity.
 
@@ -156,37 +148,55 @@ No new philosophy undermines its stock 1/2/3 permanent Blessing progression. Its
 
 The accepted constant-magnitude + duration structure is internally coherent. Increasing both magnitude and duration would over-reward premium tiers without an identified need.
 
-## Implementation-risk findings from the audit
+## Product packaging direction
 
-These do not change the roster but must be closed before acceptance.
+The user-facing product should be split into two clear Nexus offerings rather than one mod with a profile toggle:
+
+1. **PrayerClarity** — Clarity-only, mechanically vanilla. Its strongest promise is that it explains prayer behavior without changing it.
+2. **PrayerClarity Rebalanced** — the same Clarity experience plus the complete audited Rebalanced ruleset.
+
+These should be **two products, one shared source/design system**, not two copy-pasted forks. The player installs one or the other.
+
+This split is preferable because:
+
+- the Clarity-only promise stays unambiguous;
+- updates cannot silently alter game balance for a Clarity user;
+- Nexus descriptions, changelogs and support reports each have one behavioral contract;
+- Rebalanced can evolve its mechanics without forcing configuration complexity onto Clarity-only users;
+- shared source/model infrastructure still prevents UI/localization logic from drifting.
+
+The exact DLL names, BepInEx GUIDs and mutual-exclusion mechanism remain implementation details to verify later. Clarity-only should remain mechanically inert by construction rather than merely shipping the Rebalanced code behind a disabled setting.
+
+## Implementation-risk findings from the audit
 
 ### Combat legacy alias must not stack
 
 `b_shield` remains save-safe as a legacy alias of the merged Combat Prayer. Because Combat duration can cross future sermon weeks, production must not allow old `b_sword` and `b_shield` items to create two simultaneously stacking Combat packages. Both identities must resolve to one effective buff lifecycle/refresh rule.
 
-### Semantic model must be profile-aware
+### Semantic model must remain shared
 
-Stable 1.0.1 already renders pulpit, Technology, item tooltip and Temporary Effects from Clarity semantics. Rebalanced mechanics and those four presentation surfaces must read the same effective values so no UI surface reports stock numbers while gameplay uses rebalanced numbers.
+Whatever the final build layout, Clarity-only and Rebalanced should reuse the same presentation/semantic source where possible. Rebalanced mechanics and all accepted Clarity surfaces must report the same effective values; Clarity-only must continue reporting stock values.
 
 ### VFX are not a gate
 
 Two runtime visual auditions failed to expose a cheap clean native effect. Decorative aura/weapon polish is explicitly outside the first Rebalanced production scope.
 
-## Remaining decisions before roster lock
+## Roster-lock status
 
-1. User decision: accept/reject the BSS Soul's Repose alignment above.
-2. Product decision before production handoff: decide whether Rebalanced is an opt-in profile/ruleset beside stable Vanilla+Clarity or becomes the default behavior. No per-prayer sliders are planned.
+The **balance roster is now closed at the design level**. No material prayer-choice question remains open.
 
-Everything else in the roster is sufficiently closed for implementation-target work.
+Runtime-sensitive mechanics are still candidates until implementation and user testing, but the intended behavior/numbers no longer require another design round unless new evidence contradicts them.
 
-## Next engineering step after decision closure
+## Next engineering step — deliberately deferred
 
-After the two product/design questions above are closed:
+Do not create the Rebalanced development line yet while Clarity is still changing in parallel.
 
-1. create a new `dev/*` branch from current stable `main` 1.0.1;
-2. carry forward the audited roster specification, not old research runtime source;
-3. close only the remaining implementation seams (Roots expression lifecycle, Repose RNG, Repentance daily roll, Combat tier/regen/non-stacking alias, Protection recipe retirement);
-4. implement one shared effective prayer model used by mechanics and Clarity surfaces;
-5. build one coherent candidate and request only the in-game tests that can prove the changed runtime behavior.
+After the current Clarity work reaches its next accepted stable baseline:
 
-No hosted CI is required for this audit/documentation pass.
+1. create a new `dev/*` branch from that exact accepted Clarity source state;
+2. carry forward this audited roster specification, not old research runtime source;
+3. close only the remaining implementation seams (Roots expression lifecycle, Repose RNG, Repentance daily roll, Combat tier/regen/non-stacking alias, Protection recipe retirement, packaging identity);
+4. keep one shared semantic/presentation model while producing separate Clarity-only and Rebalanced user-facing artifacts;
+5. build one coherent Rebalanced candidate and request only the in-game tests that prove changed runtime behavior.
+
+No hosted CI is required for this audit/documentation lock.
