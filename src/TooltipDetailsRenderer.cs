@@ -216,7 +216,7 @@ namespace PrayerClarity
                     " " + resourceIcon);
             }
 
-            return label + ":\n" + string.Join("   ", values.ToArray());
+            return label + ":\n" + string.Join(" ", values.ToArray());
         }
 
         private static bool AnyNonZero(
