@@ -1,14 +1,26 @@
 # PrayerClarity 1.0.11 — Technology tooltip width correction
 
-Status: **runtime candidate preparation; not accepted**.
+Status: **clean-built runtime candidate; not accepted**.
 
 Baseline: accepted mainline remains PrayerClarity 1.0.9. Immediate predecessor `candidate/1.0.10` was runtime-tested and superseded because the intended adaptive Technology width did not materialize in-game.
+
+## Frozen build identity
+
+- Frozen candidate ref: `candidate/1.0.11`.
+- Exact build source SHA: `0731d6b7527fd07f961671b655cd9747680646ad`.
+- GitHub Actions run: `35162997778`.
+- Workflow result: success on `ubuntu-latest`; restore, `net472` Release build, all 11 embedded-locale checks, artifact staging and upload passed.
+- Workflow artifact ID: `10474016136` (`PrayerClarity-1.0.11-ci-0731d6b7527fd07f961671b655cd9747680646ad`).
+- Artifact ZIP digest: `sha256:64a2b08a68e7c7791248ff10bf7943b2977540a0d30624703a3cdde843719430`.
+- Handoff DLL: `PrayerClarity-1.0.11-ci.dll`.
+- Handoff DLL SHA-256: `ad1d4d46ad0389fa0daa72ebba2e1883344d4e42355d5c30bb8229d8089b7d82`.
+- The downloaded artifact DLL was independently SHA-256 rechecked before handoff and matched `BUILD_INFO.txt`.
 
 ## Narrow problem
 
 The 1.0.10 tier-first semantic structure rendered, but coherent tier rows still wrapped at approximately the previous narrow Technology width. This defeats the design goal of buying horizontal space to preserve the tier snapshot structure.
 
-Historical runtime evidence already established that `BubbleWidgetTextData.max_width` controls this wrapping and that `300 -> 360` changed the live tooltip. Therefore the next correction should remain at that verified local seam rather than introducing another UI lifecycle hook.
+Historical runtime evidence already established that `BubbleWidgetTextData.max_width` controls this wrapping and that `300 -> 360` changed the live tooltip. Therefore the next correction remains at that verified local seam rather than introducing another UI lifecycle hook.
 
 ## Candidate width rule
 
