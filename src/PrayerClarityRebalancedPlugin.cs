@@ -35,6 +35,7 @@ namespace PrayerClarity
                     return;
                 }
 
+                RebalancedRuleSet.Validate();
                 Localization.Initialize(Assembly.GetExecutingAssembly(), Logger);
 
                 InstallClarityPresentation();
