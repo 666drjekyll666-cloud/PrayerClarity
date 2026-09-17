@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "生长时间 −{0:0}%",
-  "rebalanced.active.sins": "每日忏悔概率：{0:0}%",
-  "rebalanced.active.repose.silver": "50% 概率获得当前可用的最高品质等级；否则在扩展范围内随机",
-  "rebalanced.active.repose.gold": "保证获得当前可用的最高品质等级",
+  "rebalanced.active.plant": "生长时间缩短 {0:0}%",
+  "rebalanced.active.sins": "每个忏悔室：每天 {0:0}% 概率发生忏悔",
+  "rebalanced.active.repose.bronze": "驴子可能带来比正常上限高 1 个品质等级的尸体",
+  "rebalanced.active.repose.silver": "50% 概率获得当前最佳尸体；否则品质照常随机",
+  "rebalanced.active.repose.gold": "驴子总会带来当前最佳品质的尸体",
   "rebalanced.active.combat": "伤害 +{0:0.##} · 护甲 +{1:0.##} · 生命恢复 {2:0.##}/秒",
-  "rebalanced.active.gratitude": "治疗灵魂获得的感恩值：+{0:0}%"
+  "rebalanced.active.gratitude": "治疗灵魂：感恩值 +{0:0}%"
 }

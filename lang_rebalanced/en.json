@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Growth time −{0:0}%",
-  "rebalanced.active.sins": "Daily confession chance: {0:0}%",
-  "rebalanced.active.repose.silver": "50% chance for the best available quality tier; otherwise random within the expanded range",
-  "rebalanced.active.repose.gold": "Best available quality tier guaranteed",
+  "rebalanced.active.plant": "Growth takes {0:0}% less time",
+  "rebalanced.active.sins": "Each confessional: {0:0}% confession chance per day",
+  "rebalanced.active.repose.bronze": "Donkey can bring a body one quality tier above the normal limit",
+  "rebalanced.active.repose.silver": "50% chance for the best available body; otherwise normal quality variation",
+  "rebalanced.active.repose.gold": "Donkey always brings the best available body",
   "rebalanced.active.combat": "Damage +{0:0.##} · Armor +{1:0.##} · Regeneration {2:0.##} HP/s",
-  "rebalanced.active.gratitude": "Soul Gratitude from soul healing: +{0:0}%"
+  "rebalanced.active.gratitude": "Soul healing: +{0:0}% Soul Gratitude"
 }

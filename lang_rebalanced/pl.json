@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Czas wzrostu −{0:0}%",
-  "rebalanced.active.sins": "Dzienna szansa na spowiedź: {0:0}%",
-  "rebalanced.active.repose.silver": "50% szans na najlepszy dostępny poziom jakości; w przeciwnym razie losowanie z rozszerzonego zakresu",
-  "rebalanced.active.repose.gold": "Najlepszy dostępny poziom jakości gwarantowany",
+  "rebalanced.active.plant": "Wzrost trwa o {0:0}% krócej",
+  "rebalanced.active.sins": "Każdy konfesjonał: {0:0}% szansy na spowiedź dziennie",
+  "rebalanced.active.repose.bronze": "Osioł może przywieźć ciało o jeden poziom jakości ponad normalny limit",
+  "rebalanced.active.repose.silver": "50% szans na najlepsze dostępne ciało; inaczej zwykły rozrzut jakości",
+  "rebalanced.active.repose.gold": "Osioł zawsze przywozi najlepsze dostępne ciało",
   "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
-  "rebalanced.active.gratitude": "Wdzięczność za uzdrawianie dusz: +{0:0}%"
+  "rebalanced.active.gratitude": "Leczenie duszy: +{0:0}% Wdzięczności"
 }

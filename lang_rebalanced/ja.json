@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "成長時間 −{0:0}%",
-  "rebalanced.active.sins": "1日ごとの告解発生率：{0:0}%",
-  "rebalanced.active.repose.silver": "50%で利用可能な最高品質段階。それ以外は拡張された範囲からランダム",
-  "rebalanced.active.repose.gold": "利用可能な最高品質段階を保証",
+  "rebalanced.active.plant": "成長にかかる時間が{0:0}%短縮",
+  "rebalanced.active.sins": "各告解室：1日ごとの告解発生率 {0:0}%",
+  "rebalanced.active.repose.bronze": "ロバが通常の上限より1品質段階高い死体を運ぶことがある",
+  "rebalanced.active.repose.silver": "50%で利用可能な最高品質の死体。それ以外は通常どおり品質が変動",
+  "rebalanced.active.repose.gold": "ロバは常に利用可能な最高品質の死体を運ぶ",
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
-  "rebalanced.active.gratitude": "魂の治療で得る感謝度：+{0:0}%"
+  "rebalanced.active.gratitude": "魂の治療：感謝度 +{0:0}%"
 }

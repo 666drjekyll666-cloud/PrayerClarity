@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Tempo di crescita −{0:0}%",
-  "rebalanced.active.sins": "Probabilità giornaliera di confessione: {0:0}%",
-  "rebalanced.active.repose.silver": "50% di probabilità per il miglior livello di qualità disponibile; altrimenti risultato casuale nell'intervallo ampliato",
-  "rebalanced.active.repose.gold": "Miglior livello di qualità disponibile garantito",
+  "rebalanced.active.plant": "La crescita richiede il {0:0}% di tempo in meno",
+  "rebalanced.active.sins": "Ogni confessionale: {0:0}% di probabilità di confessione al giorno",
+  "rebalanced.active.repose.bronze": "L’asino può portare un corpo di un livello di qualità oltre il limite normale",
+  "rebalanced.active.repose.silver": "50% di probabilità del miglior corpo disponibile; altrimenti normale variazione di qualità",
+  "rebalanced.active.repose.gold": "L’asino porta sempre il miglior corpo disponibile",
   "rebalanced.active.combat": "Danni +{0:0.##} · Armatura +{1:0.##} · Rigenerazione {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Gratitudine dalla cura delle anime: +{0:0}%"
+  "rebalanced.active.gratitude": "Cura dell’anima: +{0:0}% Gratitudine"
 }

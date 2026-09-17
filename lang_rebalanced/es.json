@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Tiempo de crecimiento −{0:0}%",
-  "rebalanced.active.sins": "Probabilidad diaria de confesión: {0:0}%",
-  "rebalanced.active.repose.silver": "50 % de probabilidad de obtener el mejor nivel de calidad disponible; si no, resultado aleatorio dentro del rango ampliado",
-  "rebalanced.active.repose.gold": "Mejor nivel de calidad disponible garantizado",
+  "rebalanced.active.plant": "El crecimiento tarda un {0:0} % menos",
+  "rebalanced.active.sins": "Cada confesionario: {0:0} % de probabilidad de confesión al día",
+  "rebalanced.active.repose.bronze": "El burro puede traer un cuerpo un nivel de calidad por encima del límite normal",
+  "rebalanced.active.repose.silver": "50 % de probabilidad del mejor cuerpo disponible; si no, variación de calidad habitual",
+  "rebalanced.active.repose.gold": "El burro siempre trae el mejor cuerpo disponible",
   "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Gratitud al sanar almas: +{0:0}%"
+  "rebalanced.active.gratitude": "Al sanar un alma: +{0:0} % de gratitud"
 }

@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Wachstumszeit −{0:0}%",
-  "rebalanced.active.sins": "Tägliche Beichtchance: {0:0}%",
-  "rebalanced.active.repose.silver": "50% Chance auf die beste verfügbare Qualitätsstufe; sonst zufällig aus dem erweiterten Bereich",
-  "rebalanced.active.repose.gold": "Beste verfügbare Qualitätsstufe garantiert",
+  "rebalanced.active.plant": "Wachstum benötigt {0:0}% weniger Zeit",
+  "rebalanced.active.sins": "Jeder Beichtstuhl: {0:0}% Beichtchance pro Tag",
+  "rebalanced.active.repose.bronze": "Der Esel kann eine Leiche eine Qualitätsstufe über dem normalen Limit bringen",
+  "rebalanced.active.repose.silver": "50% Chance auf die beste verfügbare Leiche; sonst normale Qualitätsschwankung",
+  "rebalanced.active.repose.gold": "Der Esel bringt immer die beste verfügbare Leiche",
   "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
-  "rebalanced.active.gratitude": "Dankbarkeit durch Seelenheilung: +{0:0}%"
+  "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% Dankbarkeit"
 }

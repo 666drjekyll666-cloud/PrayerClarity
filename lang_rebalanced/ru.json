@@ -1,8 +1,9 @@
 {
-  "rebalanced.active.plant": "Время роста −{0:0}%",
-  "rebalanced.active.sins": "Ежедневный шанс исповеди: {0:0}%",
-  "rebalanced.active.repose.silver": "50% шанс получить лучший доступный уровень качества; иначе случайный результат в расширенном диапазоне",
-  "rebalanced.active.repose.gold": "Лучший доступный уровень качества гарантирован",
+  "rebalanced.active.plant": "Рост занимает на {0:0}% меньше времени",
+  "rebalanced.active.sins": "Каждая исповедальня: {0:0}% шанс исповеди в день",
+  "rebalanced.active.repose.bronze": "Осёл может привезти тело на один уровень качества выше обычного предела",
+  "rebalanced.active.repose.silver": "50% шанс на лучшее доступное тело; иначе обычный разброс качества",
+  "rebalanced.active.repose.gold": "Осёл всегда привозит тело лучшего доступного качества",
   "rebalanced.active.combat": "Урон +{0:0.##} · Броня +{1:0.##} · Регенерация {2:0.##} ОЗ/с",
-  "rebalanced.active.gratitude": "Благодарность души за исцеление: +{0:0}%"
+  "rebalanced.active.gratitude": "За исцеление души: +{0:0}% благодарности"
 }
