@@ -84,7 +84,10 @@ namespace PrayerClarity
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
-            string normalized = text.Replace("\r\n", "\n");
+            // This row is revisited when the tooltip is rebuilt. Strip our own leading
+            // spacer before parsing, then add exactly one spacer back at the end so the
+            // operation remains idempotent instead of accumulating blank lines.
+            string normalized = text.Replace("\r\n", "\n").TrimStart('\n');
             int asciiColon = normalized.IndexOf(':');
             int fullColon = normalized.IndexOf('：');
             int colon;
@@ -110,7 +113,7 @@ namespace PrayerClarity
             }
             if (parts.Count == 0) return text;
 
-            return heading + "\n" + string.Join(", ", parts.ToArray());
+            return "\n" + heading + "\n" + string.Join(", ", parts.ToArray());
         }
     }
 }
