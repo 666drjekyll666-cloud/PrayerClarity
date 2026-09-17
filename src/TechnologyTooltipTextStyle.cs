@@ -6,10 +6,15 @@ namespace PrayerClarity
     internal static class TechnologyTooltipTextStyle
     {
         private const string NoBreakSpace = "\u00A0";
-        private const string StructuralAccent = "C7654E";
-        private const string BronzeAccent = "B77A45";
-        private const string SilverAccent = "91B6CA";
-        private const string GoldAccent = "D9B83E";
+
+        // NGUI rich-text colors are intentionally fairly bright because the tooltip
+        // label's own dark parchment-text tint visually damps the inline color. These
+        // remain secondary cues: wording, symbols and numeric values still carry the
+        // full meaning when color perception is weak or absent.
+        private const string StructuralAccent = "FF7A70";
+        private const string BronzeAccent = "E69A58";
+        private const string SilverAccent = "C9E2F5";
+        private const string GoldAccent = "FFD34E";
 
         internal static string StructuralLabel(string text)
         {
@@ -46,15 +51,19 @@ namespace PrayerClarity
 
         internal static string QualityValueAfterColon(int qualityTier, string text)
         {
-            if (string.IsNullOrEmpty(text)) return text;
-            int colon = Math.Max(text.LastIndexOf(':'), text.LastIndexOf('：'));
-            if (colon < 0 || colon + 1 >= text.Length) return text;
+            return ValueAfterColon(text, QualityColor(qualityTier));
+        }
 
-            string label = text.Substring(0, colon + 1).TrimEnd();
-            string value = text.Substring(colon + 1).Trim();
-            if (value.Length == 0) return text;
+        internal static string GoldValueAfterColon(string text)
+        {
+            return ValueAfterColon(text, GoldAccent);
+        }
 
-            return Atomic(label + " " + QualityValue(qualityTier, value));
+        internal static string CorpseQualityCue()
+        {
+            // The cluster is one semantic symbol. NGUI may move the whole group to the
+            // next visual line, but must never split arrow / white skull / red skull.
+            return "(up)" + NoBreakSpace + "(skull)" + NoBreakSpace + "(rskull)";
         }
 
         internal static string Atomic(string text)
@@ -66,6 +75,38 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(localizedName)) return text;
             return text.Replace(localizedName, RewardName(itemId, localizedName));
+        }
+
+        internal static string AccentLoreEntity(string text, string itemId, string localizedName)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(localizedName)) return text;
+
+            // Vanilla lore may wrap a named reward in language-specific quote marks.
+            // The color already supplies the visual entity cue, so remove only quote
+            // pairs immediately surrounding the exact localized item name.
+            string normalized = text;
+            string[,] quotePairs =
+            {
+                { "«", "»" },
+                { "‹", "›" },
+                { "“", "”" },
+                { "„", "“" },
+                { "\"", "\"" },
+                { "'", "'" },
+                { "「", "」" },
+                { "『", "』" },
+                { "《", "》" },
+                { "〈", "〉" },
+                { "<", ">" }
+            };
+
+            for (int i = 0; i < quotePairs.GetLength(0); i++)
+            {
+                string quoted = quotePairs[i, 0] + localizedName + quotePairs[i, 1];
+                normalized = normalized.Replace(quoted, localizedName);
+            }
+
+            return AccentEntityOccurrences(normalized, itemId, localizedName);
         }
 
         internal static string StripColorEncoding(string text)
@@ -94,6 +135,30 @@ namespace PrayerClarity
             }
 
             return result.ToString().Replace(NoBreakSpace, " ");
+        }
+
+        private static string QualityColor(int qualityTier)
+        {
+            switch (qualityTier)
+            {
+                case 1: return BronzeAccent;
+                case 2: return SilverAccent;
+                case 3: return GoldAccent;
+                default: return null;
+            }
+        }
+
+        private static string ValueAfterColon(string text, string color)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(color)) return text;
+            int colon = Math.Max(text.LastIndexOf(':'), text.LastIndexOf('：'));
+            if (colon < 0 || colon + 1 >= text.Length) return text;
+
+            string label = text.Substring(0, colon + 1).TrimEnd();
+            string value = text.Substring(colon + 1).Trim();
+            if (value.Length == 0) return text;
+
+            return Atomic(label + " " + Color(value, color));
         }
 
         private static bool IsHexColor(string value)
