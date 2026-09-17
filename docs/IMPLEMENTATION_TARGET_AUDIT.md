@@ -1,6 +1,6 @@
 # PrayerClarity: Rebalanced — implementation target audit
 
-Status: **research / architecture evidence**, reconciled with PrayerClarity: Vanilla 1.0.20 on 2026-09-17. This document identifies safe implementation seams; it does not make Rebalanced runtime behavior accepted.
+Status: **research / architecture evidence**, updated 2026-09-17 against PrayerClarity: Vanilla 1.0.20. This document identifies safe implementation seams; it does not make Rebalanced runtime behavior accepted.
 
 Target game evidence remains Graveyard Keeper 1.407, `Assembly-CSharp` MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
 
@@ -8,7 +8,7 @@ Accepted presentation/runtime base: PrayerClarity: Vanilla **1.0.20**, source `c
 
 Locked gameplay intent is in `PRAYER_REBALANCE_OPTIONS.md`. Stock behavior remains canonical in `PRAYER_MECHANICS.md`.
 
-## Primary architecture finding — one rule set, two mechanical projections
+## Primary architecture finding — one rule set, native engine where possible
 
 PrayerClarity: Vanilla 1.0.20 already has one shared presentation path centered on `PrayerForecast`:
 
@@ -16,47 +16,67 @@ PrayerClarity: Vanilla 1.0.20 already has one shared presentation path centered 
 - Technology and prayer-item tooltips call `PrayerForecast.BuildTierDetails(...)`;
 - Temporary Effects calls `PrayerForecast.BuildActiveBuffText(...)`.
 
-`BuildTierDetails` currently reads the live stock prayer `CraftDefinition` directly: `needs_quality`, `k_faith`, `k_money`, outputs, `buff`, `dur_parameter`, and linked event. `BuildSpecial` then reads relevant `BuffDefinition` data. This is correct for PrayerClarity: Vanilla, but it cannot remain a raw-stock reader in PrayerClarity: Rebalanced because several locked effects are not representable by stock fields alone.
+`BuildTierDetails` currently reads the live stock prayer `CraftDefinition` directly: `needs_quality`, `k_faith`, `k_money`, outputs, `buff`, `dur_parameter`, and linked event. `BuildSpecial` then reads relevant `BuffDefinition` data. This is correct for PrayerClarity: Vanilla, but several locked Rebalanced effects cannot be represented safely by stock fields alone.
 
-The Rebalanced edition therefore needs **one declarative effective-rule source**, not separate gameplay and tooltip tables.
-
-Recommended shape:
+The Rebalanced edition therefore needs **one declarative effective-rule source**, not separate gameplay and tooltip tables:
 
 `stock prayer definition + locked Rebalanced override -> EffectivePrayerDefinition`
 
 The same resolved rule object supplies:
 
 1. presentation semantics for Pulpit, Technology, item tooltip and Temporary Effects;
-2. safe static projections into native prayer definitions where the stock sermon engine already owns the behavior;
-3. narrow custom consumer hooks for effects the stock data model cannot express safely.
+2. safe per-save projections into native definitions where the stock engine already owns the behavior;
+3. narrow consumer hooks only for effects the stock data model cannot express safely.
 
-Do **not** create a second manually maintained table of Rebalanced numbers in UI code. Do **not** replace the whole native prayer engine with a parallel calculator.
+Do **not** create a second manually maintained table of Rebalanced numbers in UI code. Do **not** replace the native prayer engine with a parallel calculator.
 
-## Static-definition projection — preferred where stock already owns the mechanic
+## Per-save static projection lifecycle
 
-`PrayLogics.CalculatePray` already consumes prayer-owned `needs_quality`, `k_faith`, `k_money` and prayer outputs. The accepted Clarity model reads those same fields. Therefore the least-mechanism candidate for fields whose semantics are already native is to project the locked rule into the corresponding runtime `CraftDefinition` once after balance data is ready.
+### Runtime load boundary is now evidenced
 
-Potential static projections derived from the single rule set:
+Independent accepted runtime evidence from another Graveyard Keeper 1.407 production mod establishes a usable definition-mutation window on the same target build:
+
+`PrepareScene -> ClearCraftsListOnGameStart -> first CraftComponent.FillCraftsList() -> StartPlayingGame`
+
+That mod snapshots and mutates live `GameBalance.me.craft_data` during the first `FillCraftsList()` of each loaded save, then resets its one-shot guard on return to Main Menu. The mutation is observed on repeated existing-save/new-save loads and requires no polling.
+
+For PrayerClarity: Rebalanced the preferred lifecycle is therefore:
+
+- patch the first `CraftComponent.FillCraftsList()` per loaded save;
+- resolve only the exact prayer/consumer definitions that PrayerClarity owns;
+- apply absolute/idempotent values from the locked rule set once;
+- perform no recurring scan or reapplication until another save is loaded.
+
+This is better than waiting in `Update()`, scene polling, or maintaining a separate copied balance database.
+
+### Remaining identity proof
+
+One binary fact remains before treating live `CraftDefinition` projection as closed production architecture: prove that `GameBalance.GetData/GetDataOrNull(id)` returns the same live `CraftDefinition` instance stored in `craft_data`, rather than a cloned/cached copy.
+
+A read-only **Lookup Identity Probe 0.1.0** exists solely for this question:
+
+- source/ref: `candidate/lookup-identity-probe-0.1.0` at `b752e624baf826c5bb2ed6b6454f4f380bb4cc32`;
+- CI run `35218014297`, artifact `10494968504`;
+- no Harmony, no balance mutation, no save writes;
+- compares `ReferenceEquals(craft_data_row, GetDataOrNull(id))` for every `pray:*` definition and also reports output-list identity.
+
+Until that runtime result is returned, the lifecycle seam is **strongly supported but not fully closed**.
+
+## Safe native/static prayer fields
+
+Once object identity is confirmed, the least-mechanism implementation for stock-owned sermon fields is to project the locked rule into the live `CraftDefinition` at the per-save load boundary.
+
+Candidate static projections from the single effective rule set:
 
 - Faith: q25/40/70, `k_faith=2.5/3.5/4.5`, zero off-theme `k_money`, remove prayer-owned fixed Faith/money outputs;
 - Donations: q25/40/70, `k_money=2.5/3.5/4.5`, zero prayer-owned Faith bonus/fixed Faith, retain +1/+2/+3 silver fixed money;
-- BSS Soul's Repose: q25/40/70, `k_faith=2.5/3.5/4.5`, remove prayer-owned fixed/off-theme money contributions while preserving its Souls event formula and recipe;
-- Imagination Silver/Gold: add the locked 3 Silver / 3 Gold Story sermon reward if direct output-list mutation is proven to use the normal success-only `_sermon_drops` path.
+- BSS Soul's Repose: q25/40/70, `k_faith=2.5/3.5/4.5`, remove prayer-owned fixed/off-theme money contributions while preserving the Souls event formula and recipe;
+- Imagination Silver/Gold: add the locked 3 Silver / 3 Gold Story success reward through the normal prayer output path after output-list mutation is verified against the live lookup object;
+- ordinary duration/q values that remain stock require no projection.
 
-If this projection lifecycle is proven safe, stock sermon success calculation and current UI fields naturally consume the same projected values. It also avoids a broad Harmony rewrite of `CalculatePray`.
+This lets vanilla `PrayLogics.CalculatePray` remain authoritative for the behaviors it already implements and lets the accepted Clarity surfaces read the same live/effective definitions.
 
-### Remaining proof before static mutation
-
-Do not yet treat runtime `CraftDefinition` mutation as accepted production behavior. Verify narrowly:
-
-- exact point at which GameBalance prayer definitions are fully loaded and stable;
-- whether the relevant definitions are long-lived shared objects for the session;
-- whether changing scalar fields and prayer output rows at that point has any reload/reinitialization path that would overwrite them;
-- exact mutable output collection shape required for removing/adding Faith/money/Story rows.
-
-Prefer one initialization/lifecycle hook. Do not poll or repeatedly reapply definitions.
-
-## Hard no-go — global quality mutation of `BuffDefinition.res`
+## Hard no-go — quality-dependent `BuffDefinition.res`
 
 Direct inspection of `BuffsLogics.AddBuff` / `RemoveBuff` established an unsafe asymmetry:
 
@@ -64,17 +84,17 @@ Direct inspection of `BuffsLogics.AddBuff` / `RemoveBuff` established an unsafe 
 - saved `PlayerBuff` does not retain the resource delta that was applied;
 - RemoveBuff later subtracts the **then-current** definition resource.
 
-Changing shared resources such as `buff_sword.res` by prayer tier can therefore leave permanent parameter drift after save/load, edition removal or definition changes.
+Changing shared resources such as `buff_sword.res` from +5 to +15 by prayer tier can therefore leave permanent parameter drift after save/load, edition removal or definition changes.
 
 **Do not tier-scale passive prayer resources by rewriting `BuffDefinition.res`.**
 
-Keep stock buff definitions/resources intact where possible and implement quality-specific behavior at the actual consumer or through another symmetric mechanism.
+Non-resource `BuffDefinition` behavior such as `tick_period` / `se_tick` can be considered separately because it does not create an AddBuff/RemoveBuff resource delta.
 
-## Active prayer quality persistence
+## Active prayer quality persistence and live-state gating
 
 ### Vanilla `PlayerBuff` loses source prayer quality
 
-The inspected `PlayerBuff` state contains buff ID, end time, tick state and definition lookup, but not the source `CraftDefinition`/prayer item quality. Bronze/Silver/Gold therefore cannot be reliably reconstructed from an active buff after save/load.
+The inspected `PlayerBuff` state contains buff ID, end time, tick state and definition lookup, but not the source prayer `CraftDefinition`/item quality. Bronze/Silver/Gold therefore cannot be reconstructed reliably from an active buff after save/load.
 
 ### Capture seam
 
@@ -84,179 +104,203 @@ The source craft still exists during successful prayer application:
 - `StartPrayAnimation` retains `_pray_craft` / `_pray_buff` / success state;
 - `PlayerComponent.CreatePrayBuffFlyingObject` still has the selected craft and duration before the actual player buff is created.
 
-This is the narrow tier-capture boundary.
+This remains the narrow tier-capture boundary.
 
 ### Persisted token store
 
-Direct static evidence shows player `Item._params` is a serialised `GameRes` that accepts arbitrary string keys and is persisted inside the player's saved inventory. Therefore namespaced per-effect float parameters remain the preferred tier store, for example:
+Direct evidence shows player `Item._params` is a serialised `GameRes` that accepts arbitrary string keys and is persisted with player inventory. Namespaced per-effect float parameters remain the preferred tier store.
 
-- `prayerclarity_buff_sins_tier`;
-- `prayerclarity_buff_plant_tier`;
-- `prayerclarity_buff_skull_tier`;
-- `prayerclarity_combat_tier`;
-- `prayerclarity_buff_star_tier`.
+A crucial simplification is now explicit: **the custom tier token does not need to be cleared on buff expiry if every custom mechanic is gated by the corresponding vanilla live buff/state.** A stale token without the vanilla active marker is inert.
 
-A single global tier token is insufficient because long prayer effects can overlap across sermon weeks.
+Examples:
 
-Runtime reads must always be gated by the corresponding active vanilla buff/effective effect. A stale token alone is inert. PrayerClarity: Vanilla must ignore Rebalanced tokens entirely.
+- `buff_plant` itself adds/removes player `buff_plant=1`; the custom plant tier token supplies only reduction magnitude;
+- `buff_sins` itself adds/removes player `buff_sins=1`; the custom confession token supplies only the bonus above stock 15%;
+- Combat/Excellence/Repose read their token only while the corresponding stock buff/effect is active.
 
-No external save sidecar is justified by current evidence.
+This avoids save-cleanup logic and leaves mod removal structurally safe. PrayerClarity: Vanilla ignores Rebalanced tokens entirely.
 
 ## Presentation integration in 1.0.20
 
-The current 1.0.20 surfaces are already well placed; the model below them must change, not their layout ownership.
+The current 1.0.20 UI surfaces remain valid. Rebalanced changes the semantic model below them, not their layout ownership.
 
-### Pulpit
+- **Pulpit:** `PrayCraftGUI.RedrawTextValues(...)` remains the accepted redraw seam. If q is projected before the pulpit opens, vanilla success chance remains authoritative.
+- **Technology:** keep the existing generic Bronze/Silver/Gold renderer; feed it effective tier data.
+- **Prayer item tooltip:** keep the existing current-tier-only behavior.
+- **Temporary Effects:** resolve quality-sensitive values from effective rule + persisted tier, not from tier-mutated `BuffDefinition.res`.
 
-`PrayCraftGUI.RedrawTextValues(float needs_q, float chance)` remains the accepted redraw seam. `PrayerForecast.Build` should resolve an `EffectivePrayerDefinition` for the selected craft and render it through the existing reward-reveal grammar.
+The accepted exact-reward reveal boundary remains unchanged.
 
-If Rebalanced q is projected into the live craft before the pulpit opens, vanilla's own success-chance argument can remain authoritative. If q is not projected, success chance must be derived from the same effective rule instead; do not display stock `chance` beside a Rebalanced requirement.
+## Prayer-specific implementation targets
 
-### Technology
+### Shoots & Roots (`b_plant` / `buff_plant`) — lifecycle blocker substantially closed
 
-`TechUnlock.GetTooltip(Tooltip)` already resolves the sibling prayer crafts and sends their `TierDetails` into the accepted content-driven Bronze/Silver/Gold renderer. Keep the renderer generic. Rebalanced should change semantic data, not add prayer-specific layout branches.
+Verified stock bug: activation writes player `buff_plant=1`, while affected growth `CraftDefinition.craft_time` expressions read `WGOpar("buff_plant")` on the growing/workbench WGO. Direct audits found the relevant consumers in `craft_time`; examples include ordinary crops, vineyard/refugee planting and world growth/respawn expressions.
 
-### Prayer item tooltip
+The previous question "how do we recompile an already-loaded SmartExpression?" no longer needs an internal compiler mutation. `SmartExpression.ParseExpression(string)` exists, and the correct low-risk path is to replace the entire affected `craft_time` field with a newly parsed expression at the same per-save projection boundary.
 
-`ItemDefinition.GetTooltipData(Item,bool)` resolves one concrete linked prayer craft and calls the same tier-detail builder. Keep the current current-tier-only product behavior.
+Implementation shape:
 
-### Temporary Effects
+- preserve each vanilla expression and its other terms exactly;
+- replace only the prayer term so it reads player state instead of WGO state;
+- multiply by the persisted Rebalanced magnitude while gated by stock `Ppar("buff_plant")`;
+- target magnitude .20/.30/.40 by prayer tier;
+- never replace plant growth with an external timer or broad WGO scan.
 
-`PerkBuffItemGUI.Draw(PlayerBuff)` currently describes stock `BuffDefinition` state. Rebalanced quality-sensitive active effects must resolve the effective rule using `buff_id` plus the persisted tier token instead of reading tier-varying values from globally mutated buff definitions.
+Example semantic term:
 
-The existing remaining-duration behavior remains valid and should continue to use native `PlayerBuff` timing.
+`- Ppar("buff_plant") * Ppar("prayerclarity_plant_reduction")`
 
-## Prayer-specific target classification
+The exact transformed source must be generated from the known affected expressions rather than by a blind global text replacement.
 
-### Native/static sermon-definition changes
+### Repentance (`b_sins` / `buff_sins`) — native daily scheduler can stay intact
 
-These should prefer the static projection path once its lifecycle is proven:
+Verified stock lifecycle:
 
-- Faith q/rates/output cleanup;
-- Donations q/rates/output cleanup/floor;
-- BSS Soul's Repose q/rates/output cleanup;
-- Imagination premium Story reward, if output-list projection is proven safe.
+- `LogicDefinition church_budka_roll` executes `SetPpar("confession_probability", 0.15)`;
+- then it runs stock script `church_budka_roll`;
+- cadence is one in-game day (`period_time=1`, fixed `start_time=2`);
+- each existing confessional independently removes its prior availability state, rolls, compares against the player probability, and adds `confession_available` on success.
 
-Combo, Ordinary, Prosperity and Thorough Cleansing remain stock mechanically and require no gameplay patch for their locked main effect.
+Locked Rebalanced probability is 50/75/100%.
 
-### Shoots & Roots (`b_plant` / `buff_plant`)
+Preferred target is therefore **not** the RNG and not a once-at-sermon assignment. Replace only the daily reset SmartExpression at the per-save definition projection boundary so stock scheduling and stock confessional graphs remain untouched.
 
-Verified stock bug: prayer writes `buff_plant` on the player; growth expressions read `WGOpar("buff_plant")` on the growing/workbench WGO. Stock intended-looking coefficient is -20%.
+Semantic form:
 
-Rebalanced needs -20/-30/-40% by tier while preserving the native additive growth expression.
+`SetPpar("confession_probability", 0.15 + Ppar("buff_sins") * Ppar("prayerclarity_confession_bonus"))`
 
-`SmartExpression` already supports player `Ppar` and work-object `WGOpar`; a custom growth timer is unnecessary.
+Tier bonus values are .35/.60/.85. With no active prayer, stock `buff_sins=0` and the exact stock 15% baseline remains.
 
-**Open implementation gate:** prove the safe source/recompile lifecycle for affected already-loaded SmartExpressions. The quality-sensitive expression should consult the active player tier token/effective rule, not mutate every growing WGO and not use polling.
+Before production, parse the exact expression through the native SmartExpression parser and fail closed if unavailable; do not guess syntax at runtime.
 
-### Repentance (`b_sins` / `buff_sins`)
+### Repose (`b_skull` / `buff_skull`) — RNG algorithm closed, caller isolation remains
 
-Later runtime/static evidence closed the earlier unknown:
+Direct IL closes the actual corpse RNG:
 
-- `church_budka_roll` runs once per in-game day;
-- it resets `confession_probability` to stock 0.15 before the roll;
-- each existing confessional rolls independently;
-- Confessional I returns 1 Faith plus Story I/II distribution;
-- Confessional II returns 2 Faith plus Story II/III distribution.
+`GameSave.GenerateBody(tier_min, tier_max, ...)` builds the list of all `BodyDefinition`s whose tier is inside the supplied range, then chooses one through the stock `RandomElement` path before generating the corpse item.
 
-Locked Rebalanced chance is 50/75/100% by prayer quality.
+This means the locked reliability ladder can be represented exactly without rewriting corpse generation:
 
-**Implementation rule:** do not merely set `confession_probability` once when the buff starts because stock overwrites it on the next daily roll. Patch the narrow daily roll calculation/assignment seam so the active `buff_sins` + persisted tier resolves the effective chance immediately before the roll.
+- Bronze: pass stock range untouched;
+- Silver: 50% force `tier_min = tier_max`, otherwise pass the stock range;
+- Gold: force `tier_min = tier_max`.
 
-The exact method/script hook is still an implementation-target detail to pin before code.
+Silver then equals exactly `0.5 + 0.5 * P_stock(best)`, while the game still randomly selects among vanilla definitions within the chosen best tier.
 
-### Repose (`b_skull` / `buff_skull`)
+Donkey graph evidence already shows normal delivery derives its tier range from `body_min/body_max` plus progression offsets.
 
-Stock `body_max+1` expands the eligible corpse tier pool. Rebalanced changes reliability, not the progression ceiling:
+**Remaining Repose blocker:** isolate the exact normal-donkey/`Flow_DropBody` call context. Do not globally modify every `GameSave.GenerateBody` call merely because Repose is active; story/special body generation must remain unaffected.
 
-- Bronze stock-style roll;
-- Silver `P(best)=0.5+0.5*P_stock(best)`;
-- Gold guaranteed best prayer-eligible tier.
+### Combat (`b_sword`; `b_shield` legacy alias) — native buff tick is the regeneration seam
 
-Do not rewrite Donkey progression bounds globally.
+Locked package remains +5/+10/+15 damage, +4 armor and 1/2/4 HP/sec.
 
-**Open gate:** identify the exact corpse-tier selection/RNG function after `Flow_DropBody` receives `tier_min/tier_max`, so the implementation can wrap the real stock roll and preserve all non-prayer cases.
+Stock resources remain untouched:
 
-### Combat (`b_sword`; `b_shield` legacy alias)
+- `buff_sword.res` stays +5 damage;
+- `buff_shield.res` stays +4 armor.
 
-Locked package:
+Native `PlayerBuff.CustomUpdate(deltaTime)` already:
 
-- damage +5/+10/+15;
-- armor +4;
-- regeneration 1/2/4 HP/sec;
-- duration 36/72/108;
-- q10/20/40.
+- respects stopped game time;
+- accumulates native buff tick time;
+- reads `BuffDefinition.tick_period`;
+- executes `BuffDefinition.se_tick` when due;
+- observes hp/energy/money changes through the game's existing effect path.
 
-`b_sword` is canonical and `b_shield` is a save-safe same-quality alias. They must resolve to one effective Combat lifecycle and never stack.
+Vanilla itself uses the same mechanism for long-heal potion regeneration (`AddPpar("hp",1)` every 1.5 s).
 
-Do not globally tier-mutate `buff_sword.res` or `buff_shield.res`.
+Therefore Combat regeneration does **not** need PrayerClarity polling, a coroutine, or a new scheduler. The low-mechanism target is to give canonical `buff_sword` a Rebalanced-session tick behavior while leaving its resource delta stock:
 
-A likely low-mechanism direction remains to preserve stock resource buffs where safe (stock +5 damage, stock +4 armor) and layer only tier-specific extra damage/regeneration through narrow consumers, driven by one `combat_tier` token. Whether canonical Combat should apply both native stock buff IDs or represent one component through a consumer hook must be decided only after checking refresh/removal semantics and edition-removal behavior.
+- `tick_period = 1s`;
+- `se_tick = AddPpar("hp", Ppar("prayerclarity_combat_regen"))`;
+- token values 1/2/4.
 
-**Open gates:** exact outgoing-damage consumer, cheapest correct regeneration lifecycle, native AddBuff refresh semantics, and alias non-stacking behavior.
+Do not give `buff_shield` a second regen tick; legacy/canonical Combat must converge on one sword+shield effective lifecycle so regeneration cannot double-stack.
+
+**Remaining Combat blocker:** find the narrow outgoing player-damage consumer for Silver/Gold's additional +5/+10 damage beyond stock +5. Do not patch generic `GetParam`/`GameRes.Get` globally.
+
+### Combat alias / Protection retirement
+
+Direct balance evidence now identifies the stock duplicate craft and technology ownership:
+
+- `b_shield` / `b_shield_2` are visible desk/desk_2 recipes using Hard Book +7 Faith;
+- technology `Martial skills` exposes `b_sword`, `b_shield`, `@b_sword_2`, `@b_shield_2` together.
+
+Rebalanced should preserve all existing `b_shield:*` item IDs as legacy Combat aliases. Do not migrate or delete saved items.
+
+For **new crafting**, the preferred direction is to retire the duplicate Protection recipe from the technology/crafting presentation while keeping its definitions resolvable for old items. Before production, verify `TechDefinition.GetUnlocksList` caching and the desk recipe-list source so the removal happens before those lists are materialized and does not require post-UI cleanup.
 
 ### Imagination (`b_pen` / `buff_pen`)
 
-Locked `craft_q` is +0.7 at all qualities — identical to stock special magnitude. Therefore no tier mutation of `buff_pen.craft_q` is required.
+Locked `craft_q` is +0.7 at all qualities, identical to stock special magnitude. No tier mutation of `buff_pen.craft_q` is required.
 
-Only Silver/Gold Story rewards change. This substantially lowers implementation risk compared with the earlier 0.5/0.7/1.0 candidate.
+Only Silver/Gold Story rewards change. Project those success rewards through the prayer craft output list once live definition identity/output ownership is confirmed.
 
 ### Excellence (`b_star` / `buff_star`)
 
-Locked special magnitude is +0.2/+0.5/+1.0. Because `BuffDefinition.craft_q` is shared and the active buff loses source quality, do not mutate that field by tier.
+Locked special magnitude is +0.2/+0.5/+1.0. Because `BuffDefinition.craft_q` is shared and active `PlayerBuff` loses source quality, do not mutate that field by tier.
 
-Verified craft-quality seam: `CraftDefinition.GetMultiqualityResult` calls `CraftDefinition.GetBuffValue(buff_id)`.
+Verified quality seam: `CraftDefinition.GetMultiqualityResult` calls `CraftDefinition.GetBuffValue(buff_id)`.
 
-Preferred target remains a narrow postfix/override on `GetBuffValue` restricted to `buff_star`, active Rebalanced edition and a valid persisted tier token. It should return the value from the same effective rule object used by the UI.
+Preferred target remains a narrow override/postfix restricted to `buff_star`, active Rebalanced edition and a valid persisted tier token. The return value comes from the same effective rule object used by UI.
 
-### Soul Contentment (`b_grat_points_incr`)
+### Soul Contentment (`b_grat_points_incr`) — consumer graph isolated
 
-Locked magnitude is +20% at all qualities; duration remains 36/72/108. Stock buff exposes the boolean-like `increase_gp_gain` path and stock consumer calculates +10% before rounding.
+Stock `buff_gp_increase` adds player `increase_gp_gain=1`. Direct graph evidence shows the relevant consumer in loaded `soul_portal` only: the graph reads `increase_gp_gain`, multiplies it into the prayer bonus branch, adds 1, and applies that multiplier to the Soul Gratitude result before rounding.
 
-Because the magnitude is constant across qualities, no tier token is needed for the arithmetic itself. Patch the verified Soul Gratitude award consumer narrowly so active Rebalanced `buff_gp_increase` uses 1.2 instead of 1.1. Temporary Effects should render the same +20% rule.
+Locked Rebalanced magnitude is +20% at all qualities, so arithmetic itself needs no tier token.
 
-Exact consumer signature should be rechecked from accepted static evidence before production code.
+**Do not** change `buff_gp_increase.res` from 1 to 2; the same AddBuff/RemoveBuff resource-drift risk applies. The remaining implementation question is the narrowest safe way to change that consumer coefficient from the stock +10% path to +20% — preferably at the soul-portal consumer rather than through a global parameter hook.
 
 ### Thorough Cleansing (`b_sin_shard`)
 
-Locked magnitude stays stock x2; only stock duration quality progression remains. No main-mechanic patch is required.
+Locked magnitude remains stock x2; quality only extends stock duration. No main-mechanic patch is required.
 
 ## Edition composition
 
-The public editions should share presentation/model source but not behave as a hidden runtime profile toggle.
+The public editions share presentation/model source but are not a hidden runtime profile toggle.
 
-Preferred architectural boundary:
+Preferred boundary:
 
 - common Clarity/presentation source;
-- PrayerClarity: Vanilla installs only stock semantic readers and accepted Clarity UI patches;
-- PrayerClarity: Rebalanced additionally installs the effective rule provider, safe static projection and custom mechanics hooks.
+- PrayerClarity: Vanilla installs stock semantic readers and accepted Clarity UI patches only;
+- PrayerClarity: Rebalanced additionally installs the effective rule provider, per-save static projection and narrow custom mechanics hooks.
 
-Do not duplicate the entire project into two drifting source forks.
+Do not duplicate the project into drifting source forks.
 
-Exact BepInEx GUID, DLL filename, assembly/build composition and mutual-exclusion guard remain evidence/packaging decisions. A user should install one edition, not both.
+Exact sibling BepInEx GUID/DLL filename and mutual-exclusion guard remain packaging decisions to verify before handoff. A user installs one edition, not both.
 
-## What is now closed
+## What is now closed or substantially narrowed
 
-The following are no longer design blockers:
+Closed as architecture/design blockers:
 
 - final roster numbers/roles;
-- PrayerClarity: Vanilla 1.0.20 baseline;
-- public edition naming;
-- need for per-prayer tier persistence;
-- native player-param persistence strategy;
-- shared UI surfaces and their lifecycle seams;
-- no-go on global quality-dependent `BuffDefinition.res` mutation.
+- PrayerClarity: Vanilla 1.0.20 source baseline;
+- edition naming;
+- shared UI/model ownership;
+- persisted player-param tier-token strategy;
+- stale-token safety through vanilla live-buff gating;
+- no-go on quality-dependent `BuffDefinition.res` mutation;
+- per-save definition projection lifecycle candidate;
+- Roots replacement strategy via whole parsed `craft_time` expressions;
+- Repentance target at the stock daily probability-reset expression;
+- Repose's exact RNG mathematics;
+- Combat's regeneration scheduler via native `PlayerBuff` ticks;
+- stock technology/craft ownership of the duplicate Protection recipe;
+- Soul Contentment consumer graph family.
 
 ## Remaining narrow evidence gates before `dev/*`
 
-1. **Static projection lifecycle:** exact one-shot post-GameBalance-load seam; scalar/output mutation survivability.
-2. **Roots:** SmartExpression source/recompile lifecycle.
-3. **Repose:** exact corpse-tier RNG/selection method.
-4. **Repentance:** exact narrow hook around daily probability assignment/roll.
-5. **Combat:** damage consumer, regeneration scheduler/lifecycle, AddBuff refresh semantics and alias non-stacking.
-6. **Soul Contentment:** reconfirm exact +10% award consumer signature for +20% override.
+1. **Lookup identity:** run the frozen read-only 0.1.0 probe and confirm live prayer `craft_data` rows are the same objects returned by GameBalance lookup.
+2. **Static output/list ownership:** after identity result, verify sermon output-list projection uses the same live objects and does not require cache rebuild.
+3. **Repose isolation:** identify a donor-specific `GenerateBody` call context so story/special bodies are untouched.
+4. **Combat damage:** identify the narrow outgoing player-damage consumer for the Silver/Gold delta.
+5. **Protection retirement:** verify tech unlock-list caching and actual desk recipe-list ownership before removing only new `b_shield` crafting visibility.
+6. **Soul Contentment:** pin the exact coefficient/consumer mutation seam inside the isolated Soul Portal bonus path.
 7. **Packaging:** exact sibling-edition GUID/DLL/mutual-exclusion composition.
 
-These are technical evidence gaps, not user design questions. Resolve them directly from accepted/static data where possible. Use a runtime probe only for a question static evidence cannot close.
+These are technical evidence gaps, not user design questions. Prefer existing static evidence; combine unresolved IL questions into one read-only audit rather than burdening the user with separate probes.
 
-No hosted CI is required for this research/documentation audit.
+No production implementation is authorized until the remaining integration seams are sufficiently closed. Hosted CI is justified only for a narrow executable probe/build that proves one of those properties.
