@@ -34,22 +34,22 @@ jobs:
           dll='bin/TestHarnessCompat/PrayerClarity.TestHarness.RebalancedCompat.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.TestHarness.RebalancedCompat-0.1.0-ci.dll'
+          handoff='PrayerClarity.TestHarness.RebalancedCompat-0.1.1-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.0"
+            echo "Version: 0.1.1"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
-            echo "Purpose: satisfy the legacy Test Harness hard dependency on the Vanilla PrayerClarity GUID while requiring PrayerClarity: Rebalanced to load first."
+            echo "Purpose: satisfy the legacy Test Harness Vanilla GUID dependency and project the selected Rebalanced tier/effect tokens before synthetic timed-buff activation so Temporary Effects can be tested faithfully."
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
           echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
       - name: Upload compatibility candidate
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-TestHarness-RebalancedCompat-0.1.0-ci-${{ github.sha }}
+          name: PrayerClarity-TestHarness-RebalancedCompat-0.1.1-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
