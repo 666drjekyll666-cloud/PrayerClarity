@@ -93,9 +93,6 @@ namespace PrayerClarity
                     TechnologyTooltipTextStyle.RewardName(commonRewardIdentity.Id, rewardName)
                 };
 
-                // Prosperity lore already explains what the Commercial Blessing does.
-                // Do not repeat that prose inside the mechanics block; it otherwise
-                // becomes an unnecessary width owner and duplicates information.
                 return string.Join("\n", lines.ToArray());
             }
 
@@ -116,11 +113,6 @@ namespace PrayerClarity
                 return BuildEffectSection(
                     Localization.F("tech.effect.excellence_intro") + "\n" +
                     TechnologyTooltipTextStyle.Atomic(core));
-            }
-
-            if (string.Equals(family, "b_skull", StringComparison.Ordinal))
-            {
-                return BuildEffectSection(core + " " + TechnologyTooltipTextStyle.CorpseQualityCue());
             }
 
             return BuildEffectSection(core);
