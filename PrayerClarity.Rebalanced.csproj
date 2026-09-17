@@ -36,6 +36,7 @@
     <Compile Include="src/RebalancedStaticProjection.cs" />
     <Compile Include="src/RebalancedExpressionProjection.cs" />
     <Compile Include="src/RebalancedTierState.cs" />
+    <Compile Include="src/RebalancedRepose.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="lang/*.json" />
