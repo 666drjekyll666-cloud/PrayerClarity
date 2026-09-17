@@ -41,4 +41,10 @@ Therefore the base lore key (`b_*_d`) is the verified language-independent seam 
 2. Russian or English: open the same prayer and one other multi-tier prayer as regression checks; lore, PrayerClarity mechanics block, spacing and crafting footer must remain unchanged.
 3. No sermon execution is required.
 
-Do not promote or publish 1.0.20 until these checks pass on the exact candidate bytes.
+## Runtime result — 2026-09-17
+
+**Passed / accepted.** The user reported the exact 1.0.20 candidate as working correctly. Additional Japanese, Simplified Chinese, Korean and German screenshots showed the intended Technology structure without a systemic localization defect. The German post-icon word `erforderlich` is ordinary grammar (`required`), not a duplicated church-quality label; analogous post-icon wording exists in Japanese and Korean. The runtime log contained no PrayerClarity warnings or errors.
+
+Accepted runtime source: `c7ac91c1cea6c498fb406323725768b605d8139f` (`accepted/clarity-1.0.20`). See `docs/RUNTIME_1.0.20_RESULT.md` for exact artifact identity and evidence.
+
+Acceptance does not automatically publish a GitHub or Nexus release.
