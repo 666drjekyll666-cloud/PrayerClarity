@@ -6,6 +6,31 @@ namespace PrayerClarity
 {
     internal static class TooltipTextPolish
     {
+        private const string NoBreakSpace = "\u00A0";
+
+        internal static void NormalizePrayerTitleRow(IList list, int endExclusive, Type bubbleTextType)
+        {
+            if (list == null || bubbleTextType == null) return;
+
+            int end = Math.Min(list.Count, Math.Max(0, endExclusive));
+            for (int i = 0; i < end; i++)
+            {
+                object row = list[i];
+                if (row == null || !bubbleTextType.IsInstanceOfType(row)) continue;
+
+                string text = R.Get(row, "text") as string;
+                if (string.IsNullOrWhiteSpace(text)) continue;
+
+                // The first non-empty text row in the verified prayer Technology
+                // tooltip is the native title. Keep its final lexical pair together
+                // so short connectors such as "об / of / de" do not become orphans.
+                string normalized = ProtectFinalWordPair(text);
+                if (!string.Equals(text, normalized, StringComparison.Ordinal))
+                    R.Set(row, "text", normalized);
+                return;
+            }
+        }
+
         internal static void NormalizeFollowingCraftingRow(IList list, int startIndex, Type bubbleTextType)
         {
             if (list == null || bubbleTextType == null) return;
@@ -23,6 +48,21 @@ namespace PrayerClarity
                 R.Set(row, "text", normalized);
                 return;
             }
+        }
+
+        private static string ProtectFinalWordPair(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return text;
+
+            string normalized = text.Replace("\r\n", "\n");
+            if (normalized.IndexOf('\n') >= 0) return text;
+
+            int lastSpace = normalized.LastIndexOf(' ');
+            if (lastSpace <= 0 || lastSpace + 1 >= normalized.Length) return text;
+
+            return normalized.Substring(0, lastSpace) +
+                   NoBreakSpace +
+                   normalized.Substring(lastSpace + 1);
         }
 
         private static string NormalizeCraftingLocationText(string text)
