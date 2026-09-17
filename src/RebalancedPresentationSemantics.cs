@@ -5,6 +5,11 @@ namespace PrayerClarity
 {
     internal static class RebalancedPresentationSemantics
     {
+        internal static void Install()
+        {
+            PrayerEditionSemantics.Install(TryBuildTierEffect, TryBuildActiveEffect);
+        }
+
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
         {
             text = null;
