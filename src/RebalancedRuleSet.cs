@@ -99,8 +99,8 @@ namespace PrayerClarity
             new Dictionary<string, RebalancedPrayerRule>(StringComparer.Ordinal)
             {
                 ["b_empty"] = new RebalancedPrayerRule("b_empty"),
-                ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(25f, 40f, 70f), faithBonusRates: F(2.5f, 3.5f, 4.5f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
-                ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(25f, 40f, 70f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(2.5f, 3.5f, 4.5f), removeFixedFaith: true),
+                ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(25f, 40f, 70f), faithBonusRates: F(2f, 3f, 4f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(25f, 40f, 70f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(2f, 3f, 4f), removeFixedFaith: true),
                 ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money"),
                 ["b_sins"] = new RebalancedPrayerRule("b_sins", confessionProbability: F(0.50f, 0.75f, 1.00f)),
                 ["b_plant"] = new RebalancedPrayerRule("b_plant", growthReduction: F(0.20f, 0.30f, 0.40f)),
@@ -110,7 +110,7 @@ namespace PrayerClarity
                 ["b_pen"] = new RebalancedPrayerRule("b_pen", craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
                 ["b_star"] = new RebalancedPrayerRule("b_star", craftQualityBonus: F(0.2f, 0.5f, 1.0f)),
                 ["b_village"] = new RebalancedPrayerRule("b_village"),
-                ["b_souls"] = new RebalancedPrayerRule("b_souls", optionalDlc: true, requirements: F(25f, 40f, 70f), faithBonusRates: F(2.5f, 3.5f, 4.5f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_souls"] = new RebalancedPrayerRule("b_souls", optionalDlc: true, requirements: F(25f, 40f, 70f), faithBonusRates: F(2f, 3f, 4f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
                 ["b_grat_points_incr"] = new RebalancedPrayerRule("b_grat_points_incr", optionalDlc: true, soulGratitudeBonusRate: F(0.20f, 0.20f, 0.20f)),
                 ["b_sin_shard"] = new RebalancedPrayerRule("b_sin_shard", optionalDlc: true, sinShardMultiplier: F(2f, 2f, 2f))
             };
