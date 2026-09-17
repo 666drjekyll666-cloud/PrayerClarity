@@ -27,7 +27,7 @@ jobs:
         run: dotnet restore PrayerClarity.csproj
       - name: Build Release DLL
         run: dotnet build PrayerClarity.csproj -c Release --no-restore
-      - name: Verify embedded locales and stage artifact
+      - name: Verify locales and stage release-identical artifacts
         id: artifact
         shell: bash
         run: |
@@ -40,26 +40,48 @@ jobs:
               exit 1
             }
           done
-          mkdir -p dist
-          asset='PrayerClarity-1.0.17-ci.dll'
-          cp "$dll" "dist/$asset"
-          hash=$(sha256sum "dist/$asset" | awk '{print $1}')
+
+          mkdir -p dist/package/BepInEx/plugins/PrayerClarity
+          handoff='PrayerClarity-1.0.18-ci.dll'
+          canonical='PrayerClarity.dll'
+          nexus='PrayerClarity-1.0.18-Nexus.zip'
+
+          cp "$dll" "dist/$handoff"
+          cp "$dll" "dist/$canonical"
+          cp "$dll" "dist/package/BepInEx/plugins/PrayerClarity/$canonical"
+          (cd dist/package && zip -qr "../$nexus" BepInEx)
+
+          dll_hash=$(sha256sum "dist/$handoff" | awk '{print $1}')
+          canonical_hash=$(sha256sum "dist/$canonical" | awk '{print $1}')
+          nexus_hash=$(sha256sum "dist/$nexus" | awk '{print $1}')
+          test "$dll_hash" = "$canonical_hash"
+
           {
+            echo "Version: 1.0.18"
             echo "Source SHA: $GITHUB_SHA"
-            echo "DLL: $asset"
-            echo "SHA-256: $hash"
+            echo "Handoff DLL: $handoff"
+            echo "Canonical DLL: $canonical"
+            echo "DLL SHA-256: $dll_hash"
+            echo "Nexus package: $nexus"
+            echo "Nexus ZIP SHA-256: $nexus_hash"
             echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
           } > dist/BUILD_INFO.txt
-          echo "asset=$asset" >> "$GITHUB_OUTPUT"
-          echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity candidate SHA-256: $hash"
-      - name: Upload candidate build evidence
+
+          echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
+          echo "canonical=$canonical" >> "$GITHUB_OUTPUT"
+          echo "nexus=$nexus" >> "$GITHUB_OUTPUT"
+          echo "sha256=$dll_hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity 1.0.18 DLL SHA-256: $dll_hash"
+          echo "PrayerClarity 1.0.18 Nexus ZIP SHA-256: $nexus_hash"
+      - name: Upload candidate and release-package evidence
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-1.0.17-ci-${{ github.sha }}
+          name: PrayerClarity-1.0.18-ci-${{ github.sha }}
           path: |
-            dist/${{ steps.artifact.outputs.asset }}
+            dist/${{ steps.artifact.outputs.handoff }}
+            dist/${{ steps.artifact.outputs.canonical }}
+            dist/${{ steps.artifact.outputs.nexus }}
             dist/BUILD_INFO.txt
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
