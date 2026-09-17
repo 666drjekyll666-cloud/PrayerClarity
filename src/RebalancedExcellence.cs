@@ -29,8 +29,8 @@ namespace PrayerClarity
                 if (tier < 1 || tier > 3) return;
 
                 RebalancedPrayerRule rule;
-                if (!RebalancedRuleSet.TryGet("b_star", out rule) || rule.CraftQuality == null) return;
-                __result = rule.TierValue(rule.CraftQuality, tier, __result);
+                if (!RebalancedRuleSet.TryGet("b_star", out rule) || rule.CraftQualityBonus == null) return;
+                __result = rule.TierValue(rule.CraftQualityBonus, tier, __result);
             }
             catch (Exception ex)
             {
