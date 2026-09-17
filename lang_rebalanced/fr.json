@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "La croissance prend {0:0} % de temps en moins",
-  "rebalanced.active.sins": "Chaque confessionnal : {0:0} % de chance de confession par jour",
-  "rebalanced.active.repose.bronze": "L’âne peut apporter un corps d’un niveau de qualité au-dessus de la limite normale",
-  "rebalanced.active.repose.silver": "50 % de chances d’obtenir le meilleur corps disponible ; sinon variation de qualité habituelle",
-  "rebalanced.active.repose.gold": "L’âne apporte toujours le meilleur corps disponible",
+  "rebalanced.tech.plant_intro": "Accélère la croissance des plantes.",
+  "rebalanced.tech.sins_intro": "Chaque confessionnal peut recevoir une confession par jour.",
+  "rebalanced.tech.repose_intro": "L’âne peut apporter des corps de meilleure qualité. (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "Renforce le Gardien au combat.",
+  "rebalanced.active.plant": "Temps de croissance des plantes : −{0:0} %",
+  "rebalanced.active.sins": "Chance de confession : {0:0} %",
+  "rebalanced.active.repose.bronze": "L’âne peut apporter un corps d’un niveau de qualité supérieur",
+  "rebalanced.active.repose.silver": "Dans la moitié des cas, le meilleur corps disponible est garanti",
+  "rebalanced.active.repose.gold": "L’âne apporte à coup sûr le meilleur corps disponible",
   "rebalanced.active.combat": "Dégâts +{0:0.##} · Armure +{1:0.##} · Régénération {2:0.##} PV/s",
   "rebalanced.active.gratitude": "Soin d’une âme : +{0:0} % de gratitude"
 }

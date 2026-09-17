@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "La crescita richiede il {0:0}% di tempo in meno",
-  "rebalanced.active.sins": "Ogni confessionale: {0:0}% di probabilità di confessione al giorno",
-  "rebalanced.active.repose.bronze": "L’asino può portare un corpo di un livello di qualità oltre il limite normale",
-  "rebalanced.active.repose.silver": "50% di probabilità del miglior corpo disponibile; altrimenti normale variazione di qualità",
-  "rebalanced.active.repose.gold": "L’asino porta sempre il miglior corpo disponibile",
+  "rebalanced.tech.plant_intro": "Accelera la crescita delle piante.",
+  "rebalanced.tech.sins_intro": "Ogni confessionale può ricevere una confessione al giorno.",
+  "rebalanced.tech.repose_intro": "L’asino può portare corpi di qualità migliore. (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "Rafforza il Custode in combattimento.",
+  "rebalanced.active.plant": "Tempo di crescita delle piante: −{0:0}%",
+  "rebalanced.active.sins": "Probabilità di confessione: {0:0}%",
+  "rebalanced.active.repose.bronze": "L’asino può portare un corpo di un livello di qualità migliore",
+  "rebalanced.active.repose.silver": "Nella metà dei casi è garantito il miglior corpo disponibile",
+  "rebalanced.active.repose.gold": "L’asino porta sicuramente il miglior corpo disponibile",
   "rebalanced.active.combat": "Danni +{0:0.##} · Armatura +{1:0.##} · Rigenerazione {2:0.##} PV/s",
   "rebalanced.active.gratitude": "Cura dell’anima: +{0:0}% Gratitudine"
 }

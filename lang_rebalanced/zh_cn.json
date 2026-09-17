@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "生长时间缩短 {0:0}%",
-  "rebalanced.active.sins": "每个忏悔室：每天 {0:0}% 概率发生忏悔",
-  "rebalanced.active.repose.bronze": "驴子可能带来比正常上限高 1 个品质等级的尸体",
-  "rebalanced.active.repose.silver": "50% 概率获得当前最佳尸体；否则品质照常随机",
-  "rebalanced.active.repose.gold": "驴子总会带来当前最佳品质的尸体",
+  "rebalanced.tech.plant_intro": "加快植物生长。",
+  "rebalanced.tech.sins_intro": "每个忏悔室每天可接待一次忏悔。",
+  "rebalanced.tech.repose_intro": "驴子可能带来品质更好的尸体。 (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "增强守墓人在战斗中的能力。",
+  "rebalanced.active.plant": "植物生长时间：−{0:0}%",
+  "rebalanced.active.sins": "忏悔概率：{0:0}%",
+  "rebalanced.active.repose.bronze": "驴子可能带来品质高一级的尸体",
+  "rebalanced.active.repose.silver": "有一半的情况保证获得当前最佳尸体",
+  "rebalanced.active.repose.gold": "驴子保证带来当前最佳尸体",
   "rebalanced.active.combat": "伤害 +{0:0.##} · 护甲 +{1:0.##} · 生命恢复 {2:0.##}/秒",
   "rebalanced.active.gratitude": "治疗灵魂：感恩值 +{0:0}%"
 }

@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "El crecimiento tarda un {0:0} % menos",
-  "rebalanced.active.sins": "Cada confesionario: {0:0} % de probabilidad de confesión al día",
-  "rebalanced.active.repose.bronze": "El burro puede traer un cuerpo un nivel de calidad por encima del límite normal",
-  "rebalanced.active.repose.silver": "50 % de probabilidad del mejor cuerpo disponible; si no, variación de calidad habitual",
-  "rebalanced.active.repose.gold": "El burro siempre trae el mejor cuerpo disponible",
+  "rebalanced.tech.plant_intro": "Acelera el crecimiento de las plantas.",
+  "rebalanced.tech.sins_intro": "Cada confesionario puede recibir una confesión al día.",
+  "rebalanced.tech.repose_intro": "El burro puede traer cuerpos de mejor calidad. (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "Fortalece al Guardián en combate.",
+  "rebalanced.active.plant": "Tiempo de crecimiento de las plantas: −{0:0}%",
+  "rebalanced.active.sins": "Probabilidad de confesión: {0:0}%",
+  "rebalanced.active.repose.bronze": "El burro puede traer un cuerpo un nivel de calidad mejor",
+  "rebalanced.active.repose.silver": "En la mitad de los casos se garantiza el mejor cuerpo disponible",
+  "rebalanced.active.repose.gold": "El burro trae garantizado el mejor cuerpo disponible",
   "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
   "rebalanced.active.gratitude": "Al sanar un alma: +{0:0} % de gratitud"
 }

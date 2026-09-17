@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "成長にかかる時間が{0:0}%短縮",
-  "rebalanced.active.sins": "各告解室：1日ごとの告解発生率 {0:0}%",
-  "rebalanced.active.repose.bronze": "ロバが通常の上限より1品質段階高い死体を運ぶことがある",
-  "rebalanced.active.repose.silver": "50%で利用可能な最高品質の死体。それ以外は通常どおり品質が変動",
-  "rebalanced.active.repose.gold": "ロバは常に利用可能な最高品質の死体を運ぶ",
+  "rebalanced.tech.plant_intro": "植物の成長を速めます。",
+  "rebalanced.tech.sins_intro": "各告解室では1日に1回、告解を受け入れられます。",
+  "rebalanced.tech.repose_intro": "ロバがより高品質な死体を運んでくることがあります。 (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "戦闘時の墓守を強化します。",
+  "rebalanced.active.plant": "植物の成長時間：−{0:0}%",
+  "rebalanced.active.sins": "告解発生率：{0:0}%",
+  "rebalanced.active.repose.bronze": "ロバが品質が1段階高い死体を運んでくることがある",
+  "rebalanced.active.repose.silver": "半分の場合で利用可能な最高品質の死体が保証される",
+  "rebalanced.active.repose.gold": "ロバは利用可能な最高品質の死体を必ず運んでくる",
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
   "rebalanced.active.gratitude": "魂の治療：感謝度 +{0:0}%"
 }
