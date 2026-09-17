@@ -1,0 +1,8 @@
+{
+  "rebalanced.active.plant": "Tiempo de crecimiento −{0:0}%",
+  "rebalanced.active.sins": "Probabilidad diaria de confesión: {0:0}%",
+  "rebalanced.active.repose.silver": "50 % de probabilidad de obtener el mejor nivel de calidad disponible; si no, resultado aleatorio dentro del rango ampliado",
+  "rebalanced.active.repose.gold": "Mejor nivel de calidad disponible garantizado",
+  "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
+  "rebalanced.active.gratitude": "Gratitud al sanar almas: +{0:0}%"
+}
