@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  compile:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -31,3 +31,58 @@ jobs:
         run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
       - name: Verify Vanilla shared-source build
         run: dotnet build PrayerClarity.csproj -c Release --no-restore
+      - name: Verify locales and stage runtime candidate
+        id: artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll='bin/Rebalanced/PrayerClarity.Rebalanced.dll'
+          test -f "$dll"
+
+          for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
+            grep -a -q ".lang.${locale}.json" "$dll" || {
+              echo "Embedded base locale marker missing: ${locale}" >&2
+              exit 1
+            }
+            grep -a -q ".lang_rebalanced.${locale}.json" "$dll" || {
+              echo "Embedded Rebalanced locale marker missing: ${locale}" >&2
+              exit 1
+            }
+          done
+
+          mkdir -p dist
+          handoff='PrayerClarity.Rebalanced-0.1.0-ci.dll'
+          canonical='PrayerClarity.Rebalanced.dll'
+          cp "$dll" "dist/$handoff"
+          cp "$dll" "dist/$canonical"
+
+          dll_hash=$(sha256sum "dist/$handoff" | awk '{print $1}')
+          canonical_hash=$(sha256sum "dist/$canonical" | awk '{print $1}')
+          test "$dll_hash" = "$canonical_hash"
+
+          {
+            echo "Product: PrayerClarity: Rebalanced"
+            echo "Version: 0.1.0"
+            echo "Source SHA: $GITHUB_SHA"
+            echo "Handoff DLL: $handoff"
+            echo "Canonical DLL: $canonical"
+            echo "DLL SHA-256: $dll_hash"
+            echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
+            echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
+            echo "Vanilla sibling build: verified in the same run"
+          } > dist/BUILD_INFO.txt
+
+          echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
+          echo "canonical=$canonical" >> "$GITHUB_OUTPUT"
+          echo "sha256=$dll_hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity: Rebalanced 0.1.0 DLL SHA-256: $dll_hash"
+      - name: Upload runtime candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerClarity-Rebalanced-0.1.0-ci-${{ github.sha }}
+          path: |
+            dist/${{ steps.artifact.outputs.handoff }}
+            dist/${{ steps.artifact.outputs.canonical }}
+            dist/BUILD_INFO.txt
+          if-no-files-found: error
+          retention-days: 14
