@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/design stage, 2026-09-15. Stock mechanics, presentation audit, community cross-check, quantitative power budget and the revised first non-production Rebalanced roster are sufficiently modeled. No gameplay implementation or numerical rebalance is accepted yet.
+Status: product/design stage, updated 2026-09-17. Stock mechanics, presentation audit, community cross-check, quantitative power budget and the revised first non-production Rebalanced roster are sufficiently modeled. The Clarity-only edition is accepted and published; no gameplay rebalance is accepted yet.
 
 Canonical documents:
 
@@ -13,13 +13,22 @@ Canonical documents:
 
 ## Product architecture
 
-One codebase may expose three semantic layers:
+Accepted public product-family naming:
+
+1. **PrayerClarity: Vanilla** — the current stable Clarity-only edition. `Vanilla` describes prayer gameplay mechanics and balance, not presentation: the UI may become much clearer while stock Graveyard Keeper 1.407 prayer/sermon behavior remains unchanged.
+2. **PrayerClarity: Rebalanced** — a separate sibling edition for intentional prayer rebalance/rework once that behavior is implemented, tested and accepted.
+
+The two editions are peer alternatives in one PrayerClarity family, not a base mod plus an upgrade/add-on. A player who encounters either edition first should be able to infer its gameplay philosophy from the edition name.
+
+`PrayerClarity` remains the family/repository/codebase name; technical identifiers such as repository name, plugin identity and canonical DLL filename do not need to mirror the public edition subtitle.
+
+The internal semantic/evidence layers remain distinct from public edition naming:
 
 1. **Clarity** — information only;
 2. **Vanilla Fixes** — evidence-backed repair where stock intent/magnitude are recoverable;
 3. **Balance / Rework** — explicit new design/tuning.
 
-Potential profiles remain `Vanilla + Clarity`, `Fixed Vanilla`, and `Rebalanced`. Stock behavior remains separately documented.
+**Vanilla Fixes is not an accepted third public edition name.** Because **PrayerClarity: Vanilla** explicitly promises stock mechanics, evidence-backed gameplay repairs must not be silently folded into that edition. Their eventual packaging requires a separate explicit product decision. Stock behavior remains separately documented.
 
 ## Permanent policies
 
@@ -213,21 +222,9 @@ If merge is implemented:
 
 ## Current gate
 
-Broad research is done. The pulpit geometry has passed 2560x1440 and 1920x1080 multi-language smoke testing; further generic pulpit-layout probing is not justified.
+Broad research is done. The Clarity-only player-facing presentation is accepted and published as **PrayerClarity: Vanilla 1.0.20**. Further generic Clarity layout probing is not justified without a concrete regression or new requirement.
 
-The active Clarity work has moved to the two remaining player-facing surfaces:
-
-1. Character -> Temporary Effects / active prayer buffs;
-2. prayer-related Technology tooltip/unlock presentation.
-
-Technology already has a promising native tooltip seam through `TechUnlock.GetTooltip(Tooltip)`. Temporary Effects has a separate Inventory/`PerkBuffItemGUI` path rather than the HUD `BuffIcon` path; the narrow read-only secondary-surface probe exists to close the exact binding/tooltip seam before production code.
-
-The next coherent runtime candidate should therefore combine:
-
-- the revised pulpit reward-reveal presentation from `PULPIT_REVEAL_UX.md`;
-- removal of the redundant lower pulpit dependency note and dead inline-item-icon path;
-- the two secondary Clarity surfaces once their exact UI seams are closed;
-- no Vanilla Fixes or Balance/Rework mechanics yet.
+The next product-development workstream is **PrayerClarity: Rebalanced**. Existing rebalance documents remain design hypotheses until narrowed, implemented and runtime-tested; they must not be presented as current PrayerClarity: Vanilla behavior.
 
 Cross-cutting contracts remain:
 
