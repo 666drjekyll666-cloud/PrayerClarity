@@ -78,73 +78,96 @@ namespace PrayerClarity
 
         private static void ApplyCoefficient(object graph)
         {
-            List<object> connections = CollectConnections(graph);
+            List<object> nodes = GetNodes(graph);
             List<object> candidates = new List<object>();
 
-            foreach (object connection in connections)
+            foreach (object multiply in nodes)
             {
-                if (!string.Equals(Convert.ToString(R.Get(connection, "targetPortID") ?? R.Get(connection, "_targetPortID")), "b", StringComparison.Ordinal))
-                    continue;
+                if (!IsNodeType(multiply, "FloatMultiply")) continue;
 
-                object source = R.Get(connection, "sourceNode") ?? R.Get(connection, "_sourceNode");
-                object multiply = R.Get(connection, "targetNode") ?? R.Get(connection, "_targetNode");
-                if (!IsNodeType(source, "GetVariable`1") || !IsNodeType(multiply, "FloatMultiply")) continue;
+                object coefficientNode = FindIncomingSource(multiply, "b");
+                if (!IsNodeType(coefficientNode, "GetVariable`1")) continue;
 
-                object parameter = R.Get(source, "value");
-                object rawValue = parameter == null ? null : R.Get(parameter, "_value");
+                object valueParameter = R.Get(coefficientNode, "value");
+                object rawValue = valueParameter == null ? null : R.Get(valueParameter, "_value");
                 float coefficient = R.Float(rawValue);
-                if (Math.Abs(coefficient - StockCoefficient) > 0.0001f && Math.Abs(coefficient - RebalancedCoefficient) > 0.0001f)
+                if (Math.Abs(coefficient - StockCoefficient) > 0.0001f &&
+                    Math.Abs(coefficient - RebalancedCoefficient) > 0.0001f)
                     continue;
 
-                object playerParamSource = FindSourceNode(connections, multiply, "a");
+                object playerParamSource = FindIncomingSource(multiply, "a");
                 if (!IsNodeType(playerParamSource, "Flow_GetPlayerParam")) continue;
                 if (!string.Equals(Convert.ToString(InputValue(playerParamSource, "param")), "increase_gp_gain", StringComparison.Ordinal)) continue;
 
-                object add = FindTargetNode(connections, multiply, "b");
+                object add = FindOutgoingTarget(multiply, "b");
                 if (!IsNodeType(add, "FloatAdd")) continue;
                 if (Math.Abs(R.Float(InputValue(add, "a")) - 1f) > 0.0001f) continue;
 
-                candidates.Add(source);
+                candidates.Add(coefficientNode);
             }
 
             candidates = candidates.Distinct(ReferenceEqualityComparer.Instance).ToList();
             if (candidates.Count != 1)
                 throw new InvalidOperationException("Expected exactly one Soul Contentment coefficient node; found " + candidates.Count + ".");
 
-            object valueParameter = R.Get(candidates[0], "value");
-            if (valueParameter == null) throw new MissingMemberException("Soul Contentment GetVariable<float>.value");
-            float current = R.Float(R.Get(valueParameter, "_value"));
+            object parameter = R.Get(candidates[0], "value");
+            if (parameter == null) throw new MissingMemberException("Soul Contentment GetVariable<float>.value");
+            float current = R.Float(R.Get(parameter, "_value"));
             if (Math.Abs(current - RebalancedCoefficient) <= 0.0001f) return;
             if (Math.Abs(current - StockCoefficient) > 0.0001f)
                 throw new InvalidOperationException("Soul Contentment coefficient changed unexpectedly: " + current);
 
-            R.Set(valueParameter, "_value", RebalancedCoefficient);
+            R.Set(parameter, "_value", RebalancedCoefficient);
         }
 
-        private static object FindSourceNode(IEnumerable<object> connections, object targetNode, string targetPort)
+        private static List<object> GetNodes(object graph)
         {
-            foreach (object connection in connections)
-            {
-                object target = R.Get(connection, "targetNode") ?? R.Get(connection, "_targetNode");
-                if (!ReferenceEquals(target, targetNode)) continue;
-                string port = Convert.ToString(R.Get(connection, "targetPortID") ?? R.Get(connection, "_targetPortID"));
-                if (!string.Equals(port, targetPort, StringComparison.Ordinal)) continue;
-                return R.Get(connection, "sourceNode") ?? R.Get(connection, "_sourceNode");
-            }
-            return null;
+            IEnumerable enumerable = R.Get(graph, "allNodes") as IEnumerable ?? R.Get(graph, "_nodes") as IEnumerable;
+            if (enumerable == null) throw new MissingMemberException("NodeCanvas.Graph.allNodes");
+
+            var nodes = new List<object>();
+            foreach (object node in enumerable)
+                if (node != null) nodes.Add(node);
+            return nodes;
         }
 
-        private static object FindTargetNode(IEnumerable<object> connections, object sourceNode, string targetPort)
+        private static object FindIncomingSource(object targetNode, string targetPort)
         {
-            foreach (object connection in connections)
-            {
-                object source = R.Get(connection, "sourceNode") ?? R.Get(connection, "_sourceNode");
-                if (!ReferenceEquals(source, sourceNode)) continue;
-                string port = Convert.ToString(R.Get(connection, "targetPortID") ?? R.Get(connection, "_targetPortID"));
-                if (!string.Equals(port, targetPort, StringComparison.Ordinal)) continue;
-                return R.Get(connection, "targetNode") ?? R.Get(connection, "_targetNode");
-            }
-            return null;
+            List<object> matches = Connections(targetNode, "inConnections")
+                .Where(connection => string.Equals(Port(connection, "targetPortID", "_targetPortID"), targetPort, StringComparison.Ordinal))
+                .Select(connection => R.Get(connection, "sourceNode") ?? R.Get(connection, "_sourceNode"))
+                .Where(node => node != null)
+                .ToList();
+
+            if (matches.Count > 1)
+                throw new InvalidOperationException("Soul Contentment graph has multiple incoming connections for port '" + targetPort + "'.");
+            return matches.Count == 1 ? matches[0] : null;
+        }
+
+        private static object FindOutgoingTarget(object sourceNode, string targetPort)
+        {
+            List<object> matches = Connections(sourceNode, "outConnections")
+                .Where(connection => string.Equals(Port(connection, "targetPortID", "_targetPortID"), targetPort, StringComparison.Ordinal))
+                .Select(connection => R.Get(connection, "targetNode") ?? R.Get(connection, "_targetNode"))
+                .Where(node => node != null)
+                .ToList();
+
+            if (matches.Count > 1)
+                throw new InvalidOperationException("Soul Contentment graph has multiple outgoing connections targeting port '" + targetPort + "'.");
+            return matches.Count == 1 ? matches[0] : null;
+        }
+
+        private static IEnumerable<object> Connections(object node, string member)
+        {
+            IEnumerable enumerable = R.Get(node, member) as IEnumerable ?? R.Get(node, "_" + member) as IEnumerable;
+            if (enumerable == null) yield break;
+            foreach (object connection in enumerable)
+                if (connection != null) yield return connection;
+        }
+
+        private static string Port(object connection, string propertyName, string fieldName)
+        {
+            return Convert.ToString(R.Get(connection, propertyName) ?? R.Get(connection, fieldName));
         }
 
         private static object InputValue(object node, string key)
@@ -158,46 +181,6 @@ namespace PrayerClarity
         {
             string fullName = node?.GetType().FullName ?? string.Empty;
             return fullName.IndexOf(marker, StringComparison.Ordinal) >= 0;
-        }
-
-        private static List<object> CollectConnections(object graph)
-        {
-            var result = new List<object>();
-            var seen = new HashSet<object>(ReferenceEqualityComparer.Instance);
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-            for (Type type = graph.GetType(); type != null; type = type.BaseType)
-            {
-                foreach (FieldInfo field in type.GetFields(flags))
-                    CollectEnumerable(field.GetValue(graph), result, seen);
-                foreach (PropertyInfo property in type.GetProperties(flags))
-                {
-                    if (!property.CanRead || property.GetIndexParameters().Length != 0) continue;
-                    object value;
-                    try { value = property.GetValue(graph, null); } catch { continue; }
-                    CollectEnumerable(value, result, seen);
-                }
-            }
-            return result;
-        }
-
-        private static void CollectEnumerable(object value, List<object> result, HashSet<object> seen)
-        {
-            IEnumerable enumerable = value as IEnumerable;
-            if (enumerable == null || value is string) return;
-
-            IEnumerator iterator;
-            try { iterator = enumerable.GetEnumerator(); } catch { return; }
-            while (true)
-            {
-                bool moved;
-                try { moved = iterator.MoveNext(); } catch { break; }
-                if (!moved) break;
-                object item;
-                try { item = iterator.Current; } catch { continue; }
-                if (item == null || !item.GetType().FullName.Contains("BinderConnection") || !seen.Add(item)) continue;
-                result.Add(item);
-            }
         }
 
         private sealed class ReferenceEqualityComparer : IEqualityComparer<object>
