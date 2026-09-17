@@ -7,56 +7,47 @@ namespace PrayerClarity
     {
         private const string NoBreakSpace = "\u00A0";
 
-        // NGUI rich-text colors are intentionally fairly bright because the tooltip
-        // label's own dark parchment-text tint visually damps the inline color. These
-        // remain secondary cues: wording, symbols and numeric values still carry the
-        // full meaning when color perception is weak or absent.
-        private const string StructuralAccent = "FF7A70";
-        private const string BronzeAccent = "E69A58";
-        private const string SilverAccent = "C9E2F5";
-        private const string GoldAccent = "FFD34E";
+        // One warm accent is deliberately reused for structural labels, named rewards
+        // and the few values that deserve immediate attention. Prayer quality already
+        // has native Bronze/Silver/Gold star glyphs, so text color should not duplicate
+        // that tier identity with a second, weaker visual code.
+        private const string KeyAccent = "FF7A70";
 
         internal static string StructuralLabel(string text)
         {
-            return Color(text, StructuralAccent);
+            return Color(text, KeyAccent);
         }
 
         internal static string RewardName(string itemId, string text)
         {
             if (string.IsNullOrEmpty(text)) return text;
             if (string.Equals(itemId, "blessing_commerce", StringComparison.Ordinal))
-                return Color(text, StructuralAccent);
+                return Color(text, KeyAccent);
 
             if (itemId != null && itemId.StartsWith("story:", StringComparison.Ordinal))
-            {
-                if (itemId.EndsWith(":2", StringComparison.Ordinal)) return Color(text, SilverAccent);
-                if (itemId.EndsWith(":3", StringComparison.Ordinal)) return Color(text, GoldAccent);
-            }
+                return Color(text, KeyAccent);
 
             return text;
         }
 
         internal static string QualityValue(int qualityTier, string text)
         {
-            string color;
-            switch (qualityTier)
-            {
-                case 1: color = BronzeAccent; break;
-                case 2: color = SilverAccent; break;
-                case 3: color = GoldAccent; break;
-                default: return text;
-            }
-            return Color(text, color);
+            return qualityTier >= 1 && qualityTier <= 3 ? Color(text, KeyAccent) : text;
         }
 
         internal static string QualityValueAfterColon(int qualityTier, string text)
         {
-            return ValueAfterColon(text, QualityColor(qualityTier));
+            return qualityTier >= 1 && qualityTier <= 3 ? KeyValueAfterColon(text) : text;
         }
 
         internal static string GoldValueAfterColon(string text)
         {
-            return ValueAfterColon(text, GoldAccent);
+            return KeyValueAfterColon(text);
+        }
+
+        internal static string KeyValueAfterColon(string text)
+        {
+            return ValueAfterColon(text, KeyAccent);
         }
 
         internal static string CorpseQualityCue()
@@ -79,11 +70,11 @@ namespace PrayerClarity
 
         internal static string AccentLoreEntity(string text, string itemId, string localizedName)
         {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(localizedName)) return text;
+            if (string.IsNullOrEmpty(text)) return text;
 
-            // Vanilla lore may wrap a named reward in language-specific quote marks.
-            // The color already supplies the visual entity cue, so remove only quote
-            // pairs immediately surrounding the exact localized item name.
+            // Vanilla lore can use a grammatical form that differs from the inventory
+            // item name (Russian is one example), so first try the exact localized item
+            // name and then fall back to the quoted entity phrase in this known lore.
             string normalized = text;
             string[,] quotePairs =
             {
@@ -100,13 +91,35 @@ namespace PrayerClarity
                 { "<", ">" }
             };
 
-            for (int i = 0; i < quotePairs.GetLength(0); i++)
+            if (!string.IsNullOrEmpty(localizedName))
             {
-                string quoted = quotePairs[i, 0] + localizedName + quotePairs[i, 1];
-                normalized = normalized.Replace(quoted, localizedName);
+                for (int i = 0; i < quotePairs.GetLength(0); i++)
+                {
+                    string quoted = quotePairs[i, 0] + localizedName + quotePairs[i, 1];
+                    normalized = normalized.Replace(quoted, localizedName);
+                }
+
+                string exact = AccentEntityOccurrences(normalized, itemId, localizedName);
+                if (!string.Equals(exact, normalized, StringComparison.Ordinal)) return exact;
             }
 
-            return AccentEntityOccurrences(normalized, itemId, localizedName);
+            for (int i = 0; i < quotePairs.GetLength(0); i++)
+            {
+                string open = quotePairs[i, 0];
+                string close = quotePairs[i, 1];
+                int openAt = normalized.IndexOf(open, StringComparison.Ordinal);
+                if (openAt < 0) continue;
+                int contentAt = openAt + open.Length;
+                int closeAt = normalized.IndexOf(close, contentAt, StringComparison.Ordinal);
+                if (closeAt <= contentAt) continue;
+
+                string entity = normalized.Substring(contentAt, closeAt - contentAt);
+                return normalized.Substring(0, openAt) +
+                       RewardName(itemId, entity) +
+                       normalized.Substring(closeAt + close.Length);
+            }
+
+            return normalized;
         }
 
         internal static string StripColorEncoding(string text)
@@ -135,17 +148,6 @@ namespace PrayerClarity
             }
 
             return result.ToString().Replace(NoBreakSpace, " ");
-        }
-
-        private static string QualityColor(int qualityTier)
-        {
-            switch (qualityTier)
-            {
-                case 1: return BronzeAccent;
-                case 2: return SilverAccent;
-                case 3: return GoldAccent;
-                default: return null;
-            }
         }
 
         private static string ValueAfterColon(string text, string color)
