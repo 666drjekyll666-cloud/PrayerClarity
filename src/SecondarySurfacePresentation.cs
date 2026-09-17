@@ -141,11 +141,13 @@ namespace PrayerClarity
         {
             try
             {
-                string summary = BuildTechnologySummary(__instance);
+                List<object> crafts = ResolvePrayerCrafts(__instance);
+                string summary = BuildTechnologySummary(crafts);
                 if (string.IsNullOrEmpty(summary) || __0 == null) return;
 
                 Localization.UseCurrentGameLanguage();
-                if (!TryReplaceVanillaPrayerMechanics(__0, summary, TechnologyTooltipMaxWidth))
+                string vanillaLore = ResolveVanillaPrayerLore(crafts);
+                if (!TryReplaceVanillaPrayerMechanics(__0, summary, TechnologyTooltipMaxWidth, vanillaLore))
                 {
                     object blank = CreateBlankSeparator();
                     if (blank != null) AddTooltipData(__0, blank);
@@ -163,7 +165,7 @@ namespace PrayerClarity
             }
         }
 
-        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary, int maxWidth)
+        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary, int maxWidth, string vanillaLore)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -195,64 +197,24 @@ namespace PrayerClarity
             list[headerIndex + 1] = CreateTextData(summary, 4, maxWidth);
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
 
-            if (headerIndex > 0)
+            if (headerIndex > 0 && !string.IsNullOrEmpty(vanillaLore))
             {
                 object previous = list[headerIndex - 1];
                 if (previous != null && _bubbleTextType.IsInstanceOfType(previous))
                 {
                     string text = R.Get(previous, "text") as string;
-                    string trimmed = StripStockRequirementLine(text);
-                    if (!string.Equals(text, trimmed, StringComparison.Ordinal))
-                        R.Set(previous, "text", trimmed);
+                    if (!string.IsNullOrEmpty(text) &&
+                        text.IndexOf("(cross)", StringComparison.Ordinal) >= 0)
+                        R.Set(previous, "text", vanillaLore);
                 }
             }
 
             return true;
         }
 
-        private static string StripStockRequirementLine(string text)
+        private static string BuildTechnologySummary(List<object> crafts)
         {
-            if (string.IsNullOrEmpty(text)) return text;
-            string normalized = text.Replace("\r\n", "\n");
-
-            int newline = normalized.IndexOf('\n');
-            if (newline > 0)
-            {
-                string firstLine = normalized.Substring(0, newline);
-                if (firstLine.IndexOf("(cross)", StringComparison.Ordinal) >= 0)
-                    return normalized.Substring(newline + 1).TrimStart();
-            }
-
-            int cross = normalized.IndexOf("(cross)", StringComparison.Ordinal);
-            if (cross < 0 || cross > 64) return text;
-
-            int end = FindSentenceTerminator(normalized, cross);
-            if (end < 0 || end + 1 >= normalized.Length) return text;
-            return normalized.Substring(end + 1).TrimStart();
-        }
-
-        private static int FindSentenceTerminator(string text, int start)
-        {
-            for (int i = Math.Max(0, start); i < text.Length; i++)
-            {
-                switch (text[i])
-                {
-                    case '.':
-                    case '!':
-                    case '?':
-                    case '。':
-                    case '！':
-                    case '？':
-                        return i;
-                }
-            }
-            return -1;
-        }
-
-        private static string BuildTechnologySummary(object techUnlock)
-        {
-            List<object> crafts = ResolvePrayerCrafts(techUnlock);
-            if (crafts.Count == 0) return null;
+            if (crafts == null || crafts.Count == 0) return null;
 
             List<PrayerForecast.TierDetails> tiers = new List<PrayerForecast.TierDetails>();
             foreach (object craft in crafts)
@@ -263,6 +225,39 @@ namespace PrayerClarity
             if (tiers.Count == 0) return null;
 
             return TechnologyTooltipTierRenderer.Build(tiers);
+        }
+
+        private static string ResolveVanillaPrayerLore(List<object> crafts)
+        {
+            if (crafts == null || crafts.Count == 0) return null;
+
+            string commonKey = null;
+            foreach (object craft in crafts)
+            {
+                string key = ResolveBaseLoreKey(R.Id(craft));
+                if (string.IsNullOrEmpty(key)) return null;
+
+                if (commonKey == null) commonKey = key;
+                else if (!string.Equals(commonKey, key, StringComparison.Ordinal)) return null;
+            }
+
+            if (string.IsNullOrEmpty(commonKey)) return null;
+            string lore = R.VanillaLocalize(commonKey);
+            if (string.IsNullOrEmpty(lore) || string.Equals(lore, commonKey, StringComparison.Ordinal)) return null;
+            return lore;
+        }
+
+        private static string ResolveBaseLoreKey(string craftId)
+        {
+            const string prefix = "pray:";
+            if (string.IsNullOrEmpty(craftId) || !craftId.StartsWith(prefix, StringComparison.Ordinal)) return null;
+
+            string itemId = craftId.Substring(prefix.Length);
+            int tierSeparator = itemId.LastIndexOf(':');
+            if (tierSeparator <= 0 || tierSeparator + 1 >= itemId.Length) return null;
+
+            string family = itemId.Substring(0, tierSeparator);
+            return family.Length == 0 ? null : family + "_d";
         }
 
         private static List<object> ResolvePrayerCrafts(object techUnlock)
