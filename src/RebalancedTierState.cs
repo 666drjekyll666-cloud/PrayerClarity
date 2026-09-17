@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using BepInEx.Logging;
 
@@ -9,9 +8,13 @@ namespace PrayerClarity
     internal static class RebalancedTierState
     {
         internal const string PlantTierParam = "prayerclarity_rebalanced_plant_tier";
+        internal const string PlantReductionParam = "prayerclarity_rebalanced_plant_reduction";
         internal const string ConfessionTierParam = "prayerclarity_rebalanced_confession_tier";
+        internal const string ConfessionBonusParam = "prayerclarity_rebalanced_confession_bonus";
         internal const string ReposeTierParam = "prayerclarity_rebalanced_repose_tier";
         internal const string CombatTierParam = "prayerclarity_rebalanced_combat_tier";
+        internal const string CombatExtraDamageParam = "prayerclarity_rebalanced_combat_extra_damage";
+        internal const string CombatRegenParam = "prayerclarity_rebalanced_combat_regen";
         internal const string ExcellenceTierParam = "prayerclarity_rebalanced_excellence_tier";
 
         private static readonly Dictionary<string, string> PrayerToToken =
@@ -57,9 +60,23 @@ namespace PrayerClarity
                 if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier)) return;
 
                 string token;
-                if (!PrayerToToken.TryGetValue(rule.PrayerId, out token)) return;
+                if (PrayerToToken.TryGetValue(rule.PrayerId, out token))
+                    SetPlayerParam(token, tier);
 
-                SetPlayerParam(token, tier);
+                switch (rule.PrayerId)
+                {
+                    case "b_plant":
+                        SetPlayerParam(PlantReductionParam, rule.TierValue(rule.GrowthReduction, tier));
+                        break;
+                    case "b_sins":
+                        SetPlayerParam(ConfessionBonusParam, rule.TierValue(rule.ConfessionProbability, tier) - 0.15f);
+                        break;
+                    case "b_sword":
+                    case "b_shield":
+                        SetPlayerParam(CombatExtraDamageParam, Math.Max(0f, rule.TierValue(rule.CombatDamage, tier) - 5f));
+                        SetPlayerParam(CombatRegenParam, rule.TierValue(rule.CombatRegenPerSecond, tier));
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -69,13 +86,7 @@ namespace PrayerClarity
 
         internal static int GetCapturedTier(string token)
         {
-            object player = GetPlayer();
-            if (player == null) return 0;
-
-            ResolvePlayerParamMethods(player.GetType());
-            if (_getPlayerParam == null) return 0;
-
-            float value = Convert.ToSingle(_getPlayerParam.Invoke(player, new object[] { token, 0f }));
+            float value = GetPlayerParam(token, 0f);
             int tier = (int)Math.Round(value);
             return tier >= 1 && tier <= 3 ? tier : 0;
         }
@@ -86,6 +97,16 @@ namespace PrayerClarity
             return PrayerToToken.TryGetValue(prayerId ?? string.Empty, out token)
                 ? GetCapturedTier(token)
                 : 0;
+        }
+
+        internal static float GetPlayerParam(string param, float fallback)
+        {
+            object player = GetPlayer();
+            if (player == null) return fallback;
+
+            ResolvePlayerParamMethods(player.GetType());
+            if (_getPlayerParam == null) return fallback;
+            return Convert.ToSingle(_getPlayerParam.Invoke(player, new object[] { param, fallback }));
         }
 
         private static void SetPlayerParam(string token, float value)
