@@ -53,6 +53,7 @@ namespace PrayerClarity
         private static void ApplyOnce()
         {
             RebalancedExpressionProjection.Apply();
+            ApplyCombatAliasProjection();
 
             foreach (RebalancedPrayerRule rule in RebalancedRuleSet.All)
             {
@@ -70,6 +71,23 @@ namespace PrayerClarity
 
                     ApplyStockOwnedFields(craft, rule, tier);
                 }
+            }
+        }
+
+        private static void ApplyCombatAliasProjection()
+        {
+            for (int tier = 1; tier <= 3; tier++)
+            {
+                string craftId = RebalancedRuleSet.CraftId("b_shield", tier);
+                object craft = R.BalanceData(craftId, "CraftDefinition", true);
+                if (craft == null) throw new MissingMemberException("Missing legacy Combat alias prayer craft " + craftId);
+
+                string currentBuff = Convert.ToString(R.Get(craft, "buff"));
+                if (!string.Equals(currentBuff, "buff_shield", StringComparison.Ordinal) &&
+                    !string.Equals(currentBuff, "buff_sword", StringComparison.Ordinal))
+                    throw new InvalidOperationException(craftId + " buff target changed unexpectedly: " + currentBuff);
+
+                R.Set(craft, "buff", "buff_sword");
             }
         }
 
