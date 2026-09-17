@@ -9,8 +9,8 @@ namespace PrayerClarity
         private const float Epsilon = 0.0001f;
         private const string NoBreakSpace = "\u00A0";
         private const string InlineSeparator = " · ";
-        private const int LongEffectWrapThreshold = 72;
-        private const int MinimumEffectSegmentLength = 24;
+        private const int LongEffectWrapThreshold = 45;
+        private const int MinimumEffectSegmentLength = 18;
 
         internal static string Build(List<PrayerForecast.TierDetails> tiers)
         {
