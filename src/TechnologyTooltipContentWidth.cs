@@ -92,12 +92,13 @@ namespace PrayerClarity
                     continue;
                 }
 
-                bool isEffectHeader = string.Equals(line, effectHeader, StringComparison.Ordinal);
+                string semanticLine = TechnologyTooltipTextStyle.StripColorEncoding(line);
+                bool isEffectHeader = string.Equals(semanticLine, effectHeader, StringComparison.Ordinal);
                 bool soft = previousWasEffectHeader ||
                             isEffectHeader ||
-                            line.StartsWith(effectHeader + " ", StringComparison.Ordinal) ||
-                            line.IndexOf(" ×", StringComparison.Ordinal) >= 0 ||
-                            IsSectionHeading(line);
+                            semanticLine.StartsWith(effectHeader + " ", StringComparison.Ordinal) ||
+                            semanticLine.IndexOf(" ×", StringComparison.Ordinal) >= 0 ||
+                            IsSectionHeading(semanticLine);
 
                 previousWasEffectHeader = isEffectHeader;
                 if (soft) continue;
