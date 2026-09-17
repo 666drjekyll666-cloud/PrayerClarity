@@ -2,14 +2,6 @@ name: Build PrayerClarity Rebalanced
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev/rebalanced-0.1.0
-    paths:
-      - 'PrayerClarity.Rebalanced.csproj'
-      - 'src/PrayerClarityRebalancedPlugin.cs'
-      - 'src/RebalancedRuleSet.cs'
-      - 'src/RebalancedStaticProjection.cs'
 
 permissions:
   contents: read
