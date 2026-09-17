@@ -1,6 +1,6 @@
-# Lookup Identity Probe 0.1.0 — handoff manifest
+# Lookup Identity Probe 0.1.0 — handoff manifest and accepted result
 
-Status: research-only runtime evidence build. Not production code and not PrayerClarity: Rebalanced gameplay behavior.
+Status: **completed research-only runtime evidence build**. Not production code and not PrayerClarity: Rebalanced gameplay behavior.
 
 Purpose: answer one remaining static-projection question on Graveyard Keeper 1.407: whether each live `pray:*` `CraftDefinition` stored in `GameBalance.me.craft_data` is the exact same object returned by `GameBalance.GetDataOrNull<CraftDefinition>(id)`, and whether the `output` list is the same referenced list.
 
@@ -24,18 +24,26 @@ Build identity:
 - Handoff filename: `PrayerClarity.LookupIdentityProbe.0.1.0.dll`.
 - Handoff DLL SHA-256: `bc549b15f0d9ef41e543707e37882ef9534f8b218dae871dd60cb2a5293ca9b1`.
 
-Expected runtime output:
+## Accepted runtime result — 2026-09-17
 
-`BepInEx/PrayerClarity-lookup-identity-probe-0.1.0.txt`
+User runtime evidence was produced on the supported Graveyard Keeper 1.407 `Assembly-CSharp` MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
 
-The summary reports `prayerRows`, null lookups, reference mismatches, output-list identity, and `PASS=true/false`.
+Observed summary:
 
-Requested user action:
+- `prayerRows=72`;
+- `lookupNull=0`;
+- `sameCraft=72`, `differentCraft=0`;
+- `sameOutput=72`, `differentOutput=0`;
+- every reported prayer ID had `duplicateId=false`;
+- probe result: `PASS=true`.
 
-1. Keep stable PrayerClarity: Vanilla 1.0.20 installed if desired; this probe has a separate plugin GUID.
-2. Place the probe DLL in `BepInEx/plugins`.
-3. Launch Graveyard Keeper and load any save.
-4. No prayer, pulpit or sermon action is required.
-5. Return `BepInEx/PrayerClarity-lookup-identity-probe-0.1.0.txt`. If it is not created, return the BepInEx log instead.
+**Accepted fact:** for every discovered `pray:*` row, `GameBalance.GetDataOrNull<CraftDefinition>(id)` returned the exact same live `CraftDefinition` instance stored in `GameBalance.me.craft_data`, and its `output` field referenced the exact same list object.
 
-Acceptance criterion for this evidence gate: every discovered `pray:*` craft resolves non-null and `ReferenceEquals(craft_data_row, lookup)==true`. Output-list identity is recorded separately to determine whether success-output projection needs any additional cache/list handling.
+Architecture consequence:
+
+- per-save absolute/idempotent mutation of the live prayer `CraftDefinition` is visible through the same lookup path used by PrayerClarity presentation code and by stock consumers;
+- no second prayer-definition cache needs to be rebuilt for those fields;
+- output-list projection likewise needs no separate list/cache synchronization;
+- the previously open live-definition identity gate for the one-shot `CraftComponent.FillCraftsList()` projection architecture is closed.
+
+The probe has answered its only question and should not remain installed or be repeated unless a future game build changes the relevant lifecycle/identity assumptions.
