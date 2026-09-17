@@ -10,7 +10,7 @@ namespace PrayerClarity
         internal const int OwnedMaxWidth = 900;
         private const int MinimumAnchorWidth = 150;
         private const string NoBreakSpace = "\u00A0";
-        private const int SoftProseWordThreshold = 6;
+        private const int SoftProseWordThreshold = 5;
 
         private static ManualLogSource _log;
         private static bool _errorLogged;
@@ -118,10 +118,6 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(semanticLine)) return false;
 
-            // Explicitly atomic mechanics rows contain NBSPs inserted by the renderer.
-            // Ordinary human-language prose remains breakable. Once a prose line is
-            // long enough to be sentence-like, it must wrap inside the width chosen by
-            // the compact mechanics rows instead of stretching the whole bubble.
             if (rawLine.IndexOf(NoBreakSpace) >= 0) return false;
 
             int words = 1;
