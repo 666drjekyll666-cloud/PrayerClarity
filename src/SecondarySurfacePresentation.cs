@@ -307,6 +307,9 @@ namespace PrayerClarity
         private static void AddLinkedPrayerCraft(List<object> result, HashSet<string> seen, object itemDefinition)
         {
             if (itemDefinition == null) return;
+            string itemId = R.Id(itemDefinition);
+            if (!ItemTooltipPresentation.IsKnownPrayerItemId(itemId)) return;
+
             object linked = R.Get(itemDefinition, "linked_craft");
             AddPrayerCraft(result, seen, linked);
         }
