@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-17 with the accepted PrayerClarity: Vanilla 1.0.20 baseline and the locked PrayerClarity: Rebalanced roster.
+Status: product/architecture source of truth, reconciled 2026-09-18 with the accepted PrayerClarity: Vanilla 1.0.20 baseline, the locked PrayerClarity: Rebalanced roster, and the shared prayer-tooltip information-design direction.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -84,6 +84,37 @@ The four accepted player-facing surfaces consume context-appropriate projections
 PrayerClarity: Vanilla resolves effective semantics to stock 1.407 values. PrayerClarity: Rebalanced resolves them to the locked ruleset. Do not maintain a second UI-only table of Rebalanced numbers beside separate gameplay patches.
 
 The mechanics layer may require narrow hooks for behavior that is not representable merely by changing stock data. Those hooks must still consult the same effective definitions/quality semantics so gameplay and UI cannot drift.
+
+## Shared prayer information-design contract
+
+This presentation contract applies to **both PrayerClarity: Vanilla and PrayerClarity: Rebalanced**. Edition-specific mechanics and values differ; the information grammar should not fork unless evidence requires it.
+
+Primary rule:
+
+> Describe the in-world effect once in natural player-facing language; show only the quality-dependent delta inside each Bronze/Silver/Gold block.
+
+Practical rules:
+
+- write from the player's/game-world perspective first, then expose the exact number that controls the mechanic;
+- prefer concrete game actions and objects (`the donkey brings a corpse`, `a confession can occur`, `plants take less time to grow`) over implementation language (`roll`, `scheduler`, `range narrowing`) unless the technical term is itself player-facing;
+- shared/invariant behavior appears once above the quality tiers;
+- each tier contains only materially changing information plus its 100%-success Church Quality requirement;
+- short label/value mechanics are atomic clauses and should not wrap between the label and its value (`Craft quality: +0.5`, `Confession chance: 75%`, `Plant growth time: -30%`);
+- preserve semantic hierarchy with spacing before adding more prose: shared effect -> tier snapshots -> crafting source;
+- use native icons where they reduce explanation cost, but do not let an icon become the sole carrier of essential information;
+- use color as a secondary cue, never as the only source of meaning;
+- special named entities keep the same accent everywhere they recur in one tooltip (for example `Commercial Blessing` in the shared explanation and tier rewards);
+- Bronze/Silver/Gold color may emphasize a **key tier value** when that value itself is a direct quality ladder; color only the value, not the entire sentence;
+- do not color durations merely because they vary; duration is normally secondary and should remain a compact readable line;
+- avoid decorative color proliferation: structural/entity accents and quality-linked value accents must have a defined semantic role;
+- prefer exact but natural wording over technically exhaustive prose. Do not add fallback/else-case explanations when they do not materially improve the player's decision;
+- when a mechanic cannot be truthfully expressed as one fixed probability, do not invent a percentage merely to make the tier ladder visually symmetric.
+
+The intended scan path is:
+
+`what happens -> what this quality changes -> how long / what extra reward -> where it is crafted`
+
+This contract governs presentation structure, not mechanics. PrayerClarity: Vanilla must continue to describe stock 1.407 behavior honestly; PrayerClarity: Rebalanced may describe repaired/reworked behavior from its effective ruleset.
 
 ## Pulpit presentation contract
 
