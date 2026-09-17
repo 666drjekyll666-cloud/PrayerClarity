@@ -2,6 +2,21 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity Test Harness Rebalanced Compatibility 0.1.0
+
+- Type: research/test-only compatibility shim; no prayer mechanics, save state, UI or Harmony patches.
+- Purpose: allow the existing legacy PrayerClarity Test Harness to load while testing PrayerClarity: Rebalanced. The legacy Harness hard-depends on the Vanilla plugin GUID `nikich.graveyardkeeper.prayerclarity`; the shim exposes only that dependency identity and itself hard-depends on `nikich.graveyardkeeper.prayerclarity.rebalanced`, forcing Rebalanced to load first.
+- Source branch: `research/test-harness-rebalanced-compat`.
+- Candidate ref: `candidate/test-harness-rebalanced-compat-0.1.0-build2`.
+- Exact source SHA: `c251c45687c5e2f45bff9b703719ad7478c5f888`.
+- GitHub Actions run: `35287963473`.
+- Workflow result: success on `ubuntu-latest`; `net472` Release build and artifact upload passed.
+- Workflow artifact ID: `10524862386` (`PrayerClarity-TestHarness-RebalancedCompat-0.1.0-ci-c251c45687c5e2f45bff9b703719ad7478c5f888`).
+- Artifact ZIP digest: `sha256:93e6d50dcc4d7519fd4060d18c24dd6e0eccf459cf425df06ad141a34cb8cde4`.
+- Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.0-ci.dll`; SHA-256: `721b63377b365f7d483a1ac93c4b90fc6e7188154180910acfc88ada3190f23a`.
+- Runtime gate: install only alongside PrayerClarity: Rebalanced and the existing Test Harness/bridge DLLs. Confirm the Harness and bridges now load and appear in Configuration Manager. If the Harness has a compile-time assembly reference to `PrayerClarity.dll` rather than only the BepInEx GUID dependency, this shim will not be sufficient; the next runtime log will prove that distinction.
+- Status: **ready for narrow runtime dependency test; not a production or release artifact**.
+
 ## Shared polish candidate — PrayerClarity: Vanilla 1.0.24 / Rebalanced 0.1.5
 
 - Type: narrow shared presentation correction plus one Rebalanced Temporary Effects consistency repair; no prayer balance values, success formulas or gameplay mechanics changed in this candidate.
