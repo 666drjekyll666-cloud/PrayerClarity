@@ -93,19 +93,9 @@ namespace PrayerClarity
                     TechnologyTooltipTextStyle.RewardName(commonRewardIdentity.Id, rewardName)
                 };
 
-                if (string.Equals(commonRewardIdentity.Id, "blessing_commerce", StringComparison.Ordinal))
-                {
-                    string description = R.VanillaLocalize("blessing_commerce_d");
-                    if (!string.IsNullOrEmpty(description) &&
-                        !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal))
-                    {
-                        lines.Add(TechnologyTooltipTextStyle.AccentEntityOccurrences(
-                            description,
-                            commonRewardIdentity.Id,
-                            rewardName));
-                    }
-                }
-
+                // Prosperity lore already explains what the Commercial Blessing does.
+                // Do not repeat that prose inside the mechanics block; it otherwise
+                // becomes an unnecessary width owner and duplicates information.
                 return string.Join("\n", lines.ToArray());
             }
 
@@ -118,7 +108,7 @@ namespace PrayerClarity
             {
                 return BuildEffectSection(
                     Localization.F("tech.effect.imagination_intro") + "\n" +
-                    TechnologyTooltipTextStyle.Atomic(core));
+                    TechnologyTooltipTextStyle.GoldValueAfterColon(core));
             }
 
             if (string.Equals(family, "b_star", StringComparison.Ordinal))
@@ -126,6 +116,11 @@ namespace PrayerClarity
                 return BuildEffectSection(
                     Localization.F("tech.effect.excellence_intro") + "\n" +
                     TechnologyTooltipTextStyle.Atomic(core));
+            }
+
+            if (string.Equals(family, "b_skull", StringComparison.Ordinal))
+            {
+                return BuildEffectSection(core + " " + TechnologyTooltipTextStyle.CorpseQualityCue());
             }
 
             return BuildEffectSection(core);
@@ -208,7 +203,8 @@ namespace PrayerClarity
         {
             string family = PrayerFamily(tier.CraftId);
             if (string.Equals(family, "b_plant", StringComparison.Ordinal) ||
-                string.Equals(family, "b_sins", StringComparison.Ordinal))
+                string.Equals(family, "b_sins", StringComparison.Ordinal) ||
+                string.Equals(family, "b_sword", StringComparison.Ordinal))
                 return TechnologyTooltipTextStyle.Atomic(text);
 
             if (string.Equals(family, "b_star", StringComparison.Ordinal))
@@ -417,14 +413,14 @@ namespace PrayerClarity
         {
             float percent = rate * 100f;
             if (Math.Abs(percent) < Epsilon) return "0%";
-            string sign = percent > 0f ? "+" : "−";
+            string sign = percent > 0f ? "+" : "-";
             return sign + Math.Abs(percent).ToString("0.##", CultureInfo.InvariantCulture) + "%";
         }
 
         private static string FormatSignedNumber(float value)
         {
             if (Math.Abs(value) < Epsilon) return "0";
-            string sign = value > 0f ? "+" : "−";
+            string sign = value > 0f ? "+" : "-";
             return sign + Math.Abs(value).ToString("0.##", CultureInfo.InvariantCulture);
         }
 
