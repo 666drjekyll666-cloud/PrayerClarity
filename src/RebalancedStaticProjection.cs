@@ -77,7 +77,8 @@ namespace PrayerClarity
                    rule.FaithBonusRates != null ||
                    rule.MoneyBonusRates != null ||
                    rule.RemoveFixedFaith ||
-                   rule.RemoveFixedMoney;
+                   rule.RemoveFixedMoney ||
+                   !string.IsNullOrEmpty(rule.SuccessRewardBaseItemId);
         }
 
         private static void ApplyStockOwnedFields(object craft, RebalancedPrayerRule rule, int tier)
@@ -91,13 +92,13 @@ namespace PrayerClarity
 
             if (rule.RemoveFixedFaith || rule.RemoveFixedMoney)
                 RemovePrayerOwnedFixedOutputs(craft, rule.RemoveFixedFaith, rule.RemoveFixedMoney);
+
+            ApplySuccessReward(craft, rule, tier);
         }
 
         private static void RemovePrayerOwnedFixedOutputs(object craft, bool removeFaith, bool removeMoney)
         {
-            IList output = R.Get(craft, "output") as IList;
-            if (output == null) throw new MissingMemberException(R.Id(craft) ?? "CraftDefinition", "output");
-
+            IList output = RequireOutput(craft);
             for (int i = output.Count - 1; i >= 0; i--)
             {
                 object item = output[i];
@@ -106,6 +107,38 @@ namespace PrayerClarity
                     (removeMoney && string.Equals(id, "money", StringComparison.Ordinal)))
                     output.RemoveAt(i);
             }
+        }
+
+        private static void ApplySuccessReward(object craft, RebalancedPrayerRule rule, int tier)
+        {
+            if (string.IsNullOrEmpty(rule.SuccessRewardBaseItemId)) return;
+
+            int rewardTier = rule.TierValue(rule.SuccessRewardQualityTiers, tier, 0);
+            int count = rule.TierValue(rule.SuccessRewardCounts, tier, 0);
+            IList output = RequireOutput(craft);
+
+            for (int quality = 1; quality <= 3; quality++)
+            {
+                string ownedId = rule.SuccessRewardBaseItemId + ":" + quality;
+                for (int i = output.Count - 1; i >= 0; i--)
+                    if (string.Equals(R.Id(output[i]), ownedId, StringComparison.Ordinal))
+                        output.RemoveAt(i);
+            }
+
+            if (rewardTier <= 0 || count <= 0) return;
+
+            string rewardId = rule.SuccessRewardBaseItemId + ":" + rewardTier;
+            Type itemType = R.GameType("Item");
+            ConstructorInfo ctor = itemType?.GetConstructor(new[] { typeof(string), typeof(int) });
+            if (ctor == null) throw new MissingMethodException("Item(string,int)");
+            output.Add(ctor.Invoke(new object[] { rewardId, count }));
+        }
+
+        private static IList RequireOutput(object craft)
+        {
+            IList output = R.Get(craft, "output") as IList;
+            if (output == null) throw new MissingMemberException(R.Id(craft) ?? "CraftDefinition", "output");
+            return output;
         }
 
         private static MethodInfo FindMethod(Type type, string name, int parameterCount)
