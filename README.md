@@ -1,6 +1,8 @@
 # PrayerClarity: Vanilla
 
-**PrayerClarity: Vanilla** is the Clarity-only edition of PrayerClarity for **Graveyard Keeper 1.407**. It makes prayers easier to understand before you use them while preserving vanilla prayer balance and sermon mechanics.
+*Understand what your prayers actually do — without changing how they work.*
+
+Clear prayer effects, quality differences, success requirements and buff durations while keeping **Graveyard Keeper**'s vanilla prayer mechanics intact.
 
 **Current stable version: 1.0.20**
 
