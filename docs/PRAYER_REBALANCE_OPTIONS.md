@@ -25,8 +25,8 @@ Runtime baseline for future implementation: PrayerClarity: Vanilla **1.0.20**, a
 | Family | PrayerClarity: Rebalanced target |
 | --- | --- |
 | Ordinary `b_empty` | **Stock.** Starter baseline. |
-| Faith `b_faith` | **+250 / +350 / +450% Faith**, q **25 / 40 / 70**. Keep common base donations. Remove prayer-owned fixed Faith, fixed money and off-theme money percentage. |
-| Donations `b_money` | **+250 / +350 / +450% donations**, q **25 / 40 / 70**. Keep common base Faith. Remove prayer-owned Faith bonus; retain thematic **+1 / +2 / +3 silver** fixed floor. |
+| Faith `b_faith` | **+200 / +300 / +400% Faith**, q **25 / 40 / 70**. Keep common base donations. Remove prayer-owned fixed Faith, fixed money and off-theme money percentage. |
+| Donations `b_money` | **+200 / +300 / +400% donations**, q **25 / 40 / 70**. Keep common base Faith. Remove prayer-owned Faith bonus; retain thematic **+1 / +2 / +3 silver** fixed floor. |
 | Combo `b_faith_money` | **Stock:** +50/+100/+150% Faith and donations, q **15/30/60**, stock fixed Faith/money outputs. |
 | Repentance `b_sins` | Daily confession probability **50 / 75 / 100%**, duration **18/36/54 min**, q **10/20/40**. |
 | Shoots & Roots `b_plant` | Repair stock scope and scale growth time **-20 / -30 / -40%**, duration **36/72/108 min**, q **10/20/30**. The scope repair is Vanilla Fix; quality scaling is Balance/Rework. |
@@ -35,7 +35,7 @@ Runtime baseline for future implementation: PrayerClarity: Vanilla **1.0.20**, a
 | Imagination `b_pen` | **+0.7 craft quality** at every tier; duration **18/36/54 min**; Silver successful sermon gives **3 Silver Stories**, Gold gives **3 Gold Stories**; q **10/40/60**. |
 | Excellence `b_star` | **+0.2/+0.5/+1.0** linked-craft quality, duration **18/36/54 min**, q **10/40/60**. |
 | Prosperity `b_village` | **Stock:** 1/2/3 Commercial Blessings and existing sermon outputs, q **10/20/30**. Natural progression obsolescence is accepted. |
-| BSS Soul's Repose `b_souls` | **+250 / +350 / +450% Faith**, q **25/40/70**. Preserve Soul-Gratitude base formula and recipe; remove prayer-owned fixed Faith/money and off-theme donation percentage. |
+| BSS Soul's Repose `b_souls` | **+200 / +300 / +400% Faith**, q **25/40/70**. Preserve Soul-Gratitude base formula and recipe; remove prayer-owned fixed Faith/money and off-theme donation percentage. |
 | Soul Contentment `b_grat_points_incr` | **+20% Soul Gratitude** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis. |
 | Thorough Cleansing `b_sin_shard` | **x2 Sin Shards** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis. |
 
@@ -60,22 +60,22 @@ Combo remains the convenient generalist: more expensive to manufacture, broader 
 ### Faith specialist
 
 - q **25 / 40 / 70**;
-- `k_faith = 2.5 / 3.5 / 4.5` = **+250/+350/+450%**;
+- `k_faith = 2 / 3 / 4` = **+200/+300/+400%**;
 - no prayer-owned `k_money`;
 - remove prayer-owned fixed Faith and fixed money;
 - retain normal base donations.
 
-The percentage is the specialist proposition and scales with church development.
+The percentage is the specialist proposition and scales with church development. Including the unchanged base reward, the proportional Faith total is **3x / 4x / 5x base** on success versus Combo's **1.5x / 2x / 2.5x** at the same quality: exactly twice Combo's proportional Faith total before fixed outputs.
 
 ### Donations specialist
 
 - q **25 / 40 / 70**;
-- `k_money = 2.5 / 3.5 / 4.5` = **+250/+350/+450%**;
+- `k_money = 2 / 3 / 4` = **+200/+300/+400%**;
 - no prayer-owned Faith percentage/fixed Faith;
 - retain normal base Faith;
 - retain **+1/+2/+3 silver** fixed money.
 
-The fixed money is an early-game floor, not a symmetry requirement.
+The fixed money is an early-game floor, not a symmetry requirement. Before that fixed floor, the successful proportional donation total is likewise **3x / 4x / 5x base**, exactly twice Combo's corresponding **1.5x / 2x / 2.5x** proportional total.
 
 ### Requirement grammar
 
@@ -88,11 +88,13 @@ The specialist row is Combo +10 Church Quality at every tier and keeps the same 
 
 Treat BSS Soul's Repose as the **Soul-Gratitude-dependent Faith specialist**:
 
-- **+250/+350/+450% Faith**;
+- **+200/+300/+400% Faith**;
 - q **25/40/70**;
 - preserve base Faith `0.1 * (Church Quality + Soul Gratitude) * Eloquence factor`;
 - preserve Chapter +5 Faith +2 Sin Shards recipe;
 - remove prayer-owned fixed Faith, fixed money and off-theme donation percentage.
+
+Soul Gratitude is part of the prayer event's **base Faith before the success-only percentage is applied**. There is no separate `+X% from Soul Gratitude` success term. The player-facing grammar should therefore explain that base Faith depends on Church Quality and Soul Gratitude, then show the tier's **+200/+300/+400% Faith** modifier.
 
 Ordinary Faith base is `0.2 * CQ`. Because the two specialists use the same multiplier and q ladder, ignoring integer rounding:
 
@@ -204,7 +206,7 @@ The design specification is now rebased onto the complete PrayerClarity: Vanilla
 
 Do **not** start broad production implementation yet. First close the narrow effective-model/mechanics audit:
 
-1. define one effective prayer-definition seam so gameplay and Pulpit, Technology, item tooltip and Temporary Effects cannot disagree;
+1. define one effective prayer-definition/model seam so gameplay and Pulpit, Technology, item tooltip and Temporary Effects cannot disagree;
 2. verify Roots SmartExpression lifecycle/scope integration;
 3. verify Repose corpse RNG seam;
 4. verify Repentance daily-roll tier seam;
