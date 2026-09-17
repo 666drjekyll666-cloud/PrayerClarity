@@ -17,6 +17,7 @@
   <ItemGroup>
     <Compile Include="src/PrayerClarityRebalancedPlugin.cs" />
     <Compile Include="src/ReflectionBridge.cs" />
+    <Compile Include="src/PrayerEditionSemantics.cs" />
     <Compile Include="src/PrayerForecast.cs" />
     <Compile Include="src/PresentationText.cs" />
     <Compile Include="src/TooltipSemanticModel.cs" />
