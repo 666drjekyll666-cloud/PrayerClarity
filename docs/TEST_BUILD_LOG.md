@@ -2,6 +2,22 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity Test Harness Rebalanced Compatibility 0.1.1
+
+- Type: research/test-only compatibility adapter; not production PrayerClarity behavior.
+- Purpose: retain the 0.1.0 Vanilla-GUID compatibility alias and additionally mirror Rebalanced's successful-prayer tier/effect-token capture immediately before the legacy Harness synthetically activates a timed buff. This makes Temporary Effects tests representative of Silver/Gold Rebalanced semantics without running the real sermon/reward path.
+- Source branch: `research/test-harness-rebalanced-compat`.
+- Candidate ref: `candidate/test-harness-rebalanced-compat-0.1.1`.
+- Exact source SHA: `0652b8f9feb18eb6dd72c77756bda6f23b32e3d6`.
+- GitHub Actions run: `35288758209`.
+- Workflow result: success on `ubuntu-latest`; `net472` Release build and artifact upload passed.
+- Workflow artifact ID: `10525277772` (`PrayerClarity-TestHarness-RebalancedCompat-0.1.1-ci-0652b8f9feb18eb6dd72c77756bda6f23b32e3d6`).
+- Artifact ZIP digest: `sha256:c48907ef8e721a4c450fdef8c148bf481efdcb499e46c6efea68b3545c5a5d08`.
+- Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.1-ci.dll`; SHA-256: `f5ee41d053a49411754cbc4dabb645fdb9d59c480711d8e7fed24dc4501642b6`.
+- Test protocol: replace compatibility 0.1.0 with 0.1.1, keep Rebalanced 0.1.5 and the existing Harness/bridges, use Silver, activate each timed prayer once, and **skip retired Protection/b_shield** when validating canonical Combat because both Combat and Protection resolve to the same `buff_sword` and double activation extends its timer. Do not save the game with synthetic buffs active.
+- Expected Silver Temporary Effects: Repentance 75%; Roots -30% growth time; Repose Silver reliability wording; Combat +10 damage / +4 armor / 2 HP/s; Imagination +0.7; Excellence +0.5; Soul Contentment +20%; Thorough Cleansing x2. Durations should continue to reflect the active Longer Days day length.
+- Status: **ready for narrow runtime presentation verification; not a production or release artifact**.
+
 ## PrayerClarity Test Harness Rebalanced Compatibility 0.1.0
 
 - Type: research/test-only compatibility shim; no prayer mechanics, save state, UI or Harmony patches.
@@ -15,7 +31,8 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Artifact ZIP digest: `sha256:93e6d50dcc4d7519fd4060d18c24dd6e0eccf459cf425df06ad141a34cb8cde4`.
 - Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.0-ci.dll`; SHA-256: `721b63377b365f7d483a1ac93c4b90fc6e7188154180910acfc88ada3190f23a`.
 - Runtime gate: install only alongside PrayerClarity: Rebalanced and the existing Test Harness/bridge DLLs. Confirm the Harness and bridges now load and appear in Configuration Manager. If the Harness has a compile-time assembly reference to `PrayerClarity.dll` rather than only the BepInEx GUID dependency, this shim will not be sufficient; the next runtime log will prove that distinction.
-- Status: **ready for narrow runtime dependency test; not a production or release artifact**.
+- Runtime result, 2026-09-18: **dependency compatibility proved**. Rebalanced 0.1.5, compatibility 0.1.0, Test Harness 0.1.2 and all three Harness bridge plugins loaded together. The next test exposed that the legacy Buff Bridge bypasses Rebalanced tier capture, so 0.1.0 is superseded by 0.1.1 for tier-dependent Temporary Effects verification.
+- Status: **dependency question answered; superseded by compatibility 0.1.1 for active-effect testing**.
 
 ## Shared polish candidate — PrayerClarity: Vanilla 1.0.24 / Rebalanced 0.1.5
 
