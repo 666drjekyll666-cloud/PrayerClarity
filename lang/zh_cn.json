@@ -14,7 +14,7 @@
   "tech.requires_header": "需要",
   "tech.success_threshold": "100% 成功需要 {0} (cross)",
   "tech.donations": "捐款",
-  "tech.duration": "持续时间",
+  "tech.duration": "效果持续时间",
   "tech.quantity": "数量",
   "buff.souls_repose": "(gratitude_points)越多，获得的(faith)越多。",
   "active.sword": "伤害 +{0:0.##}",

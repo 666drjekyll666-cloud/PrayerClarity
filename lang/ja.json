@@ -14,7 +14,7 @@
   "tech.requires_header": "必要",
   "tech.success_threshold": "成功率100%には {0} (cross) が必要",
   "tech.donations": "寄付金",
-  "tech.duration": "持続時間",
+  "tech.duration": "効果の持続時間",
   "tech.quantity": "数量",
   "buff.souls_repose": "(gratitude_points)が多いほど(faith)が増えます。",
   "active.sword": "ダメージ +{0:0.##}",

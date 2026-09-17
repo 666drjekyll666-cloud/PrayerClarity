@@ -9,6 +9,8 @@ namespace PrayerClarity
         private const float Epsilon = 0.0001f;
         private const string NoBreakSpace = "\u00A0";
         private const string InlineSeparator = " · ";
+        private const int LongEffectWrapThreshold = 72;
+        private const int MinimumEffectSegmentLength = 24;
 
         internal static string Build(List<PrayerForecast.TierDetails> tiers)
         {
@@ -88,7 +90,7 @@ namespace PrayerClarity
             string core = tiers[0].SpecialCoreText;
             if (string.IsNullOrEmpty(core)) return null;
 
-            return Localization.F("forecast.effect_header") + ":\n" + core;
+            return Localization.F("forecast.effect_header") + ":\n" + WrapLongEffect(core);
         }
 
         private static string BuildSharedDuration(List<PrayerForecast.TierDetails> tiers)
@@ -130,7 +132,7 @@ namespace PrayerClarity
             {
                 TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
                 if (reward == null && !string.IsNullOrEmpty(tier.SpecialCoreText))
-                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialCoreText);
+                    lines.Add(Localization.F("forecast.effect_header") + ": " + WrapLongEffect(tier.SpecialCoreText));
             }
 
             if (!IsDurationShared(allTiers) && tier.HasSpecialDuration)
@@ -185,6 +187,34 @@ namespace PrayerClarity
             }
 
             return parts.Count == 0 ? null : string.Join(InlineSeparator, parts.ToArray());
+        }
+
+        private static string WrapLongEffect(string text)
+        {
+            if (string.IsNullOrEmpty(text) ||
+                text.Length <= LongEffectWrapThreshold ||
+                text.IndexOf('\n') >= 0)
+                return text;
+
+            int min = MinimumEffectSegmentLength;
+            int max = text.Length - MinimumEffectSegmentLength;
+            if (max <= min) return text;
+
+            int target = text.Length / 2;
+            int split = -1;
+            int bestDistance = int.MaxValue;
+
+            for (int i = min; i <= max; i++)
+            {
+                if (!char.IsWhiteSpace(text[i])) continue;
+                int distance = Math.Abs(i - target);
+                if (distance >= bestDistance) continue;
+                bestDistance = distance;
+                split = i;
+            }
+
+            if (split < 0) return text;
+            return text.Substring(0, split).TrimEnd() + "\n" + text.Substring(split + 1).TrimStart();
         }
 
         private static bool AnyContribution(

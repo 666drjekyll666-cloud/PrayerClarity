@@ -14,7 +14,7 @@
   "tech.requires_header": "Требуется",
   "tech.success_threshold": "Для 100% успеха требуется {0} (cross)",
   "tech.donations": "Пожертвования",
-  "tech.duration": "Длительность",
+  "tech.duration": "Длительность эффекта",
   "tech.quantity": "Количество",
   "buff.souls_repose": "Больше (gratitude_points) — больше (faith).",
   "active.sword": "+{0:0.##} к урону",

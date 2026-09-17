@@ -14,7 +14,7 @@
   "tech.requires_header": "Requer",
   "tech.success_threshold": "Para 100% de sucesso, são necessários {0} (cross)",
   "tech.donations": "Doações",
-  "tech.duration": "Duração",
+  "tech.duration": "Duração do efeito",
   "tech.quantity": "Quantidade",
   "buff.souls_repose": "Mais (gratitude_points) aumenta a (faith).",
   "active.sword": "+{0:0.##} de dano",

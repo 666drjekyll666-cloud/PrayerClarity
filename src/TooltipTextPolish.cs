@@ -22,9 +22,11 @@ namespace PrayerClarity
                 if (string.IsNullOrWhiteSpace(text)) continue;
 
                 // The first non-empty text row in the verified prayer Technology
-                // tooltip is the native title. Keep its final lexical pair together
-                // so short connectors such as "об / of / de" do not become orphans.
-                string normalized = ProtectFinalWordPair(text);
+                // tooltip is the native title. Protect only a short connector plus
+                // the final word ("об упокоении", "for prosperity", "de ...") so
+                // the title avoids an orphan without forcing ordinary two-word titles
+                // into one unbreakable span.
+                string normalized = ProtectFinalConnectorPair(text);
                 if (!string.Equals(text, normalized, StringComparison.Ordinal))
                     R.Set(row, "text", normalized);
                 return;
@@ -34,6 +36,11 @@ namespace PrayerClarity
         internal static void NormalizeFollowingCraftingRow(IList list, int startIndex, Type bubbleTextType)
         {
             if (list == null || bubbleTextType == null) return;
+
+            // In the verified replacement shape startIndex is headerIndex + 2.
+            // Reuse this already-narrow lifecycle seam to polish the native title too;
+            // no extra global tooltip patch is necessary.
+            NormalizePrayerTitleRow(list, Math.Max(0, startIndex - 2), bubbleTextType);
 
             int end = Math.Min(list.Count, startIndex + 4);
             for (int i = Math.Max(0, startIndex); i < end; i++)
@@ -50,7 +57,7 @@ namespace PrayerClarity
             }
         }
 
-        private static string ProtectFinalWordPair(string text)
+        private static string ProtectFinalConnectorPair(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
@@ -59,6 +66,14 @@ namespace PrayerClarity
 
             int lastSpace = normalized.LastIndexOf(' ');
             if (lastSpace <= 0 || lastSpace + 1 >= normalized.Length) return text;
+
+            int previousSpace = normalized.LastIndexOf(' ', lastSpace - 1);
+            int connectorStart = previousSpace + 1;
+            int connectorLength = lastSpace - connectorStart;
+            if (connectorLength <= 0 || connectorLength > 4) return text;
+
+            string connector = normalized.Substring(connectorStart, connectorLength).Trim();
+            if (connector.Length == 0 || connector.IndexOf(':') >= 0) return text;
 
             return normalized.Substring(0, lastSpace) +
                    NoBreakSpace +
