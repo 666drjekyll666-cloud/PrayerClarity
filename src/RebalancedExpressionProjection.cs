@@ -12,6 +12,7 @@ namespace PrayerClarity
         private const string RebalancedPlantTerm = "Ppar(\"buff_plant\")*Ppar(\"" + RebalancedTierState.PlantReductionParam + "\")";
         private const string StockConfessionExpression = "SetPpar(\"confession_probability\", 0.15)";
         private const string RebalancedConfessionExpression = "SetPpar(\"confession_probability\", 0.15 + Ppar(\"buff_sins\") * Ppar(\"" + RebalancedTierState.ConfessionBonusParam + "\"))";
+        private const string RebalancedCombatTickExpression = "AddPpar(\"hp\", Ppar(\"" + RebalancedTierState.CombatRegenParam + "\"))";
 
         private static readonly string[] PlantCraftIds =
         {
@@ -123,8 +124,15 @@ namespace PrayerClarity
             CollectRootsReplacements(replacements);
             CollectRepentanceReplacement(replacements);
 
+            object combatBuff;
+            bool setCombatTickPeriod;
+            CollectCombatBuffReplacement(replacements, out combatBuff, out setCombatTickPeriod);
+
             foreach (ExpressionReplacement replacement in replacements)
                 replacement.Apply();
+
+            if (setCombatTickPeriod)
+                R.Set(combatBuff, "tick_period", 1f);
         }
 
         private static void CollectRootsReplacements(List<ExpressionReplacement> replacements)
@@ -170,6 +178,25 @@ namespace PrayerClarity
                 throw new InvalidOperationException("church_budka_roll reset expression changed: " + raw);
 
             replacements.Add(new ExpressionReplacement(expressions, 0, RebalancedConfessionExpression));
+        }
+
+        private static void CollectCombatBuffReplacement(List<ExpressionReplacement> replacements, out object combatBuff, out bool setTickPeriod)
+        {
+            combatBuff = R.BalanceData("buff_sword", "BuffDefinition", true);
+            if (combatBuff == null) throw new MissingMemberException("BuffDefinition buff_sword");
+
+            float tickPeriod = R.Float(R.Get(combatBuff, "tick_period"));
+            if (Math.Abs(tickPeriod) > 0.0001f && Math.Abs(tickPeriod - 1f) > 0.0001f)
+                throw new InvalidOperationException("buff_sword tick_period changed unexpectedly: " + tickPeriod);
+            setTickPeriod = Math.Abs(tickPeriod - 1f) > 0.0001f;
+
+            string raw = Raw(R.Get(combatBuff, "se_tick"));
+            if (string.Equals(raw, RebalancedCombatTickExpression, StringComparison.Ordinal))
+                return;
+            if (!string.IsNullOrEmpty(raw))
+                throw new InvalidOperationException("buff_sword se_tick changed unexpectedly: " + raw);
+
+            replacements.Add(new ExpressionReplacement(combatBuff, "se_tick", RebalancedCombatTickExpression));
         }
 
         private static bool IsOptionalPlantConsumer(string craftId)
