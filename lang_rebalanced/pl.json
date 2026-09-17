@@ -1,0 +1,8 @@
+{
+  "rebalanced.active.plant": "Czas wzrostu −{0:0}%",
+  "rebalanced.active.sins": "Dzienna szansa na spowiedź: {0:0}%",
+  "rebalanced.active.repose.silver": "50% szans na najlepszy dostępny poziom jakości; w przeciwnym razie losowanie z rozszerzonego zakresu",
+  "rebalanced.active.repose.gold": "Najlepszy dostępny poziom jakości gwarantowany",
+  "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
+  "rebalanced.active.gratitude": "Wdzięczność za uzdrawianie dusz: +{0:0}%"
+}
