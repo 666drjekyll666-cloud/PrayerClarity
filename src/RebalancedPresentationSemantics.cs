@@ -7,7 +7,7 @@ namespace PrayerClarity
     {
         internal static void Install()
         {
-            PrayerEditionSemantics.Install(TryBuildTierEffect, TryBuildActiveEffect);
+            PrayerEditionSemantics.Install(TryBuildTierEffect, TryBuildActiveEffect, TryBuildTechnologyEffect);
         }
 
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
@@ -50,6 +50,94 @@ namespace PrayerClarity
                 default:
                     return false;
             }
+        }
+
+        internal static bool TryBuildTechnologyEffect(string craftId, out string sharedText, out string tierText)
+        {
+            sharedText = null;
+            tierText = null;
+
+            RebalancedPrayerRule rule;
+            int tier;
+            if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier)) return false;
+
+            if (rule.GrowthReduction != null)
+            {
+                sharedText = Localization.F("rebalanced.tech.plant_intro");
+                tierText = Localization.F("rebalanced.active.plant", rule.TierValue(rule.GrowthReduction, tier) * 100f);
+                return true;
+            }
+
+            if (rule.ConfessionProbability != null)
+            {
+                sharedText = Localization.F("rebalanced.tech.sins_intro");
+                tierText = Localization.F("rebalanced.active.sins", rule.TierValue(rule.ConfessionProbability, tier) * 100f);
+                return true;
+            }
+
+            if (rule.ReposeModes != null)
+            {
+                sharedText = Localization.F("rebalanced.tech.repose_intro");
+                ReposeQualityMode mode = rule.TierValue(rule.ReposeModes, tier, ReposeQualityMode.Stock);
+                switch (mode)
+                {
+                    case ReposeQualityMode.Stock:
+                        tierText = Localization.F("rebalanced.active.repose.bronze");
+                        return true;
+                    case ReposeQualityMode.HalfwayToBest:
+                        tierText = Localization.F("rebalanced.active.repose.silver");
+                        return true;
+                    case ReposeQualityMode.Best:
+                        tierText = Localization.F("rebalanced.active.repose.gold");
+                        return true;
+                }
+            }
+
+            if (rule.CombatDamage != null && rule.CombatArmor != null && rule.CombatRegenPerSecond != null)
+            {
+                sharedText = Localization.F("rebalanced.tech.combat_intro");
+                tierText = Localization.F(
+                    "rebalanced.active.combat",
+                    rule.TierValue(rule.CombatDamage, tier),
+                    rule.TierValue(rule.CombatArmor, tier),
+                    rule.TierValue(rule.CombatRegenPerSecond, tier));
+                return true;
+            }
+
+            if (rule.CraftQualityBonus != null)
+            {
+                float value = rule.TierValue(rule.CraftQualityBonus, tier);
+                if (string.Equals(rule.PrayerId, "b_pen", StringComparison.Ordinal))
+                {
+                    sharedText = Localization.F("tech.effect.imagination_intro") + "\n" + Localization.F("active.pen", value);
+                    return true;
+                }
+
+                if (string.Equals(rule.PrayerId, "b_star", StringComparison.Ordinal))
+                {
+                    sharedText = Localization.F("tech.effect.excellence_intro");
+                    tierText = Localization.F("active.star", value);
+                    return true;
+                }
+            }
+
+            if (rule.SoulGratitudeBonusRate != null)
+            {
+                sharedText = Localization.F("rebalanced.active.gratitude", rule.TierValue(rule.SoulGratitudeBonusRate, tier) * 100f);
+                return true;
+            }
+
+            if (rule.SinShardMultiplier != null)
+            {
+                float value = rule.TierValue(rule.SinShardMultiplier, tier);
+                if (Math.Abs(value - 2f) < 0.0001f)
+                {
+                    sharedText = Localization.F("active.sin_shard");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool TryBuildRuleEffect(RebalancedPrayerRule rule, int tier, out string text, out string semanticKey)
