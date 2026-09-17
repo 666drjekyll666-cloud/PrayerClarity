@@ -18,17 +18,7 @@ PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers
 
 PrayerClarity 1.0.20 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
 
-The repository also contains research for future Vanilla Fixes and Balance/Rework work. Those are separate from the stable Clarity release.
-
 ## Installation
-
-### Nexus archive
-
-1. Install **BepInEx 5** for Graveyard Keeper.
-2. Extract the PrayerClarity archive into the Graveyard Keeper game folder.
-3. The installed DLL should end up at `BepInEx/plugins/PrayerClarity/PrayerClarity.dll`.
-
-### Raw DLL / GitHub Release
 
 1. Install **BepInEx 5** for Graveyard Keeper.
 2. Download `PrayerClarity.dll` from the latest GitHub Release.
@@ -43,3 +33,7 @@ PrayerClarity requires no user-facing configuration.
 - BepInEx 5
 
 PrayerClarity verifies the supported `Assembly-CSharp` build before installing its patches. On an unverified game binary it disables itself instead of patching unknown code.
+
+## License
+
+PrayerClarity is released under the [MIT License](LICENSE).

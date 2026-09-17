@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.20
+
+- Added a clear vertical gap before the crafting-location footer in prayer Technology tooltips.
+- Replaced punctuation-sensitive parsing of vanilla prayer requirement text with direct localized vanilla lore lookup.
+- Fixed the Polish Prayer for Repose Technology tooltip retaining the stock `20–50` requirement text before its description.
+- Preserved the existing Clarity-only behavior: no prayer balance or gameplay mechanics changes.
+
 ## 1.0.18
 
 - Reworked prayer Technology tooltips into compact shared-details + Bronze/Silver/Gold tier snapshots.

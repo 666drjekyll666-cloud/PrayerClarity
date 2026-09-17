@@ -1,0 +1,21 @@
+# Build output
+bin/
+obj/
+artifacts/
+
+# IDE / editor state
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+
+# Generated binaries and packages
+*.dll
+*.pdb
+*.zip
+
+# Local runtime / diagnostic output
+BepInEx/
+*.log
+PrayerClarity-*.txt
