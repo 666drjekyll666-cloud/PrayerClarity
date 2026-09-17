@@ -77,8 +77,10 @@ namespace PrayerClarity
 
             if (rule.ReposeModes != null)
             {
-                sharedText = Localization.F("rebalanced.tech.repose_intro") + " " +
-                             TechnologyTooltipTextStyle.CorpseQualityCue();
+                // The in-world concept is identical in both editions; only the
+                // tier-specific reliability is rebalanced. Reuse the shared base
+                // localization so sibling editions cannot drift in wording.
+                sharedText = Localization.F("active.skull");
                 ReposeQualityMode mode = rule.TierValue(rule.ReposeModes, tier, ReposeQualityMode.Stock);
                 switch (mode)
                 {
