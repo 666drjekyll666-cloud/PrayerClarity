@@ -43,6 +43,7 @@ namespace PrayerClarity
                 RebalancedTierState.Install(PluginGuid, Logger);
                 RebalancedRepose.Install(PluginGuid, Logger);
                 RebalancedCombat.Install(PluginGuid, Logger);
+                RebalancedExcellence.Install(PluginGuid, Logger);
 
                 Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Includes the PrayerClarity: Vanilla presentation layer plus the Rebalanced mechanics foundation. Runtime behavior is development-only until accepted.");
             }
