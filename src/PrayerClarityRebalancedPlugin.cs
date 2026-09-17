@@ -41,6 +41,7 @@ namespace PrayerClarity
                 InstallClarityPresentation();
                 RebalancedStaticProjection.Install(PluginGuid, Logger);
                 RebalancedTierState.Install(PluginGuid, Logger);
+                RebalancedRepose.Install(PluginGuid, Logger);
 
                 Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Includes the PrayerClarity: Vanilla presentation layer plus the Rebalanced mechanics foundation. Runtime behavior is development-only until accepted.");
             }
