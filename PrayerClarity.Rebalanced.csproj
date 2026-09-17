@@ -38,6 +38,7 @@
     <Compile Include="src/RebalancedTierState.cs" />
     <Compile Include="src/RebalancedRepose.cs" />
     <Compile Include="src/RebalancedCombat.cs" />
+    <Compile Include="src/RebalancedExcellence.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="lang/*.json" />
