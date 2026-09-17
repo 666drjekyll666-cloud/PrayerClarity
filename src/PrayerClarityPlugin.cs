@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         internal const string PluginName = "PrayerClarity";
-        internal const string PluginVersion = "1.0.11";
+        internal const string PluginVersion = "1.0.12";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -50,6 +50,15 @@ namespace PrayerClarity
 
                 try
                 {
+                    TechnologyTooltipContentWidth.Install(PluginGuid, Logger);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("PrayerClarity Technology tooltip content-width sizing is disabled; Technology text remains available at vanilla/prefab width. " + ex);
+                }
+
+                try
+                {
                     SecondarySurfacePresentation.Install(PluginGuid, Logger);
                 }
                 catch (Exception ex)
@@ -66,7 +75,7 @@ namespace PrayerClarity
                     Logger.LogError("PrayerClarity prayer-item tooltip surface is disabled; other Clarity surfaces remain active. " + ex);
                 }
 
-                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit, Technology, prayer-item tooltip and Temporary Effects presentation; prayer Technology tooltips receive viewport safety; no prayer mechanics are changed.");
+                Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit, Technology, prayer-item tooltip and Temporary Effects presentation; prayer Technology tooltips receive content-driven width plus viewport safety; no prayer mechanics are changed.");
             }
             catch (Exception ex)
             {
