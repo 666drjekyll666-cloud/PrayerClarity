@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Logging;
@@ -55,18 +54,30 @@ namespace PrayerClarity
         {
             foreach (RebalancedPrayerRule rule in RebalancedRuleSet.All)
             {
+                if (!HasStaticProjection(rule)) continue;
+
                 for (int tier = 1; tier <= 3; tier++)
                 {
-                    object craft = R.BalanceData(RebalancedRuleSet.CraftId(rule.PrayerId, tier), "CraftDefinition", true);
+                    string craftId = RebalancedRuleSet.CraftId(rule.PrayerId, tier);
+                    object craft = R.BalanceData(craftId, "CraftDefinition", true);
                     if (craft == null)
                     {
                         if (rule.OptionalDlc) continue;
-                        throw new MissingMemberException("Missing required prayer craft " + RebalancedRuleSet.CraftId(rule.PrayerId, tier));
+                        throw new MissingMemberException("Missing required prayer craft " + craftId);
                     }
 
                     ApplyStockOwnedFields(craft, rule, tier);
                 }
             }
+        }
+
+        private static bool HasStaticProjection(RebalancedPrayerRule rule)
+        {
+            return rule.Requirements != null ||
+                   rule.FaithBonusRates != null ||
+                   rule.MoneyBonusRates != null ||
+                   rule.RemoveFixedFaith ||
+                   rule.RemoveFixedMoney;
         }
 
         private static void ApplyStockOwnedFields(object craft, RebalancedPrayerRule rule, int tier)
