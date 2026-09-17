@@ -2,6 +2,23 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## Shared UI candidate — PrayerClarity: Vanilla 1.0.21 / Rebalanced 0.1.2
+
+- Type: shared Technology information-design/presentation candidate for both editions, plus the accepted Rebalanced specialist-bonus adjustment from **+250/+350/+450%** to **+200/+300/+400%** for Faith, Donations and BSS Soul's Repose. No other Rebalanced mechanic/hook architecture changes.
+- Development branch: `dev/shared-tooltip-polish-1.0.21-0.1.2`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.2`; one frozen source state intentionally produces both sibling editions.
+- Exact build source SHA: `a0bdbc8a66e28a4175376765419ff004d7bae6a7`.
+- GitHub Actions run: `35277513366`.
+- Workflow result: success on `ubuntu-latest`; all 11 base and Rebalanced localization JSON files parsed, Rebalanced `net472` Release build passed, Vanilla sibling `net472` Release build passed, all required embedded locale markers were present, and both candidate DLL pairs were staged in one run.
+- Workflow artifact ID: `10521206721` (`PrayerClarity-shared-ui-1.0.21-rebalanced-0.1.2-ci-a0bdbc8a66e28a4175376765419ff004d7bae6a7`).
+- Artifact ZIP digest: `sha256:9a9ac2480d23dd05732da29f539135bfdd7a7b2fa9eccbaf126a25a7ef9d66cc`.
+- Vanilla handoff filename: `PrayerClarity-1.0.21-ci.dll`; canonical filename: `PrayerClarity.dll`; SHA-256: `847953001c7fb2a5be008d7d705b2da5971faa38b2b5d33244140a8c9b8be8f6`.
+- Rebalanced handoff filename: `PrayerClarity.Rebalanced-0.1.2-ci.dll`; canonical filename: `PrayerClarity.Rebalanced.dll`; SHA-256: `7b08540adb952466e84cd92246e853c07b9a5e26a1e4f22f949439c65c069ddf`.
+- Shared presentation scope: Technology follows `shared in-world effect -> terse quality delta`; short mechanics rows are atomic; Effect/special-entity labels gain restrained semantic accents; Commercial Blessing keeps one consistent entity accent; Excellence can color only its key tier value Bronze/Silver/Gold; durations remain plain; new strings ship in all 11 locales. Vanilla and Rebalanced compile the same shared renderer/style/localization infrastructure while edition-specific semantics remain separate.
+- Rebalanced wording scope: Roots uses a shared plant-growth explanation plus `growth time -20/-30/-40%`; Repentance uses a shared daily-confessional explanation plus `confession chance 50/75/100%`; Repose uses a shared better-corpse cue with upward/white-skull/red-skull symbols and the accepted natural Bronze/Silver/Gold reliability wording; Imagination lifts its invariant +0.7 writing-quality effect above the tiers and preserves Silver/Gold Story rewards; Excellence presents its +0.2/+0.5/+1.0 values as the key quality ladder; BSS Soul's Repose explicitly explains that base Faith depends on Church Quality and Soul Gratitude before the tier percentage is applied.
+- Requested user test: install **one edition at a time**. Primary gate is Rebalanced 0.1.2 in Russian: inspect Repose, Repentance, Shoots & Roots, Imagination, Excellence, Prosperity, Faith, Donations and BSS Soul's Repose where available. Confirm the shared/tier hierarchy reads naturally; skull/up icons render; semantic colors render rather than exposing raw NGUI tags; atomic label/value rows do not split awkwardly; Commercial Blessing and Story accents are coherent; and the tooltip remains viewport-safe. Then spot-check Vanilla 1.0.21 (especially Repose, Imagination/Excellence and Prosperity) to confirm the same shared grammar improves presentation without changing stock mechanics. Existing 0.1.0/0.1.1 runtime evidence already covers the underlying Rebalanced mechanic seams; this pass does not require repeating the full sermon/mechanics smoke unless the UI or values expose a discrepancy.
+- Status: **ready for runtime visual/UX verification; not accepted**.
+
 ## PrayerClarity: Rebalanced 0.1.1 — presentation/localization polish candidate
 
 - Type: Rebalanced presentation/localization follow-up; **no prayer-mechanics or balance changes** and no Technology-tooltip layout redesign.
@@ -162,7 +179,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
 - Purpose: validate the 0.1.2 information model with a less dense, fixed-column pulpit layout and stable font sizing.
 - Frozen candidate ref: `candidate/0.1.3`.
-- Exact build source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
+- Exact source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
 - GitHub Actions run: `34877867872`.
 - Workflow artifact ID: `10360339790`.
 - Handoff DLL SHA-256: `e24b93a6e70c69f6c440da08d7f2bdf91c9d6bafc2a979cd6307d0ae7092066c`.
