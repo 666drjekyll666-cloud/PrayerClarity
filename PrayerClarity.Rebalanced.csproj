@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>PrayerClarity.Rebalanced</AssemblyName>
+    <RootNamespace>PrayerClarity</RootNamespace>
+    <Version>0.1.0</Version>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <Deterministic>true</Deterministic>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin/Rebalanced/</OutputPath>
+    <RestoreAdditionalProjectSources>https://api.nuget.org/v3/index.json;https://nuget.bepinex.dev/v3/index.json</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/PrayerClarityRebalancedPlugin.cs" />
+    <Compile Include="src/ReflectionBridge.cs" />
+    <Compile Include="src/PrayerForecast.cs" />
+    <Compile Include="src/PresentationText.cs" />
+    <Compile Include="src/TooltipSemanticModel.cs" />
+    <Compile Include="src/TooltipDetailsRenderer.cs" />
+    <Compile Include="src/TechnologyTooltipTierRenderer.cs" />
+    <Compile Include="src/TechnologyTooltipContentWidth.cs" />
+    <Compile Include="src/TooltipTextPolish.cs" />
+    <Compile Include="src/PulpitPresentation.cs" />
+    <Compile Include="src/PulpitLayoutV5.cs" />
+    <Compile Include="src/PulpitPolish.cs" />
+    <Compile Include="src/PulpitTuning.cs" />
+    <Compile Include="src/SecondarySurfacePresentation.cs" />
+    <Compile Include="src/TechnologyTooltipViewportClamp.cs" />
+    <Compile Include="src/ItemTooltipPresentation.cs" />
+    <Compile Include="src/Localization.cs" />
+    <Compile Include="src/RebalancedRuleSet.cs" />
+    <Compile Include="src/RebalancedStaticProjection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="lang/*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
