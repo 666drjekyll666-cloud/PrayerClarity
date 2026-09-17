@@ -147,12 +147,13 @@ namespace PrayerClarity
             List<RewardItem> rewards = new List<RewardItem>();
             CollectOutputs(craft, ref fixedFaith, ref fixedMoney, rewards);
 
+            int qualityTier = ParseQualityTier(craftId);
             SpecialInfo special = BuildSpecial(craft, eventId, rewards);
             return new TierDetails
             {
                 CraftId = craftId,
                 EventId = eventId,
-                QualityTier = ParseQualityTier(craftId),
+                QualityTier = qualityTier,
                 Requirement = Mathf.Max(0, Mathf.RoundToInt(R.Float(R.Get(craft, "needs_quality")))),
                 FaithBonusRate = R.Float(R.Get(craft, "k_faith")),
                 MoneyBonusRate = R.Float(R.Get(craft, "k_money")),
@@ -178,6 +179,10 @@ namespace PrayerClarity
             if (buff == null) return null;
             string buffId = R.Id(buff) ?? string.Empty;
             object res = R.Get(buff, "res");
+
+            string rebalancedText;
+            if (RebalancedPresentationSemantics.TryBuildActiveEffect(buffId, out rebalancedText))
+                return rebalancedText;
 
             switch (buffId)
             {
@@ -259,9 +264,10 @@ namespace PrayerClarity
                 semanticParts.Add("event:pray_for_souls");
             }
 
+            string craftId = R.Id(craft) ?? string.Empty;
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
-            SpecialInfo buff = BuildBuffEffect(buffId, duration);
+            SpecialInfo buff = BuildBuffEffect(craftId, buffId, duration);
             if (buff != null)
             {
                 if (!string.IsNullOrEmpty(buff.Text)) displayParts.Add(buff.Text);
@@ -318,16 +324,35 @@ namespace PrayerClarity
             return name + amount;
         }
 
-        private static SpecialInfo BuildBuffEffect(string buffId, float duration)
+        private static SpecialInfo BuildBuffEffect(string craftId, string buffId, float duration)
         {
             if (string.IsNullOrEmpty(buffId)) return null;
 
             object buff = R.BalanceData(buffId, "BuffDefinition", true);
             object res = buff == null ? null : R.Get(buff, "res");
             string iconName = GetBuffIconName(buff);
+
+            string rebalancedText;
+            string rebalancedSemanticKey;
+            if (RebalancedPresentationSemantics.TryBuildTierEffect(craftId, buffId, out rebalancedText, out rebalancedSemanticKey))
+            {
+                float rebalancedDurationDays = duration > 0.0001f ? DurationParameterToGameDays(duration) : 0f;
+                bool rebalancedHasDuration = duration > 0.0001f;
+                string rebalancedDisplay = rebalancedText;
+                if (rebalancedHasDuration)
+                    rebalancedDisplay += " · " + Localization.F("active.timer_days", rebalancedDurationDays);
+
+                return new SpecialInfo(
+                    rebalancedDisplay,
+                    rebalancedText,
+                    rebalancedSemanticKey,
+                    iconName,
+                    rebalancedDurationDays,
+                    rebalancedHasDuration);
+            }
+
             bool showDuration = true;
             string semanticKey = "buff:" + buffId;
-
             string text;
             switch (buffId)
             {
