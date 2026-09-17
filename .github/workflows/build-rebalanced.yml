@@ -1,0 +1,34 @@
+name: Build PrayerClarity Rebalanced
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/rebalanced-0.1.0
+    paths:
+      - 'PrayerClarity.Rebalanced.csproj'
+      - 'src/PrayerClarityRebalancedPlugin.cs'
+      - 'src/RebalancedRuleSet.cs'
+      - 'src/RebalancedStaticProjection.cs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayerclarity-rebalanced-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PrayerClarity.Rebalanced.csproj
+      - name: Build
+        run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
