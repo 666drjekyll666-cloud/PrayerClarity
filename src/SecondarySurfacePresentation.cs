@@ -244,6 +244,15 @@ namespace PrayerClarity
             if (string.IsNullOrEmpty(commonKey)) return null;
             string lore = R.VanillaLocalize(commonKey);
             if (string.IsNullOrEmpty(lore) || string.Equals(lore, commonKey, StringComparison.Ordinal)) return null;
+
+            if (string.Equals(commonKey, "b_village_d", StringComparison.Ordinal))
+            {
+                lore = TechnologyTooltipTextStyle.AccentLoreEntity(
+                    lore,
+                    "blessing_commerce",
+                    R.VanillaLocalize("blessing_commerce"));
+            }
+
             return lore;
         }
 
