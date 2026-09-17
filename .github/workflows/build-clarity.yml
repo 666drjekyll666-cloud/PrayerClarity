@@ -6,6 +6,7 @@ on:
     branches:
       - 'candidate/**'
       - '!candidate/rebalanced-*'
+      - '!candidate/test-harness-rebalanced-compat-*'
 
 permissions:
   contents: read
