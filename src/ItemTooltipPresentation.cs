@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Logging;
 
@@ -7,6 +8,33 @@ namespace PrayerClarity
 {
     internal static class ItemTooltipPresentation
     {
+        private static readonly HashSet<string> PrayerItemFamilies = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "b_empty",
+            "b_faith",
+            "b_money",
+            "b_faith_money",
+            "b_plant",
+            "b_sins",
+            "b_skull",
+            "b_sword",
+            "b_shield",
+            "b_pen",
+            "b_star",
+            "b_village",
+            "b_souls",
+            "b_grat_points_incr",
+            "b_sin_shard",
+            "b_ghost",
+            "b_energy",
+            "b_random",
+            "b_techpoint_blue",
+            "b_techpoint_green",
+            "b_techpoint_red",
+            "b_circle",
+            "b_cross"
+        };
+
         private static ManualLogSource _log;
         private static bool _errorLogged;
         private static Type _bubbleTextType;
@@ -64,11 +92,23 @@ namespace PrayerClarity
         private static object ResolvePrayerCraft(object itemDefinition)
         {
             if (itemDefinition == null) return null;
+
+            string itemId = R.Id(itemDefinition);
+            if (!IsKnownPrayerItemId(itemId)) return null;
+
             object craft = R.Get(itemDefinition, "linked_craft");
             if (craft == null) return null;
 
             string craftId = R.Id(craft) ?? string.Empty;
             return craftId.StartsWith("pray:", StringComparison.Ordinal) ? craft : null;
+        }
+
+        private static bool IsKnownPrayerItemId(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return false;
+            int separator = itemId.IndexOf(':');
+            string family = separator < 0 ? itemId : itemId.Substring(0, separator);
+            return PrayerItemFamilies.Contains(family);
         }
 
         private static bool TryReplaceVanillaPrayerMechanics(IList list, string summary)
