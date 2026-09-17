@@ -1,0 +1,8 @@
+{
+  "rebalanced.active.plant": "성장 시간 −{0:0}%",
+  "rebalanced.active.sins": "일일 고해 확률: {0:0}%",
+  "rebalanced.active.repose.silver": "50% 확률로 가능한 최고 품질 단계, 그 외에는 확장된 범위에서 무작위",
+  "rebalanced.active.repose.gold": "가능한 최고 품질 단계 보장",
+  "rebalanced.active.combat": "피해 +{0:0.##} · 방어 +{1:0.##} · HP 재생 {2:0.##}/초",
+  "rebalanced.active.gratitude": "영혼 치유 시 감사도: +{0:0}%"
+}
