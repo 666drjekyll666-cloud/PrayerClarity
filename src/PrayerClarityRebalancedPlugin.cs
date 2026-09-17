@@ -37,6 +37,7 @@ namespace PrayerClarity
 
                 RebalancedRuleSet.Validate();
                 Localization.Initialize(Assembly.GetExecutingAssembly(), Logger);
+                RebalancedPresentationSemantics.Install();
 
                 InstallClarityPresentation();
                 RebalancedStaticProjection.Install(PluginGuid, Logger);
