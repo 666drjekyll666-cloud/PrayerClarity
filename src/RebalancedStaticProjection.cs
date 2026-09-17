@@ -52,6 +52,8 @@ namespace PrayerClarity
 
         private static void ApplyOnce()
         {
+            RebalancedExpressionProjection.Apply();
+
             foreach (RebalancedPrayerRule rule in RebalancedRuleSet.All)
             {
                 if (!HasStaticProjection(rule)) continue;
