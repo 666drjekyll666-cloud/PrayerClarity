@@ -21,11 +21,6 @@ namespace PrayerClarity
                 string text = R.Get(row, "text") as string;
                 if (string.IsNullOrWhiteSpace(text)) continue;
 
-                // The first non-empty text row in the verified prayer Technology
-                // tooltip is the native title. Protect only a short connector plus
-                // the final word ("об упокоении", "for prosperity", "de ...") so
-                // the title avoids an orphan without forcing ordinary two-word titles
-                // into one unbreakable span.
                 string normalized = ProtectFinalConnectorPair(text);
                 if (!string.Equals(text, normalized, StringComparison.Ordinal))
                     R.Set(row, "text", normalized);
@@ -37,10 +32,8 @@ namespace PrayerClarity
         {
             if (list == null || bubbleTextType == null) return;
 
-            // In the verified replacement shape startIndex is headerIndex + 2.
-            // Reuse this already-narrow lifecycle seam to polish the native title too;
-            // no extra global tooltip patch is necessary.
             NormalizePrayerTitleRow(list, Math.Max(0, startIndex - 2), bubbleTextType);
+            NormalizeCommercialBlessingLore(list, Math.Max(0, startIndex - 2), bubbleTextType);
 
             int end = Math.Min(list.Count, startIndex + 4);
             for (int i = Math.Max(0, startIndex); i < end; i++)
@@ -54,6 +47,31 @@ namespace PrayerClarity
 
                 R.Set(row, "text", normalized);
                 return;
+            }
+        }
+
+        private static void NormalizeCommercialBlessingLore(IList list, int endExclusive, Type bubbleTextType)
+        {
+            string name = R.VanillaLocalize("blessing_commerce");
+            if (string.IsNullOrEmpty(name) || string.Equals(name, "blessing_commerce", StringComparison.Ordinal))
+                return;
+
+            int end = Math.Min(list.Count, Math.Max(0, endExclusive));
+            for (int i = 0; i < end; i++)
+            {
+                object row = list[i];
+                if (row == null || !bubbleTextType.IsInstanceOfType(row)) continue;
+
+                string text = R.Get(row, "text") as string;
+                if (string.IsNullOrEmpty(text) || text.IndexOf(name, StringComparison.Ordinal) < 0)
+                    continue;
+
+                string normalized = TechnologyTooltipTextStyle.AccentLoreEntity(
+                    text,
+                    "blessing_commerce",
+                    name);
+                if (!string.Equals(text, normalized, StringComparison.Ordinal))
+                    R.Set(row, "text", normalized);
             }
         }
 
@@ -84,9 +102,6 @@ namespace PrayerClarity
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
-            // This row is revisited when the tooltip is rebuilt. Strip our own leading
-            // spacer before parsing, then add exactly one spacer back at the end so the
-            // operation remains idempotent instead of accumulating blank lines.
             string normalized = text.Replace("\r\n", "\n").TrimStart('\n');
             int asciiColon = normalized.IndexOf(':');
             int fullColon = normalized.IndexOf('：');
@@ -95,9 +110,6 @@ namespace PrayerClarity
             else if (fullColon < 0) colon = asciiColon;
             else colon = Math.Min(asciiColon, fullColon);
 
-            // The runtime screenshots establish that the first short heading-like row
-            // following prayer mechanics is the native crafting-location row. Keep this
-            // normalization narrow rather than rewriting arbitrary tooltip prose.
             if (colon <= 0 || colon > 64 || colon + 1 >= normalized.Length) return text;
 
             string heading = normalized.Substring(0, colon + 1).TrimEnd();
