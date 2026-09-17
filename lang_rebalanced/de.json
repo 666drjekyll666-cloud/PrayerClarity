@@ -1,9 +1,13 @@
 {
-  "rebalanced.active.plant": "Wachstum benötigt {0:0}% weniger Zeit",
-  "rebalanced.active.sins": "Jeder Beichtstuhl: {0:0}% Beichtchance pro Tag",
-  "rebalanced.active.repose.bronze": "Der Esel kann eine Leiche eine Qualitätsstufe über dem normalen Limit bringen",
-  "rebalanced.active.repose.silver": "50% Chance auf die beste verfügbare Leiche; sonst normale Qualitätsschwankung",
-  "rebalanced.active.repose.gold": "Der Esel bringt immer die beste verfügbare Leiche",
+  "rebalanced.tech.plant_intro": "Beschleunigt das Pflanzenwachstum.",
+  "rebalanced.tech.sins_intro": "Jeder Beichtstuhl kann einmal pro Tag eine Beichte aufnehmen.",
+  "rebalanced.tech.repose_intro": "Der Esel kann hochwertigere Körper bringen. (up) (wskull) (rskull)",
+  "rebalanced.tech.combat_intro": "Stärkt den Hüter im Kampf.",
+  "rebalanced.active.plant": "Pflanzenwachstumszeit: −{0:0}%",
+  "rebalanced.active.sins": "Beichtchance: {0:0}%",
+  "rebalanced.active.repose.bronze": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen",
+  "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste verfügbare Körper garantiert",
+  "rebalanced.active.repose.gold": "Der Esel bringt garantiert den besten verfügbaren Körper",
   "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
   "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% Dankbarkeit"
 }
