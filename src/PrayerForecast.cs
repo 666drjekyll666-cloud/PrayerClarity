@@ -180,9 +180,9 @@ namespace PrayerClarity
             string buffId = R.Id(buff) ?? string.Empty;
             object res = R.Get(buff, "res");
 
-            string rebalancedText;
-            if (RebalancedPresentationSemantics.TryBuildActiveEffect(buffId, out rebalancedText))
-                return rebalancedText;
+            string editionText;
+            if (PrayerEditionSemantics.TryBuildActiveEffect(buffId, out editionText))
+                return editionText;
 
             switch (buffId)
             {
@@ -332,23 +332,23 @@ namespace PrayerClarity
             object res = buff == null ? null : R.Get(buff, "res");
             string iconName = GetBuffIconName(buff);
 
-            string rebalancedText;
-            string rebalancedSemanticKey;
-            if (RebalancedPresentationSemantics.TryBuildTierEffect(craftId, buffId, out rebalancedText, out rebalancedSemanticKey))
+            string editionText;
+            string editionSemanticKey;
+            if (PrayerEditionSemantics.TryBuildTierEffect(craftId, buffId, out editionText, out editionSemanticKey))
             {
-                float rebalancedDurationDays = duration > 0.0001f ? DurationParameterToGameDays(duration) : 0f;
-                bool rebalancedHasDuration = duration > 0.0001f;
-                string rebalancedDisplay = rebalancedText;
-                if (rebalancedHasDuration)
-                    rebalancedDisplay += " · " + Localization.F("active.timer_days", rebalancedDurationDays);
+                float editionDurationDays = duration > 0.0001f ? DurationParameterToGameDays(duration) : 0f;
+                bool editionHasDuration = duration > 0.0001f;
+                string editionDisplay = editionText;
+                if (editionHasDuration)
+                    editionDisplay += " · " + Localization.F("active.timer_days", editionDurationDays);
 
                 return new SpecialInfo(
-                    rebalancedDisplay,
-                    rebalancedText,
-                    rebalancedSemanticKey,
+                    editionDisplay,
+                    editionText,
+                    editionSemanticKey,
                     iconName,
-                    rebalancedDurationDays,
-                    rebalancedHasDuration);
+                    editionDurationDays,
+                    editionHasDuration);
             }
 
             bool showDuration = true;
