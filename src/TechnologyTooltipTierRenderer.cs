@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using UnityEngine;
 
 namespace PrayerClarity
 {
@@ -10,8 +9,6 @@ namespace PrayerClarity
         private const float Epsilon = 0.0001f;
         private const string NoBreakSpace = "\u00A0";
         private const string InlineSeparator = " · ";
-        private const int LongEffectWrapThreshold = 45;
-        private const int MinimumEffectSegmentLength = 18;
 
         internal static string Build(List<PrayerForecast.TierDetails> tiers)
         {
@@ -91,7 +88,7 @@ namespace PrayerClarity
             string core = tiers[0].SpecialCoreText;
             if (string.IsNullOrEmpty(core)) return null;
 
-            return Localization.F("forecast.effect_header") + ":\n" + WrapLongEffect(core);
+            return Localization.F("forecast.effect_header") + ":\n" + core;
         }
 
         private static string BuildSharedDuration(List<PrayerForecast.TierDetails> tiers)
@@ -126,14 +123,13 @@ namespace PrayerClarity
             string rates = BuildTierRateLine(tier, allTiers);
             if (!string.IsNullOrEmpty(rates)) lines.Add(rates);
 
-            string fixedAndReward = BuildTierFixedAndRewardLine(tier, allTiers);
-            if (!string.IsNullOrEmpty(fixedAndReward)) lines.Add(fixedAndReward);
+            AddTierFixedAndRewardLines(lines, tier, allTiers);
 
             if (!IsSpecialShared(allTiers))
             {
                 TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
                 if (reward == null && !string.IsNullOrEmpty(tier.SpecialCoreText))
-                    lines.Add(Localization.F("forecast.effect_header") + ": " + WrapLongEffect(tier.SpecialCoreText));
+                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialCoreText);
             }
 
             if (!IsDurationShared(allTiers) && tier.HasSpecialDuration)
@@ -163,89 +159,33 @@ namespace PrayerClarity
             return parts.Count == 0 ? null : string.Join(InlineSeparator, parts.ToArray());
         }
 
-        private static string BuildTierFixedAndRewardLine(
+        private static void AddTierFixedAndRewardLines(
+            List<string> lines,
             PrayerForecast.TierDetails tier,
             List<PrayerForecast.TierDetails> allTiers)
         {
-            List<string> parts = new List<string>();
+            List<string> fixedParts = new List<string>();
 
             if (Math.Abs(tier.FixedFaithBonus) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.FixedFaithBonus))
-                parts.Add(FormatSignedNumber(tier.FixedFaithBonus) + " (faith)");
+                fixedParts.Add(FormatSignedNumber(tier.FixedFaithBonus) + " (faith)");
 
             if (Math.Abs(tier.FixedMoneyBonus) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.FixedMoneyBonus))
-                parts.Add(FormatSignedNumber(tier.FixedMoneyBonus) + " (slv)");
+                fixedParts.Add(FormatSignedNumber(tier.FixedMoneyBonus) + " (slv)");
+
+            if (fixedParts.Count > 0)
+                lines.Add(string.Join(InlineSeparator, fixedParts.ToArray()));
 
             TooltipSemanticModel.RewardDetails commonReward;
             bool rewardIsShared = TryGetCommonReward(allTiers, out commonReward);
             TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
             if (!rewardIsShared && reward != null)
             {
-                parts.Add(
+                lines.Add(
                     R.VanillaLocalize(reward.Id) + " ×" +
                     reward.Count.ToString(CultureInfo.InvariantCulture));
             }
-
-            return parts.Count == 0 ? null : string.Join(InlineSeparator, parts.ToArray());
-        }
-
-        private static string WrapLongEffect(string text)
-        {
-            if (string.IsNullOrEmpty(text) ||
-                text.Length <= LongEffectWrapThreshold ||
-                text.IndexOf('\n') >= 0)
-                return text;
-
-            int min = MinimumEffectSegmentLength;
-            int max = text.Length - MinimumEffectSegmentLength;
-            if (max <= min) return text;
-
-            // Slightly favor a longer first line. This reads more naturally for the
-            // sentence-like effect prose used by the long prayer descriptions than a
-            // mechanically exact 50/50 split.
-            int target = Mathf.RoundToInt(text.Length * 0.55f);
-            int split = -1;
-            int bestScore = int.MaxValue;
-
-            for (int i = min; i <= max; i++)
-            {
-                if (!char.IsWhiteSpace(text[i])) continue;
-
-                int score = Math.Abs(i - target) * 10;
-                int nextWordLength = GetAdjacentWordLength(text, i + 1, 1);
-                int previousWordLength = GetAdjacentWordLength(text, i - 1, -1);
-
-                // Avoid visually awkward breaks around short connectors/particles,
-                // e.g. English "does / not". This remains language-agnostic and only
-                // nudges the midpoint choice; it never rewrites localized text.
-                if (nextWordLength > 0 && nextWordLength <= 3) score += 40;
-                if (previousWordLength > 0 && previousWordLength <= 2) score += 20;
-
-                if (score >= bestScore) continue;
-                bestScore = score;
-                split = i;
-            }
-
-            if (split < 0) return text;
-            return text.Substring(0, split).TrimEnd() + "\n" + text.Substring(split + 1).TrimStart();
-        }
-
-        private static int GetAdjacentWordLength(string text, int index, int direction)
-        {
-            if (string.IsNullOrEmpty(text) || direction == 0) return 0;
-
-            int i = index;
-            while (i >= 0 && i < text.Length && char.IsWhiteSpace(text[i]))
-                i += direction;
-
-            int length = 0;
-            while (i >= 0 && i < text.Length && !char.IsWhiteSpace(text[i]))
-            {
-                length++;
-                i += direction;
-            }
-            return length;
         }
 
         private static bool AnyContribution(
