@@ -26,7 +26,8 @@ namespace PrayerClarity
         internal readonly float[] CombatArmor;
         internal readonly float[] CombatRegenPerSecond;
         internal readonly float[] CraftQualityBonus;
-        internal readonly string[] SuccessRewardItemIds;
+        internal readonly string SuccessRewardBaseItemId;
+        internal readonly int[] SuccessRewardQualityTiers;
         internal readonly int[] SuccessRewardCounts;
         internal readonly float[] SoulGratitudeBonusRate;
         internal readonly float[] SinShardMultiplier;
@@ -46,7 +47,8 @@ namespace PrayerClarity
             float[] combatArmor = null,
             float[] combatRegenPerSecond = null,
             float[] craftQualityBonus = null,
-            string[] successRewardItemIds = null,
+            string successRewardBaseItemId = null,
+            int[] successRewardQualityTiers = null,
             int[] successRewardCounts = null,
             float[] soulGratitudeBonusRate = null,
             float[] sinShardMultiplier = null)
@@ -65,7 +67,8 @@ namespace PrayerClarity
             CombatArmor = combatArmor;
             CombatRegenPerSecond = combatRegenPerSecond;
             CraftQualityBonus = craftQualityBonus;
-            SuccessRewardItemIds = successRewardItemIds;
+            SuccessRewardBaseItemId = successRewardBaseItemId;
+            SuccessRewardQualityTiers = successRewardQualityTiers;
             SuccessRewardCounts = successRewardCounts;
             SoulGratitudeBonusRate = soulGratitudeBonusRate;
             SinShardMultiplier = sinShardMultiplier;
@@ -80,12 +83,6 @@ namespace PrayerClarity
         internal int TierValue(int[] values, int qualityTier, int fallback = 0)
         {
             if (values == null || qualityTier < 1 || qualityTier > values.Length) return fallback;
-            return values[qualityTier - 1];
-        }
-
-        internal string TierValue(string[] values, int qualityTier)
-        {
-            if (values == null || qualityTier < 1 || qualityTier > values.Length) return null;
             return values[qualityTier - 1];
         }
 
@@ -153,7 +150,8 @@ namespace PrayerClarity
                 ["b_pen"] = new RebalancedPrayerRule(
                     "b_pen",
                     craftQualityBonus: F(0.7f, 0.7f, 0.7f),
-                    successRewardItemIds: new[] { null, "story:2", "story:3" },
+                    successRewardBaseItemId: "story",
+                    successRewardQualityTiers: I(0, 2, 3),
                     successRewardCounts: I(0, 3, 3)),
 
                 ["b_star"] = new RebalancedPrayerRule(
