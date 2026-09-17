@@ -1,42 +1,45 @@
 # PrayerClarity
 
-PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayer/sermon information clearer without changing prayer balance or gameplay mechanics.
+PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers easier to understand before you use them, without changing prayer balance or sermon mechanics.
 
-Accepted Clarity mainline baseline: **1.0.9**.  
-Latest public GitHub Release: **1.0.1**.
+**Current stable version: 1.0.18**
 
-[Download the current public release, PrayerClarity 1.0.1](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.1)
+[Download the latest GitHub release](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/latest)
 
 ## What it changes
 
-- **Pulpit:** explains guaranteed reward sources, success-only prayer modifiers, success chance, and special prayer effects without revealing the exact final sermon payout in advance.
-- **Technology tree:** uses a compact property-first comparison of Bronze/Silver/Gold prayer progression, collapses invariant information instead of repeating it for every quality tier, keeps quality/value segments intact when wrapping, and keeps PrayerClarity-owned prayer tooltips inside the visible viewport when possible.
-- **Prayer item tooltips:** inspect only the concrete hovered prayer item/current quality instead of duplicating the full Bronze/Silver/Gold comparison already available in Technology.
-- **Character -> Temporary Effects:** shows the actual quantitative effect of active prayer buffs and expresses long durations in in-game days.
-- **Localization:** PrayerClarity-owned UI text is included for all 11 interface languages supported by the game.
+- **Pulpit:** explains the guaranteed reward sources, exact success chance, prayer-owned success bonuses, special effects, and effect duration while preserving the sermon itself as the reveal moment for the final Faith/donation payout.
+- **Technology tree:** shows shared prayer properties once, then compact Bronze/Silver/Gold tier snapshots with the quality needed for 100% success and the values that actually change by tier. Long descriptive effects wrap inside a content-driven width instead of making the whole tooltip unnecessarily wide.
+- **Prayer item tooltips:** show the mechanics of the concrete prayer quality you are holding rather than repeating the full three-tier comparison.
+- **Character -> Temporary Effects:** shows the actual quantitative effect of active prayer buffs and expresses long remaining durations in in-game days.
+- **Localization:** PrayerClarity-owned text is included for all 11 interface languages supported by Graveyard Keeper: English, French, German, Simplified Chinese, Spanish, Brazilian Portuguese, Korean, Japanese, Russian, Italian, and Polish.
 
 ## What it does not change
 
-The accepted 1.0.9 mainline baseline is **Clarity-only**. It contains no prayer balance changes, no Vanilla Fixes, and no intentional changes to sermon rewards or prayer mechanics.
+PrayerClarity 1.0.18 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
 
-The repository also contains evidence and design research for later Vanilla Fixes and Balance/Rework work. Those layers remain separate from the accepted Clarity baseline.
+The repository also contains research for future Vanilla Fixes and Balance/Rework work. Those are separate from the stable Clarity release.
 
 ## Installation
 
-For normal users, install the latest published GitHub Release:
+### Nexus archive
 
-1. Install BepInEx 5 for Graveyard Keeper.
-2. Download `PrayerClarity.dll` from the current GitHub Release.
-3. Put `PrayerClarity.dll` in `Graveyard Keeper/BepInEx/plugins/`.
-4. Replace the same file when upgrading; do not keep multiple PrayerClarity versions side by side.
+1. Install **BepInEx 5** for Graveyard Keeper.
+2. Extract the PrayerClarity archive into the Graveyard Keeper game folder.
+3. The installed DLL should end up at `BepInEx/plugins/PrayerClarity/PrayerClarity.dll`.
 
-The repository `main` branch may contain a newer accepted runtime baseline than the latest public Release. Mainline acceptance and public publication are deliberately separate steps.
+### Raw DLL / GitHub Release
 
-PrayerClarity has no user-facing configuration requirement for its accepted presentation.
+1. Install **BepInEx 5** for Graveyard Keeper.
+2. Download `PrayerClarity.dll` from the latest GitHub Release.
+3. Put it in `Graveyard Keeper/BepInEx/plugins/PrayerClarity/`.
+4. When updating, replace the existing DLL. Do not keep multiple PrayerClarity versions side by side.
+
+PrayerClarity requires no user-facing configuration.
 
 ## Compatibility
 
 - Graveyard Keeper **1.407**
 - BepInEx 5
 
-PrayerClarity guards against an unverified `Assembly-CSharp` build and disables itself instead of patching an unsupported game binary.
+PrayerClarity verifies the supported `Assembly-CSharp` build before installing its patches. On an unverified game binary it disables itself instead of patching unknown code.
