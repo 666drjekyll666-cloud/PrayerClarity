@@ -17,11 +17,24 @@ Target: Graveyard Keeper 1.407.
 
 Purpose: establish how the prayer/sermon system actually works, make its effects understandable at the point of choice, repair narrowly proven broken/disconnected behavior where vanilla intent is recoverable, and explicitly redesign/tune prayers where the verified system still lacks a healthy choice structure.
 
-The product may remain one BepInEx mod/codebase, but it must keep three semantic layers distinct:
+### Public product family naming
+
+The accepted public naming architecture is:
+
+1. **PrayerClarity: Vanilla** — the current Clarity-only edition. `Vanilla` refers to prayer gameplay mechanics and balance: this edition may improve presentation and explanation, but it must preserve stock Graveyard Keeper 1.407 prayer/sermon behavior.
+2. **PrayerClarity: Rebalanced** — a separate sibling edition for intentional prayer rebalance/rework once that behavior is implemented, tested and accepted.
+
+Treat these as peer alternatives in the PrayerClarity family, not as a base mod plus upgrade/add-on. A player who encounters either edition first should be able to infer its gameplay philosophy from the edition name.
+
+`PrayerClarity` remains the family/repository/codebase name. Existing technical identifiers such as the repository name, plugin identity and canonical DLL filename do not need to change merely because the public edition is named **PrayerClarity: Vanilla**.
+
+The internal evidence/design categories remain distinct from public edition naming:
 
 1. **Clarity** — information only; no mechanics changes.
 2. **Vanilla Fixes** — evidence-backed repairs where the intended mechanic/magnitude is sufficiently recoverable.
 3. **Balance / Rework** — intentional new design or tuning. Never present these changes as recovered vanilla mechanics.
+
+**Vanilla Fixes is not an accepted third public edition name.** Because **PrayerClarity: Vanilla** explicitly promises stock mechanics, do not silently ship gameplay repairs in that edition. The eventual packaging of evidence-backed vanilla repairs requires an explicit product decision; until then they remain a separate semantic/research category.
 
 Stock Graveyard Keeper 1.407 behavior must remain documented independently of modded behavior.
 
