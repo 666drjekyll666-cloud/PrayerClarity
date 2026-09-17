@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -74,6 +75,42 @@ namespace PrayerClarity
             "tree_apple_growing_3"
         };
 
+        private sealed class ExpressionReplacement
+        {
+            internal readonly object Owner;
+            internal readonly string Member;
+            internal readonly string Expression;
+            internal readonly IList ListOwner;
+            internal readonly int ListIndex;
+
+            internal ExpressionReplacement(object owner, string member, string expression)
+            {
+                Owner = owner;
+                Member = member;
+                Expression = expression;
+                ListOwner = null;
+                ListIndex = -1;
+            }
+
+            internal ExpressionReplacement(IList listOwner, int listIndex, string expression)
+            {
+                Owner = null;
+                Member = null;
+                Expression = expression;
+                ListOwner = listOwner;
+                ListIndex = listIndex;
+            }
+
+            internal void Apply()
+            {
+                object parsed = Parse(Expression);
+                if (ListOwner != null)
+                    ListOwner[ListIndex] = parsed;
+                else
+                    R.Set(Owner, Member, parsed);
+            }
+        }
+
         private static Type _smartExpressionType;
         private static MethodInfo _parseExpression;
         private static MethodInfo _getRawExpression;
@@ -81,39 +118,43 @@ namespace PrayerClarity
         internal static void Apply()
         {
             ResolveSmartExpressionApi();
-            ApplyRoots();
-            ApplyRepentance();
+
+            var replacements = new List<ExpressionReplacement>();
+            CollectRootsReplacements(replacements);
+            CollectRepentanceReplacement(replacements);
+
+            foreach (ExpressionReplacement replacement in replacements)
+                replacement.Apply();
         }
 
-        private static void ApplyRoots()
+        private static void CollectRootsReplacements(List<ExpressionReplacement> replacements)
         {
             foreach (string craftId in PlantCraftIds)
             {
                 object craft = R.BalanceData(craftId, "CraftDefinition", true);
                 if (craft == null)
+                {
+                    if (IsOptionalPlantConsumer(craftId)) continue;
                     throw new MissingMemberException("Missing verified Roots consumer craft " + craftId);
+                }
 
                 object craftTime = R.Get(craft, "craft_time");
                 string raw = Raw(craftTime);
                 if (string.IsNullOrEmpty(raw))
                     throw new InvalidOperationException("Roots consumer " + craftId + " has no craft_time expression.");
 
-                string transformed;
                 if (raw.Contains(RebalancedPlantTerm))
-                    transformed = raw;
-                else
-                {
-                    int first = raw.IndexOf(StockPlantTerm, StringComparison.Ordinal);
-                    if (first < 0 || raw.IndexOf(StockPlantTerm, first + StockPlantTerm.Length, StringComparison.Ordinal) >= 0)
-                        throw new InvalidOperationException("Roots consumer " + craftId + " no longer contains exactly one verified stock prayer term: " + raw);
-                    transformed = raw.Replace(StockPlantTerm, RebalancedPlantTerm);
-                }
+                    continue;
 
-                R.Set(craft, "craft_time", Parse(transformed));
+                int first = raw.IndexOf(StockPlantTerm, StringComparison.Ordinal);
+                if (first < 0 || raw.IndexOf(StockPlantTerm, first + StockPlantTerm.Length, StringComparison.Ordinal) >= 0)
+                    throw new InvalidOperationException("Roots consumer " + craftId + " no longer contains exactly one verified stock prayer term: " + raw);
+
+                replacements.Add(new ExpressionReplacement(craft, "craft_time", raw.Replace(StockPlantTerm, RebalancedPlantTerm)));
             }
         }
 
-        private static void ApplyRepentance()
+        private static void CollectRepentanceReplacement(List<ExpressionReplacement> replacements)
         {
             object logic = R.BalanceData("church_budka_roll", "LogicDefinition", true);
             if (logic == null) throw new MissingMemberException("LogicDefinition church_budka_roll");
@@ -123,11 +164,17 @@ namespace PrayerClarity
                 throw new InvalidOperationException("church_budka_roll execute_expressions shape changed.");
 
             string raw = Raw(expressions[0]);
-            if (!string.Equals(raw, StockConfessionExpression, StringComparison.Ordinal) &&
-                !string.Equals(raw, RebalancedConfessionExpression, StringComparison.Ordinal))
+            if (string.Equals(raw, RebalancedConfessionExpression, StringComparison.Ordinal))
+                return;
+            if (!string.Equals(raw, StockConfessionExpression, StringComparison.Ordinal))
                 throw new InvalidOperationException("church_budka_roll reset expression changed: " + raw);
 
-            expressions[0] = Parse(RebalancedConfessionExpression);
+            replacements.Add(new ExpressionReplacement(expressions, 0, RebalancedConfessionExpression));
+        }
+
+        private static bool IsOptionalPlantConsumer(string craftId)
+        {
+            return craftId != null && craftId.StartsWith("refugee_", StringComparison.Ordinal);
         }
 
         private static object Parse(string expression)
