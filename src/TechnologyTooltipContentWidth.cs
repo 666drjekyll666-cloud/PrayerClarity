@@ -7,12 +7,10 @@ namespace PrayerClarity
 {
     internal static class TechnologyTooltipContentWidth
     {
-        // Ownership marker for PrayerClarity's Technology mechanics body. This stays
-        // deliberately wider than any expected final body so the live UILabel can be
-        // measured before we replace its native overflow ceiling with the atomic-row
-        // anchor derived below.
         internal const int OwnedMaxWidth = 900;
         private const int MinimumAnchorWidth = 150;
+        private const string NoBreakSpace = "\u00A0";
+        private const int SoftProseWordThreshold = 6;
 
         private static ManualLogSource _log;
         private static bool _errorLogged;
@@ -59,8 +57,6 @@ namespace PrayerClarity
 
                 R.Set(label, "text", fullText);
                 R.Set(label, "overflowWidth", anchorWidth);
-                // Force NGUI to rebuild processedText immediately so the enclosing
-                // WidgetsBubbleGUI reads the final wrapped dimensions in the same draw.
                 R.Get(label, "processedText");
             }
             catch (Exception ex)
@@ -98,7 +94,8 @@ namespace PrayerClarity
                             isEffectHeader ||
                             semanticLine.StartsWith(effectHeader + " ", StringComparison.Ordinal) ||
                             semanticLine.IndexOf(" ×", StringComparison.Ordinal) >= 0 ||
-                            IsSectionHeading(semanticLine);
+                            IsSectionHeading(semanticLine) ||
+                            IsLongProse(line, semanticLine);
 
                 previousWasEffectHeader = isEffectHeader;
                 if (soft) continue;
@@ -117,10 +114,30 @@ namespace PrayerClarity
             return Mathf.Clamp(measured, MinimumAnchorWidth, measurementCeiling);
         }
 
+        private static bool IsLongProse(string rawLine, string semanticLine)
+        {
+            if (string.IsNullOrEmpty(semanticLine)) return false;
+
+            // Explicitly atomic mechanics rows contain NBSPs inserted by the renderer.
+            // Ordinary human-language prose remains breakable. Once a prose line is
+            // long enough to be sentence-like, it must wrap inside the width chosen by
+            // the compact mechanics rows instead of stretching the whole bubble.
+            if (rawLine.IndexOf(NoBreakSpace) >= 0) return false;
+
+            int words = 1;
+            bool inSpace = false;
+            for (int i = 0; i < semanticLine.Length; i++)
+            {
+                bool space = char.IsWhiteSpace(semanticLine[i]);
+                if (space && !inSpace) words++;
+                inSpace = space;
+            }
+
+            return words >= SoftProseWordThreshold;
+        }
+
         private static bool IsSectionHeading(string line)
         {
-            // Headings organize the body but should not become width owners merely
-            // because one localization spells the heading with a long phrase.
             return line.EndsWith(":", StringComparison.Ordinal) &&
                    line.IndexOf("100%", StringComparison.Ordinal) < 0;
         }
