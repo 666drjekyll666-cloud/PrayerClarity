@@ -12,6 +12,9 @@ Date: 2026-09-17
 - Artifact ZIP digest: `sha256:eb04f58888628caa0ba530e82b6180f0b41246819cbf4b6fac3c9513ac742e40`
 - Handoff DLL: `PrayerClarity-1.0.20-ci.dll`
 - DLL SHA-256: `fcf96c2c2c71f9dbc7f17646a91a5c44aadc7a210be0f3ef8ea9850411a21ffc`
+- Public release: `v1.0.20`
+- Public release asset: `PrayerClarity.dll`
+- Release asset SHA-256: `fcf96c2c2c71f9dbc7f17646a91a5c44aadc7a210be0f3ef8ea9850411a21ffc`
 
 ## Runtime evidence
 
@@ -25,6 +28,6 @@ The supplied runtime log confirms `PrayerClarity 1.0.20` loaded and contains no 
 
 ## Accepted result
 
-**Accepted.** The localization-robustness hotfix replaces punctuation-dependent stripping with the verified base vanilla prayer lore key seam and passes the runtime gate. No prayer mechanics, balance, pulpit behavior, prayer-item tooltip behavior, Temporary Effects behavior, Technology tier grouping, values, spacing, or viewport policy changed.
+**Accepted and published.** The localization-robustness hotfix replaces punctuation-dependent stripping with the verified base vanilla prayer lore key seam and passes the runtime gate. No prayer mechanics, balance, pulpit behavior, prayer-item tooltip behavior, Temporary Effects behavior, Technology tier grouping, values, spacing, or viewport policy changed.
 
-This acceptance does not by itself publish a new GitHub or Nexus release. The existing public release remains unchanged until a separate release decision is made.
+GitHub Release `v1.0.20` was published from the exact accepted runtime source and carries the exact accepted `PrayerClarity.dll` bytes; no Nexus publication was performed as part of this step.
