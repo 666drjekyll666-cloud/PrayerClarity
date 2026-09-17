@@ -200,21 +200,51 @@ namespace PrayerClarity
             int max = text.Length - MinimumEffectSegmentLength;
             if (max <= min) return text;
 
-            int target = text.Length / 2;
+            // Slightly favor a longer first line. This reads more naturally for the
+            // sentence-like effect prose used by the long prayer descriptions than a
+            // mechanically exact 50/50 split.
+            int target = Mathf.RoundToInt(text.Length * 0.55f);
             int split = -1;
-            int bestDistance = int.MaxValue;
+            int bestScore = int.MaxValue;
 
             for (int i = min; i <= max; i++)
             {
                 if (!char.IsWhiteSpace(text[i])) continue;
-                int distance = Math.Abs(i - target);
-                if (distance >= bestDistance) continue;
-                bestDistance = distance;
+
+                int score = Math.Abs(i - target) * 10;
+                int nextWordLength = GetAdjacentWordLength(text, i + 1, 1);
+                int previousWordLength = GetAdjacentWordLength(text, i - 1, -1);
+
+                // Avoid visually awkward breaks around short connectors/particles,
+                // e.g. English "does / not". This remains language-agnostic and only
+                // nudges the midpoint choice; it never rewrites localized text.
+                if (nextWordLength > 0 && nextWordLength <= 3) score += 40;
+                if (previousWordLength > 0 && previousWordLength <= 2) score += 20;
+
+                if (score >= bestScore) continue;
+                bestScore = score;
                 split = i;
             }
 
             if (split < 0) return text;
             return text.Substring(0, split).TrimEnd() + "\n" + text.Substring(split + 1).TrimStart();
+        }
+
+        private static int GetAdjacentWordLength(string text, int index, int direction)
+        {
+            if (string.IsNullOrEmpty(text) || direction == 0) return 0;
+
+            int i = index;
+            while (i >= 0 && i < text.Length && char.IsWhiteSpace(text[i]))
+                i += direction;
+
+            int length = 0;
+            while (i >= 0 && i < text.Length && !char.IsWhiteSpace(text[i]))
+            {
+                length++;
+                i += direction;
+            }
+            return length;
         }
 
         private static bool AnyContribution(
