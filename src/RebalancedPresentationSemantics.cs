@@ -77,7 +77,8 @@ namespace PrayerClarity
 
             if (rule.ReposeModes != null)
             {
-                sharedText = Localization.F("rebalanced.tech.repose_intro");
+                sharedText = Localization.F("rebalanced.tech.repose_intro") + " " +
+                             TechnologyTooltipTextStyle.CorpseQualityCue();
                 ReposeQualityMode mode = rule.TierValue(rule.ReposeModes, tier, ReposeQualityMode.Stock);
                 switch (mode)
                 {
@@ -109,7 +110,8 @@ namespace PrayerClarity
                 float value = rule.TierValue(rule.CraftQualityBonus, tier);
                 if (string.Equals(rule.PrayerId, "b_pen", StringComparison.Ordinal))
                 {
-                    sharedText = Localization.F("tech.effect.imagination_intro") + "\n" + Localization.F("active.pen", value);
+                    sharedText = Localization.F("tech.effect.imagination_intro") + "\n" +
+                                 TechnologyTooltipTextStyle.GoldValueAfterColon(Localization.F("active.pen", value));
                     return true;
                 }
 
@@ -170,16 +172,21 @@ namespace PrayerClarity
                     case ReposeQualityMode.Stock:
                         text = Localization.F("rebalanced.active.repose.bronze");
                         semanticKey = "rebalanced:repose=stock";
-                        return true;
+                        break;
                     case ReposeQualityMode.HalfwayToBest:
                         text = Localization.F("rebalanced.active.repose.silver");
                         semanticKey = "rebalanced:repose=halfway";
-                        return true;
+                        break;
                     case ReposeQualityMode.Best:
                         text = Localization.F("rebalanced.active.repose.gold");
                         semanticKey = "rebalanced:repose=best";
-                        return true;
+                        break;
+                    default:
+                        return false;
                 }
+
+                text += " " + TechnologyTooltipTextStyle.CorpseQualityCue();
+                return true;
             }
 
             if (rule.CombatDamage != null && rule.CombatArmor != null && rule.CombatRegenPerSecond != null)
