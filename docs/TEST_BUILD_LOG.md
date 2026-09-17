@@ -2,6 +2,23 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## Shared polish candidate — PrayerClarity: Vanilla 1.0.24 / Rebalanced 0.1.5
+
+- Type: narrow shared presentation correction plus one Rebalanced Temporary Effects consistency repair; no prayer balance values, success formulas or gameplay mechanics changed in this candidate.
+- Development branch: `dev/shared-tooltip-polish-1.0.24-0.1.5`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.5-runtime`; one exact source state intentionally produces both sibling editions.
+- Exact build source SHA: `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
+- GitHub Actions run: `35286685613`.
+- Workflow result: success on `ubuntu-latest`; all 11 base and Rebalanced localization JSON files parsed, Rebalanced `net472` Release build passed, Vanilla sibling `net472` Release build passed, required embedded locale markers were present, and both candidate DLL pairs were staged and uploaded.
+- Workflow artifact ID: `10524397397` (`PrayerClarity-shared-ui-1.0.24-rebalanced-0.1.5-ci-3b7cea7986138f57d7ace6998b9cc6bca952af1e`).
+- Artifact ZIP digest: `sha256:b09478ceb3009ff5c7ebb603b9e5de7dcb0404270eeb71c859263230ca72c5d4`.
+- Vanilla handoff filename: `PrayerClarity-1.0.24-ci.dll`; canonical filename: `PrayerClarity.dll`; SHA-256: `ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879`.
+- Rebalanced handoff filename: `PrayerClarity.Rebalanced-0.1.5-ci.dll`; canonical filename: `PrayerClarity.Rebalanced.dll`; SHA-256: `aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf`.
+- Technology fix: a reward is hoisted into the shared Effect block only when both reward identity **and quantity** are invariant across tiers. Prosperity therefore no longer shows the orphan shared `Effect: Commercial Blessing`; its `x1/x2/x3` Commercial Blessing outputs remain tier-local.
+- Temporary Effects audit/fix: the vanilla game still owns the buff title and icon. PrayerClarity replaces only the active-buff description and strategic timer presentation. Rebalanced Roots/Repentance now promote their meaningful remaining duration into that description when their repaired edition-specific active semantics are available; Vanilla keeps the stock broken/unverified presentation policy.
+- Requested user test: first inspect Prosperity in Technology in either edition and confirm the shared `Effect: Commercial Blessing` line is gone while Bronze/Silver/Gold still show `x1/x2/x3`. In Rebalanced, activate Shoots & Roots or Repentance and open Character -> Temporary Effects; confirm the concrete effect text is present together with the remaining-duration text when at least one in-game day remains, while the stock title/icon still look normal. No full sermon/mechanics regression pass is required.
+- Status: **ready for narrow runtime verification; not accepted**.
+
 ## Shared UI candidate — PrayerClarity: Vanilla 1.0.21 / Rebalanced 0.1.2
 
 - Type: shared Technology information-design/presentation candidate for both editions, plus the accepted Rebalanced specialist-bonus adjustment from **+250/+350/+450%** to **+200/+300/+400%** for Faith, Donations and BSS Soul's Repose. No other Rebalanced mechanic/hook architecture changes.
