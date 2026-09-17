@@ -47,4 +47,6 @@ Therefore the base lore key (`b_*_d`) is the verified language-independent seam 
 
 Accepted runtime source: `c7ac91c1cea6c498fb406323725768b605d8139f` (`accepted/clarity-1.0.20`). See `docs/RUNTIME_1.0.20_RESULT.md` for exact artifact identity and evidence.
 
-Acceptance does not automatically publish a GitHub or Nexus release.
+## Publication
+
+GitHub Release `v1.0.20` is published. Its `PrayerClarity.dll` asset is the exact accepted binary (`sha256:fcf96c2c2c71f9dbc7f17646a91a5c44aadc7a210be0f3ef8ea9850411a21ffc`) from source `c7ac91c1cea6c498fb406323725768b605d8139f`. No Nexus publication was performed as part of this release step.
