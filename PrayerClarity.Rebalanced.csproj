@@ -40,9 +40,11 @@
     <Compile Include="src/RebalancedCombat.cs" />
     <Compile Include="src/RebalancedExcellence.cs" />
     <Compile Include="src/RebalancedSoulContentment.cs" />
+    <Compile Include="src/RebalancedPresentationSemantics.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="lang/*.json" />
+    <EmbeddedResource Include="lang_rebalanced/*.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
