@@ -2,7 +2,7 @@
 
 PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers easier to understand before you use them, without changing prayer balance or sermon mechanics.
 
-**Current stable version: 1.0.18**
+**Current stable version: 1.0.20**
 
 [Download the latest GitHub release](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/latest)
 
@@ -16,7 +16,7 @@ PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers
 
 ## What it does not change
 
-PrayerClarity 1.0.18 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
+PrayerClarity 1.0.20 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
 
 The repository also contains research for future Vanilla Fixes and Balance/Rework work. Those are separate from the stable Clarity release.
 
