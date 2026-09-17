@@ -54,6 +54,7 @@ namespace PrayerClarity
         {
             RebalancedExpressionProjection.Apply();
             ApplyCombatAliasProjection();
+            RetireProtectionCrafting();
 
             foreach (RebalancedPrayerRule rule in RebalancedRuleSet.All)
             {
@@ -89,6 +90,50 @@ namespace PrayerClarity
 
                 R.Set(craft, "buff", "buff_sword");
             }
+        }
+
+        private static void RetireProtectionCrafting()
+        {
+            object tech = R.BalanceData("Martial skills", "TechDefinition", true);
+            if (tech == null) throw new MissingMemberException("TechDefinition Martial skills");
+
+            IList crafts = R.Get(tech, "crafts") as IList;
+            if (crafts == null) throw new MissingMemberException("Martial skills", "crafts");
+            RemoveStringEntries(crafts, "b_shield", "@b_shield_2");
+
+            IList unlocks = R.Get(tech, "_unlocks_list") as IList;
+            if (unlocks != null)
+            {
+                for (int i = unlocks.Count - 1; i >= 0; i--)
+                {
+                    string id = Convert.ToString(R.Get(unlocks[i], "id"));
+                    if (string.Equals(id, "b_shield", StringComparison.Ordinal) ||
+                        string.Equals(id, "b_shield_2", StringComparison.Ordinal))
+                        unlocks.RemoveAt(i);
+                }
+            }
+
+            HideCraftDefinition("b_shield");
+            HideCraftDefinition("b_shield_2");
+        }
+
+        private static void RemoveStringEntries(IList list, params string[] ids)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                string value = Convert.ToString(list[i]);
+                if (ids.Any(id => string.Equals(value, id, StringComparison.Ordinal)))
+                    list.RemoveAt(i);
+            }
+        }
+
+        private static void HideCraftDefinition(string id)
+        {
+            object craft = R.BalanceData(id, "CraftDefinition", true);
+            if (craft == null) throw new MissingMemberException("CraftDefinition " + id);
+            object hidden = R.Get(craft, "hidden");
+            if (hidden == null) throw new MissingMemberException(id, "hidden");
+            R.Set(craft, "hidden", true);
         }
 
         private static bool HasStaticProjection(RebalancedPrayerRule rule)
