@@ -200,7 +200,7 @@ namespace PrayerClarity
                 case "buff_plant":
                     return Localization.F("active.plant_inactive");
                 case "buff_sins":
-                    return Localization.F("active.sins_inactive");
+                    return Localization.F("active.sins_unverified");
                 case "buff_gp_increase":
                     return Localization.F("active.gratitude");
                 case "buff_sin_shard":
@@ -412,7 +412,7 @@ namespace PrayerClarity
                     showDuration = false;
                     break;
                 case "buff_sins":
-                    text = Localization.F("active.sins_inactive");
+                    text = Localization.F("active.sins_unverified");
                     showDuration = false;
                     break;
                 case "buff_gp_increase":
