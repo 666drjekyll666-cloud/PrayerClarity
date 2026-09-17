@@ -99,88 +99,52 @@ namespace PrayerClarity
             new Dictionary<string, RebalancedPrayerRule>(StringComparer.Ordinal)
             {
                 ["b_empty"] = new RebalancedPrayerRule("b_empty"),
-
-                ["b_faith"] = new RebalancedPrayerRule(
-                    "b_faith",
-                    requirements: F(25f, 40f, 70f),
-                    faithBonusRates: F(2.5f, 3.5f, 4.5f),
-                    moneyBonusRates: F(0f, 0f, 0f),
-                    removeFixedFaith: true,
-                    removeFixedMoney: true),
-
-                ["b_money"] = new RebalancedPrayerRule(
-                    "b_money",
-                    requirements: F(25f, 40f, 70f),
-                    faithBonusRates: F(0f, 0f, 0f),
-                    moneyBonusRates: F(2.5f, 3.5f, 4.5f),
-                    removeFixedFaith: true),
-
+                ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(25f, 40f, 70f), faithBonusRates: F(2.5f, 3.5f, 4.5f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(25f, 40f, 70f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(2.5f, 3.5f, 4.5f), removeFixedFaith: true),
                 ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money"),
-
-                ["b_sins"] = new RebalancedPrayerRule(
-                    "b_sins",
-                    confessionProbability: F(0.50f, 0.75f, 1.00f)),
-
-                ["b_plant"] = new RebalancedPrayerRule(
-                    "b_plant",
-                    growthReduction: F(0.20f, 0.30f, 0.40f)),
-
-                ["b_skull"] = new RebalancedPrayerRule(
-                    "b_skull",
-                    reposeModes: new[]
-                    {
-                        ReposeQualityMode.Stock,
-                        ReposeQualityMode.HalfwayToBest,
-                        ReposeQualityMode.Best
-                    }),
-
-                ["b_sword"] = new RebalancedPrayerRule(
-                    "b_sword",
-                    combatDamage: F(5f, 10f, 15f),
-                    combatArmor: F(4f, 4f, 4f),
-                    combatRegenPerSecond: F(1f, 2f, 4f)),
-
-                // Existing Protection items remain same-quality aliases of Combat.
-                ["b_shield"] = new RebalancedPrayerRule(
-                    "b_shield",
-                    combatDamage: F(5f, 10f, 15f),
-                    combatArmor: F(4f, 4f, 4f),
-                    combatRegenPerSecond: F(1f, 2f, 4f)),
-
-                ["b_pen"] = new RebalancedPrayerRule(
-                    "b_pen",
-                    craftQualityBonus: F(0.7f, 0.7f, 0.7f),
-                    successRewardBaseItemId: "story",
-                    successRewardQualityTiers: I(0, 2, 3),
-                    successRewardCounts: I(0, 3, 3)),
-
-                ["b_star"] = new RebalancedPrayerRule(
-                    "b_star",
-                    craftQualityBonus: F(0.2f, 0.5f, 1.0f)),
-
+                ["b_sins"] = new RebalancedPrayerRule("b_sins", confessionProbability: F(0.50f, 0.75f, 1.00f)),
+                ["b_plant"] = new RebalancedPrayerRule("b_plant", growthReduction: F(0.20f, 0.30f, 0.40f)),
+                ["b_skull"] = new RebalancedPrayerRule("b_skull", reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
+                ["b_sword"] = new RebalancedPrayerRule("b_sword", combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
+                ["b_shield"] = new RebalancedPrayerRule("b_shield", combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
+                ["b_pen"] = new RebalancedPrayerRule("b_pen", craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
+                ["b_star"] = new RebalancedPrayerRule("b_star", craftQualityBonus: F(0.2f, 0.5f, 1.0f)),
                 ["b_village"] = new RebalancedPrayerRule("b_village"),
-
-                ["b_souls"] = new RebalancedPrayerRule(
-                    "b_souls",
-                    optionalDlc: true,
-                    requirements: F(25f, 40f, 70f),
-                    faithBonusRates: F(2.5f, 3.5f, 4.5f),
-                    moneyBonusRates: F(0f, 0f, 0f),
-                    removeFixedFaith: true,
-                    removeFixedMoney: true),
-
-                ["b_grat_points_incr"] = new RebalancedPrayerRule(
-                    "b_grat_points_incr",
-                    optionalDlc: true,
-                    soulGratitudeBonusRate: F(0.20f, 0.20f, 0.20f)),
-
-                ["b_sin_shard"] = new RebalancedPrayerRule(
-                    "b_sin_shard",
-                    optionalDlc: true,
-                    sinShardMultiplier: F(2f, 2f, 2f))
+                ["b_souls"] = new RebalancedPrayerRule("b_souls", optionalDlc: true, requirements: F(25f, 40f, 70f), faithBonusRates: F(2.5f, 3.5f, 4.5f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_grat_points_incr"] = new RebalancedPrayerRule("b_grat_points_incr", optionalDlc: true, soulGratitudeBonusRate: F(0.20f, 0.20f, 0.20f)),
+                ["b_sin_shard"] = new RebalancedPrayerRule("b_sin_shard", optionalDlc: true, sinShardMultiplier: F(2f, 2f, 2f))
             };
 
         internal static IEnumerable<RebalancedPrayerRule> All => Rules.Values;
+
+        internal static void Validate()
+        {
+            foreach (KeyValuePair<string, RebalancedPrayerRule> pair in Rules)
+            {
+                RebalancedPrayerRule rule = pair.Value;
+                if (rule == null || string.IsNullOrEmpty(rule.PrayerId) || !string.Equals(pair.Key, rule.PrayerId, StringComparison.Ordinal))
+                    throw new InvalidOperationException("Invalid Rebalanced prayer rule key: " + pair.Key);
+
+                RequireThree(rule.PrayerId, nameof(rule.Requirements), rule.Requirements);
+                RequireThree(rule.PrayerId, nameof(rule.FaithBonusRates), rule.FaithBonusRates);
+                RequireThree(rule.PrayerId, nameof(rule.MoneyBonusRates), rule.MoneyBonusRates);
+                RequireThree(rule.PrayerId, nameof(rule.GrowthReduction), rule.GrowthReduction);
+                RequireThree(rule.PrayerId, nameof(rule.ConfessionProbability), rule.ConfessionProbability);
+                RequireThree(rule.PrayerId, nameof(rule.ReposeModes), rule.ReposeModes);
+                RequireThree(rule.PrayerId, nameof(rule.CombatDamage), rule.CombatDamage);
+                RequireThree(rule.PrayerId, nameof(rule.CombatArmor), rule.CombatArmor);
+                RequireThree(rule.PrayerId, nameof(rule.CombatRegenPerSecond), rule.CombatRegenPerSecond);
+                RequireThree(rule.PrayerId, nameof(rule.CraftQualityBonus), rule.CraftQualityBonus);
+                RequireThree(rule.PrayerId, nameof(rule.SuccessRewardQualityTiers), rule.SuccessRewardQualityTiers);
+                RequireThree(rule.PrayerId, nameof(rule.SuccessRewardCounts), rule.SuccessRewardCounts);
+                RequireThree(rule.PrayerId, nameof(rule.SoulGratitudeBonusRate), rule.SoulGratitudeBonusRate);
+                RequireThree(rule.PrayerId, nameof(rule.SinShardMultiplier), rule.SinShardMultiplier);
+
+                bool hasRewardShape = rule.SuccessRewardQualityTiers != null || rule.SuccessRewardCounts != null || !string.IsNullOrEmpty(rule.SuccessRewardBaseItemId);
+                if (hasRewardShape && (string.IsNullOrEmpty(rule.SuccessRewardBaseItemId) || rule.SuccessRewardQualityTiers == null || rule.SuccessRewardCounts == null))
+                    throw new InvalidOperationException("Incomplete success-reward rule for " + rule.PrayerId);
+            }
+        }
 
         internal static bool TryGet(string prayerId, out RebalancedPrayerRule rule)
         {
@@ -205,6 +169,12 @@ namespace PrayerClarity
         internal static string CraftId(string prayerId, int qualityTier)
         {
             return "pray:" + prayerId + ":" + qualityTier;
+        }
+
+        private static void RequireThree(string prayerId, string fieldName, Array values)
+        {
+            if (values != null && values.Length != 3)
+                throw new InvalidOperationException(prayerId + "." + fieldName + " must contain exactly three quality tiers.");
         }
 
         private static float[] F(float a, float b, float c) => new[] { a, b, c };
