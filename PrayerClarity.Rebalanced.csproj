@@ -39,6 +39,7 @@
     <Compile Include="src/RebalancedRepose.cs" />
     <Compile Include="src/RebalancedCombat.cs" />
     <Compile Include="src/RebalancedExcellence.cs" />
+    <Compile Include="src/RebalancedSoulContentment.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="lang/*.json" />
