@@ -1,6 +1,6 @@
-# PrayerClarity
+# PrayerClarity: Vanilla
 
-PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers easier to understand before you use them, without changing prayer balance or sermon mechanics.
+**PrayerClarity: Vanilla** is the Clarity-only edition of PrayerClarity for **Graveyard Keeper 1.407**. It makes prayers easier to understand before you use them while preserving vanilla prayer balance and sermon mechanics.
 
 **Current stable version: 1.0.20**
 
@@ -16,7 +16,9 @@ PrayerClarity is a BepInEx mod for **Graveyard Keeper 1.407** that makes prayers
 
 ## What it does not change
 
-PrayerClarity 1.0.20 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
+PrayerClarity: Vanilla 1.0.20 is **Clarity-only**. It does not rebalance prayers, change sermon rewards, repair broken vanilla prayer effects, or otherwise alter prayer gameplay mechanics.
+
+The **Vanilla** label refers to gameplay mechanics, not presentation: this edition deliberately keeps stock prayer behavior while making it clearer. **PrayerClarity: Rebalanced** is the planned sibling edition for intentional prayer rebalance/rework; it is separate from the current 1.0.20 release.
 
 ## Installation
 
@@ -25,7 +27,7 @@ PrayerClarity 1.0.20 is **Clarity-only**. It does not rebalance prayers, change 
 3. Put it in `Graveyard Keeper/BepInEx/plugins/PrayerClarity/`.
 4. When updating, replace the existing DLL. Do not keep multiple PrayerClarity versions side by side.
 
-PrayerClarity requires no user-facing configuration.
+PrayerClarity: Vanilla requires no user-facing configuration.
 
 ## Compatibility
 
