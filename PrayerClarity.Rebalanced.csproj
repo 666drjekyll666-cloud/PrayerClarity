@@ -34,6 +34,7 @@
     <Compile Include="src/Localization.cs" />
     <Compile Include="src/RebalancedRuleSet.cs" />
     <Compile Include="src/RebalancedStaticProjection.cs" />
+    <Compile Include="src/RebalancedTierState.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="lang/*.json" />
