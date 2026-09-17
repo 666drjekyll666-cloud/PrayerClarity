@@ -6,14 +6,18 @@
 - [x] Production version metadata set to 1.0.18.
 - [x] Completed probe workflow/project/source files removed from the stable-bound branch.
 - [x] Public README and changelog updated.
-- [x] GitHub release notes and Nexus page copy drafted.
+- [x] GitHub release notes and Nexus page copy finalized.
 - [x] Candidate workflow stages byte-identical handoff/canonical DLLs plus Nexus-ready ZIP.
-- [ ] Freeze exact `candidate/1.0.18` source ref.
-- [ ] Clean CI build passes and all 11 locale markers are present.
-- [ ] Record exact DLL and Nexus ZIP hashes.
-- [ ] Final runtime log gate: Inventory + Technology + real prayer; no mass ordinary-item `Craft for sermon not found` flood.
-- [ ] User accepts 1.0.18 as stable release.
-- [ ] Promote exact accepted source to `main` and accepted ref/tag.
-- [ ] Publish GitHub Release `v1.0.18` using the exact accepted canonical DLL bytes.
-- [ ] Use the exact accepted Nexus ZIP for Nexus upload.
-- [ ] Record final release identity in durable release/test docs.
+- [x] Exact `candidate/1.0.18` source frozen at `2e7d2fbac412eb74ea43bcc60bb1fc35bc79b15e`.
+- [x] Clean CI run `35203942368` passed, including all 11 embedded locale markers.
+- [x] Exact DLL and Nexus ZIP hashes recorded.
+- [x] Final runtime log gate passed: Inventory + Technology + real prayer; prior ordinary-item `Craft for sermon not found` flood absent.
+- [x] User accepted 1.0.18 as the stable Clarity release.
+- [x] Exact accepted source promoted to `main` and frozen at `accepted/clarity-1.0.18`.
+- [x] GitHub tag/release `v1.0.18` published against the exact accepted source with the exact accepted canonical DLL bytes.
+- [x] Exact Nexus-ready ZIP published as a GitHub Release asset and retained for Nexus upload.
+- [x] Final release identity recorded in `docs/RELEASE_1.0.18.md`.
+
+## External publication remaining
+
+- [ ] Upload the already accepted `PrayerClarity-1.0.18-Nexus.zip` unchanged to the Nexus Mods page when the page is created/published.
