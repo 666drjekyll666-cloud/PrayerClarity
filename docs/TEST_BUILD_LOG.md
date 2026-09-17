@@ -2,6 +2,23 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.1.1 — presentation/localization polish candidate
+
+- Type: Rebalanced presentation/localization follow-up; **no prayer-mechanics or balance changes** and no Technology-tooltip layout redesign.
+- Development branch: `dev/rebalanced-0.1.1`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.1-runtime`.
+- Exact build source SHA: `40c5f60062267e887756864e096a0f731efe54f0`.
+- GitHub Actions run: `35255682271`.
+- Workflow result: success on `ubuntu-latest`; Rebalanced `net472` Release build, sibling Vanilla shared-source build, all 11 base/Rebalanced locale-resource checks, artifact staging and upload passed.
+- Workflow artifact ID: `10512445366` (`PrayerClarity-Rebalanced-0.1.1-ci-40c5f60062267e887756864e096a0f731efe54f0`).
+- Artifact ZIP digest: `sha256:0c97f4fe018d8fb03ef933f0cf8c327283804e6ee67ef8c3ebe483582dc6aedc`.
+- Handoff filename: `PrayerClarity.Rebalanced-0.1.1-ci.dll`.
+- Canonical install filename inside the artifact: `PrayerClarity.Rebalanced.dll`.
+- Handoff/canonical DLL SHA-256: `93313be354b5fc965c6cbef3a456b37c7ef10371935696f0ba1229452f01d721`.
+- Scope: Bronze Repose no longer calls the parameterized stock `active.skull` localization key without its required argument; it uses a dedicated Rebalanced semantic string describing the stock-style expanded body range. Roots, Repentance, Repose, Combat and Soul Contentment presentation remains driven by the same effective-rule semantic layer; new Rebalanced wording was shortened and made more player-facing in all 11 `lang_rebalanced` overlays. Common `lang/*.json`, mechanics rules/hooks and Technology layout were not changed. Version metadata/build packaging was advanced to 0.1.1.
+- Requested user test: in Russian, inspect the Technology tooltips for Repose (all three qualities), Shoots & Roots, Repentance and Soul Contentment; optionally spot-check Combat. Confirm Bronze Repose is Russian rather than falling back to English, the new effect lines are shorter/easier to parse, and no new clipping/wrapping or excessive tooltip height appears. No sermon execution or mechanics test is required for this candidate.
+- Status: **ready for short runtime visual retest; not accepted**.
+
 ## PrayerClarity 1.0.10 — Technology tier-first UX candidate
 
 - Type: Clarity-only Technology presentation candidate; no prayer-mechanics or balance changes.
@@ -92,7 +109,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 
 - Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
 - Frozen candidate ref: `candidate/0.1.6`.
-- Exact build source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
+- Exact source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
 - GitHub Actions run: `34891988740`.
 - Workflow artifact ID: `10367390730` (`PrayerClarity-0.1.6-ci-adf752e1a04c93172bdedc54b913d4b926413c0d`).
 - Handoff filename: `PrayerClarity-0.1.6-ci.dll`.
