@@ -1,0 +1,62 @@
+name: Publish PrayerClarity 1.0.18
+
+on:
+  push:
+    branches:
+      - 'release/publish-1.0.18'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_SHA: 2e7d2fbac412eb74ea43bcc60bb1fc35bc79b15e
+      SOURCE_RUN_ID: '35203942368'
+      ARTIFACT_NAME: PrayerClarity-1.0.18-ci-2e7d2fbac412eb74ea43bcc60bb1fc35bc79b15e
+      DLL_SHA256: 4a3acce006713602783a7a26de48134c07b96d7e0fbe43a846397c5e822e06ee
+      NEXUS_SHA256: d30638f8ea9e61a8ac0d0df834acf9fba4b0d79c1f33885ea7e55d71da3cce1f
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout publication metadata
+        uses: actions/checkout@v4
+
+      - name: Download accepted CI artifact
+        run: |
+          set -euo pipefail
+          mkdir -p artifact
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "$ARTIFACT_NAME" \
+            --dir artifact
+
+      - name: Verify accepted bytes
+        run: |
+          set -euo pipefail
+          test -f artifact/PrayerClarity.dll
+          test -f artifact/PrayerClarity-1.0.18-ci.dll
+          test -f artifact/PrayerClarity-1.0.18-Nexus.zip
+          test -f artifact/BUILD_INFO.txt
+          echo "$DLL_SHA256  artifact/PrayerClarity.dll" | sha256sum -c -
+          echo "$DLL_SHA256  artifact/PrayerClarity-1.0.18-ci.dll" | sha256sum -c -
+          echo "$NEXUS_SHA256  artifact/PrayerClarity-1.0.18-Nexus.zip" | sha256sum -c -
+          cmp artifact/PrayerClarity.dll artifact/PrayerClarity-1.0.18-ci.dll
+          grep -Fq "Source SHA: $TARGET_SHA" artifact/BUILD_INFO.txt
+
+      - name: Publish exact accepted GitHub Release
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.18 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v1.0.18 already exists; refusing to replace an immutable release." >&2
+            exit 1
+          fi
+          gh release create v1.0.18 \
+            artifact/PrayerClarity.dll \
+            artifact/PrayerClarity-1.0.18-Nexus.zip \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title "PrayerClarity 1.0.18" \
+            --notes-file docs/RELEASE_NOTES_1.0.18.md \
+            --latest
