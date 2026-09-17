@@ -103,7 +103,7 @@ namespace PrayerClarity
             return craftId.StartsWith("pray:", StringComparison.Ordinal) ? craft : null;
         }
 
-        private static bool IsKnownPrayerItemId(string itemId)
+        internal static bool IsKnownPrayerItemId(string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return false;
             int separator = itemId.IndexOf(':');
