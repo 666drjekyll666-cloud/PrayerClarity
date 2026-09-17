@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "Przyspiesza wzrost roślin.",
-  "rebalanced.tech.sins_intro": "Każdy konfesjonał może przyjąć jedną spowiedź dziennie.",
-  "rebalanced.tech.repose_intro": "Osioł może przywozić ciała lepszej jakości. (up) (wskull) (rskull)",
+  "rebalanced.tech.sins_intro": "W każdym konfesjonale spowiedzi odbywają się częściej.",
+  "rebalanced.tech.repose_intro": "Osioł może przywozić ciała lepszej jakości.",
   "rebalanced.tech.combat_intro": "Wzmacnia Strażnika w walce.",
-  "rebalanced.active.plant": "Czas wzrostu roślin: −{0:0}%",
+  "rebalanced.active.plant": "Czas wzrostu roślin: -{0:0}%",
   "rebalanced.active.sins": "Szansa na spowiedź: {0:0}%",
   "rebalanced.active.repose.bronze": "Osioł może przywieźć ciało o jeden poziom jakości lepsze",
-  "rebalanced.active.repose.silver": "W połowie przypadków najlepsze dostępne ciało jest gwarantowane",
-  "rebalanced.active.repose.gold": "Osioł gwarantowanie przywozi najlepsze dostępne ciało",
+  "rebalanced.active.repose.silver": "W połowie przypadków najlepsze ciało jest gwarantowane",
+  "rebalanced.active.repose.gold": "Osioł gwarantowanie przywozi najlepsze ciało",
   "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
   "rebalanced.active.gratitude": "Leczenie duszy: +{0:0}% Wdzięczności"
 }
