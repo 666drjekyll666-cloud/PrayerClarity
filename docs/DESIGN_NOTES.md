@@ -1,236 +1,184 @@
 # PrayerClarity — Design Notes
 
-Status: product/design stage, updated 2026-09-17. Stock mechanics, presentation audit, community cross-check, quantitative power budget and the revised first non-production Rebalanced roster are sufficiently modeled. The Clarity-only edition is accepted and published; no gameplay rebalance is accepted yet.
+Status: product/architecture source of truth, reconciled 2026-09-17 with the accepted PrayerClarity: Vanilla 1.0.20 baseline and the locked PrayerClarity: Rebalanced roster.
 
-Canonical documents:
+Detailed evidence and history live in specialized documents rather than being duplicated here:
 
-- `PRAYER_MECHANICS.md` — stock 1.407 truth;
+- `PRAYER_MECHANICS.md` — stock Graveyard Keeper 1.407 mechanics;
 - `PLAYER_UX_RESEARCH.md` — player/presentation evidence;
-- `PRAYER_DESIGN_AUDIT.md` — role/design verdicts;
-- `PRAYER_POWER_BUDGET.md` — full investment/opportunity-cost model;
-- `PRAYER_REBALANCE_OPTIONS.md` — concrete current candidate roster;
-- `PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary.
+- `PRAYER_DESIGN_AUDIT.md` — current prayer-by-prayer role/design verdicts;
+- `PRAYER_POWER_BUDGET.md` — quantitative stock unlock/craft/quality/opportunity-cost analysis;
+- `PRAYER_REBALANCE_OPTIONS.md` — locked Rebalanced design specification;
+- `PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary;
+- `TECHNOLOGY_TOOLTIP_UX.md` and current candidate/runtime docs — detailed Technology UX evolution;
+- `CLARITY_UI_STATUS.md` and `RUNTIME_1.0.20_RESULT.md` — accepted Clarity/runtime evidence.
 
-## Product architecture
+Do not use historical candidate scope files or older balance examples as the current Rebalanced roster when they conflict with `PRAYER_REBALANCE_OPTIONS.md`.
 
-Accepted public product-family naming:
+## Product family
 
-1. **PrayerClarity: Vanilla** — the current stable Clarity-only edition. `Vanilla` describes prayer gameplay mechanics and balance, not presentation: the UI may become much clearer while stock Graveyard Keeper 1.407 prayer/sermon behavior remains unchanged.
-2. **PrayerClarity: Rebalanced** — a separate sibling edition for intentional prayer rebalance/rework once that behavior is implemented, tested and accepted.
+Accepted public naming:
 
-The two editions are peer alternatives in one PrayerClarity family, not a base mod plus an upgrade/add-on. A player who encounters either edition first should be able to infer its gameplay philosophy from the edition name.
+1. **PrayerClarity: Vanilla** — complete Clarity presentation over stock Graveyard Keeper 1.407 prayer/sermon mechanics and balance.
+2. **PrayerClarity: Rebalanced** — sibling edition containing the same Clarity experience plus the intentional locked Rebalanced ruleset.
 
-`PrayerClarity` remains the family/repository/codebase name; technical identifiers such as repository name, plugin identity and canonical DLL filename do not need to mirror the public edition subtitle.
+They are peer alternatives in one PrayerClarity family, not base mod + upgrade/add-on. A player should install one edition or the other.
 
-The internal semantic/evidence layers remain distinct from public edition naming:
+`PrayerClarity` remains the repository/codebase family name. Public edition subtitles do not force repository, namespace, plugin GUID or DLL naming decisions.
 
-1. **Clarity** — information only;
-2. **Vanilla Fixes** — evidence-backed repair where stock intent/magnitude are recoverable;
-3. **Balance / Rework** — explicit new design/tuning.
+Internal evidence/design layers remain distinct:
 
-**Vanilla Fixes is not an accepted third public edition name.** Because **PrayerClarity: Vanilla** explicitly promises stock mechanics, evidence-backed gameplay repairs must not be silently folded into that edition. Their eventual packaging requires a separate explicit product decision. Stock behavior remains separately documented.
+- **Clarity** — information/presentation only;
+- **Vanilla Fixes** — evidence-backed repair where intended stock mechanic/magnitude is recoverable;
+- **Balance / Rework** — deliberate new design/tuning.
 
-## Permanent policies
+**Vanilla Fixes is not an accepted third public edition.** PrayerClarity: Vanilla explicitly promises stock gameplay behavior, so fixes must not be silently folded into it. PrayerClarity: Rebalanced may incorporate a proven Vanilla Fix where the locked Rebalanced design requires the repaired mechanic, while documentation must still distinguish repair from invented tuning.
 
-- Do not nerf failed-sermon base donations. Preserve full base donations on failure in every profile; only prayer-specific bonuses/special success outputs disappear.
-- Use **temptation parity**: a prayer must justify unlock/craft/quality cost plus the weekly sermon opportunity.
-- Bronze must already be credible; silver/gold may deliberately buy magnitude, reliability, output, duration or certainty.
-- Strong gold behavior is acceptable when bounded by a narrow role and finite game caps.
+## Accepted baseline
 
-## Presentation architecture
+PrayerClarity: Vanilla **1.0.20** is the current stable presentation baseline:
 
-Technology unlock, prayer item, pulpit choice and active-buff presentation are separate vanilla paths. Active timed buffs communicate essentially icon + remaining time, not quantitative meaning.
+- accepted runtime/source: `c7ac91c1cea6c498fb406323725768b605d8139f`;
+- frozen accepted ref: `accepted/clarity-1.0.20`;
+- public release: `v1.0.20`;
+- DLL SHA-256: `fcf96c2c2c71f9dbc7f17646a91a5c44aadc7a210be0f3ef8ea9850411a21ffc`.
 
-Build one mod-owned semantic model and render context-appropriate subsets:
+Later `main` changes through the naming pass are documentation/repository-hygiene changes; accepted production code remains the 1.0.20 runtime baseline.
 
-- technology tree: role, why unlock it, quality progression;
-- prayer item: exact static tier properties;
-- pulpit: reward dependencies, exact success probability, prayer-owned success modifiers/fixed outputs, special output/effect, duration and relevant probabilities — but not the fully resolved current Faith/donation payout;
-- active buff: the concrete meaning of the currently active prayer effect plus the game's existing remaining-time presentation.
+PrayerClarity: Rebalanced implementation must start from this complete code/UI architecture, not from the old research branch runtime source.
 
-Preview calculations must be side-effect free; never call `PrayLogics.CalculatePray` merely to render information. The exact side-effect-free calculator may remain available internally for correctness, tests, diagnostics and balance work even when its final payout totals are intentionally hidden from the default pulpit UI.
+## Permanent gameplay/product policies
 
-Where quality bonuses naturally saturate at a cap, Clarity should say so. Example: if a writing craft is already guaranteed at maximum quality, a stronger Imagination prayer should not pretend to improve it further.
+- Preserve full **base donations on failed sermons**. This is an explicit PrayerClarity product decision. Prayer-specific bonuses/special success outputs may still be lost according to verified mechanics.
+- Keep stock 1.407 behavior documented independently of Rebalanced behavior.
+- Do not present intentional Rebalanced values as restored developer intent.
+- Use temptation parity: unlock/craft/quality/success/weekly opportunity cost all matter.
+- Bronze must already be credible. Silver/Gold should buy meaningful magnitude, reliability, duration, output or certainty.
+- Do not rebalance for visual/numerical symmetry.
+- Prefer strengthening alternatives over nerfing familiar healthy rewards unless evidence justifies a nerf.
+- Natural obsolescence is acceptable for progression prayers that have completed their role.
 
-### Accepted pulpit information model
+## Shared semantic architecture
 
-Runtime testing through 0.1.14 established the useful semantic split and workable geometry, but the exact-number rendering policy was revised after UX review.
+The core architectural requirement for both editions is **one effective prayer semantic model**.
 
-Keep:
+The model must be side-effect free for presentation and must describe, where relevant:
 
-1. vanilla `Church quality`;
-2. vanilla `Sermon requires`;
-3. exact sermon success probability inside the Clarity result presentation;
-4. the semantic decomposition `guaranteed/base -> success-only prayer contribution -> special effect`;
-5. exact intrinsic prayer mechanics, durations, caps, probabilities and fixed prayer-owned outputs.
+- prayer/craft/event identity;
+- quality tier;
+- success requirement and probability inputs;
+- Faith and donation percentage modifiers;
+- fixed prayer-owned success outputs;
+- special effect magnitude/probability/reliability;
+- duration;
+- discrete item rewards;
+- relevant dependencies such as Church Quality, Graveyard Quality or Soul Gratitude.
 
-Default pre-sermon rendering must now preserve the ceremony as the exact reward-reveal moment:
+The four accepted player-facing surfaces consume context-appropriate projections of that same model:
 
-- **Guaranteed/base** explains the source relationship rather than showing the computed payout: base Faith is driven by Church Quality, base donations by Graveyard Quality, with verified BSS dependencies such as Soul Gratitude made explicit where relevant;
-- **On success (N%)** shows the prayer's own modifiers such as Faith `+50%` or Donations `+25%`, plus fixed prayer-owned additions when present, rather than a computed `+2 Faith / +31c` delta;
-- **Effect** continues to show exact prayer-owned effects such as duration, damage, armor, growth reduction, regeneration, confession probability, GP/Sin Shard multipliers or Blessing counts;
-- do not replace real progression with qualitative `low / medium / high` buckets;
-- do not add a separate failure row: failure is already represented by the guaranteed/base relationship.
+1. Pulpit;
+2. Technology tooltip;
+3. prayer item tooltip;
+4. Character -> Temporary Effects.
 
-The verified mechanics/forecast model itself is unchanged by this UX decision. Exact BaseFaith/BaseMoney and success deltas may still be calculated internally; the change is which fields the default renderer exposes.
+PrayerClarity: Vanilla resolves effective semantics to stock 1.407 values. PrayerClarity: Rebalanced resolves them to the locked ruleset. Do not maintain a second UI-only table of Rebalanced numbers beside separate gameplay patches.
 
-If dependency relationships are visible directly in the Guaranteed row, the separate lower dependency note is redundant and should be removed unless runtime readability proves a need for it.
+The mechanics layer may require narrow hooks for behavior that is not representable merely by changing stock data. Those hooks must still consult the same effective definitions/quality semantics so gameplay and UI cannot drift.
 
-Detailed rationale and examples are in `PULPIT_REVEAL_UX.md`.
+## Pulpit presentation contract
 
-### Runtime layout evidence and current accepted pulpit geometry
+The accepted pulpit model is:
 
-The earlier layout iterations established the final implementation seam and a usable composition:
+`base/guaranteed dependency -> success-only prayer contribution -> special effect`
 
-- **0.1.3:** fixed-column/multi-widget layout was rejected in runtime because its geometry drifted outside the pulpit.
-- **0.1.4:** replacing that hierarchy with one stock `l_total_values` label plus `ResizeHeight` was also rejected. It overlapped the selected prayer/button and accumulated a downward offset on repeated redraws.
-- **0.1.5:** fixed measured regions removed cumulative drift and repeated prayer switching stayed geometrically stable, but the composition remained crowded and the stock frame was too short.
-- **0.1.6:** live Configuration Manager tuning was useful and applied without rebuilds, but its frame-extension implementation was rejected. Changing height could explode width and decorative pieces moved inconsistently.
-- **0.1.7:** the second frame-resize attempt was rejected. It deterministically resized child artwork rather than the real window boundary. The user nevertheless found a workable internal composition by moving the prayer selector to the upper-right.
-- **0.1.8:** effect wrapping and the information hierarchy improved, but runtime confirmed that the fixed stock frame was still too restrictive.
-- **0.1.9–0.1.14:** the real window/container seam, sliced frame pieces and calibrated layout were implemented and iterated. The resulting 0.1.14 layout remained usable at 2560x1440 and passed a second-resolution 1920x1080 smoke with Russian, German and Japanese. Thin stock font rendering at 1080p is noted but is not a layout blocker.
+Before the sermon, explain what drives the reward and what the selected prayer changes. Preserve the sermon animation as the reveal moment for the exact final Faith/donation totals.
 
-The original narrow layout probe established stock 1.407 geometry and inline symbols:
+Default pulpit presentation therefore keeps:
 
-- actual `UI Root/Pray GUI/window`: `UIWidget`, `274x241`, center pivot;
-- anchored `window/container`: `UIWidget`, `274x199`;
-- `l_total_values`: local `(-3,49)`, `242x68`, center pivot, 16 px font, `spacingY=-3`, `ShrinkContent`;
-- prayer button: window-local `y=-85`;
-- controller tips: window-local `y=-136`;
-- `(faith)` — Faith;
-- `(cross)` — church-quality cross;
-- `(wskull)` — green-wreath graveyard-quality skull;
-- `(skull)` — ordinary white skull;
-- `(gld)`, `(slv)`, `(brz)` — money denominations;
-- `(gratitude_points)` — Soul Gratitude;
-- `(up)` — native small green up arrow.
+- current relevant context such as Church Quality and Graveyard Quality;
+- exact sermon success probability;
+- dependency relationships for base Faith/donations and verified special inputs such as Soul Gratitude;
+- exact prayer-owned percentage/fixed modifiers;
+- exact intrinsic mechanics such as duration, growth reduction, combat stats, regeneration, confession chance, resource multiplier or reward quantity.
 
-The 0.1.4 probe observed Y progress `49 -> 35 -> 21 -> 7 -> -7 -> -21 -> -35` after the stock center-pivot label had been converted to 170/208 px `ResizeHeight`. 0.1.5 eliminated that mutable stock-label geometry path, and later repeated-switch tests confirmed the cumulative drift no longer occurs.
+It does **not** expose the fully resolved current final Faith/donation payout merely because the semantic model can calculate it.
 
-A dedicated **Pulpit Frame Slice Probe 0.1.0** closed the real-window question:
+See `PULPIT_REVEAL_UX.md` for the detailed rationale.
 
-- `window/back`: `UI2DSprite`, already `Sliced`, border `30/30/30/30`, `288x240`, TopLeft pivot;
-- `window/decore_back`: `UI2DSprite`, already `Sliced`, border `15/15/15/15`, `270x202`, Bottom pivot;
-- `window/header`: `UI2DSprite`, already `Sliced`, border `65/5/65/5`, `264x21`, Top pivot;
-- `window/header/pixel line`: simple horizontal line, `264x2`;
-- `window/decore` (`pulpit_bench_back`): `UI2DSprite` **Simple**, `244x186`; this decoration must not be stretched when the frame grows;
-- the container's four anchors target the real `window`, so the native hierarchy already contains the semantic seam required for a proper resize.
+## Technology tooltip contract
 
-Current accepted/calibrated defaults from the 0.1.14 line include real-window extra size `10 / 100`, result/effect/note positioning, Prayer selector Y `40`, and Note font size `10`. Prayer button X/Y remains a non-blocking experimental control rather than a reason to delay the product.
+Technology is the comparison/planning surface.
 
-Presentation should remain icon-first where the game already has an unambiguous resource/stat icon. An icon may replace an obvious noun such as Faith, money, damage, armor, Sin Shards or Soul Gratitude; it should not replace explanatory relationships or turn a mechanic into a pictogram puzzle. Prosperity and Thorough Cleansing inline item icons were attempted through two seams and did not resolve in the 1.407 runtime; localized text is the accepted fallback rather than further icon-chasing.
+Accepted general grammar is:
 
-## Localization architecture
+`shared prayer information -> compact Bronze/Silver/Gold tier snapshots`
 
-PrayerClarity must ship all mod-owned player-facing text for the full 11-language interface set supported by Graveyard Keeper: English, French, German, Simplified Chinese, Spanish (Spain), Portuguese (Brazil), Korean, Japanese, Russian, Italian and Polish.
+- shared/invariant behavior appears once;
+- each tier shows the native quality marker, Church Quality required for 100% success, and only values that materially vary by prayer quality;
+- percentage and flat contributions remain semantically distinguishable;
+- long special effects use content-driven wrapping instead of forcing every tooltip to the width of the longest string;
+- Effect duration is semantically separated from Faith/Donations bonus information;
+- the `Crafted at` footer remains visually separated from the last tier;
+- vanilla lore comes through the verified base `b_*_d` localization seam rather than punctuation-sensitive parsing.
 
-Implementation direction:
+Rebalanced effects should fit this data-driven structure. Do not add bespoke layout code per prayer unless runtime evidence proves the generic semantic structure insufficient.
 
-- read the active game language from the game's own language state (`GameSettings._cur_lng` is the established current seam in the existing GK mod ecosystem);
-- normalize casing and `-`/`_` separators so variants such as `pt-BR`/`pt_BR` and `zh-CN`/`zh_CN` resolve to one locale;
-- use compact mod-owned key/value localization resources with English fallback;
-- keep dynamic values out of translated source strings except as explicit placeholders;
-- reuse vanilla localized prayer names, resources and game terminology where practical rather than maintaining duplicate translations of game-owned text;
-- direct 1.407 audit places `GJL` in `Assembly-CSharp-firstpass`; resolve and cache its `L(string)` method through the small compatibility boundary rather than assuming it lives in Assembly-CSharp;
-- refresh on an existing language/UI lifecycle boundary or lazily during relevant UI redraw, not through polling;
-- missing locale/key must fail visibly and safely to English rather than showing a blank or corrupting UI.
+## Prayer item tooltip contract
 
-The first Clarity prototype is localization-complete only when every new visible phrase used by that prototype exists in all 11 language resources. Translation quality can be refined later without changing mechanics, but unsupported-language placeholders are not an acceptable release state.
+A prayer item tooltip describes the **concrete quality currently held**, not the whole Bronze/Silver/Gold comparison.
 
-### Imagination / Excellence terminology
+It should continue to use the same effective semantics as Technology and Pulpit so a Rebalanced item never reports stock mechanics.
 
-The direct mechanics are closed: `buff_pen` contributes `craft_q=0.7` to writing-linked multiquality recipes and `buff_star` contributes `craft_q=0.2` to explicitly linked crafts in stock 1.407. The same additive quality-score bucket is also used by perks such as Writer, Playwright/Good Writer, Jeweler and Industriousness.
+## Temporary Effects contract
 
-The current `Writing quality` / `Affected craft quality` Clarity copy is therefore mechanically defensible but still **provisional UX wording**. A community/wiki cross-check describes those perks simply as improving `Quality`, but that is not a substitute for direct recovery of the current Russian/game localization. Before final release wording, prefer the exact in-game perk terminology if direct localization evidence is recovered.
+Active prayer effects show their concrete quantitative meaning and remaining duration. Long remaining durations are expressed in in-game days using the game's effective day length; the precise stock timer returns inside the final day.
 
-## Revised leading Rebalanced roster
+Rebalanced timed buffs must feed their actual effective magnitude through this same surface. Do not infer active values from localized strings.
 
-These remain design hypotheses pending runtime acceptance:
+## Localization
 
-- **Ordinary:** stock; free starter is not buffed.
-- **Faith:** +100/+200/+300% target Faith.
-- **Donations:** +100/+200/+300% target donations.
-- **Combo:** stock +50/+100/+150% both.
-- **Repentance:** 30/50/70% confession chance.
-- **Shoots & Roots:** Fixed Vanilla repairs stock -20%; Rebalanced scales **-20/-30/-40% growth time**.
-- **Combat:** save-safe Retribution/Protection soft merge; +5/+8/+12 damage, +4 armor, regen **1 HP every 3/2/1.5 sec**, duration 36/72/108 min.
-- **Repose:** bronze stock random selection from max+1 pool; silver exactly halfway from current vanilla best-tier chance to certainty; gold 100% best prayer-eligible tier; ceiling remains story max+1.
-- **Imagination:** +0.5/+0.7/+1.0 writing-quality input, 18/36/54 min.
-- **Excellence:** +0.2/+0.5/+1.0 linked-craft quality input, 18/36/54 min.
-- **Prosperity:** stock 1/2/3 Blessings.
-- **BSS Soul's Repose:** stock mechanics, dependency-aware Faith presentation.
-- **Soul Contentment:** stock initially; new **+20/+40/+60% Soul Gratitude** curve is a user-proposed design hypothesis pending BSS economy modeling.
-- **Thorough Cleansing:** stock x2 initially; new **x2/x3/x4 Sin Shards** curve is a user-proposed design hypothesis pending BSS economy modeling.
+All PrayerClarity-owned player-facing strings must support the same 11 interface languages as the accepted Vanilla edition:
 
-Full modeling and fallback options are in `PRAYER_REBALANCE_OPTIONS.md`.
+`en`, `fr`, `de`, `zh_cn`, `es`, `pt_br`, `ko`, `ja`, `ru`, `it`, `pl`.
 
-## Important revisions from the prior roster
+Rules:
 
-### Shoots & Roots
+- follow the game's active language;
+- reuse vanilla terminology/localization where practical;
+- keep dynamic values separate from translatable prose;
+- English is the safe fallback;
+- no polling for language changes;
+- new Rebalanced player-facing text is not localization-complete if it exists only in English/Russian.
 
-The -20% stock coefficient remains the evidence-backed Vanilla Fix. Rebalanced may legitimately scale the actual growth reduction by prayer quality to 20/30/40%, giving increasingly strong throughput rather than duration-only quality.
+## Runtime/performance architecture
 
-### Repose
+- Keep UI work at existing UI lifecycle/redraw seams.
+- Prefer native getters/state over mirrored runtime state.
+- No broad Unity scans or background polling in production.
+- Cache unavoidable reflection/compatibility bindings.
+- Mechanics changes should hook the narrow semantic event that owns the behavior rather than broad `Update()` loops.
+- Diagnostic probes remain narrow, removable research artifacts.
 
-Do not use a fixed 90% silver value globally. Vanilla top-tier probability itself changes with the current corpse-tier pool. Silver should be **mathematically halfway between whatever vanilla currently gives and 100%**:
+## Rebalanced roster status
 
-`P_silver = (P_vanilla + 100%)/2`.
+The design roster is **locked**. `PRAYER_REBALANCE_OPTIONS.md` is the only canonical concrete table of current Rebalanced values.
 
-Gold is certainty. This preserves a meaningful gold upgrade at every progression state.
+The old intermediate candidates formerly recorded in this file — including earlier Faith/Donations coefficients, earlier Repentance probabilities, earlier Combat regeneration/damage, earlier Imagination curves and speculative BSS magnitude ladders — are superseded and must not be implemented.
 
-The future player-facing phrasing may use a simple reliability ladder such as bronze `possible`, silver `very likely`, gold `guaranteed`, but only after that Rebalanced behavior exists. Clarity-only stock text must not advertise those future probabilities.
+No new balance round is required unless implementation evidence contradicts an assumption that materially affects the locked behavior.
 
-### Imagination / Excellence
+## Current engineering gate
 
-Direct multiquality evidence confirms linked perk stars and prayer `craft_q` contributions are additive and outputs have finite quality tiers. Therefore late-game saturation is real rather than hypothetical.
+The stable Clarity baseline now exists; waiting for another Clarity release is no longer a gate.
 
-Imagination lead changes to **0.5/0.7/1.0**: stock +0.7 becomes silver rather than bronze, while gold adds a full quality-score point.
+Before writing broad Rebalanced production code, close the implementation-target/effective-model audit:
 
-Excellence lead changes to **0.2/0.5/1.0**. Because it affects a narrower craft set, a gold prayer that makes a reachable high-quality result deterministic is considered a desirable payoff, not an automatic balance failure.
+- one effective prayer-definition/model seam for gameplay plus all four Clarity surfaces;
+- Roots SmartExpression scope/lifecycle;
+- Repose corpse RNG seam;
+- Repentance daily-roll tier seam;
+- Combat quality capture, regeneration lifecycle and `b_sword`/`b_shield` non-stacking alias behavior;
+- safe Protection recipe retirement/hiding;
+- exact mutually-exclusive packaging/plugin identity for PrayerClarity: Vanilla vs PrayerClarity: Rebalanced.
 
-These quality-specific values belong to Rebalanced. The current Clarity prototype correctly reports stock `+0.7` Imagination and stock `+0.2` Excellence for every prayer quality.
-
-### Combat regeneration
-
-The rejected 1 HP/min concept did not meet temptation parity. Vanilla long-heal potion heals 1 HP every 1.5 sec. The first Combat Prayer candidate therefore uses **3/2/1.5 sec** ticks across bronze/silver/gold. Gold reaches an existing potion cadence but lasts much longer and is bundled with damage/armor; the resulting power should be judged in runtime rather than pre-nerfed into irrelevance.
-
-## Specialist/generalist policy
-
-Do not nerf Combo first. Faith and Donations become true specialists while Combo stays a familiar generalist.
-
-Church quality remains the universal sermon-success gate. Graveyard Quality already creates the donation base, so do not add a second GQ gate until runtime evidence shows it is needed.
-
-## Broken-prayer policy
-
-### Shoots and Roots
-
-Vanilla Fix = reconnect stock -20% only. Any 30/40% quality scaling exists only in Rebalanced.
-
-### Repentance
-
-Balance/Rework = role known, magnitude lost. Current first candidate is 30/50/70%.
-
-## Combat migration policy
-
-If merge is implemented:
-
-- existing `b_sword` becomes canonical Combat Prayer;
-- existing `b_shield` remains in saves as same-quality legacy alias;
-- no destructive save migration;
-- hide redundant new recipe only after lifecycle verification;
-- uninstall/profile change leaves vanilla save structurally valid.
-
-## Current gate
-
-Broad research is done. The Clarity-only player-facing presentation is accepted and published as **PrayerClarity: Vanilla 1.0.20**. Further generic Clarity layout probing is not justified without a concrete regression or new requirement.
-
-The next product-development workstream is **PrayerClarity: Rebalanced**. Existing rebalance documents remain design hypotheses until narrowed, implemented and runtime-tested; they must not be presented as current PrayerClarity: Vanilla behavior.
-
-Cross-cutting contracts remain:
-
-- one pure semantic/forecast model;
-- side-effect-free preview calculations;
-- full 11-language localization with English fallback;
-- no hard-coded player-facing prose in patch code;
-- no polling or broad UI scans;
-- unaccepted runtime behavior remains off `main`.
+After those seams are verified, create the build-bearing `dev/*` implementation line and produce one coherent integrated Rebalanced candidate. Runtime-sensitive behavior becomes accepted only after the required in-game evidence.
