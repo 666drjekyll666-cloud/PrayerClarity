@@ -2,6 +2,9 @@ name: Build PrayerClarity Rebalanced
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'candidate/rebalanced-*'
 
 permissions:
   contents: read
@@ -20,7 +23,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Restore
-        run: dotnet restore PrayerClarity.Rebalanced.csproj
-      - name: Build
+      - name: Restore sibling projects
+        run: |
+          dotnet restore PrayerClarity.Rebalanced.csproj
+          dotnet restore PrayerClarity.csproj
+      - name: Build Rebalanced
         run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
+      - name: Verify Vanilla shared-source build
+        run: dotnet build PrayerClarity.csproj -c Release --no-restore
