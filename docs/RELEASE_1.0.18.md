@@ -30,8 +30,23 @@ The user confirmed all PrayerClarity surfaces visually correct before the final 
 
 The installed research Test Harness plugins were not part of the 1.0.18 release artifact.
 
+## Public GitHub release
+
+- Tag: `v1.0.18`
+- GitHub Release ID: `390587839`
+- Publication workflow run: `35206134798`
+- Tag/release target: exact accepted source SHA `2e7d2fbac412eb74ea43bcc60bb1fc35bc79b15e`
+- Published assets:
+  - `PrayerClarity.dll` — SHA-256 `4a3acce006713602783a7a26de48134c07b96d7e0fbe43a846397c5e822e06ee`
+  - `PrayerClarity-1.0.18-Nexus.zip` — SHA-256 `d30638f8ea9e61a8ac0d0df834acf9fba4b0d79c1f33885ea7e55d71da3cce1f`
+- The publication workflow re-downloaded CI artifact `10489550250`, verified both hashes and byte-equality between the runtime handoff DLL and canonical DLL, then created the release without rebuilding.
+
 ## Scope
 
 1.0.18 is Clarity-only. It changes prayer information presentation and maintenance behavior only; it does not rebalance prayers, repair vanilla prayer mechanics, or alter sermon payouts.
 
 Future Vanilla Fixes and PrayerClarity: Rebalance work remain separate from this accepted stable source.
+
+## Nexus handoff
+
+`PrayerClarity-1.0.18-Nexus.zip` is the accepted Nexus upload package. Upload it unchanged when the Nexus page is published; its page copy is in `docs/NEXUS_PAGE_1.0.18.md`.
