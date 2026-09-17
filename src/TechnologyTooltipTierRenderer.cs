@@ -83,14 +83,14 @@ namespace PrayerClarity
             if (AllUseSoulGratitude(tiers))
                 return Localization.F("tech.souls_base_faith");
 
-            TooltipSemanticModel.RewardDetails commonRewardIdentity;
-            if (TryGetCommonRewardIdentity(tiers, out commonRewardIdentity))
+            TooltipSemanticModel.RewardDetails commonReward;
+            if (TryGetCommonReward(tiers, out commonReward))
             {
-                string rewardName = R.VanillaLocalize(commonRewardIdentity.Id);
+                string rewardName = R.VanillaLocalize(commonReward.Id);
                 List<string> lines = new List<string>
                 {
                     TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":",
-                    TechnologyTooltipTextStyle.RewardName(commonRewardIdentity.Id, rewardName)
+                    TechnologyTooltipTextStyle.RewardName(commonReward.Id, rewardName)
                 };
 
                 return string.Join("\n", lines.ToArray());
@@ -344,27 +344,6 @@ namespace PrayerClarity
             if (tiers == null || tiers.Count == 0) return false;
             foreach (PrayerForecast.TierDetails tier in tiers)
                 if (tier == null || !tier.UsesSoulGratitude) return false;
-            return true;
-        }
-
-        private static bool TryGetCommonRewardIdentity(
-            List<PrayerForecast.TierDetails> tiers,
-            out TooltipSemanticModel.RewardDetails common)
-        {
-            common = null;
-            if (tiers == null || tiers.Count == 0) return false;
-
-            TooltipSemanticModel.RewardDetails first = TooltipSemanticModel.ResolveSingleReward(tiers[0]);
-            if (first == null) return false;
-
-            for (int i = 1; i < tiers.Count; i++)
-            {
-                TooltipSemanticModel.RewardDetails next = TooltipSemanticModel.ResolveSingleReward(tiers[i]);
-                if (next == null || !string.Equals(first.Id, next.Id, StringComparison.Ordinal))
-                    return false;
-            }
-
-            common = first;
             return true;
         }
 
