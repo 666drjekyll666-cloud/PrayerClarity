@@ -118,7 +118,13 @@ namespace PrayerClarity
         {
             if (string.IsNullOrEmpty(semanticLine)) return false;
 
-            if (rawLine.IndexOf(NoBreakSpace) >= 0) return false;
+            // A fully atomic mechanics row replaces every ordinary space with NBSP.
+            // A prose sentence may still contain one smaller atomic cluster (for
+            // example ↑ + white skull + red skull); normal spaces around that cluster
+            // remain valid wrapping opportunities and the sentence must stay soft.
+            bool hasNoBreakSpace = rawLine.IndexOf(NoBreakSpace) >= 0;
+            bool hasOrdinarySpace = rawLine.IndexOf(' ') >= 0;
+            if (hasNoBreakSpace && !hasOrdinarySpace) return false;
 
             int words = 1;
             bool inSpace = false;
