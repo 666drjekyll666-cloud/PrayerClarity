@@ -1,0 +1,8 @@
+{
+  "rebalanced.active.plant": "Wachstumszeit −{0:0}%",
+  "rebalanced.active.sins": "Tägliche Beichtchance: {0:0}%",
+  "rebalanced.active.repose.silver": "50% Chance auf die beste verfügbare Qualitätsstufe; sonst zufällig aus dem erweiterten Bereich",
+  "rebalanced.active.repose.gold": "Beste verfügbare Qualitätsstufe garantiert",
+  "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
+  "rebalanced.active.gratitude": "Dankbarkeit durch Seelenheilung: +{0:0}%"
+}
