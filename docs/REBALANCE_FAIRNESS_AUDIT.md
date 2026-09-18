@@ -1921,7 +1921,7 @@ Working design decision for the next implementation candidate (research acceptan
 | Repentance | 20 / 40 / 60 |
 | Repose | 20 / 40 / 50 |
 | Combat | 20 / 40 / 60 |
-| Imagination | 10 / 40 / 60 |
+| Imagination | 20 / 40 / 60 |
 | Excellence | 20 / 60 / 90 |
 | BSS Soul's Repose | 30 / 60 / 120 |
 | BSS Soul Contentment | 20 / 40 / 60 |
@@ -1971,3 +1971,84 @@ English semantic target:
 The same contextual replacement may be used for Rebalanced Bronze. Rebalanced Silver/Gold must retain their reliability wording whenever narrowing the currently eligible corpse range still changes the result. Only show the no-further-effect replacement if direct current progression state proves the prayer cannot change the evaluated range at all.
 
 Technology remains unchanged.
+
+
+## Imagination requirement normalization — accepted working change
+
+Working q for Prayer for Imagination is revised from 10/40/60 to **20/40/60**.
+
+Rationale:
+
+- the prayer is not a true church-opening tool;
+- its unlock route from Research costs 15 red + 70 blue points in total, with Writing Tricks itself costing 10 red + 40 blue;
+- it is a Hard Book +7 Faith prayer;
+- the Rebalanced core +0.7 writing-quality effect remains constant across tiers, while higher tiers buy duration and Story return;
+- q20 does not materially delay the role, but removes the aesthetically/systemically awkward 10 -> 40 -> 60 ladder and aligns it with the roster's common 20-point progression language.
+
+This is intentionally a low-impact normalization, not a response to an overpowered Bronze tier.
+
+## Repose endpoint wording — final RU direction
+
+Remove the temporal word "сейчас" from the endpoint replacement.
+
+Current normal effect:
+\`Осёл может привозить более качественные тела. (up) (skull) (rskull)\`
+
+Endpoint replacement:
+\`Ещё более качественные тела недоступны. (up) (skull) (rskull)\`
+
+English semantic target:
+\`No higher-quality bodies are available.\`
+
+Reason:
+- the line is intended to appear only once current corpse progression has reached the endpoint relevant to the prayer;
+- "сейчас/currently" incorrectly implies that ordinary progression may later unlock another tier;
+- wording deliberately reuses \`более качественные тела\` from the normal effect.
+
+Technology remains unchanged; pulpit-only contextual replacement.
+
+## Soul's Repose scaling axis — current Gratitude, not lifetime souls
+
+Direct 1.407 project formula:
+
+\`base_faith = (CQ + GP) * 0.1 * (1 + 0.3 * E)\`
+
+where:
+- CQ = current Church Quality;
+- GP = current player parameter \`gratitude_points\` (current Soul Gratitude balance);
+- E = Eloquence flag.
+
+Therefore Prayer for Soul's Repose does **not** count:
+- lifetime souls healed;
+- lifetime Soul Gratitude earned;
+- number of souls currently stored as soul items;
+- Soul Gratitude capacity by itself.
+
+It uses the **current amount of Soul Gratitude actually held at sermon time**.
+
+Soul Gratitude is a spendable/current-state resource used by BSS systems such as Remote Craft Control. Spending it before the sermon reduces the prayer's Faith base; refilling it raises the base again.
+
+The soul portal awards Gratitude from released healed souls and clamps the resulting current value against the Souls-room capacity limit. Capacity is a separate axis from current Gratitude.
+
+### Capacity interpretation
+
+There is no canonical 40/60 progression ladder.
+
+Capacity is additive from Souls Room infrastructure. Current external documentation/community evidence reports:
+
+- ordinary fully built room base capacity around **136**;
+- Soul Containers themselves contribute 10/15/20 by tier;
+- stored Sin Shards increase maximum Gratitude by +1 each;
+- higher-quality/complex stackable items can increase capacity far beyond the ordinary room value, with community examples above 2000.
+
+Therefore values such as 40/40 or 60/60 are plausible early/midgame states, but they are not fixed standard caps or named progression milestones.
+
+For balance modeling, distinguish:
+- \`current GP\`: what Soul's Repose actually scales from;
+- \`GP capacity\`: how much current GP the player can potentially stockpile;
+- \`GP throughput\`: how quickly healed/released souls can refill it;
+- \`GP spending\`: Remote Craft Control and other sinks that compete with hoarding for sermon output.
+
+External community tests independently match the direct formula. A March 2026 discussion rewrites the base as \`CQ/5 + (SG-CQ)/10\`, which algebraically equals \`(CQ+SG)/10\` before Eloquence.
+
+This strengthens the q120 Gold Soul's Repose concept: the extraordinary payout requires both a prepared church and deliberate accumulation of a large **current** Soul Gratitude stockpile, rather than passive lifetime completion.
