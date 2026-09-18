@@ -1648,7 +1648,7 @@ This is a **candidate q audit**, not production acceptance.
 | Prosperity | 1/2/3 Blessings | 10/20/30 | extremely useful early, naturally exhausts vendor-tier role | **10/20/30 keep** |
 | Roots | -20/-30/-40%, 36/72/108 min | 10/20/30 | farming-stage utility; Gold lasts ~14.4 game days | **10/30/50 candidate** |
 | Repentance | 50/75/100% daily confession, 18/36/54 min | 10/20/40 | deep Theology route; Gold can add ~24 Faith + 12 Stories/week with 2x Confessional II | **20/40/60 leading** |
-| Repose | corpse-tier reliability, ceiling max+1, 18/36/54 | 20/40/50 | finite early/mid corpse progression, then obsolete | **20/40/50 keep** |
+| Repose | corpse-tier reliability, ceiling unchanged, 18/36/54 | 20/40/50 | stock/Bronze eventually lose the +tier benefit; Rebalanced Silver/Gold may retain a reliability benefit by forcing the best currently eligible tier | **20/40/50 keep; direct final-range check before claiming late-game value in UI** |
 | Combat | +5/+10/+15 dmg, +4 armor, 1/2/4 HP/s, 36/72/108 | 10/20/40 | very deep unlock; huge Gold package lasting >2 weeks but narrow combat niche | **20/40/60 leading; 70 upper test** |
 | Imagination | +0.7 writing q; 18/36/54; +3 Silver/Gold Stories at S/G | 10/40/60 | powerful writing accelerator; Book prayer; community shows Silver can already create extreme writing sessions | **10/40/60 defensible; test 20/50/70 only if play/economy evidence demands** |
 | Excellence | +0.2/+0.5/+1.0 craft q, 18/36/54 | 10/40/60 | late infrastructure prayer; Gold is a major deterministic-quality jump | **20/60/90 leading** |
@@ -1660,7 +1660,7 @@ This is a **candidate q audit**, not production acceptance.
 
 #### Repentance -> 20 / 40 / 60
 
-Gold is no longer a vague utility effect. With two Confessional II it can add roughly 24 Faith and 12 Stories over a six-day sermon week, on top of its own sermon payout.
+Gold is no longer a vague utility effect. On stock 450-second days, its 54-minute duration spans ~7.2 game days, so with two Confessional II it can cover a full six-day sermon week and add roughly 24 Faith and 12 Stories, on top of its own sermon payout. Under a 1.5x Longer Days setup that preserves the 54-minute wall-clock duration, it spans only ~4.8 game days; practical output is closer to 8-10 confessions (16-20 Faith with two Confessional II) depending on daily-roll alignment.
 
 The prayer also requires player interaction and confessional infrastructure, so it should not be priced like a universal passive resource engine. q60 is a sufficient visible premium; q80+ would likely double-tax the activity cost.
 
@@ -1672,13 +1672,13 @@ q60 makes Gold feel earned without pushing a combat preparation prayer so late t
 
 #### Excellence -> 20 / 60 / 90
 
-Gold +1.0 craft quality is a qualitatively different tool from Bronze +0.2 and can turn premium outcomes deterministic.
+Gold +1.0 craft quality is a qualitatively different tool from Bronze +0.2 and can turn premium outcomes deterministic. Its 54-minute duration is ~7.2 vanilla game days, but only ~4.8 game days under a 1.5x Longer Days setup that normalizes buff wall-clock duration.
 
 Because its scope is bounded by item-quality ceilings, it does not need q120. q90 makes Gold an aspirational near-max-passive Cathedral reward while preserving the separate q120 miracle slot for BSS Soul's Repose.
 
 #### BSS Thorough Cleansing -> 30 / 60 / 90
 
-x2 Sin Shards is already a major rare-resource multiplier, and Gold lasts ~14.4 game days (>2 sermon intervals). Current q30 makes this premium nearly free once BSS is online.
+x2 Sin Shards is already a major rare-resource multiplier. Gold lasts 108 real-time minutes: ~14.4 game days (>2 sermon intervals) on stock 450-second days, but ~9.6 days (~1.6 sermon intervals) under a 1.5x Longer Days setup that deliberately preserves wall-clock buff duration. Current q30 still looks cheap for stock balance, but the '>2 weeks' rationale must not be generalized to modded day lengths.
 
 Community players describe it as one of the strongest prayers because it can effectively halve the corpse throughput needed for high-end soul/corpse work. A 30/60/90 ladder makes the DLC progression visible without requiring consumables for certainty at a mature passive Cathedral.
 
@@ -1712,7 +1712,7 @@ ordinary prayer progression is complete -> BSS/GP investment creates an extraord
 
 #### Roots -> 10 / 30 / 50 candidate
 
-Gold is strong because both magnitude and duration scale: -40% growth time for ~14.4 days. Current q30 undersells that.
+Gold is strong because both magnitude and duration scale. On vanilla 450-second days, 108 real-time minutes span ~14.4 game days; external day-length mods can change the number of game days covered without changing the prayer's real-time duration. Current q30 may undersell the vanilla proposition.
 
 But Roots is stage-sensitive. Raising Gold to q60-80 risks making the prayer reliable only after farming acceleration matters less. q50 is the current upper useful target.
 
@@ -1764,3 +1764,100 @@ Ordinary base game:
 This produces multiple visible reasons to keep improving the church beyond vanilla q60 without turning every prayer into the same ladder.
 
 Status: research hypothesis. The staged economic baseline is accepted for further research; the non-economic q changes above still require cross-roster acceptance before implementation.
+
+
+## Duration-model correction — vanilla baseline vs Longer Days
+
+A material clarification is required for every duration-based balance statement.
+
+### Direct PrayerClarity behavior
+
+`dur_parameter` is the verified prayer-buff duration in real-time minutes.
+
+PrayerClarity production does **not** hard-code a 7.5-minute day when presenting duration. `PrayerForecast.DurationParameterToGameDays` asks the runtime `TimeOfDay.FromTimeKToSeconds(1f)` for the effective seconds-per-day and converts:
+
+`game_days = duration_minutes * 60 / effective_seconds_per_day`.
+
+Therefore the shipped UI already adapts to a day-length mod that patches the game's TimeOfDay conversion.
+
+### Vanilla 1.407 baseline
+
+Vanilla day length = 450 seconds = 7.5 real minutes.
+
+Therefore:
+
+- 18/36/54 real minutes = **2.4 / 4.8 / 7.2 vanilla game days**;
+- 36/72/108 real minutes = **4.8 / 9.6 / 14.4 vanilla game days**;
+- one six-day sermon interval = **45 real minutes**.
+
+These are valid **vanilla balance** conversions.
+
+### Current Longer Days behavior
+
+Current Longer Days source slows `EnvironmentEngine.Update` according to the selected day multiplier and also patches the stock hard-coded 450-second basis in `BuffsLogics.AddBuff` / `PlayerBuff.GetTimerText` to the configured day length specifically so buffs keep their **normal wall-clock duration** instead of stretching with the longer day.
+
+At 1.5x (675-second / 11.25-minute days):
+
+- 18/36/54 real minutes = **1.6 / 3.2 / 4.8 game days**;
+- 36/72/108 real minutes = **3.2 / 6.4 / 9.6 game days**;
+- one six-day sermon interval = **67.5 real minutes**.
+
+Consequences for the user's current runtime:
+
+- Gold Repentance (54 min) does **not** span a full sermon week;
+- Gold Repose/Imagination/Excellence likewise span ~4.8 modded days;
+- Gold Roots/Combat/Contentment/Cleansing (108 min) span ~9.6 modded days, about 1.6 sermon intervals, not >2.
+
+This is a correction to earlier conversational statements that applied vanilla day-count conversion to the user's Longer Days runtime.
+
+### Balance policy
+
+PrayerClarity: Rebalanced should continue to balance primarily against **stock Graveyard Keeper 1.407** rather than compensate for another gameplay mod.
+
+However:
+
+- research prose must label vanilla-day equivalents as vanilla-only;
+- player-facing duration should remain dynamically derived from the runtime day length (already implemented);
+- runtime feel tests performed with Longer Days must be interpreted with the shorter *game-day coverage* above.
+
+No production duration bug is currently identified in PrayerClarity.
+
+## Repose late-game obsolescence — reopened nuance
+
+Stock Repose is directly proven to add +1 only to Donkey `Tier max`, leaving `Tier min` unchanged. Community consistently reports that once the final corpse-delivery progression is unlocked, the stock +1 ceiling no longer opens a new tier and the prayer becomes useless.
+
+Rebalanced 0.1.5 is structurally different:
+
+- Bronze preserves the stock evaluated range;
+- Silver has a 50% chance to force `tier_min = tier_max`;
+- Gold always forces `tier_min = tier_max`;
+- it never raises the evaluated maximum beyond the stock/prayer ceiling;
+- stock RNG still chooses among corpse definitions inside the resulting tier.
+
+Recent community descriptions report that the final normal delivery pool remains a **range** rather than a single tier (commonly described as 2-3). If that external description matches stock 1.407 runtime state, then:
+
+- Bronze still becomes effectively obsolete when +1 can no longer extend the maximum;
+- Silver remains useful by sometimes excluding the lower eligible tier;
+- Gold remains useful by always excluding it and guaranteeing the best currently eligible tier.
+
+In that case, the Rebalanced reliability redesign **does fix the main vanilla late-game obsolescence for Silver/Gold**.
+
+Evidence status:
+- the Rebalanced narrowing algorithm is direct project fact;
+- stock +1-max behavior is direct project fact;
+- the exact final-game `body_min/body_max` range is currently **community-supported but not yet project-direct runtime evidence**.
+
+Do not add a hard player-facing claim such as "Gold remains useful after final corpse progression" until that final-range state is directly verified.
+
+### UX direction once final range is verified
+
+Vanilla / stock-Bronze can explicitly communicate the natural endpoint, e.g. conceptually:
+
+> Raises the maximum corpse tier while a higher tier is still available.
+
+Rebalanced Silver/Gold should instead communicate reliability:
+
+- Silver: moves halfway from the current stock distribution toward guaranteed best eligible tier;
+- Gold: guarantees the best eligible corpse tier.
+
+If the current evaluated range is already a single tier, a dynamic contextual line such as **"No further corpse-tier benefit at current progression"** would be more truthful than a static late-game warning. This can be computed on demand when the prayer UI opens; no per-frame work is required.
