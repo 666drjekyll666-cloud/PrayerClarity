@@ -1,8 +1,8 @@
 # Prayer Mechanics — Graveyard Keeper 1.407
 
-Status: mechanics evidence map, updated 2026-09-14 after read-only probes 0.1.0–0.1.5.
+Status: **canonical stock Graveyard Keeper 1.407 mechanics evidence map**, originally closed from read-only probes 0.1.0–0.1.5 and retained after the stable PrayerClarity releases.
 
-This document records verified mechanics before PrayerClarity production implementation. `prayer item`, `PrayCraft`, `PrayEventDefinition`, localized prayer name, buff, sermon FlowCanvas, and downstream consumers remain distinct layers unless direct evidence maps them.
+This document records verified **stock** mechanics independently of PrayerClarity's modded behavior. `prayer item`, `PrayCraft`, `PrayEventDefinition`, localized prayer name, buff, sermon FlowCanvas, and downstream consumers remain distinct layers unless direct evidence maps them.
 
 ## Evidence basis
 
@@ -369,26 +369,24 @@ Better Save Soul descriptions are clearer:
 - `b_grat_points_incr`: states `+10%` Gratitude gain;
 - `b_sin_shard`: states `x2` Sin Shards.
 
-## Remaining non-blocking scope questions
+## Remaining non-blocking stock-research questions
 
-The mechanics questions that blocked a truthful player-facing explanation are now closed. Remaining research is peripheral to the first PrayerClarity UX prototype:
+The mechanics questions required for the stable PrayerClarity siblings are closed. Remaining questions are peripheral and should be reopened only when a concrete feature needs them:
 
-1. exact linked-craft scope for `buff_pen` / `buff_star` only if player-facing wording needs exhaustive lists;
+1. exhaustive linked-craft scope for `buff_pen` / `buff_star`;
 2. merchant-side implementation of `blessing_commerce`;
 3. reachability classification for extra internal PrayCraft rows;
-4. buff-hover text if post-use presentation becomes part of scope;
-5. English localization only if bilingual support is required;
-6. exact Animator asset edge only if implementation needs that lifecycle target.
+4. exact Animator asset edge if a future implementation needs that lifecycle target.
 
 No additional static probe or user in-game mechanics test is currently justified.
 
-## Research-stage conclusion
+## Stable-state conclusion
 
-The core sermon calculation, success/failure payout behavior, requirements, player prayer catalogue, principal buff durations/magnitudes, Souls mechanics, live Donkey Repose consumer, Roots/Shoots wiring mismatch, Sin Shard effect, and current selection/report presentation are sufficiently verified to move to the **narrow UX prototype** stage.
+The core stock sermon calculation, success/failure payout behavior, requirements, prayer catalogue, principal buff durations/magnitudes, Souls mechanics, live Donkey Repose consumer, Roots/Shoots wiring mismatch, Sin Shard effect, and selection/report presentation are sufficiently verified for the current product family.
 
-Two stock-1.407 prayer anomalies must be represented truthfully rather than “fixed” by an information mod:
+Two stock-1.407 anomalies remain important boundaries:
 
-- Prayer of Repentance: timed buff exists, no gameplay consumer found;
-- Prayer for Shoots and Roots: `-20%` growth formula exists, but prayer buff and formula read/write different parameter owners.
+- Prayer of Repentance: timed buff exists, no gameplay consumer was found;
+- Prayer for Shoots and Roots: the `-20%` growth formula exists, but the stock prayer buff and formula read/write different parameter owners.
 
-Production behavior changes remain out of scope unless separately accepted.
+**PrayerClarity: Vanilla 1.0.24** preserves these stock mechanics and presents them truthfully. **PrayerClarity: Rebalanced 0.1.5** intentionally repairs/reworks the affected behavior according to the separate accepted ruleset in `PRAYER_REBALANCE_OPTIONS.md`. Do not rewrite this stock evidence to match Rebalanced behavior.
