@@ -542,3 +542,20 @@ Assessment:
 - Additive interaction with fertilizer is runtime-confirmed.
 - Manual removal correctly exercises the same stock removal path as timed expiry.
 - Gold is not separately runtime-sampled in this log, but it has no distinct control-flow branch: the same verified bridge uses the persisted tier reduction scalar (.20/.30/.40). Bronze and Silver runtime samples plus definition validation cover the mechanism; no additional Gold-specific runtime test is required unless behavior changes.
+
+
+### Rebalanced 0.2.2 — Roots aggregate-cap candidate
+
+- Type: executable follow-up to the accepted 0.2.1 Roots repair.
+- Frozen candidate ref: `candidate/rebalanced-0.2.2`.
+- Exact source SHA: `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`.
+- GitHub Actions run: `35382737488` — **success**.
+- Build result: Rebalanced and Vanilla sibling builds succeeded with 0 warnings / 0 errors; all 11 base/Rebalanced locale JSON files validated and all embedded locale markers passed.
+- Artifact ID: `10562647003`.
+- Artifact name: `PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.2-ci-924900365d44cd1ec9e530c9dd9b7e2f6a796bed`.
+- Artifact ZIP digest: `sha256:153d6664019d0532dfbb4095dc810e9fc96beb7562f100f4d42cf398a7a1c652`.
+- Handoff Rebalanced DLL SHA-256: `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
+- Change: preserve additive fertilizer + Roots behavior, but cap total growth-time reduction at 95% of base time.
+- Player-facing semantics: nominal Roots remains -20/-30/-40%; all 11 Rebalanced locales disclose the 95% combined reduction cap.
+- Expected stock maximum interaction: Boost II -60% + Silver Roots -30% = -90%; Boost II -60% + Gold Roots -40% is capped at -95%, preserving a visible Silver -> Gold improvement.
+- Runtime status: **candidate; not yet accepted**.
