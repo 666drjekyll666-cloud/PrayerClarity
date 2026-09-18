@@ -1527,3 +1527,24 @@ Build evidence:
 - DLL SHA-256: ee24759e29e3a7202370b71aa3acc4d51c03ca05019c44b56991f71121cc969b.
 
 Runtime contract remains read-only: no Harmony, no balance/save mutation.
+
+
+## Crafting-quality probe 0.1.1 — direct closure
+
+The user's stock 1.407 runtime log from the narrow read-only Crafting Quality Probe 0.1.1 closes the remaining Chapter-vs-Book quality-path question.
+
+Direct facts:
+
+- runtime MVID remains `6f50b8e7-156b-49ac-bbe8-7505894b2364`;
+- `MultiqualityCraftResult.value_result = value_items + value_perks - difficulty`;
+- `value_items` is the average quality of qualifying multi-quality inputs;
+- linked perks and active linked buffs add their quality values before recipe difficulty is subtracted;
+- Prayer for Faith final craft: Chapter + 5 Faith, difficulty **0.7**, writing-quality modifiers;
+- Prayer for Donations final craft: Chapter + 5 Faith, difficulty **0.7**, writing-quality modifiers;
+- Combo Prayer final craft: Book + 7 Faith, difficulty **1.0**, writing-quality modifiers;
+- the Book is itself a separate quality gate from cover + Chapter, difficulty **0.5** at Desk / **0.3** at Desk II, with Jeweler / Industriousness / Excellence modifiers;
+- BSS Soul's Repose final craft: Chapter + 5 Faith + 2 Sin Shards, difficulty **0**, writing-quality modifiers.
+
+Conclusion: the proposed staged grammar is now directly supported by stock 1.407 crafting structure. Chapter specialists are materially easier to quality-up than Book Combo, and Combo pays both an extra intermediate quality roll and a harder final recipe. This evidence removes the previous need for an additional crafting-quality probe before comparing the staged-handoff architecture.
+
+Do not commit the raw runtime dump; retain only these minimal derived facts.
