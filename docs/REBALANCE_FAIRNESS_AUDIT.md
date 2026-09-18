@@ -291,3 +291,193 @@ Before choosing exact values:
 5. only if q cannot create a fair/interesting decision without making the prayer late or tedious, reopen magnitude/duration/scope.
 
 No hosted CI is justified for this research/documentation stage.
+
+
+## Combo benchmark — two-week specialist rotation
+
+The community/meta concern is directly corroborated by external player guidance:
+
+- one long-running guide describes Combo as the default best prayer and says players will likely use it for the rest of the game once available;
+- a Steam discussion reaches the same structural conclusion: once Book quality and Church Quality stop being barriers, there is little reason to use the separate Faith/Donations prayers;
+- Reddit advice likewise commonly recommends Combo every service.
+
+Community references:
+
+- https://www.lostnoob.com/graveyard-keeper/prayer/
+- https://steamcommunity.com/app/599140/discussions/0/1734336452596992977/
+- https://www.reddit.com/r/GraveyardKeeper/comments/116k5jo
+
+This is **community/meta evidence**, not mechanics authority. The direct project evidence already proves why the pressure exists: stock Combo has the same per-resource percentage coefficients as the stock specialists at equal quality, while adding the other resource at the same time.
+
+### Correct comparison horizon
+
+A one-sermon comparison exaggerates the apparent size of the Rebalanced specialist premium.
+
+The fair strategic benchmark is:
+
+- Week 1: Faith specialist;
+- Week 2: Donations specialist;
+
+versus:
+
+- Week 1: Combo;
+- Week 2: Combo.
+
+Let:
+
+- `F` = ordinary base Faith for one sermon;
+- `D` = ordinary base donations for one sermon;
+- `pC` = Combo success probability;
+- `pS` = specialist success probability.
+
+For proportional output only, when all sermons are guaranteed:
+
+| Quality | Combo coefficient per resource | Specialist coefficient in target week | Two Combo weeks | Faith+Donations rotation | Rotation premium before flat outputs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bronze | +50% | +200% | 3.0 base units | 4.0 base units | +33% |
+| Silver | +100% | +300% | 4.0 base units | 5.0 base units | +25% |
+| Gold | +150% | +400% | 5.0 base units | 6.0 base units | +20% |
+
+This is the central interpretation:
+
+> Rebalanced Gold's visible `+400%` is not a 2x two-week advantage over Gold Combo. Because the specialist only boosts one resource in one of the two weeks, the long-horizon proportional advantage is **6 base units versus 5**, i.e. about **+20%** before flat-output effects.
+
+The specialist premium therefore becomes **less relatively dominant** as quality rises: +33% Bronze -> +25% Silver -> +20% Gold.
+
+### Flat outputs further protect Combo
+
+Stock Combo also carries success-only flat Faith and money outputs. The accepted Rebalanced Faith specialist removes its flat prayer-owned outputs; Donations retains only its thematic fixed money floor.
+
+Using the stock tier pattern of +1/+2/+3 flat Faith and +1/+2/+3 silver as the working cross-check, guaranteed two-week totals become:
+
+| Quality | Two Combo — Faith | Rotation — Faith | Rotation wins when | Two Combo — donations | Rotation — donations | Rotation wins when |
+| --- | ---: | ---: | --- | ---: | ---: | --- |
+| Bronze | `3F + 2` | `4F` | `F > 2` | `3D + 2` | `4D + 1` | `D > 1` |
+| Silver | `4F + 4` | `5F` | `F > 4` | `4D + 4` | `5D + 2` | `D > 2` |
+| Gold | `5F + 6` | `6F` | `F > 6` | `5D + 6` | `6D + 3` | `D > 3` |
+
+The exact flat-output values should remain subordinate to direct balance/runtime evidence if this benchmark later drives production. The structural conclusion does not depend on them: flat outputs make Combo **better at low base values**, which is desirable progression behavior.
+
+### Current accepted q already creates a progression crossover
+
+Representative expected-value model:
+
+- no Eloquence;
+- no Cardinal;
+- current accepted requirements;
+- stock success formula including rounding;
+- flat-output pattern above.
+
+For the Faith side of the two-week benchmark:
+
+| Quality | Combo q | Specialist q | Approx. CQ where rotation first exceeds two Combo sermons |
+| --- | ---: | ---: | ---: |
+| Bronze | 15 | 25 | ~20 |
+| Silver | 30 | 40 | ~35 |
+| Gold | 60 | 70 | ~62 |
+
+This is a healthy shape:
+
+- at the Combo guarantee threshold, Combo generally remains the safer/better aggregate choice;
+- as Church Quality approaches the harder specialist threshold, the rotation catches up;
+- once the specialist threshold is comfortably met, deliberate specialization wins by a moderate amount.
+
+Eloquence increases base Faith while Combo's flat Faith remains fixed, so it moves the Faith-specialist crossover somewhat earlier. Cardinal similarly increases the donation base and makes Donations specialization more attractive.
+
+### Donation side depends on Graveyard Quality as well as Church Quality
+
+Without Cardinal, `D = 0.03 * GQ`.
+
+At the current accepted Gold requirements:
+
+- at CQ 60, Gold Combo is guaranteed but Gold specialists are ~86% success; Donations rotation only overtakes two Combo sermons at roughly **GQ 260**;
+- at CQ 65, the crossover is roughly **GQ 149**;
+- at CQ 70, both are guaranteed and the crossover falls to roughly **GQ 101**.
+
+This is especially useful design behavior because it creates a genuine state-dependent choice instead of a universal replacement.
+
+## Gold requirement sensitivity — Combo-meta constraint
+
+The earlier fairness pass considered q80-q90 for the strongest Gold specialists. The two-week Combo benchmark changes the recommendation.
+
+For Gold Faith, using the same representative assumptions:
+
+| Specialist Gold q | Approx. CQ where Faith->Donations rotation first beats two Gold Combo sermons |
+| ---: | ---: |
+| 70 (current) | ~62 |
+| 75 | ~65 |
+| 80 | ~69 |
+| 85 | ~73 |
+| 90 | ~77 |
+
+Donation specialization is stricter because of Combo's second flat money payout. Approximate Graveyard Quality needed for the rotation to beat two Gold Combo sermons:
+
+| Specialist Gold q | At CQ 70 | At CQ 75 | At CQ 80 | At CQ 90 |
+| ---: | ---: | ---: | ---: | ---: |
+| 70 | ~101 | ~101 | ~101 | ~101 |
+| 75 | ~149 | ~101 | ~101 | ~101 |
+| 80 | ~216 | ~140 | ~101 | ~101 |
+| 85 | ~422 | ~216 | ~140 | ~101 |
+| 90 | ~1017 | ~366 | ~199 | ~101 |
+
+These values assume no Cardinal; Cardinal lowers the required Graveyard Quality.
+
+### Updated implication
+
+q90 is no longer the default leading idea for Faith/Donations.
+
+It makes Gold feel highly earned, but it also preserves the old Combo dominance for too much of the Cathedral progression. That conflicts with the product goal that players should **notice that Combo is no longer the automatic answer**.
+
+The current strongest candidate band is therefore **q80-q85**, with **q80** the clean leading value:
+
+- Gold Combo remains easier and fully reliable from CQ 60;
+- around CQ 70, specialist rotation becomes roughly competitive rather than clearly superior;
+- by CQ 80, the player has earned a clear but modest specialist advantage;
+- a mature passive Cathedral still guarantees the specialist without recurring consumable chores.
+
+This is a better strategic story than q90 if dethroning Combo's universal-meta status is a first-class goal.
+
+## Power / Cost map — first concrete pass
+
+This table is a research map, not an accepted rebalance.
+
+| Prayer / family | Power increase vs stock | Existing meaningful costs / bounds | Dominant-choice risk | Best balance lever | Current direction |
+| --- | --- | --- | --- | --- | --- |
+| **Combo** | none | Hard Book +7 Faith; q15/30/60 | **stock meta anchor** | none | **Do not nerf.** Preserve as convenient generalist and reference point. |
+| **Faith** | very high targeted resource multiplier | Chapter +5 Faith; higher q; loses off-theme/fixed prayer bonuses; one weekly slot | high if too cheap, but two-week premium is only moderate | Church Quality | Keep Bronze/Silver. Gold **q80 leading**, q85 alternate. |
+| **Donations** | very high targeted resource multiplier | Chapter +5 Faith; higher q; only one fixed-money floor over two-week rotation; depends on GQ; one weekly slot | medium-high and strongly state-dependent | Church Quality + natural GQ scaling | Keep Bronze/Silver. Gold **q80 leading**, because q90 preserves Combo too long. |
+| **BSS Soul's Repose** | same specialist multiplier plus Soul-Gratitude-dependent base | DLC progression; Chapter +5 Faith +2 Sin Shards; GP state dependence; one weekly slot | medium-high at high GP | Church Quality + existing GP state | Likely align Gold near **q80**, not q90, unless direct output modeling shows runaway Faith. |
+| **Combat** | major: merged offense+defense+regen | deep smithing route; Hard Book +7 Faith; combat-only use; weekly slot; no resource-engine scaling | medium | modest q increase, scope already narrow | Gold likely **q60-ish**, maybe 70; do not price it like an uncapped resource engine. |
+| **Excellence** | Gold magnitude 5x stock (+0.2 -> +1.0) | late routes; Hard Book +7 Faith; finite quality ceilings; useful only around specific crafts | medium | q plus natural cap | Gold **q70-80** candidate; likely does not need magnitude nerf first. |
+| **Shoots & Roots** | repairs inert stock path; Gold doubles recoverable -20% term to -40% | farming-only; finite duration; Chapter prayer; opportunity cost | low-medium | stage relevance; possibly small q rise | **Do not late-game-gate it.** q30 may already be defensible; q40 max obvious test. |
+| **Repentance** | inert stock special -> 50/75/100% daily confession chance | requires confessionals and repeated interaction; short effect; Chapter; weekly slot | low-medium | interaction burden / modest q | q40 may already be fair; q50 is a conservative test, not an automatic need. |
+| **Repose** | reliability increase, not ceiling increase | Hard Book; finite corpse progression window; natural obsolescence; ceiling stays max+1 | low | existing ceiling/reliability | **Keep q50** unless runtime play shows certainty arrives too cheaply. |
+| **Imagination** | core +0.7 unchanged; premium adds Story return | Hard Book; q60; writing-only window; Story reward feeds but does not replace full book chain | low-medium | existing q / reward audit | **Keep q60 provisionally.** Check whether 3 Gold Stories create a self-sustaining loop before changing. |
+| **Soul Contentment** | +10% -> +20% | DLC; Soul workflow; Chapter+Faith+Sin Shards; duration is premium axis | low-medium | existing scope/duration | Probably keep current q unless actual Soul throughput proves excessive. |
+| **Thorough Cleansing** | magnitude remains stock x2; quality buys duration | DLC; Soul-healing workflow; weekly slot | low | existing scope/duration | **No balance change indicated.** |
+| **Prosperity** | stock | progression-limited Merchant use; naturally becomes obsolete | low | natural obsolescence | **No change.** |
+| **Ordinary** | stock | starter baseline | none | none | **No change.** |
+
+## Updated balance principle
+
+The resource-specialist family should satisfy all of these simultaneously:
+
+1. **Combo remains the easiest broad answer.**
+2. At lower Church Quality, Combo's reliability and flat outputs can make it objectively better.
+3. A specialist is clearly best when the player urgently wants its one resource.
+4. Over a planned two-week Faith+Donations rotation, specialists should eventually beat two Combo sermons, but only **modestly**, not by an overwhelming margin.
+5. That crossover should occur during meaningful Cathedral progression, not only after the church is effectively complete.
+6. The Gold specialist should feel earned, but not so late that the player never gets to enjoy the alternative before resource scarcity has already disappeared.
+
+This argues strongly for treating **the two-week Combo benchmark as the acceptance test for all future Faith/Donations q changes**.
+
+## Narrow next gate after this map
+
+Before production code:
+
+1. directly verify the 1.407 passive Church Quality ceiling only if the final candidate depends on q near the ceiling;
+2. test q80 versus q85 for Gold Faith/Donations/BSS Soul's Repose using representative CQ/GQ/GP states;
+3. separately model Combat and Excellence because their power is bounded differently and should not inherit the resource-specialist q by symmetry;
+4. do not reopen effect magnitude unless these native cost levers fail to produce interesting decisions.
+
+No hosted CI is justified for this research pass.
