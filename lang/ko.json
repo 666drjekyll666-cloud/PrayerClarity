@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "효과",
   "forecast.graveyard_quality": "묘지 품질: (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "영혼 감사: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "확정",
   "forecast.success_bonus": "성공 시 ({0}%)",
   "forecast.dependency_note": "(faith) 신앙 — 교회 품질\n(slv) 기부금 — 묘지 품질",
@@ -18,7 +19,8 @@
   "tech.quantity": "수량",
   "tech.effect.imagination_intro": "글쓰기 품질을 높입니다.",
   "tech.effect.excellence_intro": "제작 품질을 높입니다.",
-  "tech.souls_base_faith": "신앙은 교회 품질과 영혼 감사도에 따라 달라집니다.",
+  "tech.souls_base_faith": "신앙은 교회 품질과 영혼 감사도에 따라 달라집니다.",  "repose.endpoint": "더 높은 품질의 시체는 없습니다.",
+
   "buff.souls_repose": "(faith)은 교회 품질과 (gratitude_points)에 따라 달라집니다.",
   "active.sword": "피해 +{0:0.##}",
   "active.shield": "방어력 +{0:0.##}",
