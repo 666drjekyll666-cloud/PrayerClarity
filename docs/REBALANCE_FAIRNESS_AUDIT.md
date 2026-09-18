@@ -1063,3 +1063,243 @@ Strength: clearest progression language and strongest alignment between crafting
 Weakness: largest mechanical departure from stock/current Rebalanced; requires careful economy modeling.
 
 Candidate A is currently the most promising architecture for the newly stated product goal, but it is **not accepted** until the early/mid/late economy is modeled more deeply and the 1.407 sermon-quality crafting path is directly verified.
+
+
+## Candidate A quantitative sanity check — power creep and early economy
+
+This section tests the staged handoff candidate against stock 1.407 rather than against the previous Rebalanced roster.
+
+### Stock flat-output correction
+
+Current external sermon tables and historical runtime-aligned community calculations agree with the project semantic model: Faith, Donations and Combo all carry the same stock tier flat outputs:
+
+- Bronze: **+1 Faith, +1 silver**;
+- Silver: **+2 Faith, +2 silver**;
+- Gold: **+3 Faith, +3 silver**.
+
+The family difference is therefore primarily percentage allocation and q:
+
+- Faith: +50/+100/+150% Faith, +20% donations, q10/20/50;
+- Donations: +50/+100/+150% donations, +20% Faith, q10/20/50;
+- Combo: +50/+100/+150% both, q15/30/60.
+
+References:
+- https://graveyardkeeper.fandom.com/wiki/Sermon
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_faith
+- https://graveyardkeeper.fandom.com/wiki/Prayer_for_donations
+- https://graveyardkeeper.fandom.com/wiki/Combo_prayer
+
+### Faith specialist — Candidate A versus stock
+
+Candidate A:
+- q20/40/60;
+- +50% Faith all tiers;
+- flat +5/+10/+15 Faith;
+- no prayer-owned money bonus.
+
+At the candidate guarantee thresholds and without Eloquence:
+
+| Tier | CQ | Base Faith | Stock same-tier Faith prayer | Candidate A Faith | Delta |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bronze | 20 | 4 | 7 | 11 | **+57%** |
+| Silver | 40 | 8 | 18 | 22 | **+22%** |
+| Gold | 60 | 12 | 33 | 33 | **0%** |
+
+With Eloquence at the same CQ values, the candidate deltas shrink further; at Gold/CQ60 the candidate is about **8.6% below** stock Gold Faith because percentage scaling matters more.
+
+Interpretation:
+
+- Candidate A is intentionally a **front-loaded Faith progression buff**, not a late-game Faith power creep.
+- Bronze is the only genuinely aggressive point.
+- The Bronze result has a useful recoup property: at CQ20, Casual gives 6 Faith (base 4 + flat 2) while Candidate A Bronze gives 11. The +5 incremental Faith exactly recovers the specialist's 5-Faith crafting cost after one successful use, ignoring writing-material opportunity cost.
+- This directly repairs a long-standing player complaint that stock Copper Faith barely improves on Casual while costing 5 Faith and a Chapter.
+- Silver is a moderate uplift.
+- Gold converges to stock and then scales worse than stock once Eloquence/base Faith rises.
+
+External historical community example for stock Copper Faith at CQ~20: 7 Faith versus 6 from Casual, described as scarcely worth the crafting cost:
+- https://steamcommunity.com/app/599140/discussions/0/1742231705662858611/
+
+Current judgment: **+5/+10/+15 is strong but not obviously excessive**. If runtime feel later says Bronze accelerates research too hard, the first conservative alternate should be +4/+8/+12 rather than changing the percentage core.
+
+### Donations specialist — Candidate A versus stock
+
+Candidate A:
+- q20/40/60;
+- +50% donations all tiers;
+- flat +2/+4/+6 silver;
+- no prayer-owned Faith bonus.
+
+Representative comparison:
+
+Without Cardinal:
+
+| GQ | Base donations | Bronze candidate vs stock | Silver candidate vs stock | Gold candidate vs stock |
+| ---: | ---: | ---: | ---: | ---: |
+| 50 | 1.5s | 4.25s vs 3.25s | 6.25s vs 5.0s | 8.25s vs 6.75s |
+| 100 | 3.0s | 6.5s vs 5.5s | 8.5s vs 8.0s | 10.5s vs 10.5s |
+| 150 | 4.5s | 8.75s vs 7.75s | 10.75s vs 11.0s | 12.75s vs 14.25s |
+| 200 | 6.0s | 11.0s vs 10.0s | 13.0s vs 14.0s | 15.0s vs 18.0s |
+
+With Cardinal, base donations are 4% of GQ instead of 3%, so the percentage-heavy stock Gold overtakes Candidate A even earlier.
+
+Interpretation:
+
+- Bronze Candidate A is always +1 silver above stock Bronze Donations, before considering removed off-theme Faith.
+- Silver crosses stock around a 4-silver base.
+- Gold crosses stock around a 3-silver base; above that, Candidate A is **weaker than stock Gold Donations** in its target resource.
+- This is exactly the intended staged handoff: early flat strength, deliberately poor late scaling.
+
+### Are +2/+4/+6 silver too small?
+
+Not in the early game; they become small later, which is the point.
+
+Useful economy anchors:
+
+- one Burial Certificate sells for **1s50c** at a fixed price;
+- at GQ50 without Cardinal, Candidate Bronze Donations pays about **4s25c total**, versus 1s50c base donations; the prayer's incremental money above the base is about **2s75c**, roughly the cash value of 1.8 burial certificates;
+- at GQ100 with Cardinal, Candidate Silver pays **10s total**;
+- Trade Office silver crates sell for about **10s75c**, gold crates about **16s50c**, and goods crates about **15s** each in current data;
+- late tavern and Trade Office systems can produce much larger weekly income.
+
+References:
+- https://graveyardkeeper.fandom.com/wiki/Burial_certificate
+- https://graveyardkeeper.fandom.com/wiki/Trade_Office
+- https://graveyardkeeper.fandom.com/wiki/Talking_Skull
+- https://steamcommunity.com/app/599140/discussions/0/5789982181537748511/
+
+Therefore +2/+4/+6 silver is **meaningful early, intentionally modest late**. It does not look like a game-breaking cash injection.
+
+### Combo — Candidate A versus stock
+
+Candidate A Combo:
+- q40/60/80;
+- +100/+150/+200% Faith and donations;
+- no flat Faith or money.
+
+At representative no-perk stages:
+
+- Bronze at CQ40: base Faith 8 -> Candidate 16 Faith vs stock Bronze 13 Faith (**~+23%**);
+- Silver at CQ60: base Faith 12 -> Candidate 30 Faith vs stock Silver 26 Faith (**~+15%**);
+- Gold at CQ80: base Faith 16 -> Candidate 48 Faith vs stock Gold 43 Faith (**~+12%**).
+
+Representative donation bases of 4/6/8 silver give:
+
+- Bronze: 8s vs stock 7s (**~+14%**);
+- Silver: 15s vs stock 14s (**~+7%**);
+- Gold: 24s vs stock 23s (**~+4%**).
+
+The output increase is therefore modest at the stage where the higher q is intended to make the tier reliable.
+
+Candidate A is not "everything is stronger":
+
+- specialists are strongly better early;
+- specialists flatten and can become weaker than stock late;
+- Combo is moderately stronger late, but pays a much higher q ladder and Book-class production burden;
+- off-theme specialist rewards are removed.
+
+Current conclusion: **no evidence of severe whole-family power creep**. The design mostly reallocates power across progression stages.
+
+## Full perceived-value / power-cost equation
+
+For this family, perceived and actual prayer value should be audited across all of the following.
+
+### Access and acquisition
+1. technology unlock itself;
+2. prerequisite/route depth;
+3. whether the prayer is Chapter-class or Book-class;
+4. raw recipe materials;
+5. upfront Faith cost (5 vs 7);
+6. quality-production difficulty/probability;
+7. prerequisite quality infrastructure/perks (Desk II, Writer, Playwright, Jeweler, Inspiration, covers, Jewelry Details);
+8. **recoup time**: how many successful uses are required before the initial Faith/material investment has paid back relative to the alternative;
+9. reusability: vanilla prayer items are not consumed by the normal weekly sermon, so crafting cost is amortized over future weeks rather than paid repeatedly.
+
+### Weekly use cost
+10. Church Quality requirement;
+11. actual success probability below the guarantee threshold;
+12. optional candles/incense needed to bridge that threshold;
+13. failure downside: base Faith/donations survive, prayer-owned success bonuses do not;
+14. one-sermon-per-week opportunity cost;
+15. stage timing: whether the prayer becomes reliable while its resource role is still relevant.
+
+### Reward
+16. base Faith from Church Quality;
+17. base donations from Graveyard Quality;
+18. flat Faith;
+19. flat money;
+20. percentage Faith;
+21. percentage money;
+22. off-theme rewards / breadth;
+23. Eloquence/Cardinal scaling;
+24. interaction with other buffs/perks where applicable.
+
+### Economic context
+25. current scarcity/marginal utility of Faith;
+26. current scarcity/marginal utility of money;
+27. substitute Faith sources (especially confessionals);
+28. substitute money sources (burial certificates, farming/trading, Trade Office, tavern/DLC systems);
+29. natural obsolescence of the resource need itself;
+30. caps/ceilings or lack thereof.
+
+### Player comprehension / perceived fairness
+31. whether recipe cost visually matches power class;
+32. whether q visibly matches progression stage;
+33. whether the tooltip makes role comparison obvious without arithmetic;
+34. whether a stronger option is situational or simply dominant;
+35. whether the reward feels satisfying enough to justify the weekly ritual.
+
+No major missing category is currently apparent. The most important additions were **amortization/reusability, recoup time, quality-production variance, substitute income sources, and perceived/cognitive legibility**.
+
+## Crafting-quality path — evidence state
+
+Accepted/direct project evidence already establishes the structural chain:
+
+- Story -> Note;
+- 3 Notes -> Chapter;
+- Chapter -> Chapter-class prayer;
+- Chapter + cover -> Book;
+- Book -> Book-class prayer such as Combo.
+
+Current external documentation consistently reports:
+
+- Notes, Chapters and most sermons use a writing-quality system influenced by craft difficulty, ingredient quality, Writer (+0.3), Playwright (+0.5), Inspiration (+0.7), and Desk II;
+- Book quality is a separate quality step driven by Chapter quality + cover quality, Desk II and Jeweler; Writer/Playwright do not apply to the Book craft itself;
+- better Hard Covers raise Book quality; Gold Hard Cover can consume Gold Jewelry Details;
+- Combo then goes through the sermon-quality step after the Book step.
+
+References:
+- https://graveyardkeeper.fandom.com/wiki/Sermon
+- https://graveyardkeeper.fandom.com/wiki/Notes
+- https://graveyardkeeper.fandom.com/wiki/Chapter
+- https://graveyardkeeper.fandom.com/wiki/Book
+- https://graveyardkeeper.fandom.com/wiki/Hard_cover
+- https://graveyardkeeper.fandom.com/wiki/Perks
+
+This proves the **extra quality bottleneck** for Book prayers, but not yet the exact 1.407 numerical probability formula.
+
+### Narrow 1.407 runtime evidence gate
+
+A dedicated read-only CraftingQualityProbe 0.1.0 has been created on this research line.
+
+Purpose:
+- dump the exact 1.407 CraftDefinition quality-related method signatures/IL;
+- dump relevant Notes/Chapter/Book/Faith/Donations/Combo craft rows;
+- resolve exact quality modifiers/probability arithmetic without mutating game state.
+
+Build:
+- source SHA: 97090a19251f972ce42559ce0c6931874bb61a85;
+- frozen ref: candidate/crafting-quality-probe-0.1.0;
+- Actions run: 35328131561;
+- result: success;
+- artifact: PrayerClarity-CraftingQualityProbe-0.1.0;
+- artifact ZIP digest: sha256:75def9bf4f1d49bb222041e012ebbeed59497eff5d2b3d42abb71e3d94dbfe4c;
+- DLL SHA-256: a78a54a33673af9a4fd6e12b71621745e9eed89d2aad03f0f6188a6bf3d06737.
+
+Runtime contract:
+- no Harmony;
+- no balance mutation;
+- no save mutation;
+- automatically runs once after a loaded game reaches stable runtime state;
+- writes BepInEx/PrayerClarity-crafting-quality-0.1.0.txt.
+
+This is the only current in-game evidence request required before exact recipe-quality probabilities are used in Candidate A balance decisions.
