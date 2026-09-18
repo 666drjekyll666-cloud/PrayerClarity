@@ -10,10 +10,8 @@ namespace PrayerClarity
         internal const string PlantTierParam = "prayerclarity_rebalanced_plant_tier";
         internal const string PlantReductionParam = "prayerclarity_rebalanced_plant_reduction";
         internal const string ConfessionTierParam = "prayerclarity_rebalanced_confession_tier";
-        internal const string ConfessionBonusParam = "prayerclarity_rebalanced_confession_bonus";
         internal const string ReposeTierParam = "prayerclarity_rebalanced_repose_tier";
         internal const string CombatTierParam = "prayerclarity_rebalanced_combat_tier";
-        internal const string CombatExtraDamageParam = "prayerclarity_rebalanced_combat_extra_damage";
         internal const string CombatRegenParam = "prayerclarity_rebalanced_combat_regen";
         internal const string ExcellenceTierParam = "prayerclarity_rebalanced_excellence_tier";
 
@@ -68,12 +66,8 @@ namespace PrayerClarity
                     case "b_plant":
                         SetPlayerParam(PlantReductionParam, rule.TierValue(rule.GrowthReduction, tier));
                         break;
-                    case "b_sins":
-                        SetPlayerParam(ConfessionBonusParam, rule.TierValue(rule.ConfessionProbability, tier) - 0.15f);
-                        break;
                     case "b_sword":
                     case "b_shield":
-                        SetPlayerParam(CombatExtraDamageParam, Math.Max(0f, rule.TierValue(rule.CombatDamage, tier) - 5f));
                         SetPlayerParam(CombatRegenParam, rule.TierValue(rule.CombatRegenPerSecond, tier));
                         break;
                 }
