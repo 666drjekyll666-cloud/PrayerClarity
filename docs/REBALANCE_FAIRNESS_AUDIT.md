@@ -2365,3 +2365,32 @@ Stock prayer crafts already carry success-only \`faith\` and \`money\` output it
 The current rule model removes fixed outputs but does not yet expose tiered fixed Faith/money replacement arrays, so implementation should add those values to the single Rebalanced semantic/rule source rather than hard-code output edits in a separate patch.
 
 Status: **leading final resource-family candidate; awaiting explicit user acceptance before production implementation.**
+
+
+## Repose terminal-range gate closure — no new probe required
+
+The pre-production Repose evidence gap is now **closed from existing direct 1.407 evidence**.
+
+Direct reconstruction:
+- Bishop establishes `body_min=1`, `body_max=1`.
+- Inquisitor progression raises `body_max` to 2, `body_min` to 2, then `body_max` to 3.
+- The loaded graph audit contains no later permanent `body_min=3` progression write.
+- Terminal permanent normal range is therefore **2..3**.
+- `GameBalance.bodies_data` contains ordinary body definitions through tier 3 and no ordinary tier 4.
+- `GameSave.GenerateBody` filters definitions inclusively by requested tier range; it does not clamp an absent tier.
+
+Thus stock Repose at the endpoint changes the raw range `2..3 -> 2..4` but does not change the actual eligible ordinary corpse pool. The Vanilla pulpit endpoint message is mechanically justified.
+
+A separate implementation issue was discovered in stable Rebalanced 0.1.5:
+- current Gold narrowing assigns raw `tier_min=tier_max`;
+- at terminal Repose state raw max is 4;
+- `4..4` has no BodyDefinition and stock `GenerateBody` returns null.
+
+The next candidate must resolve the highest **existing** ordinary body tier inside the evaluated range before narrowing. At the terminal `2..4` state that tier is 3, so Silver/Gold retain a meaningful late-game reliability role by selecting tier 3 rather than the mixed tier-2/3 pool.
+
+This discovery strengthens, rather than weakens, the accepted design:
+- Vanilla/Bronze naturally reach an endpoint;
+- Rebalanced Silver/Gold remain useful via reliability;
+- internal implementation must use actual eligible definitions, not raw numeric maxima.
+
+No additional user runtime probe is justified before implementation.
