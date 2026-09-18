@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "В каждой исповедальне чаще проходят исповеди.",
   "rebalanced.tech.repose_intro": "Осёл может привозить более качественные тела.",
   "rebalanced.tech.combat_intro": "Усиливает Хранителя в бою.",
-  "rebalanced.active.plant": "Время роста растений: -{0:0}%",
+  "rebalanced.active.plant": "Время роста растений: -{0:0}% · Суммарно не более -{1:0}%",
   "rebalanced.active.sins": "Шанс исповеди: {0:0}%",
   "rebalanced.active.repose.bronze": "Осёл может привезти тело на уровень качественнее",
   "rebalanced.active.repose.silver": "В половине случаев лучшее тело гарантировано",
