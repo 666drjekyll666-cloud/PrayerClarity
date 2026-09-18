@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.1.2";
 
         private sealed class TimedEffect
         {
@@ -42,6 +42,7 @@ namespace PrayerClarityResearch
         private static Action<string, float?> _addBuff;
         private static Action<string> _removeBuff;
         private static MethodInfo _findBuffById;
+        private static bool _simulateBoostII;
         private static readonly HashSet<string> RootsDiagnosticLoggedCrafts = new HashSet<string>(StringComparer.Ordinal);
 
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
@@ -54,6 +55,7 @@ namespace PrayerClarityResearch
             _log = Logger;
             ResolveBuffApi();
             PatchRootsDiagnostic();
+            PatchBoostIISimulation();
 
             _effects.Add(new TimedEffect(
                 "Shoots & Roots",
@@ -133,7 +135,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.1");
+                "PrayerClarity: Rebalanced Test Console 0.1.2");
         }
 
         private void DrawWindow(int id)
@@ -167,6 +169,23 @@ namespace PrayerClarityResearch
 
             if (GUILayout.Button("Remove all synthetic prayer buffs"))
                 RemoveAll();
+
+            GUILayout.Space(8f);
+
+            if (GUILayout.Button(
+                _simulateBoostII
+                    ? "Boost II growth simulation: ON"
+                    : "Boost II growth simulation: OFF"))
+            {
+                _simulateBoostII = !_simulateBoostII;
+                RootsDiagnosticLoggedCrafts.Clear();
+                _status = _simulateBoostII
+                    ? "Boost II simulation enabled. Relevant growth expressions read grow_time=3 without changing save data."
+                    : "Boost II simulation disabled.";
+                _log?.LogInfo(_status);
+            }
+
+            GUILayout.Label("Simulation affects only active plant crafts whose expression already uses both grow_time and buff_plant.");
 
             GUILayout.Space(8f);
             GUILayout.Label("Status: " + _status);
@@ -253,6 +272,87 @@ namespace PrayerClarityResearch
             args[3] = null;
             args[4] = null;
             patch.Invoke(harmony, args);
+        }
+
+        private static void PatchBoostIISimulation()
+        {
+            Type worldGameObject = FindType("WorldGameObject");
+            if (worldGameObject == null)
+                throw new MissingMemberException("WorldGameObject");
+
+            MethodInfo getParam = worldGameObject.GetMethod(
+                "GetParam",
+                AnyInstance,
+                null,
+                new[] { typeof(string), typeof(float) },
+                null);
+            if (getParam == null)
+                throw new MissingMethodException("WorldGameObject.GetParam(string,float)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.boost2sim" });
+
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(GrowTimeGetParamPostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = getParam;
+            args[1] = null;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void GrowTimeGetParamPostfix(object __instance, string param_name, ref float __result)
+        {
+            if (!_simulateBoostII ||
+                !string.Equals(param_name, "grow_time", StringComparison.Ordinal) ||
+                !IsActive("buff_plant") ||
+                __instance == null)
+                return;
+
+            try
+            {
+                object components = Get(__instance, "components");
+                object craftComponent = Get(components, "craft");
+                object craft = Get(craftComponent, "current_craft");
+                object craftTime = Get(craft, "craft_time");
+                if (craftTime == null) return;
+
+                MethodInfo rawMethod = craftTime.GetType().GetMethod(
+                    "GetRawExpressionString",
+                    AnyInstance,
+                    null,
+                    Type.EmptyTypes,
+                    null);
+                string raw = rawMethod == null ? null : rawMethod.Invoke(craftTime, null) as string;
+                if (string.IsNullOrEmpty(raw) ||
+                    raw.IndexOf("WGOpar(\"grow_time\")", StringComparison.Ordinal) < 0 ||
+                    raw.IndexOf("WGOpar(\"buff_plant\")", StringComparison.Ordinal) < 0)
+                    return;
+
+                __result = Math.Max(__result, 3f);
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("PrayerClarity Rebalanced Test Console Boost II simulation failed closed. " + ex);
+            }
         }
 
         private static object CreateHarmonyMethod(Type harmonyMethodType, MethodInfo method)
@@ -352,16 +452,18 @@ namespace PrayerClarityResearch
                     null);
                 if (resGet == null || resSet == null) return;
 
-                float projectedStockValue = reduction / 0.20f;
                 float currentRuntimeValue = Convert.ToSingle(
                     resGet.Invoke(runtimeEffect, new object[] { "buff_plant", 0f }));
 
                 float withoutRoots;
                 try
                 {
+                    // Controlled research baseline: remove the current runtime-only
+                    // buff_plant contribution, evaluate the same native expression,
+                    // then restore it immediately.
                     resSet.Invoke(
                         runtimeEffect,
-                        new object[] { "buff_plant", currentRuntimeValue - projectedStockValue });
+                        new object[] { "buff_plant", 0f });
                     withoutRoots = Convert.ToSingle(
                         evaluateFloat.Invoke(craftTime, new[] { wgo, player }));
                 }
@@ -382,6 +484,7 @@ namespace PrayerClarityResearch
                     " configured_reduction=" + reduction.ToString("0.###") +
                     " effective_WGO_buff_plant=" + effectiveBuffPlant.ToString("0.###") +
                     " grow_time=" + growTime.ToString("0.###") +
+                    " boost_ii_sim=" + _simulateBoostII +
                     " craft_time_without_roots=" + withoutRoots.ToString("0.###") +
                     " craft_time_with_roots=" + withRoots.ToString("0.###") +
                     " saved=" + saved.ToString("0.###") +
