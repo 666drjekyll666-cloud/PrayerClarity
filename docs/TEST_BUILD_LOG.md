@@ -390,3 +390,31 @@ Do not treat this probe as a release candidate or production architecture. Once 
   3. on a save at terminal Donkey progression, confirm the effect line becomes `Ещё более качественные тела недоступны.`;
   4. confirm no stock mechanics/balance values changed.
 - Status: **ready for focused runtime verification; not accepted**.
+
+
+### Runtime check 2026-09-18 — Rebalanced 0.2.0 first pass
+
+User-tested candidate:
+- Rebalanced source: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
+- Test Harness 0.1.2 + Rebalanced Compatibility 0.1.2 + existing bridge set.
+
+Accepted observations from this pass:
+- Rebalanced 0.2.0 and Test Harness compatibility loaded successfully together.
+- Faith / Donations / Combo preview semantics and revised requirements appeared as designed.
+- Soul's Repose pulpit displayed the additional current Soul Gratitude metric without requiring manual layout tuning.
+- Soul's Repose Bronze and Gold screenshots matched the candidate ladder: q30 Bronze / q120 Gold and +50% / +150% success contribution.
+- RU/EN/DE/JA screenshots rendered the added context; JA is visually denser but no blocking clipping/overflow was reported.
+- User exercised multiple timed prayer previews/activations and reported matching descriptions across pulpit, Technology and active-effect/character surfaces.
+- Harness compatibility successfully projected Rebalanced tier state for real synthetic native buffs (observed Gold Excellence 54 min, Gold Roots 108 min, Gold Combat 108 min).
+- No PrayerClarity-specific exception/error was observed in the supplied runtime log.
+
+Not verified in this pass:
+- terminal Repose endpoint presentation/behavior: current save has not yet reached terminal corpse progression;
+- actual normal-sermon reward payout for the new fixed-only Faith/Donations and percentage-only Combo family: Test Harness synthetic preview bypasses normal sermon rewards by design;
+- exhaustive visual acceptance of every locale; multi-language switching was exercised, with screenshots supplied for representative locales;
+- exact timed-effect duration audit was not manually repeated because durations are unchanged by the candidate.
+
+Status:
+- **presentation/semantic/timed-buff first pass accepted**;
+- candidate remains pending the narrow normal-sermon reward check and terminal Repose check (the latter can wait until a suitable save/progression state exists).
