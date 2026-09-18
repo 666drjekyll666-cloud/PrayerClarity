@@ -1,5 +1,26 @@
 # Changelog
 
+## PrayerClarity: Vanilla 1.0.25
+
+- Added the current Soul Gratitude value to the pulpit context for Soul's Repose.
+- Added contextual Repose endpoint wording when stock +1 corpse-tier maximum no longer opens a higher ordinary body tier.
+- Kept all prayer mechanics, requirements, rewards, formulas and balance stock Graveyard Keeper 1.407.
+- Preserved synchronized Clarity presentation and all 11 supported interface languages.
+
+## PrayerClarity: Rebalanced 0.2.0
+
+- Reworked the main resource family into clearer roles:
+  - Faith: flat-only +5 / +10 / +20 Faith, q20 / 40 / 60.
+  - Donations: flat-only +5 / +10 / +15 silver, q20 / 40 / 60.
+  - Combo: percentage-only +100 / +150 / +200% Faith and donations, q40 / 60 / 80.
+- Revised Church Quality ladders across Repentance, Roots, Combat, Imagination, Excellence and Better Save Soul prayers.
+- Set BSS Soul's Repose to q30 / 60 / 120 with +50 / +100 / +150% Faith on the verified Soul Gratitude base.
+- Added current Soul Gratitude to the Soul's Repose pulpit context.
+- Fixed Rebalanced Repose to narrow toward the highest actually existing eligible corpse tier instead of blindly using the raw numeric maximum.
+- Added contextual Repose endpoint wording for states where stock/Bronze Repose cannot open a higher ordinary corpse tier.
+- Kept Imagination's +0.7 writing-quality effect and its 3 Silver / 3 Gold Story success rewards through the stock sermon-drop pipeline.
+- Preserved stock prayer durations and all 11 supported interface languages.
+
 ## PrayerClarity: Vanilla 1.0.24
 
 - Refined Technology prayer tooltips around a shared-effect -> tier-specific-value hierarchy.
