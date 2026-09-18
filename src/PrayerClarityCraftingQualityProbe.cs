@@ -17,7 +17,7 @@ namespace PrayerClarityResearch
     {
         public const string PluginGuid = "prayerclarity.research.craftingquality";
         public const string PluginName = "PrayerClarity Crafting Quality Probe";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         private static readonly Dictionary<short, OpCode> OneByte = new Dictionary<short, OpCode>();
         private static readonly Dictionary<short, OpCode> TwoByte = new Dictionary<short, OpCode>();
@@ -38,7 +38,7 @@ namespace PrayerClarityResearch
 
         private void Awake()
         {
-            Logger.LogInfo("PrayerClarity Crafting Quality Probe 0.1.0 loaded: read-only runtime metadata/GameBalance inspection; no Harmony and no intentional mutation.");
+            Logger.LogInfo("PrayerClarity Crafting Quality Probe 0.1.1 loaded: read-only runtime metadata/GameBalance inspection; no Harmony and no intentional mutation.");
         }
 
         private void Update()
@@ -115,6 +115,20 @@ namespace PrayerClarityResearch
                 return;
             }
 
+            sb.AppendLine("=== MULTIQUALITY RESULT TYPE / IL ===");
+            foreach (Type nested in craftType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(t => t.Name.IndexOf("Multiquality", StringComparison.OrdinalIgnoreCase) >= 0))
+            {
+                DumpTypeShape(sb, nested);
+                foreach (MethodInfo m in nested.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+                    .OrderBy(m => m.Name).ThenBy(m => m.GetParameters().Length))
+                {
+                    DumpMethod(sb, m);
+                    sb.AppendLine();
+                }
+            }
+            sb.AppendLine();
+
             sb.AppendLine("=== RELEVANT CRAFT ROWS ===");
             int scanned = 0, matched = 0;
             const BindingFlags fields = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -161,7 +175,9 @@ namespace PrayerClarityResearch
             if (string.IsNullOrEmpty(name)) return false;
             return name.IndexOf("quality", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    name.IndexOf("multi", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   name.IndexOf("buffvalue", StringComparison.OrdinalIgnoreCase) >= 0;
+                   name.IndexOf("buffvalue", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   name.IndexOf("perk", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   name.IndexOf("needed", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static bool RelevantCraftId(string id)
@@ -171,9 +187,10 @@ namespace PrayerClarityResearch
             return s.Contains("note") ||
                    s.Contains("chapter") ||
                    s.Contains("book") ||
-                   s.StartsWith("pray:b_faith:") ||
-                   s.StartsWith("pray:b_money:") ||
-                   s.StartsWith("pray:b_faith_money:");
+                   s.Contains("b_faith") ||
+                   s.Contains("b_money") ||
+                   s.Contains("b_souls") ||
+                   s.Contains("b_sins");
         }
 
         private static void DumpTypeShape(StringBuilder sb, Type type)
@@ -404,7 +421,7 @@ namespace PrayerClarityResearch
 
         private void Write(StringBuilder sb)
         {
-            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-crafting-quality-0.1.0.txt");
+            string path = Path.Combine(Paths.BepInExRootPath, "PrayerClarity-crafting-quality-0.1.1.txt");
             File.WriteAllText(path, sb.ToString(), new UTF8Encoding(false));
             Logger.LogInfo("PrayerClarity crafting-quality audit complete: " + path);
         }
