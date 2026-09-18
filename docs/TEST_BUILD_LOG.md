@@ -2,6 +2,19 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## Stable sibling releases — Vanilla 1.0.24 / Rebalanced 0.1.5
+
+- User acceptance: 2026-09-18. The tested shared candidate was explicitly approved for promotion to the stable line for both sibling editions.
+- Exact accepted runtime/source SHA: `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
+- Frozen accepted refs: `accepted/vanilla-1.0.24` and `accepted/rebalanced-0.1.5`.
+- Stable promotion PR: #1, merged to `main` as `a1510a89a31f687b0fa77d8ab8e5221e3fe34e4b`.
+- Publication workflow run: `35290795881`; result: **success**.
+- Publication reused the exact accepted CI artifact from run `35286685613` and verified both hashes before release; neither DLL was rebuilt.
+- **PrayerClarity: Vanilla 1.0.24** — tag `v1.0.24`, asset `PrayerClarity.dll`, SHA-256 `ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879`.
+- **PrayerClarity: Rebalanced 0.1.5** — tag `rebalanced-v0.1.5`, asset `PrayerClarity.Rebalanced.dll`, SHA-256 `aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf`.
+- Runtime acceptance included the shared Technology/presentation polish and the final Temporary Effects gate. Rebalanced Silver semantics matched the accepted rule set; the Vanilla sibling retained stock mechanics/presentation policy where intended.
+- Status: **accepted, merged to main, and published as two stable sibling releases**.
+
 ## PrayerClarity Test Harness Rebalanced Compatibility 0.1.2
 
 - Type: research/test-only compatibility adapter; not production PrayerClarity behavior.
