@@ -113,9 +113,9 @@ Do not repeat already-closed tests unless a code change touches their mechanism.
 
 ## Roots overflow design hypothesis
 
-Status: **design hypothesis; not yet production behavior**.
+Status: **accepted design; implemented in Rebalanced 0.2.2 candidate, runtime acceptance pending**.
 
-The narrow preferred correction is to preserve the verified native additive relationship but cap the **combined** growth-time reduction at **90% of base time** (minimum remaining growth time 10% of base).
+The narrow preferred correction is to preserve the verified native additive relationship but cap the **combined** growth-time reduction at **95% of base time** (minimum remaining growth time 5% of base).
 
 For stock fertilizer reductions 0/20/40/60% and Rebalanced Roots 20/30/40%, the uncapped matrix is:
 
@@ -124,23 +124,37 @@ For stock fertilizer reductions 0/20/40/60% and Rebalanced Roots 20/30/40%, the 
 | 0% | 20% | 30% | 40% |
 | 20% | 40% | 50% | 60% |
 | 40% | 60% | 70% | 80% |
-| 60% | 80% | 90% | **100%** |
+| 60% | 80% | 95% | **100%** |
 
-A 90% cap changes only the final dangerous cell: Gold + maximum Boost becomes 90% instead of 100%. All other stock combinations remain numerically unchanged.
+A 95% cap changes only the final dangerous cell: Gold + maximum Boost becomes 95% instead of 100%. All other stock combinations remain numerically unchanged.
 
 Why this is preferred over alternatives:
 - do **not** change Roots to multiplicative stacking: that would alter every fertilizer+Roots combination and contradict the already accepted native-additive design;
 - do **not** lower Gold Roots globally: the issue exists only when another source has already consumed almost all remaining growth time;
 - do **not** clamp to the game's <=0.001 completion threshold: that would merely turn instant growth into practically instant growth;
-- a round 90% aggregate cap is easy to explain and keeps at least 10% of base growth time.
+- a round 95% aggregate cap is easy to explain and keeps at least 5% of base growth time.
 
 Implementation shape under consideration:
 - before temporary Roots projection, read the current WGO's existing `grow_time` and `buff_plant` contributions;
-- compute how much headroom remains before 90% total reduction;
+- compute how much headroom remains before 95% total reduction;
 - inject only `min(configured Roots reduction, available headroom) / 0.20` into the nonserialized `totem_effect["buff_plant"]`;
 - restore the original runtime aggregate in the existing finalizer;
 - do not mutate serialized crop data or rewrite the native craft expression.
 
-Player-facing Clarity should disclose the cap once in the shared Roots semantics (for example: combined growth-time reductions cannot reduce growth below 10% of base time) if this design is accepted.
+Player-facing Clarity should disclose the cap once in the shared Roots semantics (for example: combined growth-time reductions cannot reduce growth below 5% of base time) if this design is accepted.
 
 Because 0.2.1 was already handed out, any implementation change uses a new Rebalanced version; do not replace 0.2.1 bytes.
+
+
+### 0.2.2 implementation candidate
+
+- Frozen candidate ref: `candidate/rebalanced-0.2.2`
+- Exact source SHA: `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`
+- CI run: `35382737488` — success, 0 warnings / 0 errors
+- Artifact ID: `10562647003`
+- Artifact ZIP digest: `sha256:153d6664019d0532dfbb4095dc810e9fc96beb7562f100f4d42cf398a7a1c652`
+- Rebalanced DLL SHA-256: `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`
+
+Implementation preserves the existing temporary nonserialized `totem_effect["buff_plant"]` bridge. Before injection it reads only modifier terms actually consumed by the verified stock expression, computes remaining headroom to the 95% aggregate cap, injects only the permitted prayer portion, and restores the original runtime value in the existing finalizer.
+
+Presentation now discloses both the nominal prayer reduction and the 95% combined cap in all 11 supported locales.
