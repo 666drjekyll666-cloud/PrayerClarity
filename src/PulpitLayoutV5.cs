@@ -256,11 +256,12 @@ namespace PrayerClarity
             int extraW = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraWidth.Value));
             int containerWidth = CurrentContainerWidth(extraW);
 
+            int contextHeight = 44 + (_forecast != null && _forecast.UsesSoulGratitude ? 16 : 0);
             ConfigureLabel(_template,
                 PulpitTuning.ContextX.Value,
                 PulpitTuning.ContextY.Value,
                 258 + extraW,
-                44,
+                contextHeight,
                 "Top",
                 "Left",
                 "ShrinkContent",
@@ -396,7 +397,28 @@ namespace PrayerClarity
 
             if (craftId.StartsWith("pray:b_skull:", StringComparison.Ordinal))
             {
-                forecast.SpecialText = Localization.F("buff.skull", 1f, duration);
+                string rebalancedText;
+                string semanticKey;
+                bool hasRebalancedSemantics = PrayerEditionSemantics.TryBuildTierEffect(
+                    craftId,
+                    "buff_skull",
+                    out rebalancedText,
+                    out semanticKey);
+
+                bool stockAddsHigherTier = CorpseTierSemantics.StockReposeAddsHigherOrdinaryTier();
+                bool reliabilityStillChangesDistribution =
+                    hasRebalancedSemantics &&
+                    forecast.QualityTier >= 2 &&
+                    CorpseTierSemantics.BestTierNarrowingChangesDistribution();
+
+                if (!stockAddsHigherTier && !reliabilityStillChangesDistribution)
+                    forecast.SpecialText = Localization.F("repose.endpoint");
+                else if (!hasRebalancedSemantics)
+                    forecast.SpecialText = Localization.F("buff.skull", 1f, duration);
+
+                // Rebalanced tiers already carry their accepted reliability wording
+                // and duration in PrayerForecast. Keep that shared semantic text when
+                // it still changes the corpse distribution.
                 forecast.SpecialIconName = null;
                 return;
             }
