@@ -12,18 +12,18 @@ Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improvi
 
 [Download PrayerClarity: Vanilla 1.0.25](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.25)
 
-### PrayerClarity: Rebalanced — 0.2.0
+### PrayerClarity: Rebalanced — 0.2.3
 
-Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices.
+Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices. Runtime-sensitive prayer effects are implemented through narrow Graveyard Keeper-native seams where verified.
 
-[Download PrayerClarity: Rebalanced 0.2.0](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.0)
+[Download PrayerClarity: Rebalanced 0.2.3](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.3)
 
 **Install one edition, not both.**
 
 ## Current stable differences
 
 - **Vanilla 1.0.25:** adds current Soul Gratitude to the Soul's Repose pulpit context and can explain when stock Repose can no longer open a higher ordinary corpse tier; prayer mechanics and balance remain stock 1.407.
-- **Rebalanced 0.2.0:** introduces the accepted full-roster balance pass: flat Faith/Donations specialists, percentage-only Combo scaling, revised Church Quality ladders, q120 Gold Soul's Repose, tuned timed prayers, and safe best-existing-tier Repose handling.
+- **Rebalanced 0.2.3:** keeps the accepted full-roster balance pass, the 95% combined growth-time safety cap for Roots, and the verified native-seam implementations for Repentance and Combat.
 
 ## Shared clarity features
 
