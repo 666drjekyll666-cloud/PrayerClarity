@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-18 with the accepted PrayerClarity: Vanilla 1.0.20 baseline, the locked PrayerClarity: Rebalanced roster, and the shared prayer-tooltip information-design direction.
+Status: product/architecture source of truth, reconciled 2026-09-18 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.24 and PrayerClarity: Rebalanced 0.1.5.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -36,16 +36,12 @@ Internal evidence/design layers remain distinct:
 
 ## Accepted baseline
 
-PrayerClarity: Vanilla **1.0.20** is the current stable presentation baseline:
+Current accepted stable runtime/source for both sibling editions is `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
 
-- accepted runtime/source: `c7ac91c1cea6c498fb406323725768b605d8139f`;
-- frozen accepted ref: `accepted/clarity-1.0.20`;
-- public release: `v1.0.20`;
-- DLL SHA-256: `fcf96c2c2c71f9dbc7f17646a91a5c44aadc7a210be0f3ef8ea9850411a21ffc`.
+- **PrayerClarity: Vanilla 1.0.24** — accepted ref `accepted/vanilla-1.0.24`, release `v1.0.24`, DLL SHA-256 `ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879`.
+- **PrayerClarity: Rebalanced 0.1.5** — accepted ref `accepted/rebalanced-0.1.5`, release `rebalanced-v0.1.5`, DLL SHA-256 `aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf`.
 
-Later `main` changes through the naming pass are documentation/repository-hygiene changes; accepted production code remains the 1.0.20 runtime baseline.
-
-PrayerClarity: Rebalanced implementation must start from this complete code/UI architecture, not from the old research branch runtime source.
+The two binaries share the same accepted source state and were published from the already tested CI artifact without rebuilding. Later `main` commits may document or clean the repository without changing these frozen runtime identities.
 
 ## Permanent gameplay/product policies
 
@@ -198,18 +194,8 @@ The old intermediate candidates formerly recorded in this file — including ear
 
 No new balance round is required unless implementation evidence contradicts an assumption that materially affects the locked behavior.
 
-## Current engineering gate
+## Current engineering state
 
-The stable Clarity baseline now exists; waiting for another Clarity release is no longer a gate.
+The implementation-target audit and first integrated Rebalanced line are complete. Rebalanced 0.1.5 runtime acceptance proved the effective-model/mechanics integration required for the locked roster, including the repaired/tier-aware prayer behaviors and synchronized presentation surfaces.
 
-Before writing broad Rebalanced production code, close the implementation-target/effective-model audit:
-
-- one effective prayer-definition/model seam for gameplay plus all four Clarity surfaces;
-- Roots SmartExpression scope/lifecycle;
-- Repose corpse RNG seam;
-- Repentance daily-roll tier seam;
-- Combat quality capture, regeneration lifecycle and `b_sword`/`b_shield` non-stacking alias behavior;
-- safe Protection recipe retirement/hiding;
-- exact mutually-exclusive packaging/plugin identity for PrayerClarity: Vanilla vs PrayerClarity: Rebalanced.
-
-After those seams are verified, create the build-bearing `dev/*` implementation line and produce one coherent integrated Rebalanced candidate. Runtime-sensitive behavior becomes accepted only after the required in-game evidence.
+There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.
