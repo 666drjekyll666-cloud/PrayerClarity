@@ -475,3 +475,70 @@ Not verified:
 
 Status:
 - **Vanilla 1.0.25 shared-Clarity runtime pass accepted except terminal Repose endpoint**, which can wait for a suitable save.
+
+
+## PrayerClarity: Rebalanced 0.2.1 — Roots runtime fix candidate
+
+- Type: focused bug-fix candidate over accepted Rebalanced 0.2.0.
+- Candidate ref: `candidate/rebalanced-0.2.1`.
+- Triggering bug: Rebalanced 0.2.0 rewrote plant `craft_time` with `Ppar("buff_plant")*Ppar("prayerclarity_rebalanced_plant_reduction")`; live Graveyard Keeper 1.407 evaluation throws `InvalidCastException` inside Expressive and `SmartExpression.EvaluateFloat` falls back to `1f`, causing auto-growth to finish almost immediately.
+- Vanilla control: PrayerClarity: Vanilla 1.0.25 leaves plant mechanics untouched and the same carrot/cabbage scenario shows no SmartExpression/Expressive exception.
+- Fix architecture: keep the verified stock `craft_time` expression unchanged. On affected plant `CraftComponent.DoAction` calls only, temporarily project the active Rebalanced Roots reduction into the stock WGO-owned **NonSerialized `totem_effect`** `buff_plant` entry as `reduction / 0.20` (1 / 1.5 / 2 for Bronze/Silver/Gold), then restore the exact original runtime-effect value in a Harmony finalizer.
+- Semantics: preserves the game's additive `grow_time + buff_plant` formula rather than multiplying elapsed time externally.
+- Save safety: the injected value lives only in the native NonSerialized `totem_effect` aggregate for the duration of `DoAction`, and is restored even when the original call throws; serialized plant Item data is never modified.
+- Performance shape: no per-frame polling or scans. One narrow `CraftComponent.DoAction` hook exits immediately for non-Roots plant crafts; affected auto-growth already executes through this native path at the game's own cadence.
+- Exact candidate source SHA: `d13655e01a1b8e797ed019b636f040b3d2f2a55f`.
+- GitHub Actions run: `35377381232` — success.
+- Workflow artifact ID: `10560138983` (`PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.1-ci-d13655e01a1b8e797ed019b636f040b3d2f2a55f`).
+- Handoff filename: `PrayerClarity.Rebalanced-0.2.1-ci.dll`.
+- Handoff DLL SHA-256: `adb0bfc90c1245cb652662a826a168f6f4410a696a352e9360abfe8507ab20c7`.
+- Build result: success on `ubuntu-latest`; Rebalanced and Vanilla compiled, all 11 locale sets validated/staged, and the shared artifact uploaded.
+- Required runtime gate after the clean build:
+  1. ordinary freshly planted carrot/cabbage no longer completes in seconds and produces no SmartExpression/Expressive error;
+  2. with active Roots, Bronze/Silver/Gold retains the intended -20/-30/-40 percentage-point term in the native additive growth formula;
+  3. repeat one case with `grow_time` fertilizer to verify the additive interaction remains intact;
+  4. return the runtime log so the absence of the 0.2.0 exception can be confirmed.
+- Broader Rebalanced behavior-risk audit is intentionally deferred until this blocker is closed; it remains a required follow-up requested by the user.
+
+
+### Runtime check 2026-09-18 — Rebalanced 0.2.1 Roots fix, no-buff half of gate
+
+User-tested candidate:
+- Rebalanced source: `d13655e01a1b8e797ed019b636f040b3d2f2a55f`
+- Rebalanced 0.2.1 loaded successfully and static projection applied.
+- Fresh carrot/cabbage growth crafts started normally after planting; the newly planted crops did not transition to `*_ready` during the remainder of the supplied log.
+- The supplied runtime log contains zero `ExpressiveException`, zero `InvalidCastException`, zero `SmartExpression` error, and zero `Error in expression` entries.
+- User visual observation agrees: freshly planted carrots no longer become ready almost immediately.
+- This closes the original 0.2.0 failure mode for ordinary/no-Roots growth.
+- Remaining acceptance gate: prove active Rebalanced Roots actually shortens native crop `craft_time` by the intended Bronze/Silver/Gold amount, including one fertilizer-adjusted case.
+
+A research Test Console 0.1.1 was prepared to remove stopwatch/manual timing from that gate:
+- candidate ref: `candidate/rebalanced-test-console-0.1.1`
+- source SHA: `187579dcc329c05c845aec80849772cb7fbd67bb`
+- GitHub Actions run: `35379100576` — success
+- artifact ID: `10561017600`
+- handoff DLL SHA-256: `4de6e4cee802c88757439ba9cb6ccdb83617601158588cfcd90e024047cad707`
+- Roots diagnostic logs, once per affected craft after activation, both `craft_time_without_roots` and `craft_time_with_roots`, plus tier, configured reduction, effective WGO `buff_plant`, fertilizer `grow_time`, and raw native expression.
+- Diagnostic comparison is performed after the native `DoAction` call while RebalancedRoots' temporary nonserialized WGO projection is still in scope; it temporarily subtracts only the projected Roots runtime contribution for the read-only comparison evaluation, restores it immediately, and leaves the production finalizer to restore the original WGO state.
+
+
+### Runtime check 2026-09-18 — active Roots + fertilizer + removal
+
+User-tested Rebalanced 0.2.1 with Rebalanced Test Console 0.1.1.
+
+Observed runtime evidence:
+- Bronze synthetic Roots activation used native `BuffsLogics.AddBuff`; diagnostic on `tree_growing`: baseline `1800`, with Roots `1440`, saved `360` = exactly 20%.
+- Silver activation used the same native buff path; `tree_growing`: `1800 -> 1260` = exactly 30%.
+- Silver on ordinary carrot/cabbage: `1440 -> 1008` = exactly 30% of base growth time.
+- Silver plus one time-fertilizer unit on wheat: native formula `1440*(1-0.2*grow_time-0.2*buff_plant)`; `grow_time=1`; no-Roots fertilizer baseline `1152`; Roots result `720`. This proves the intended additive stacking: fertilizer contributes -20 percentage points of base time and Silver Roots contributes another -30 points, for total -50% of base time.
+- No `ExpressiveException`, `InvalidCastException`, `SmartExpression` error, or `Error in expression` occurred.
+- User removed Roots through the console; runtime logged native `BuffsLogics.RemoveBuff("buff_plant")`.
+- The console removal is a valid simulation of natural expiry because stock `BuffsLogics.RecalculateBuffs` removes expired buffs through that same `RemoveBuff` path.
+- Production semantics after removal: already accumulated crop progress is retained; subsequent `CraftComponent.DoAction` calls no longer receive the temporary Roots WGO projection because the prefix requires active player `buff_plant`. Therefore an in-progress plant continues from its current progress at its ordinary/fertilizer-adjusted rate rather than rewinding or finishing instantly.
+
+Assessment:
+- The 0.2.0 near-instant-growth regression is fixed.
+- The 0.2.1 native scope bridge is runtime-confirmed for active Roots.
+- Additive interaction with fertilizer is runtime-confirmed.
+- Manual removal correctly exercises the same stock removal path as timed expiry.
+- Gold is not separately runtime-sampled in this log, but it has no distinct control-flow branch: the same verified bridge uses the persisted tier reduction scalar (.20/.30/.40). Bronze and Silver runtime samples plus definition validation cover the mechanism; no additional Gold-specific runtime test is required unless behavior changes.

@@ -52,6 +52,7 @@ namespace PrayerClarity
 
         private static void ApplyOnce()
         {
+            RebalancedRoots.ValidateDefinitions();
             RebalancedExpressionProjection.Apply();
             ApplyCombatAliasProjection();
             RetireProtectionCrafting();

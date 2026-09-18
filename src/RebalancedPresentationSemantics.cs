@@ -64,7 +64,10 @@ namespace PrayerClarity
             if (rule.GrowthReduction != null)
             {
                 sharedText = Localization.F("rebalanced.tech.plant_intro");
-                tierText = Localization.F("rebalanced.active.plant", rule.TierValue(rule.GrowthReduction, tier) * 100f);
+                tierText = Localization.F(
+                    "rebalanced.active.plant",
+                    rule.TierValue(rule.GrowthReduction, tier) * 100f,
+                    RebalancedRoots.MaxCombinedGrowthReduction * 100f);
                 return true;
             }
 
@@ -153,8 +156,12 @@ namespace PrayerClarity
             if (rule.GrowthReduction != null)
             {
                 float value = rule.TierValue(rule.GrowthReduction, tier);
-                text = Localization.F("rebalanced.active.plant", value * 100f);
-                semanticKey = "rebalanced:growth=" + Rv(value);
+                text = Localization.F(
+                    "rebalanced.active.plant",
+                    value * 100f,
+                    RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                semanticKey = "rebalanced:growth=" + Rv(value) +
+                              ";cap=" + Rv(RebalancedRoots.MaxCombinedGrowthReduction);
                 return true;
             }
 

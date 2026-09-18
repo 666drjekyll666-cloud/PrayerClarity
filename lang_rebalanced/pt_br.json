@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "As confissões acontecem com mais frequência em cada confessionário.",
   "rebalanced.tech.repose_intro": "O burro pode trazer corpos de melhor qualidade.",
   "rebalanced.tech.combat_intro": "Fortalece o Guardião em combate.",
-  "rebalanced.active.plant": "Tempo de crescimento das plantas: -{0:0}%",
+  "rebalanced.active.plant": "Tempo de crescimento das plantas: -{0:0}% · Redução total máx.: -{1:0}%",
   "rebalanced.active.sins": "Chance de confissão: {0:0}%",
   "rebalanced.active.repose.bronze": "O burro pode trazer um corpo um nível de qualidade melhor",
   "rebalanced.active.repose.silver": "Em metade dos casos, o melhor corpo é garantido",

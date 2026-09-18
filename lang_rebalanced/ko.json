@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "각 고해소에서 고해가 더 자주 일어납니다.",
   "rebalanced.tech.repose_intro": "당나귀가 더 좋은 품질의 시체를 가져올 수 있습니다.",
   "rebalanced.tech.combat_intro": "전투에서 묘지기를 강화합니다.",
-  "rebalanced.active.plant": "식물 성장 시간: -{0:0}%",
+  "rebalanced.active.plant": "식물 성장 시간: -{0:0}% · 총 감소 한도: -{1:0}%",
   "rebalanced.active.sins": "고해 확률: {0:0}%",
   "rebalanced.active.repose.bronze": "당나귀가 품질이 한 단계 더 좋은 시체를 가져올 수 있습니다",
   "rebalanced.active.repose.silver": "절반의 경우 최고 품질의 시체가 보장됩니다",
