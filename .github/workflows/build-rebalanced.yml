@@ -73,7 +73,7 @@ jobs:
           mkdir -p dist
           reb_handoff='PrayerClarity.Rebalanced-0.2.0-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
-          van_handoff='PrayerClarity-1.0.24-ci.dll'
+          van_handoff='PrayerClarity-1.0.25-ci.dll'
           van_canonical='PrayerClarity.dll'
 
           cp "$rebalanced" "dist/$reb_handoff"
@@ -94,7 +94,7 @@ jobs:
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
             echo
             echo "PrayerClarity: Vanilla"
-            echo "Version: 1.0.24"
+            echo "Version: 1.0.25"
             echo "Handoff DLL: $van_handoff"
             echo "Canonical DLL: $van_canonical"
             echo "DLL SHA-256: $van_hash"
@@ -113,11 +113,11 @@ jobs:
           echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
           echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
           echo "PrayerClarity: Rebalanced 0.2.0 DLL SHA-256: $reb_hash"
-          echo "PrayerClarity: Vanilla 1.0.24 DLL SHA-256: $van_hash"
+          echo "PrayerClarity: Vanilla 1.0.25 DLL SHA-256: $van_hash"
       - name: Upload shared runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-shared-ui-1.0.24-rebalanced-0.2.0-ci-${{ github.sha }}
+          name: PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.0-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
