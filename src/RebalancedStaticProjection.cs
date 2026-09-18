@@ -143,6 +143,8 @@ namespace PrayerClarity
                    rule.MoneyBonusRates != null ||
                    rule.RemoveFixedFaith ||
                    rule.RemoveFixedMoney ||
+                   rule.FixedFaithBonuses != null ||
+                   rule.FixedMoneyBonusesCents != null ||
                    !string.IsNullOrEmpty(rule.SuccessRewardBaseItemId);
         }
 
@@ -155,8 +157,15 @@ namespace PrayerClarity
             if (rule.MoneyBonusRates != null)
                 R.Set(craft, "k_money", rule.TierValue(rule.MoneyBonusRates, tier));
 
-            if (rule.RemoveFixedFaith || rule.RemoveFixedMoney)
-                RemovePrayerOwnedFixedOutputs(craft, rule.RemoveFixedFaith, rule.RemoveFixedMoney);
+            bool replaceFaith = rule.RemoveFixedFaith || rule.FixedFaithBonuses != null;
+            bool replaceMoney = rule.RemoveFixedMoney || rule.FixedMoneyBonusesCents != null;
+            if (replaceFaith || replaceMoney)
+                RemovePrayerOwnedFixedOutputs(craft, replaceFaith, replaceMoney);
+
+            if (rule.FixedFaithBonuses != null)
+                AddPrayerOwnedFixedOutput(craft, "faith", rule.TierValue(rule.FixedFaithBonuses, tier, 0));
+            if (rule.FixedMoneyBonusesCents != null)
+                AddPrayerOwnedFixedOutput(craft, "money", rule.TierValue(rule.FixedMoneyBonusesCents, tier, 0));
 
             ApplySuccessReward(craft, rule, tier);
         }
@@ -172,6 +181,17 @@ namespace PrayerClarity
                     (removeMoney && string.Equals(id, "money", StringComparison.Ordinal)))
                     output.RemoveAt(i);
             }
+        }
+
+        private static void AddPrayerOwnedFixedOutput(object craft, string itemId, int count)
+        {
+            if (count <= 0) return;
+
+            Type itemType = R.GameType("Item");
+            ConstructorInfo ctor = itemType?.GetConstructor(new[] { typeof(string), typeof(int) });
+            if (ctor == null) throw new MissingMethodException("Item(string,int)");
+
+            RequireOutput(craft).Add(ctor.Invoke(new object[] { itemId, count }));
         }
 
         private static void ApplySuccessReward(object craft, RebalancedPrayerRule rule, int tier)
