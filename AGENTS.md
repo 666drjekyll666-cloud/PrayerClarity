@@ -31,7 +31,7 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 ### Current accepted stable baselines
 
 - **PrayerClarity: Vanilla 1.0.25** — tag `v1.0.25`, accepted ref `accepted/vanilla-1.0.25`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
-- **PrayerClarity: Rebalanced 0.2.2** — tag/release `rebalanced-v0.2.2`, accepted ref `accepted/rebalanced-0.2.2`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`, accepted/released DLL SHA-256 `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
+- **PrayerClarity: Rebalanced 0.2.3** — tag/release `rebalanced-v0.2.3`, accepted ref `accepted/rebalanced-0.2.3`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `ab1eb67cbf2465a912c392120395011503b720c3`, accepted/released DLL SHA-256 `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`.
 - Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
 
@@ -154,7 +154,7 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset unless a later accepted runtime-safety constraint is recorded in `docs/TEST_BUILD_LOG.md`. Rebalanced 0.2.2 adds the accepted 95% combined growth-time-reduction safety cap without changing the nominal Roots 20/30/40% ladder. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset unless a later accepted runtime-safety constraint is recorded in `docs/TEST_BUILD_LOG.md`. Rebalanced 0.2.3 retains the accepted 95% combined growth-time-reduction safety cap without changing the nominal Roots 20/30/40% ladder, and moves Repentance plus Combat damage/armor onto the accepted host-native seams recorded in `docs/REBALANCED_NATIVE_SEAM_AUDIT.md`. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 
@@ -235,6 +235,8 @@ Production should be event-driven and cheap:
 - fixes/rebalance should patch the narrow verified behavior rather than repeatedly scanning all objects.
 
 A diagnostic probe must answer one narrow question and be removable.
+
+When several closely related runtime questions require the user's installed game, prefer a research-only Test Console/harness that turns them into explicit buttons/actions and one returned log. Use native game APIs for the behavior under test, keep synthetic setup narrow/reversible, log the effective inputs/results, warn about any save-persistent test state, and never ship the harness in production. Follow the global DevRules user-operated runtime harness contract.
 
 ## Repository policy
 
