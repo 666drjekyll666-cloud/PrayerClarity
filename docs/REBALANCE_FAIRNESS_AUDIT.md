@@ -1,3 +1,6 @@
+> Current strong next-candidate design: `docs/PRAYER_REBALANCE_CANDIDATE.md`.
+> This audit preserves historical alternatives and evidence; when candidate values conflict with older sections below, the candidate document wins for the next implementation target.
+
 # PrayerClarity: Rebalanced — fairness / power-cost audit
 
 Status: **research reopened by direct player feedback, 2026-09-18**. No production values are changed by this document. PrayerClarity: Rebalanced 0.1.5 remains the accepted stable runtime baseline until a new candidate is explicitly designed, implemented, tested and accepted.
