@@ -1,0 +1,76 @@
+name: Publish accepted PrayerClarity sibling releases
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-1.0.24-rebalanced-0.1.5.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACCEPTED_SHA: 3b7cea7986138f57d7ace6998b9cc6bca952af1e
+      VANILLA_SHA256: ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879
+      REBALANCED_SHA256: aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf
+    steps:
+      - name: Download exact accepted shared artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: 666drjekyll666-cloud/PrayerClarity
+          run-id: 35286685613
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-shared-ui-1.0.24-rebalanced-0.1.5-ci-3b7cea7986138f57d7ace6998b9cc6bca952af1e
+          path: dist
+
+      - name: Verify accepted bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/PrayerClarity-1.0.24-ci.dll
+          test -f dist/PrayerClarity.Rebalanced-0.1.5-ci.dll
+
+          vanilla_actual=$(sha256sum dist/PrayerClarity-1.0.24-ci.dll | awk '{print $1}')
+          rebalanced_actual=$(sha256sum dist/PrayerClarity.Rebalanced-0.1.5-ci.dll | awk '{print $1}')
+
+          test "$vanilla_actual" = "$VANILLA_SHA256"
+          test "$rebalanced_actual" = "$REBALANCED_SHA256"
+
+          cp dist/PrayerClarity-1.0.24-ci.dll dist/PrayerClarity.dll
+          cp dist/PrayerClarity.Rebalanced-0.1.5-ci.dll dist/PrayerClarity.Rebalanced.dll
+
+      - name: Publish Rebalanced release without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view rebalanced-v0.1.5 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'rebalanced-v0.1.5 already exists; leaving it unchanged.'
+          else
+            gh release create rebalanced-v0.1.5 dist/PrayerClarity.Rebalanced.dll \
+              --repo 666drjekyll666-cloud/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Rebalanced 0.1.5' \
+              --latest=false \
+              --notes 'First accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Includes the full Clarity presentation layer plus the accepted intentional prayer rebalance: specialist reward progression, repaired/tuned Repentance and Shoots & Roots, tier-aware Repose, Combat, Imagination and Excellence, plus the accepted Better Save Soul prayer changes. Includes all 11 supported interface languages.'
+          fi
+
+      - name: Publish Vanilla release without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.24 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'v1.0.24 already exists; leaving it unchanged.'
+          else
+            gh release create v1.0.24 dist/PrayerClarity.dll \
+              --repo 666drjekyll666-cloud/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Vanilla 1.0.24' \
+              --latest \
+              --notes 'Accepted PrayerClarity: Vanilla release for Graveyard Keeper 1.407. Refines prayer Technology hierarchy, wrapping, semantic emphasis and shared-vs-tier presentation; removes the redundant shared Prosperity effect line; and keeps pulpit, item tooltip and Temporary Effects clarity synchronized. Includes all 11 supported interface languages. Prayer mechanics and balance remain vanilla.'
+          fi
