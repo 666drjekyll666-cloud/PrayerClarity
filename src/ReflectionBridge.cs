@@ -159,6 +159,17 @@ namespace PrayerClarity
             return bound.ContainsGenericParameters ? null : bound;
         }
 
+        internal static float PlayerParam(string param, float fallback = 0f)
+        {
+            object mainGame = GetStatic(GameType("MainGame"), "me");
+            object player = mainGame == null ? null : Get(mainGame, "player");
+            if (player == null) return fallback;
+
+            MethodInfo getParam = Method(player.GetType(), "GetParam", false, new[] { typeof(string), typeof(float) });
+            if (getParam == null) throw new MissingMethodException("WorldGameObject.GetParam(string,float)");
+            return Float(getParam.Invoke(player, new object[] { param, fallback }));
+        }
+
         internal static float ZoneQuality(string zoneId)
         {
             Type worldZoneType = GameType("WorldZone");
