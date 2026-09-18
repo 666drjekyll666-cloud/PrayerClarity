@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         private sealed class TimedEffect
         {
@@ -42,6 +42,7 @@ namespace PrayerClarityResearch
         private static Action<string, float?> _addBuff;
         private static Action<string> _removeBuff;
         private static MethodInfo _findBuffById;
+        private static readonly HashSet<string> RootsDiagnosticLoggedCrafts = new HashSet<string>(StringComparer.Ordinal);
 
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
         private Rect _windowRect = new Rect(24f, 24f, 620f, 560f);
@@ -52,6 +53,7 @@ namespace PrayerClarityResearch
         {
             _log = Logger;
             ResolveBuffApi();
+            PatchRootsDiagnostic();
 
             _effects.Add(new TimedEffect(
                 "Shoots & Roots",
@@ -131,7 +133,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.0");
+                "PrayerClarity: Rebalanced Test Console 0.1.1");
         }
 
         private void DrawWindow(int id)
@@ -207,11 +209,227 @@ namespace PrayerClarityResearch
             _removeBuff = (Action<string>)Delegate.CreateDelegate(typeof(Action<string>), remove);
         }
 
+        private static void PatchRootsDiagnostic()
+        {
+            Type craftComponent = FindType("CraftComponent");
+            Type worldGameObject = FindType("WorldGameObject");
+            if (craftComponent == null || worldGameObject == null)
+                throw new MissingMemberException("Roots diagnostic runtime types are unavailable.");
+
+            MethodInfo doAction = craftComponent.GetMethod(
+                "DoAction",
+                AnyInstance,
+                null,
+                new[] { worldGameObject, typeof(float), typeof(bool) },
+                null);
+            if (doAction == null)
+                throw new MissingMethodException("CraftComponent.DoAction(WorldGameObject,float,bool)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.rootsdiag" });
+
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(RootsDoActionPostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = doAction;
+            args[1] = null;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static object CreateHarmonyMethod(Type harmonyMethodType, MethodInfo method)
+        {
+            ConstructorInfo ctor = harmonyMethodType.GetConstructor(new[] { typeof(MethodInfo) });
+            if (ctor != null) return ctor.Invoke(new object[] { method });
+
+            object instance = Activator.CreateInstance(harmonyMethodType);
+            FieldInfo methodField = harmonyMethodType.GetField(
+                "method",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (methodField == null) throw new MissingMemberException("HarmonyMethod.method");
+            methodField.SetValue(instance, method);
+            return instance;
+        }
+
+        private static void RootsDoActionPostfix(object __instance)
+        {
+            try
+            {
+                if (!IsActive("buff_plant")) return;
+
+                object craft = Get(__instance, "current_craft");
+                string craftId = GetId(craft);
+                if (string.IsNullOrEmpty(craftId) || RootsDiagnosticLoggedCrafts.Contains(craftId)) return;
+
+                object craftTime = Get(craft, "craft_time");
+                if (craftTime == null) return;
+
+                MethodInfo rawMethod = craftTime.GetType().GetMethod(
+                    "GetRawExpressionString",
+                    AnyInstance,
+                    null,
+                    Type.EmptyTypes,
+                    null);
+                string raw = rawMethod == null ? null : rawMethod.Invoke(craftTime, null) as string;
+                if (string.IsNullOrEmpty(raw) ||
+                    raw.IndexOf("WGOpar(\"buff_plant\")", StringComparison.Ordinal) < 0)
+                    return;
+
+                object wgo = Get(__instance, "wgo");
+                object player = GetPlayer();
+                if (wgo == null || player == null) return;
+
+                float reduction = GetPlayerParam(player, "prayerclarity_rebalanced_plant_reduction", 0f);
+                int tier = (int)Math.Round(GetPlayerParam(player, "prayerclarity_rebalanced_plant_tier", 0f));
+                if (reduction <= 0.0001f || tier < 1 || tier > 3) return;
+
+                MethodInfo wgoGetParam = wgo.GetType().GetMethod(
+                    "GetParam",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(string), typeof(float) },
+                    null);
+                if (wgoGetParam == null) return;
+
+                float effectiveBuffPlant = Convert.ToSingle(
+                    wgoGetParam.Invoke(wgo, new object[] { "buff_plant", 0f }));
+                float growTime = Convert.ToSingle(
+                    wgoGetParam.Invoke(wgo, new object[] { "grow_time", 0f }));
+
+                MethodInfo evaluateFloat = craftTime.GetType().GetMethod(
+                    "EvaluateFloat",
+                    AnyInstance,
+                    null,
+                    new[] { wgo.GetType(), player.GetType() },
+                    null);
+                if (evaluateFloat == null)
+                {
+                    Type wgoType = FindType("WorldGameObject");
+                    evaluateFloat = craftTime.GetType().GetMethod(
+                        "EvaluateFloat",
+                        AnyInstance,
+                        null,
+                        new[] { wgoType, wgoType },
+                        null);
+                }
+                if (evaluateFloat == null) return;
+
+                float withRoots = Convert.ToSingle(
+                    evaluateFloat.Invoke(craftTime, new[] { wgo, player }));
+
+                object runtimeEffect = Get(wgo, "totem_effect");
+                if (runtimeEffect == null) return;
+
+                MethodInfo resGet = runtimeEffect.GetType().GetMethod(
+                    "Get",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(string), typeof(float) },
+                    null);
+                MethodInfo resSet = runtimeEffect.GetType().GetMethod(
+                    "Set",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(string), typeof(float) },
+                    null);
+                if (resGet == null || resSet == null) return;
+
+                float projectedStockValue = reduction / 0.20f;
+                float currentRuntimeValue = Convert.ToSingle(
+                    resGet.Invoke(runtimeEffect, new object[] { "buff_plant", 0f }));
+
+                float withoutRoots;
+                try
+                {
+                    resSet.Invoke(
+                        runtimeEffect,
+                        new object[] { "buff_plant", currentRuntimeValue - projectedStockValue });
+                    withoutRoots = Convert.ToSingle(
+                        evaluateFloat.Invoke(craftTime, new[] { wgo, player }));
+                }
+                finally
+                {
+                    resSet.Invoke(
+                        runtimeEffect,
+                        new object[] { "buff_plant", currentRuntimeValue });
+                }
+
+                RootsDiagnosticLoggedCrafts.Add(craftId);
+                float saved = withoutRoots - withRoots;
+                float savedPercent = withoutRoots > 0.0001f ? saved / withoutRoots * 100f : 0f;
+
+                _log?.LogInfo(
+                    "ROOTS_DIAGNOSTIC craft=" + craftId +
+                    " tier=" + tier +
+                    " configured_reduction=" + reduction.ToString("0.###") +
+                    " effective_WGO_buff_plant=" + effectiveBuffPlant.ToString("0.###") +
+                    " grow_time=" + growTime.ToString("0.###") +
+                    " craft_time_without_roots=" + withoutRoots.ToString("0.###") +
+                    " craft_time_with_roots=" + withRoots.ToString("0.###") +
+                    " saved=" + saved.ToString("0.###") +
+                    " (" + savedPercent.ToString("0.#") + "% of this fertilizer-adjusted baseline)." +
+                    " raw=\"" + raw + "\"");
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("PrayerClarity Rebalanced Test Console Roots diagnostic failed. " + ex);
+            }
+        }
+
+        private static object GetPlayer()
+        {
+            Type mainGame = FindType("MainGame");
+            object me = GetStatic(mainGame, "me");
+            return Get(me, "player");
+        }
+
+        private static float GetPlayerParam(object player, string name, float fallback)
+        {
+            if (player == null) return fallback;
+            MethodInfo getParam = player.GetType().GetMethod(
+                "GetParam",
+                AnyInstance,
+                null,
+                new[] { typeof(string), typeof(float) },
+                null);
+            return getParam == null
+                ? fallback
+                : Convert.ToSingle(getParam.Invoke(player, new object[] { name, fallback }));
+        }
+
+        private static string GetId(object obj)
+        {
+            if (obj == null) return null;
+            object id = Get(obj, "id") ?? Get(obj, "obj_id");
+            return id == null ? null : Convert.ToString(id);
+        }
+
         private void Activate(TimedEffect effect, int tier)
         {
             try
             {
                 if (effect == null || tier < 1 || tier > 3) return;
+
+                if (string.Equals(effect.BuffId, "buff_plant", StringComparison.Ordinal))
+                    RootsDiagnosticLoggedCrafts.Clear();
 
                 if (IsActive(effect.BuffId))
                     _removeBuff(effect.BuffId);
