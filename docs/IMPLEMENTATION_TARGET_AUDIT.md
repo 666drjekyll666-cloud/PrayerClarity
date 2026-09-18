@@ -92,19 +92,19 @@ No prayer-specific manual layout branch should be required for reasonable new va
 
 ## Prayer-specific implementation targets
 
-### Shoots & Roots (`b_plant` / `buff_plant`) — closed target
+### Shoots & Roots (`b_plant` / `buff_plant`) — historical target superseded by accepted 0.2.2
 
 Stock bug: activation writes player `buff_plant=1`, while affected growth `CraftDefinition.craft_time` expressions read `WGOpar("buff_plant")` on the growing/workbench WGO.
 
-Use native `SmartExpression.ParseExpression(string)` to replace the whole affected `craft_time` expression at the per-save projection boundary, preserving every vanilla term except the broken prayer term.
+The original audit incorrectly treated whole-expression replacement through the native SmartExpression parser as a sufficiently native mechanism. Rebalanced 0.2.0 proved this architecture unsafe in the live growth path.
 
-Semantic replacement:
+**Superseded architecture:** do not replace the stock crop `craft_time` expression.
 
-`- Ppar("buff_plant") * Ppar("prayerclarity_plant_reduction")`
+**Accepted 0.2.2 architecture:** preserve the complete stock expression and temporarily project the tier-aware prayer contribution into the growing WGO's native nonserialized `totem_effect["buff_plant"]` input during the stock craft evaluation, restoring it afterward. The accepted aggregate reduction safety cap is 95%.
 
-Persisted reduction values: `.20/.30/.40`. Do not use external timers or broad WGO scans.
+This section is retained as a postmortem so the earlier reasoning is not reused. Native parser/interpreter usage does not by itself preserve native formula ownership.
 
-### Repentance (`b_sins` / `buff_sins`) — closed target
+### Repentance (`b_sins` / `buff_sins`) — behavior target closed; mechanism target reopened
 
 Keep the stock once-per-day `church_budka_roll` scheduler and confessional RNG graph.
 
@@ -114,7 +114,9 @@ Replace only the daily probability reset expression so stock 15% remains without
 
 Persisted bonus values: `.35/.60/.85`.
 
-Parse through the native SmartExpression parser and fail closed if the expected expression/lifecycle is unavailable.
+The 50/75/100% behavior target remains accepted, but the whole-expression replacement mechanism is reopened by the native-seam audit. Before any further production work, trace the downstream `confession_probability` consumer and determine whether the stock 0.15 reset can remain authoritative while Rebalanced changes only the effective parameter/value at a narrower seam.
+
+Do not treat native SmartExpression parsing as sufficient architectural justification for replacing the reset expression.
 
 ### Repose (`b_skull` / `buff_skull`) — closed target
 
