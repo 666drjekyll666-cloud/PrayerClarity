@@ -520,3 +520,25 @@ A research Test Console 0.1.1 was prepared to remove stopwatch/manual timing fro
 - handoff DLL SHA-256: `4de6e4cee802c88757439ba9cb6ccdb83617601158588cfcd90e024047cad707`
 - Roots diagnostic logs, once per affected craft after activation, both `craft_time_without_roots` and `craft_time_with_roots`, plus tier, configured reduction, effective WGO `buff_plant`, fertilizer `grow_time`, and raw native expression.
 - Diagnostic comparison is performed after the native `DoAction` call while RebalancedRoots' temporary nonserialized WGO projection is still in scope; it temporarily subtracts only the projected Roots runtime contribution for the read-only comparison evaluation, restores it immediately, and leaves the production finalizer to restore the original WGO state.
+
+
+### Runtime check 2026-09-18 — active Roots + fertilizer + removal
+
+User-tested Rebalanced 0.2.1 with Rebalanced Test Console 0.1.1.
+
+Observed runtime evidence:
+- Bronze synthetic Roots activation used native `BuffsLogics.AddBuff`; diagnostic on `tree_growing`: baseline `1800`, with Roots `1440`, saved `360` = exactly 20%.
+- Silver activation used the same native buff path; `tree_growing`: `1800 -> 1260` = exactly 30%.
+- Silver on ordinary carrot/cabbage: `1440 -> 1008` = exactly 30% of base growth time.
+- Silver plus one time-fertilizer unit on wheat: native formula `1440*(1-0.2*grow_time-0.2*buff_plant)`; `grow_time=1`; no-Roots fertilizer baseline `1152`; Roots result `720`. This proves the intended additive stacking: fertilizer contributes -20 percentage points of base time and Silver Roots contributes another -30 points, for total -50% of base time.
+- No `ExpressiveException`, `InvalidCastException`, `SmartExpression` error, or `Error in expression` occurred.
+- User removed Roots through the console; runtime logged native `BuffsLogics.RemoveBuff("buff_plant")`.
+- The console removal is a valid simulation of natural expiry because stock `BuffsLogics.RecalculateBuffs` removes expired buffs through that same `RemoveBuff` path.
+- Production semantics after removal: already accumulated crop progress is retained; subsequent `CraftComponent.DoAction` calls no longer receive the temporary Roots WGO projection because the prefix requires active player `buff_plant`. Therefore an in-progress plant continues from its current progress at its ordinary/fertilizer-adjusted rate rather than rewinding or finishing instantly.
+
+Assessment:
+- The 0.2.0 near-instant-growth regression is fixed.
+- The 0.2.1 native scope bridge is runtime-confirmed for active Roots.
+- Additive interaction with fertilizer is runtime-confirmed.
+- Manual removal correctly exercises the same stock removal path as timed expiry.
+- Gold is not separately runtime-sampled in this log, but it has no distinct control-flow branch: the same verified bridge uses the persisted tier reduction scalar (.20/.30/.40). Bronze and Silver runtime samples plus definition validation cover the mechanism; no additional Gold-specific runtime test is required unless behavior changes.
