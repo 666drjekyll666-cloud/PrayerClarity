@@ -1303,3 +1303,229 @@ Runtime contract:
 - writes BepInEx/PrayerClarity-crafting-quality-0.1.0.txt.
 
 This is the only current in-game evidence request required before exact recipe-quality probabilities are used in Candidate A balance decisions.
+
+
+## Follow-up — Donations viability, Combo progression, BSS hierarchy, Repentance throughput
+
+### Donations community signal
+
+Current community evidence does not support calling Prayer for Donations universally useless, but it does show two recurring pressures:
+
+1. at equal quality, stock Combo gives the same donation coefficient while also giving the full Faith coefficient, so players repeatedly ask why they would ever craft/use Donations after the Book/q barrier is solved;
+2. by the time advanced Merchant-crate / Tavern / other economy loops are established, several players describe sermon money as comparatively unimportant while Faith remains scarce.
+
+Counter-signal exists: some players deliberately used Gold Donations for much of a playthrough and considered the income worthwhile.
+
+Classification: **community signal**, not mechanics proof.
+
+References:
+- https://www.reddit.com/r/GraveyardKeeper/comments/1k3y63m
+- https://www.reddit.com/r/GraveyardKeeper/comments/tjrku3
+- https://www.reddit.com/r/GraveyardKeeper/comments/1d3svge
+- https://www.reddit.com/r/GraveyardKeeper/comments/133z7jo
+- https://steamcommunity.com/app/599140/discussions/0/1734336452591917037/
+- https://steamcommunity.com/app/599140/discussions/0/1736589519992194908/
+
+Design implication: Donations should own a **strong early/mid-game cash window**, not attempt to remain the final late-game money engine.
+
+### Donations flat candidate B — 3 / 6 / 9 silver
+
+Candidate A used +2/+4/+6 silver with +50% donations.
+
+A stronger leading alternative is now:
+
+- Bronze: **+50% + 3 silver**;
+- Silver: **+50% + 6 silver**;
+- Gold: **+50% + 9 silver**;
+- q remains 20/40/60 for the staged-handoff candidate.
+
+This has one useful invariant versus same-tier staged Combo:
+
+- Bronze Combo total = 2.0D;
+- Silver Combo total = 2.5D;
+- Gold Combo total = 3.0D;
+- Donations = 1.5D + 3/6/9.
+
+All three same-tier crossovers occur at exactly D = 6 silver base donations.
+
+That corresponds to approximately:
+
+- GQ 200 without Cardinal;
+- GQ 150 with Cardinal.
+
+Below that state, Donations is best at money. Above it, Combo's scaling overtakes it.
+
+Representative early value:
+
+- GQ50, no Cardinal -> D=1.5s;
+- Bronze Donations candidate B -> **5.25s total**.
+
+This is meaningfully stronger than stock Bronze (3.25s) without being an economy-breaking amount.
+
+Status: **leading design hypothesis**, not accepted.
+
+### Combo relative-uplift question
+
+Staged Combo currently proposes +100/+150/+200% Faith and donations.
+
+Compared against stock Combo, the percentage uplift in total payout naturally shrinks with tier because the candidate adds a roughly constant +50 percentage points to an already-growing stock multiplier.
+
+Ignoring flats:
+
+- stock totals: 1.5x / 2.0x / 2.5x base;
+- staged totals: 2.0x / 2.5x / 3.0x base;
+- relative uplift: +33.3% / +25% / +20%.
+
+Representative stock flat outputs reduce these percentages further, producing the previously observed ~23/~15/~12% examples.
+
+This is **not reverse player progression**. The player-facing prayer still rises +100 -> +150 -> +200%, and each tier is stronger than the previous one.
+
+Current design judgment: do not inflate Gold merely to keep "mod versus vanilla percentage uplift" constant. That is an internal comparison metric, not a player-facing progression rule. Reopen only if Gold Combo fails the quality-cost temptation test.
+
+### BSS Soul's Repose must be reopened under staged handoff
+
+The accepted 0.1.5 BSS rule was aligned to the old specialist architecture:
+
+- +200/+300/+400% Faith;
+- q25/40/70;
+- base Faith = 0.1 * (CQ + Soul Gratitude) * Eloquence factor.
+
+Under staged handoff this creates obvious double scaling: Soul Gratitude already expands the base, then the old specialist multiplier multiplies that expanded base again.
+
+Representative no-Eloquence example:
+
+- CQ100, GP2086 -> base Faith ~= 219;
+- stock Gold Soul's Repose (+150% + fixed 3 Faith) ~= **550 Faith**;
+- current Rebalanced 0.1.5 Gold (+400%, no flat) ~= **1095 Faith**.
+
+Community runtime reports of ~500-586 Faith with very high Soul Gratitude corroborate that stock BSS already has an enormous endgame ceiling; there is no need to double it again.
+
+References:
+- https://www.reddit.com/r/GraveyardKeeper/comments/1rsjmat/
+- https://www.reddit.com/r/GraveyardKeeper/comments/1gm1ckn
+- https://www.reddit.com/r/GraveyardKeeper/comments/1gzskgh
+- https://www.reddit.com/r/GraveyardKeeper/comments/15ys6s3
+
+Leading new direction:
+
+- preserve the **stock +50/+100/+150% Faith ladder** provisionally;
+- let Soul Gratitude itself be the special scaling axis;
+- remove off-theme outputs if the staged family cleanup still calls for it;
+- then choose q based on DLC/Soul-room progression rather than copying ordinary Faith specialist q by symmetry.
+
+With stock BSS percentages against Candidate-A ordinary Faith (+50% +5/+10/+15), no-Eloquence crossover Soul Gratitude at the candidate guarantee CQs is approximately:
+
+- Bronze at CQ20: GP ~53;
+- Silver at CQ40: GP ~70;
+- Gold at CQ60: GP ~72.
+
+That is a much healthier state-dependent progression story: ordinary Faith wins before serious Soul-room investment; Soul's Repose becomes the strongest Faith engine once the player has actually built up Soul Gratitude.
+
+Status: **design reopening required**; do not preserve 0.1.5 BSS multiplier automatically in the next candidate.
+
+### Repentance — full weekly Faith + Story throughput
+
+Direct accepted runtime evidence:
+
+- scheduler rolls once per in-game day;
+- each existing confessional rolls independently;
+- Confessional I success reward: **1 Faith** and one Story:
+  - 70% Story I;
+  - 30% Story II;
+- Confessional II success reward: **2 Faith** and one Story:
+  - 70% Story II;
+  - 30% Story III;
+- there are two confessional slots in the church.
+
+Rebalanced accepted probability/duration:
+
+- Bronze 50%, ~2.4 days;
+- Silver 75%, ~4.8 days;
+- Gold 100%, ~7.2 days.
+
+Continuous expected throughput with both confessionals:
+
+| Tier | Expected confessions | Extra Faith | Expected Stories B/S/G |
+| --- | ---: | ---: | --- |
+| Bronze | 2.4 | 3.6 | 0.84 / 1.20 / 0.36 |
+| Silver | 7.2 | 10.8 | 2.52 / 3.60 / 1.08 |
+| Gold | 14.4 | 21.6 | 5.04 / 7.20 / 2.16 |
+
+Discrete scheduler alignment can move the actual count by roughly one daily roll around effect boundaries.
+
+For an exact **six-day sermon week**, Gold 100% with two confessionals yields:
+
+- 12 confession events;
+- **18 extra Faith**;
+- 12 Stories;
+- expected Story mix:
+  - 4.2 Bronze;
+  - 6.0 Silver;
+  - 1.8 Gold.
+
+This is **in addition to the Repentance sermon payout itself**.
+
+At CQ40 without Eloquence, Gold Repentance's retained stock sermon contribution is approximately:
+
+- base Faith 8;
+- +75% = +6;
+- +3 fixed Faith;
+- sermon total ~= **17 Faith**.
+
+If all six days of confessions are collected, the weekly Faith package is therefore about **35 Faith + 12 Stories**.
+
+This is substantially stronger than treating Repentance as a small utility buff. The power is compensated by:
+
+- two-confessional infrastructure;
+- deeper theology progression for Confessional II;
+- repeated daily church interaction;
+- Story value being indirect rather than liquid Faith;
+- weekly opportunity cost.
+
+Nevertheless Repentance must now be included in the Faith-family power audit; it cannot be balanced in isolation only as "confession probability".
+
+## CraftingQualityProbe 0.1.0 result and narrow gap
+
+User runtime log verified the target 1.407 MVID and the core multi-quality algorithm.
+
+CraftDefinition.GetMultiqualityResult directly shows:
+
+1. sum quality-contributing perk values;
+2. sum linked-buff craft-quality values;
+3. store recipe difficulty;
+4. average quality of qualifying multi-quality ingredients;
+5. derive Bronze/Silver/Gold probabilities by clamping the resulting scalar into 0..1 / 1..2 / 2..3 bands.
+
+The same log directly shows:
+
+- Notes linked to Writer / Playwright / Industriousness and Inspiration;
+- Chapter uses the same writing family;
+- Hard Book is a separate quality craft;
+- Hard Book uses cover + Chapter;
+- Hard Book links Jeweler / Industriousness and Excellence;
+- Book difficulty is 0.5 at Desk I and 0.3 at Desk II.
+
+Therefore the extra Book quality bottleneck is directly proven.
+
+However probe 0.1.0 filtered the **pulpit pray:* rows** rather than the actual b_faith / b_money / b_faith_money Desk recipe rows. It therefore did **not** directly close the final prayer-item recipe difficulty/perk stage.
+
+This is a concrete probe-coverage defect, not a user-test failure.
+
+### CraftingQualityProbe 0.1.1
+
+0.1.1 fixes exactly that gap:
+
+- includes actual b_faith, b_money, b_faith_money, b_souls, b_sins craft rows;
+- dumps perk-related CraftDefinition methods as well as quality methods;
+- dumps MultiqualityCraftResult nested type/IL to close the exact value-result expression.
+
+Build evidence:
+
+- source SHA: 42d0659c242de647b270ec3ca183fc40d42183d7;
+- frozen ref: candidate/crafting-quality-probe-0.1.1;
+- Actions run: 35330900953;
+- result: success;
+- artifact ZIP digest: sha256:6bb2b4673a48b2ec56239019b98bbd6cabdad111d56536f5b4b82cc0c20476b8;
+- DLL SHA-256: ee24759e29e3a7202370b71aa3acc4d51c03ca05019c44b56991f71121cc969b.
+
+Runtime contract remains read-only: no Harmony, no balance/save mutation.
