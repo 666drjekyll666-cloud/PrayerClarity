@@ -1904,3 +1904,70 @@ Rebalanced:
 - do not show the vanilla "no further tier effect" line for Silver/Gold unless direct runtime state proves the evaluated range is already a single tier.
 
 Implementation, if accepted, should be on-demand at pulpit redraw/open using canonical player/donkey progression parameters; no per-frame scans or Technology mutation.
+
+
+## Cross-roster q decision after BSS/core-progression review
+
+Working design decision for the next implementation candidate (research acceptance; production still unchanged):
+
+| Prayer | Working q |
+| --- | ---: |
+| Ordinary | 10 |
+| Faith | 20 / 40 / 60 |
+| Donations | 20 / 40 / 60 |
+| Combo | 40 / 60 / 80 |
+| Prosperity | 10 / 20 / 30 |
+| Shoots & Roots | 10 / 30 / 50 |
+| Repentance | 20 / 40 / 60 |
+| Repose | 20 / 40 / 50 |
+| Combat | 20 / 40 / 60 |
+| Imagination | 10 / 40 / 60 |
+| Excellence | 20 / 60 / 90 |
+| BSS Soul's Repose | 30 / 60 / 120 |
+| BSS Soul Contentment | 20 / 40 / 60 |
+| BSS Thorough Cleansing | 30 / 60 / 90 |
+
+### Why Soul Contentment stops at 60
+
+Better Save Soul itself can begin soon after the church opens; it is not a postgame-only DLC by access. Soul Contentment is also inherently state-limited: its +20% Gratitude gain matters only while the player is actively healing/releasing souls and has useful Gratitude capacity/consumption. Community reports explicitly note that the prayer becomes pointless when Gratitude is capped and not being spent.
+
+Therefore q30/50/70 was considered and rejected as unnecessary tuning. q20/40/60 is enough to price the doubled Rebalanced magnitude while keeping the prayer inside the stage where its workflow matters.
+
+### Gold Soul's Repose remains the q120 miracle
+
+The high Gold requirement does not imply the whole BSS roster is postgame. Instead the quality ladder deliberately spans progression:
+
+- Bronze q30: usable BSS tool;
+- Silver q60: mature normal church;
+- Gold q120: aspirational prepared service.
+
+The pulpit already communicates the relevant mechanic ("Faith depends on Church Quality and Soul Gratitude") and displays the unusually high Church Quality requirement/success chance. Do not add editorial copy such as "late-game prayer" or "miracle ritual" merely to justify q120. The mechanics and requirement should explain themselves.
+
+Community evidence supports the role separation: Soul's Repose may be attractive early when Gratitude is high relative to Church Quality, but very high Gratitude can later push it into several-hundred-Faith outputs.
+
+## Repose endpoint pulpit wording — terminology constraint
+
+Current RU stock effect wording owned by PrayerClarity is:
+
+\`Осёл может привозить более качественные тела. (up) (skull) (rskull)\`
+
+When stock/Vanilla Repose cannot raise the maximum eligible corpse tier any further, the pulpit should **replace**, not append to, that effect sentence.
+
+Preferred RU wording:
+
+\`Ещё более качественные тела сейчас недоступны. (up) (skull) (rskull)\`
+
+Rationale:
+- reuses the exact player-facing term \`более качественные тела\`;
+- states only the current mechanical limitation;
+- does not tell the player whether to use the prayer;
+- avoids introducing internal terminology such as tier/body_max;
+- remains compact in the already-dense pulpit surface.
+
+English semantic target:
+
+\`No higher-quality bodies are currently available.\`
+
+The same contextual replacement may be used for Rebalanced Bronze. Rebalanced Silver/Gold must retain their reliability wording whenever narrowing the currently eligible corpse range still changes the result. Only show the no-further-effect replacement if direct current progression state proves the prayer cannot change the evaluated range at all.
+
+Technology remains unchanged.
