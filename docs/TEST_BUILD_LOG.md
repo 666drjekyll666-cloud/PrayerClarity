@@ -565,12 +565,43 @@ Accepted edge-case runtime evidence:
 Result: the original 0.2.0 instant-growth regression and the later 100%-stack edge are both closed. Rebalanced 0.2.2 is the accepted stable baseline for Roots.
 
 
-### 2026-09-18 — Rebalanced 0.2.2 stable publication
+### 2026-09-18 — Rebalanced 0.2.2 publication correction
 
-- Stable tag/release: `rebalanced-v0.2.2`.
-- Release target: exact accepted runtime source `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`.
-- Publication reused the exact accepted CI artifact from run `35382737488`; no rebuild occurred.
+A GitHub Release/tag for `rebalanced-v0.2.2` was created prematurely during internal stabilization and was later deleted before the public 0.2.3 release. The accepted 0.2.2 source/ref remains valid historical runtime evidence for the Roots repair, but `rebalanced-v0.2.2` is **not** a current published release.
+
+
+### 2026-09-18 — Rebalanced 0.2.3 accepted and published
+
+- User acceptance: explicit `фиксируем 023` after the focused native-seam runtime pass.
+- Accepted ref: `accepted/rebalanced-0.2.3`.
+- Exact accepted runtime source: `ab1eb67cbf2465a912c392120395011503b720c3`.
+- Candidate CI run: `35388483840` — success.
+- Artifact ID: `10564359079`.
+- Artifact: `PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.3-ci-ab1eb67cbf2465a912c392120395011503b720c3`.
+- Artifact ZIP digest: `sha256:097febe34877eb16cb1ac79df56301f24e96deb908c60eb66830d8443bdf4a06`.
+- Accepted/released Rebalanced DLL SHA-256: `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`.
+- Stable promotion: PR #7 merged to `main` as `f953e34901de139a5f7af7162af6fc62bb02b4d9`.
+- Stable tag/release: `rebalanced-v0.2.3`, targeting the exact accepted runtime source.
+- Publication workflow run: `35391896166` — success.
+- Publication reused and hash-verified the exact accepted CI artifact; **no rebuild occurred**.
 - Published asset: `PrayerClarity.Rebalanced.dll`.
-- Published DLL SHA-256: `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
-- Publication workflow run: `35385706077` — success.
-- Release page: `https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.2`.
+
+Accepted runtime evidence with Test Console 0.1.3:
+- Repentance: Bronze/Silver/Gold effective confession probability = 0.50 / 0.75 / 1.00 while the controlled stored stock value remained 0.15 before each accessor read.
+- Combat damage: Bronze/Silver/Gold tier delta relative to the native Bronze result = 0 / +5 / +10; persisted stock `add_damage` remained 5.
+- Combat armor: controlled 20 damage caused 20 stock HP loss vs 16 with Combat, exactly 4 damage prevented.
+- Combat regeneration: Bronze/Silver/Gold native buff ticks were observed as +1 / +2 / +4 HP, with stock max-HP clamping.
+- No PrayerClarity runtime failure, `Exception`, `ExpressiveException`, `InvalidCastException`, `SmartExpression`, or `Error in expression` occurred in the supplied log.
+- Synthetic Combat buff was removed at the end of the test.
+
+Architecture accepted in 0.2.3:
+- Repentance leaves stock `SetPpar("confession_probability", 0.15)` authoritative and projects only the effective FlowCanvas player-param read while `buff_sins` is live.
+- Combat damage projects only the Silver/Gold delta through nonserialized `totem_effect["add_damage"]` around native `GetDamage`.
+- Combat armor projects +4 through nonserialized `totem_effect["add_armor"]` around native `DecHP`, eliminating the prior ThreadStatic + generic `GetParam` interception.
+- Combat regeneration remains on the native `BuffDefinition.se_tick` extension point.
+- Roots retains the accepted 95% aggregate growth-time-reduction safety cap from 0.2.2.
+
+Research helper identity:
+- Test Console 0.1.3 source: `5de0f27e97cb38a72fb2b53b93e02131225012e7`.
+- Test Console DLL SHA-256: `f7624c8696f5dbbf1bf64a959ea370c545c198332bbfe0c1b8eeec4e0775d6fc`.
+- The helper remains research-only and is not part of the public release.
