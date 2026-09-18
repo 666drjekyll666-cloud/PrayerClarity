@@ -1,6 +1,6 @@
 # PrayerClarity — Clarity UI status
 
-Status: **accepted stable Clarity mainline baseline** for Graveyard Keeper 1.407.
+Status: **historical accepted Clarity milestone** for Graveyard Keeper 1.407. This file preserves the 1.0.9 acceptance evidence; it is **not** the current release status.
 
 Accepted build: **PrayerClarity 1.0.9**  
 Accepted runtime/source SHA: `4b86b972baeef19aa656a9e414891405006cf67f`  
@@ -15,7 +15,7 @@ The user runtime-tested the 1.0.9 candidate on 2026-09-17 and explicitly accepte
 
 This accepted baseline is information-only: it contains **no Vanilla Fixes and no Balance/Rework mechanics**.
 
-The latest public GitHub Release remains **v1.0.1**. Version 1.0.9 is the accepted mainline Clarity baseline until a separate publication decision is made.
+Historical note: at the time of this milestone, the latest public release was v1.0.1. The current stable Vanilla release is **PrayerClarity: Vanilla 1.0.24**; current release identity is recorded in `README.md`, `CHANGELOG.md`, `DESIGN_NOTES.md`, and `TEST_BUILD_LOG.md`.
 
 ## Accepted pulpit presentation
 
@@ -113,11 +113,11 @@ The accepted Clarity layer remains narrow and UI-lifecycle driven:
 - reflection bindings for viewport geometry are compiled/cached during install rather than rediscovered every frame;
 - no broad Unity scans, background polling, mirrored prayer runtime state or mechanics mutation is introduced.
 
-## Promotion state
+## Historical promotion state
 
 `candidate/1.0.9` and `accepted/clarity-1.0.9` point to the exact accepted runtime/source SHA `4b86b972baeef19aa656a9e414891405006cf67f`.
 
-`main` was fast-forwarded to that same SHA without rebuilding. Subsequent documentation-only commits on `main` record acceptance and do not alter the accepted runtime bytes.
+That state was accepted at the time and later superseded by subsequent Clarity releases. Current stable runtime identity is Vanilla 1.0.24 / Rebalanced 0.1.5 from shared accepted source `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
 
 The last public release remains `v1.0.1`; publishing 1.0.9 is a separate release step and is not implied by mainline acceptance.
 
