@@ -499,3 +499,24 @@ Status:
   3. repeat one case with `grow_time` fertilizer to verify the additive interaction remains intact;
   4. return the runtime log so the absence of the 0.2.0 exception can be confirmed.
 - Broader Rebalanced behavior-risk audit is intentionally deferred until this blocker is closed; it remains a required follow-up requested by the user.
+
+
+### Runtime check 2026-09-18 — Rebalanced 0.2.1 Roots fix, no-buff half of gate
+
+User-tested candidate:
+- Rebalanced source: `d13655e01a1b8e797ed019b636f040b3d2f2a55f`
+- Rebalanced 0.2.1 loaded successfully and static projection applied.
+- Fresh carrot/cabbage growth crafts started normally after planting; the newly planted crops did not transition to `*_ready` during the remainder of the supplied log.
+- The supplied runtime log contains zero `ExpressiveException`, zero `InvalidCastException`, zero `SmartExpression` error, and zero `Error in expression` entries.
+- User visual observation agrees: freshly planted carrots no longer become ready almost immediately.
+- This closes the original 0.2.0 failure mode for ordinary/no-Roots growth.
+- Remaining acceptance gate: prove active Rebalanced Roots actually shortens native crop `craft_time` by the intended Bronze/Silver/Gold amount, including one fertilizer-adjusted case.
+
+A research Test Console 0.1.1 was prepared to remove stopwatch/manual timing from that gate:
+- candidate ref: `candidate/rebalanced-test-console-0.1.1`
+- source SHA: `187579dcc329c05c845aec80849772cb7fbd67bb`
+- GitHub Actions run: `35379100576` — success
+- artifact ID: `10561017600`
+- handoff DLL SHA-256: `4de6e4cee802c88757439ba9cb6ccdb83617601158588cfcd90e024047cad707`
+- Roots diagnostic logs, once per affected craft after activation, both `craft_time_without_roots` and `craft_time_with_roots`, plus tier, configured reduction, effective WGO `buff_plant`, fertilizer `grow_time`, and raw native expression.
+- Diagnostic comparison is performed after the native `DoAction` call while RebalancedRoots' temporary nonserialized WGO projection is still in scope; it temporarily subtracts only the projected Roots runtime contribution for the read-only comparison evaluation, restores it immediately, and leaves the production finalizer to restore the original WGO state.
