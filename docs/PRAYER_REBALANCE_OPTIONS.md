@@ -1,209 +1,175 @@
-# PrayerClarity: Rebalanced — roster specification
+# PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset**. The roster below is implemented and runtime-accepted in PrayerClarity: Rebalanced 0.1.5. Stock Graveyard Keeper 1.407 remains canonical in `PRAYER_MECHANICS.md`; values here are deliberate Balance/Rework design unless explicitly identified as a Vanilla Fix and must not be described as recovered vanilla intent.
+Status: **canonical accepted Rebalanced ruleset for PrayerClarity: Rebalanced 0.2.0**.
 
-Current shared accepted runtime/source: `3b7cea7986138f57d7ace6998b9cc6bca952af1e`. Frozen refs are `accepted/vanilla-1.0.24` and `accepted/rebalanced-0.1.5`; public releases are `v1.0.24` and `rebalanced-v0.1.5`. Exact binary hashes and runtime gates are recorded in `TEST_BUILD_LOG.md`.
+Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
-`PRAYER_DESIGN_AUDIT.md` records the role/cross-roster rationale. `PRAYER_POWER_BUDGET.md` remains the quantitative stock cost/progression input; any older candidate numbers there are historical analysis, not the current roster.
+Stable runtime identity:
 
-## Product and evidence rules
+- Rebalanced version: **0.2.0**
+- frozen accepted ref: `accepted/rebalanced-0.2.0`
+- exact accepted source SHA: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- canonical DLL: `PrayerClarity.Rebalanced.dll`
+- accepted DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
 
-- Public editions are **PrayerClarity: Vanilla** and **PrayerClarity: Rebalanced**. They are sibling alternatives, not a base mod plus an add-on.
-- PrayerClarity: Vanilla remains mechanically stock. Do not silently put Vanilla Fixes or rebalancing into that edition.
-- PrayerClarity: Rebalanced contains the complete Clarity experience plus the coherent ruleset below.
-- Keep **Clarity**, **Vanilla Fixes**, and **Balance/Rework** distinct in code and documentation even when a Rebalanced prayer uses both a proven repair and intentional tuning.
-- No per-prayer balance sliders are planned.
-- Preserve the pulpit reward-reveal boundary: explain dependencies and prayer-owned effects, but do not expose the exact final current Faith/donation payout before the sermon.
-- Preserve full **base** donations on failed sermons. Prayer-specific success bonuses and special outputs may still disappear according to verified mechanics.
-- Base sermon Faith/donations remain present according to the prayer event. Specialist cleanup changes prayer-owned success contributions, not common base sermon rewards.
-- Every prayer must justify unlock, crafting/quality cost, success gate and weekly sermon opportunity. Bronze must already be credible; Silver/Gold must visibly buy magnitude, reliability, useful duration, output or certainty.
-- Do not normalize quality requirements globally for symmetry.
-- Gameplay and all four Clarity surfaces must consume one effective semantic model.
+The sibling Vanilla release remains mechanically stock and is documented separately.
 
-## Locked roster
+## Product rules
 
-| Family | PrayerClarity: Rebalanced target |
-| --- | --- |
-| Ordinary `b_empty` | **Stock.** Starter baseline. |
-| Faith `b_faith` | **+200 / +300 / +400% Faith**, q **25 / 40 / 70**. Keep common base donations. Remove prayer-owned fixed Faith, fixed money and off-theme money percentage. |
-| Donations `b_money` | **+200 / +300 / +400% donations**, q **25 / 40 / 70**. Keep common base Faith. Remove prayer-owned Faith bonus; retain thematic **+1 / +2 / +3 silver** fixed floor. |
-| Combo `b_faith_money` | **Stock:** +50/+100/+150% Faith and donations, q **15/30/60**, stock fixed Faith/money outputs. |
-| Repentance `b_sins` | Daily confession probability **50 / 75 / 100%**, duration **18/36/54 min**, q **10/20/40**. |
-| Shoots & Roots `b_plant` | Repair stock scope and scale growth time **-20 / -30 / -40%**, duration **36/72/108 min**, q **10/20/30**. The scope repair is Vanilla Fix; quality scaling is Balance/Rework. |
-| Repose `b_skull` | Bronze stock-style expanded-pool roll; Silver halfway from current stock best-tier probability to certainty; Gold guaranteed best prayer-eligible tier. Ceiling remains normal progression max +1. Duration **18/36/54 min**, q **20/40/50**. |
-| Combat (`b_sword`; `b_shield` legacy alias) | Merge accepted. Damage **+5/+10/+15**, armor **+4**, regeneration **1/2/4 HP/sec**, duration **36/72/108 min**, q **10/20/40**. |
-| Imagination `b_pen` | **+0.7 craft quality** at every tier; duration **18/36/54 min**; Silver successful sermon gives **3 Silver Stories**, Gold gives **3 Gold Stories**; q **10/40/60**. |
-| Excellence `b_star` | **+0.2/+0.5/+1.0** linked-craft quality, duration **18/36/54 min**, q **10/40/60**. |
-| Prosperity `b_village` | **Stock:** 1/2/3 Commercial Blessings and existing sermon outputs, q **10/20/30**. Natural progression obsolescence is accepted. |
-| BSS Soul's Repose `b_souls` | **+200 / +300 / +400% Faith**, q **25/40/70**. Preserve Soul-Gratitude base formula and recipe; remove prayer-owned fixed Faith/money and off-theme donation percentage. |
-| Soul Contentment `b_grat_points_incr` | **+20% Soul Gratitude** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis. |
-| Thorough Cleansing `b_sin_shard` | **x2 Sin Shards** at every tier; duration **36/72/108 min**, q **10/20/30**. Duration is the premium-tier axis. |
+- **PrayerClarity: Vanilla** and **PrayerClarity: Rebalanced** are alternative sibling editions. Install one, not both.
+- Rebalanced uses the full shared Clarity presentation layer plus the complete ruleset below.
+- Base sermon Faith/donations remain present according to the underlying prayer event.
+- Failed sermons retain full base donations by permanent project policy; prayer-owned success bonuses/special outputs still depend on sermon success.
+- Do not show the fully resolved current Faith/donation payout before the sermon. The pulpit explains inputs and prayer-owned contributions while preserving the sermon animation as the reward reveal.
+- Mechanics and all presentation surfaces consume the same effective semantic/rule source.
+- All durations below are **stock Graveyard Keeper 1.407 durations**. External day-length mods are not balance targets.
 
-## Faith / Donations / Combo family
+## Accepted roster
 
-### Common-base rule
+| Family | 100% Church Quality | PrayerClarity: Rebalanced 0.2.0 behavior |
+| --- | ---: | --- |
+| Ordinary `b_empty` | **10** | Stock starter baseline. |
+| Faith `b_faith` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +10 / +20 Faith**. No prayer-owned donation bonus. |
+| Donations `b_money` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +10 / +15 silver**. No prayer-owned Faith bonus. |
+| Combo `b_faith_money` | **40 / 60 / 80** | Success bonus is percentage only: **+100 / +150 / +200% Faith and donations**. No prayer-owned flat Faith/money. |
+| Prosperity `b_village` | **10 / 20 / 30** | Keep stock 1 / 2 / 3 Commercial Blessings and stock sermon outputs. |
+| Shoots & Roots `b_plant` | **10 / 30 / 50** | Repair stock scope; growth time **-20 / -30 / -40%**. Duration **36 / 72 / 108 min**. |
+| Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. Duration **18 / 36 / 54 min**. |
+| Repose `b_skull` | **20 / 40 / 50** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. Duration **18 / 36 / 54 min**. |
+| Combat `b_sword` (`b_shield` legacy alias) | **20 / 40 / 60** | Damage **+5 / +10 / +15**, armor **+4**, regeneration **1 / 2 / 4 HP/s**. Duration **36 / 72 / 108 min**. |
+| Imagination `b_pen` | **20 / 40 / 60** | Writing quality **+0.7** at all tiers; successful Silver gives **3 Silver Stories**, successful Gold gives **3 Gold Stories**. Duration **18 / 36 / 54 min**. |
+| Excellence `b_star` | **20 / 60 / 90** | Linked-craft quality **+0.2 / +0.5 / +1.0**. Duration **18 / 36 / 54 min**. |
+| BSS Soul's Repose `b_souls` | **30 / 60 / 120** | **+50 / +100 / +150% Faith** on the verified Souls base. Preserve current Soul Gratitude scaling; remove prayer-owned fixed/off-theme outputs. |
+| BSS Soul Contentment `b_grat_points_incr` | **20 / 40 / 60** | **+20% Soul Gratitude** at all tiers. Duration **36 / 72 / 108 min**. |
+| BSS Thorough Cleansing `b_sin_shard` | **30 / 60 / 90** | **x2 Sin Shards** at all tiers. Duration **36 / 72 / 108 min**. |
 
-Specialization does not remove the ordinary sermon base. Base Faith still comes from the event/Church Quality path and base donations still come from Graveyard Quality. On failure, those common base rewards remain while success-only prayer bonuses disappear.
+## Resource-family grammar
+
+### Faith
+
+The specialist is intentionally flat-only:
+
+- Bronze: **+5 Faith**
+- Silver: **+10 Faith**
+- Gold: **+20 Faith**
+
+The common sermon base still scales from Church Quality and Eloquence. The flat prayer-owned reward does not.
+
+### Donations
+
+The specialist is intentionally flat-only:
+
+- Bronze: **+5 silver**
+- Silver: **+10 silver**
+- Gold: **+15 silver**
+
+The common donation base still scales from Graveyard Quality/Cardinal.
 
 ### Combo
 
-Keep stock:
+Combo is intentionally percentage-only:
 
-- q **15 / 30 / 60**;
-- `k_faith = .5 / 1 / 1.5`;
-- `k_money = .5 / 1 / 1.5`;
-- stock fixed Faith/money outputs;
-- Hard Book +7 Faith production gate.
+- Bronze: **+100% Faith and donations**
+- Silver: **+150%**
+- Gold: **+200%**
 
-Combo remains the convenient generalist: more expensive to manufacture, broader in output and easier to guarantee than the specialists.
+No prayer-owned flat Faith or money.
 
-### Faith specialist
+This produces the intended progression:
 
-- q **25 / 40 / 70**;
-- `k_faith = 2 / 3 / 4` = **+200/+300/+400%**;
-- no prayer-owned `k_money`;
-- remove prayer-owned fixed Faith and fixed money;
-- retain normal base donations.
+`early focused specialists -> mature specialists / early Combo -> late premium Combo`
 
-The percentage is the specialist proposition and scales with church development. Including the unchanged base reward, the proportional Faith total is **3x / 4x / 5x base** on success versus Combo's **1.5x / 2x / 2.5x** at the same quality: exactly twice Combo's proportional Faith total before fixed outputs.
+The player-facing choice should remain simple:
 
-### Donations specialist
+- need Faith -> Faith specialist;
+- need money -> Donations specialist;
+- need both / late scaling -> Combo.
 
-- q **25 / 40 / 70**;
-- `k_money = 2 / 3 / 4` = **+200/+300/+400%**;
-- no prayer-owned Faith percentage/fixed Faith;
-- retain normal base Faith;
-- retain **+1/+2/+3 silver** fixed money.
+## Better Save Soul endgame structure
 
-The fixed money is an early-game floor, not a symmetry requirement. Before that fixed floor, the successful proportional donation total is likewise **3x / 4x / 5x base**, exactly twice Combo's corresponding **1.5x / 2x / 2.5x** proportional total.
+### Soul's Repose
 
-### Requirement grammar
+Verified base Faith:
 
-- Combo q: **15 -> 30 -> 60**;
-- Specialist q: **25 -> 40 -> 70**.
+`Base Faith = (Church Quality + current Soul Gratitude) * 0.1 * EloquenceFactor`
 
-The specialist row is Combo +10 Church Quality at every tier and keeps the same internal steps (+15, then +30). Over two successful weeks, rotating Faith specialist + Donations specialist is intentionally stronger on planned target resources than simply repeating Combo; Combo pays for convenience and breadth.
+The prayer scales from **current** Soul Gratitude held at sermon time, not lifetime souls healed and not Soul Gratitude capacity.
 
-## BSS Soul's Repose — accepted specialist alignment
+Accepted requirement ladder:
 
-Treat BSS Soul's Repose as the **Soul-Gratitude-dependent Faith specialist**:
+- Bronze q30
+- Silver q60
+- Gold q120
 
-- **+200/+300/+400% Faith**;
-- q **25/40/70**;
-- preserve base Faith `0.1 * (Church Quality + Soul Gratitude) * Eloquence factor`;
-- preserve Chapter +5 Faith +2 Sin Shards recipe;
-- remove prayer-owned fixed Faith, fixed money and off-theme donation percentage.
+Gold q120 is the deliberate aspirational late-game ritual. It gates the **+150% success bonus**, not the underlying Souls base Faith. A failed sermon still retains the base Faith that already includes current Soul Gratitude.
 
-Soul Gratitude is part of the prayer event's **base Faith before the success-only percentage is applied**. There is no separate `+X% from Soul Gratitude` success term. The player-facing grammar should therefore explain that base Faith depends on Church Quality and Soul Gratitude, then show the tier's **+200/+300/+400% Faith** modifier.
-
-Ordinary Faith base is `0.2 * CQ`. Because the two specialists use the same multiplier and q ladder, ignoring integer rounding:
-
-- `GP < CQ` -> ordinary Faith wins;
-- `GP = CQ` -> equal Faith output;
-- `GP > CQ` -> Soul's Repose wins.
-
-The Sin Shard cost therefore buys access to a state-dependent alternative rather than an automatically superior DLC prayer.
-
-## Repentance
-
-Accepted daily-roll rework:
-
-- Bronze **50%**;
-- Silver **75%**;
-- Gold **100%**;
-- duration **18/36/54 min**.
-
-The stock scheduler rolls once per in-game day for each existing confessional. Gold intentionally guarantees those daily rolls while active. This remains interaction-heavy throughput rather than passive Faith generation.
-
-## Shoots & Roots
-
-- Bronze **-20% growth time**;
-- Silver **-30%**;
-- Gold **-40%**;
-- duration **36/72/108 min**.
-
-The stock `-20%` term is recoverable, but stock writes the prayer state to the player while growth expressions read the growing/workbench WGO. Rebalanced must repair that verified scope mismatch while preserving the game's additive growth expression; do not replace plant growth with an external timer system.
-
-## Repose
-
-Premium quality buys reliability rather than progression skipping:
-
-- Bronze: stock-style selection from the expanded max+1 pool;
-- Silver: `P(best) = 0.5 + 0.5 * P_stock(best)`;
-- Gold: 100% best prayer-eligible tier.
-
-Never exceed the story/progression ceiling that stock `body_max+1` can open.
-
-## Combat
-
-| Quality | Damage | Armor | Regeneration | Duration | q |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Bronze | +5 | +4 | 1 HP/sec | 36 min | 10 |
-| Silver | +10 | +4 | 2 HP/sec | 72 min | 20 |
-| Gold | +15 | +4 | 4 HP/sec | 108 min | 40 |
-
-The strong package is intentional for a deep-unlock, Hard Book, combat-only weekly choice. Do not raise q merely to make the table look symmetric with other prayers.
-
-`b_sword` is canonical. Existing `b_shield` items remain save-safe same-quality aliases. Both IDs must resolve to one effective Combat buff lifecycle/refresh behavior; they must not stack. Retire/hide the redundant Protection recipe only after the exact crafting/unlock lifecycle seam is verified.
-
-Decorative VFX are outside the first Rebalanced scope after two native-FX auditions failed to produce a cheap clean result.
-
-## Imagination
-
-Accepted:
-
-- `craft_q = +0.7` at all tiers;
-- duration **18/36/54 min**;
-- Bronze: no extra Story reward;
-- Silver: **3 Silver Stories** on successful sermon;
-- Gold: **3 Gold Stories** on successful sermon;
-- q **10/40/60**.
-
-Do not nerf the healthy Bronze core or inflate `craft_q` merely to manufacture a numeric tier ladder. Premium tiers improve useful duration and return thematic premium writing material without bypassing Notes -> Chapter -> cover/Hard Book production.
-
-## Excellence
-
-Accepted first runtime target:
-
-- `craft_q = +0.2 / +0.5 / +1.0`;
-- duration **18/36/54 min**;
-- q **10/40/60**.
-
-Finite craft-quality tiers are the natural cap. Gold may intentionally make an otherwise reachable premium result deterministic.
-
-## BSS duration specialists
+At the pulpit, Soul's Repose additionally shows the current Soul Gratitude input. Exact final Faith remains hidden until the sermon resolves.
 
 ### Soul Contentment
 
-- **+20% Soul Gratitude gain** at all qualities;
-- duration **36/72/108 min**.
-
-Do not also scale magnitude by quality. Duration is the premium axis and avoids magnitude×duration double scaling.
+Keep **+20% Soul Gratitude** at all qualities with q20/40/60 and 36/72/108-minute duration. Duration is the premium quality axis.
 
 ### Thorough Cleansing
 
-- **x2 Sin Shards** at all qualities;
-- duration **36/72/108 min**.
+Keep **x2 Sin Shards** at all qualities with q30/60/90 and 36/72/108-minute duration.
 
-The x2 effect is already a strong scarce-resource specialist. Silver/Gold buy a longer processing window; do not add x3/x4 without new evidence.
+## Repose terminal behavior
 
-## No global cleanup of secondary sermon bonuses
+Direct 1.407 evidence establishes normal terminal Donkey progression as permanent range **2..3**, while ordinary BodyDefinitions exist only through tier 3.
 
-The pure-resource specialists are cleaned because off-theme success bonuses directly blur their comparison. Do **not** generalize that cleanup to Roots, Repentance, Repose, Combat, Imagination, Excellence, Contentment or Cleansing merely for aesthetic symmetry. Their small stock sermon-resource contributions remain an opportunity-cost floor unless a specific model demonstrates a problem.
+Stock Repose raises raw max by +1, so terminal stock evaluates **2..4**. Because ordinary tier 4 does not exist, stock Repose adds no new corpse quality at that endpoint.
 
-## Edition architecture
+Accepted Rebalanced behavior:
 
-The intended user-facing structure is two separate Nexus offerings backed by one shared source/design system:
+- Bronze leaves the stock-style expanded range unchanged.
+- Silver narrows to the highest actually existing eligible tier on its reliability branch.
+- Gold always narrows to the highest actually existing eligible tier.
+- Do not blindly set `tier_min = tier_max`; resolve the best existing ordinary BodyDefinition first.
 
-1. **PrayerClarity: Vanilla 1.0.24** — accepted Clarity UX over stock prayer mechanics, canonical DLL `PrayerClarity.dll`, plugin GUID `nikich.graveyardkeeper.prayerclarity`.
-2. **PrayerClarity: Rebalanced 0.1.5** — the same Clarity UX plus the complete accepted ruleset above, canonical DLL `PrayerClarity.Rebalanced.dll`, plugin GUID `nikich.graveyardkeeper.prayerclarity.rebalanced`.
+This fixes the latent 0.1.5 late-game `4..4` edge case while keeping stock `GameSave.GenerateBody` authoritative.
 
-A user installs one edition or the other. Both are built from shared source/presentation infrastructure rather than copy-pasted forks. Vanilla declares Rebalanced as incompatible so the sibling alternatives are not intended to run together.
+Presentation rule:
 
-## Accepted implementation state
+- Vanilla/Bronze may replace the normal Repose effect line with **"No higher-quality bodies are available."** when stock +1 adds no higher ordinary tier.
+- Rebalanced Silver/Gold keep their reliability wording while narrowing still changes the distribution.
 
-The implementation-target/effective-model audit was completed and the integrated ruleset was accepted in Rebalanced 0.1.5.
+## Imagination success rewards
 
-The stable implementation uses one shared rules/semantic source across gameplay and the four Clarity surfaces; repairs Roots at the verified expression scope; applies Repentance probability at the native daily-roll logic; narrows Repose corpse selection at the verified generation seam; captures tier-dependent Combat state with one effective `buff_sword` lifecycle; preserves `b_shield` as a legacy alias while retiring its future crafting path; and ships Vanilla/Rebalanced as separate plugin identities and DLLs.
+Premium Story rewards use the stock prayer output/drop pipeline, not a separate inventory-grant hook:
 
-There is no open implementation gate attached to this roster. Any future value or algorithm change is a new Balance/Rework proposal and must go through the normal evidence, candidate, runtime-test and acceptance process.
+- Bronze: no extra Story reward;
+- Silver successful sermon: `story:2 x3`;
+- Gold successful sermon: `story:3 x3`.
+
+The items are projected into the prayer's existing `CraftDefinition.output`; non-Faith/non-money prayer outputs flow through the stock sermon-drop path.
+
+## Runtime / performance shape
+
+- No per-frame polling.
+- No broad Unity scans.
+- Rule projection is load-time/static.
+- Soul Gratitude and Repose contextual presentation are computed only when the relevant pulpit UI redraws.
+- Repose corpse-tier narrowing occurs only at the verified corpse-generation seam.
+- Stock `GameSave.GenerateBody` remains authoritative.
+- New player-facing strings ship in all 11 supported Graveyard Keeper interface languages.
+
+## Acceptance status
+
+PrayerClarity: Rebalanced 0.2.0 was user-tested and accepted for stable promotion on 2026-09-18.
+
+Runtime-accepted in the tested candidate:
+
+- revised Faith / Donations / Combo semantics and CQ requirements;
+- Soul's Repose q30/60/120 and current Soul Gratitude pulpit metric;
+- representative RU/EN/DE/JA rendering of the new pulpit context;
+- synchronized pulpit / Technology / active-effect presentation for representative timed prayers;
+- Test Harness + Rebalanced Compatibility operation with the candidate;
+- representative stock-duration native buff activation;
+- no PrayerClarity-specific exception/error in the supplied runtime log.
+
+Deferred, non-blocking verification:
+
+- terminal Repose wording/behavior still needs a save that has reached terminal Donkey corpse progression;
+- physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been observed in the user's runtime, although it uses the already verified native non-Faith/non-money sermon-drop path.
+
+These are recorded in `TEST_BUILD_LOG.md`. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.0 bytes.

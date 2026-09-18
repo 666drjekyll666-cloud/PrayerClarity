@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "Efecto",
   "forecast.graveyard_quality": "Calidad del cementerio: (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "Gratitud de las almas: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Garantizado",
   "forecast.success_bonus": "Con éxito ({0}%)",
   "forecast.dependency_note": "(faith) Fe — calidad de la iglesia\n(slv) Donaciones — calidad del cementerio",
@@ -18,7 +19,8 @@
   "tech.quantity": "Cantidad",
   "tech.effect.imagination_intro": "Mejora la calidad de escritura.",
   "tech.effect.excellence_intro": "Mejora la calidad de fabricación.",
-  "tech.souls_base_faith": "La Fe depende de la calidad de la iglesia y la Gratitud de las almas.",
+  "tech.souls_base_faith": "La Fe depende de la calidad de la iglesia y la Gratitud de las almas.",  "repose.endpoint": "No hay cuerpos de mayor calidad disponibles.",
+
   "buff.souls_repose": "La (faith) depende de la calidad de la iglesia y de (gratitude_points).",
   "active.sword": "+{0:0.##} de daño",
   "active.shield": "+{0:0.##} de armadura",

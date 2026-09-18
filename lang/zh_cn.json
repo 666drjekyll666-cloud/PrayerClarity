@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "效果",
   "forecast.graveyard_quality": "墓地质量：(wskull) {0:0.#}",
+  "forecast.soul_gratitude": "灵魂感恩度：(gratitude_points) {0:0.#}",
   "forecast.guaranteed": "保证获得",
   "forecast.success_bonus": "成功时（{0}%）",
   "forecast.dependency_note": "(faith) 信仰 — 教堂品质\n(slv) 捐款 — 墓地品质",
@@ -18,7 +19,8 @@
   "tech.quantity": "数量",
   "tech.effect.imagination_intro": "提高书写品质。",
   "tech.effect.excellence_intro": "提高制作质量。",
-  "tech.souls_base_faith": "信仰取决于教堂品质和灵魂感恩值。",
+  "tech.souls_base_faith": "信仰取决于教堂品质和灵魂感恩值。",  "repose.endpoint": "没有更高品质的尸体可用。",
+
   "buff.souls_repose": "(faith)取决于教堂品质和(gratitude_points)。",
   "active.sword": "伤害 +{0:0.##}",
   "active.shield": "护甲 +{0:0.##}",

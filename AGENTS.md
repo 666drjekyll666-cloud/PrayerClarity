@@ -30,9 +30,9 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 
 ### Current accepted stable baselines
 
-- **PrayerClarity: Vanilla 1.0.24** — tag `v1.0.24`, accepted ref `accepted/vanilla-1.0.24`, canonical DLL `PrayerClarity.dll`.
-- **PrayerClarity: Rebalanced 0.1.5** — tag `rebalanced-v0.1.5`, accepted ref `accepted/rebalanced-0.1.5`, canonical DLL `PrayerClarity.Rebalanced.dll`.
-- Both accepted binaries were built from runtime/source SHA `3b7cea7986138f57d7ace6998b9cc6bca952af1e` and promoted without rebuilding.
+- **PrayerClarity: Vanilla 1.0.25** — tag `v1.0.25`, accepted ref `accepted/vanilla-1.0.25`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
+- **PrayerClarity: Rebalanced 0.2.0** — tag `rebalanced-v0.2.0`, accepted ref `accepted/rebalanced-0.2.0`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted source SHA `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
 
 The internal evidence/design categories remain distinct from public edition naming:
@@ -154,7 +154,7 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset for the current stable Rebalanced edition. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced 0.2.0 ruleset. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 

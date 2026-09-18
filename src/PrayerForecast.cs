@@ -18,6 +18,9 @@ namespace PrayerClarity
 
         internal sealed class Result
         {
+            internal string CraftId;
+            internal int QualityTier;
+
             // Exact resolved values stay available for correctness/tests/balance work.
             // Default pulpit rendering intentionally does not expose these totals.
             internal int BaseFaith;
@@ -34,6 +37,7 @@ namespace PrayerClarity
 
             internal int ChancePercent;
             internal float GraveyardQuality;
+            internal float SoulGratitude;
             internal bool UsesSoulGratitude;
             internal BonusHighlight Highlight;
             internal string SpecialText;
@@ -113,6 +117,8 @@ namespace PrayerClarity
 
             return new Result
             {
+                CraftId = tier.CraftId,
+                QualityTier = tier.QualityTier,
                 BaseFaith = baseFaith,
                 BaseMoney = baseMoney,
                 BonusFaith = bonusFaith,
@@ -123,6 +129,7 @@ namespace PrayerClarity
                 FixedMoneyBonus = tier.FixedMoneyBonus,
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
                 GraveyardQuality = R.ZoneQuality("graveyard"),
+                SoulGratitude = tier.UsesSoulGratitude ? R.PlayerParam("gratitude_points") : 0f,
                 UsesSoulGratitude = tier.UsesSoulGratitude,
                 Highlight = tier.Highlight,
                 SpecialText = tier.SpecialText,

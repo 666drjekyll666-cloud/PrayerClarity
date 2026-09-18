@@ -2,6 +2,36 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+
+## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
+
+- User acceptance: **2026-09-18**. After separate runtime passes, the user explicitly approved both candidates for promotion to `main` and stable GitHub publication.
+- Frozen accepted refs:
+  - `accepted/vanilla-1.0.25` -> source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+  - `accepted/rebalanced-0.2.0` -> source SHA `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- **PrayerClarity: Vanilla 1.0.25**
+  - accepted CI run: `35347730945`
+  - artifact ID: `10547383753`
+  - artifact: `PrayerClarity-1.0.25-ci-ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+  - artifact ZIP digest: `sha256:d7fb3fe9bd789a6568a0204d033c044c2f17c028b8b6125b15858317cb6a0f92`
+  - release asset: `PrayerClarity.dll`
+  - DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`
+- **PrayerClarity: Rebalanced 0.2.0**
+  - accepted CI run: `35346055221`
+  - artifact ID: `10547166000`
+  - artifact: `PrayerClarity-shared-ui-1.0.24-rebalanced-0.2.0-ci-26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+  - artifact ZIP digest: `sha256:54a49d9a460d255a594b788089cde9b26433f38eb0f1214d6a3a5efa94c5051f`
+  - release asset: `PrayerClarity.Rebalanced.dll`
+  - DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
+- Stable publication policy: publish these **exact accepted bytes without rebuilding**.
+- Vanilla runtime acceptance: current Soul Gratitude row rendered correctly for Soul's Repose; stock Gold Soul's Repose remained q60; non-terminal Repose retained normal stock wording; no PrayerClarity-specific runtime error was observed.
+- Rebalanced runtime acceptance: revised Faith/Donations/Combo and requirements rendered as designed; Soul's Repose q30/60/120 and Soul Gratitude context rendered correctly; representative timed prayers matched across pulpit/Technology/Temporary Effects; Test Harness + Rebalanced Compatibility operated correctly; no PrayerClarity-specific runtime error was observed.
+- Deferred, non-blocking runtime verification:
+  - terminal Repose endpoint wording/behavior awaits a save with terminal Donkey corpse progression;
+  - the real successful Silver/Gold Imagination sermon has not yet been visually observed dropping its 3 premium Stories, although the implementation uses the verified native sermon-drop path.
+- Any future change required by deferred verification must use a new version; the accepted 1.0.25 / 0.2.0 binaries are immutable.
+- Promotion/publication metadata is appended after the stable merge and release workflow complete.
+
 ## Stable sibling releases — Vanilla 1.0.24 / Rebalanced 0.1.5
 
 - User acceptance: 2026-09-18. The tested shared candidate was explicitly approved for promotion to the stable line for both sibling editions.
@@ -345,3 +375,97 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Status: **pending user runtime capture**.
 
 Do not treat this probe as a release candidate or production architecture. Once its narrow questions are answered, durable derived facts belong in `docs/PRAYER_MECHANICS.md` and the probe should not become a permanent runtime dependency.
+
+## PrayerClarity: Rebalanced 0.2.0 — first executable candidate
+
+- Type: executable candidate for the accepted 2026-09-18 fairness/rework specification.
+- Frozen candidate ref: `candidate/rebalanced-0.2.0`.
+- Exact build source SHA: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- GitHub Actions run: `35346055221`.
+- Workflow result: **success** on `ubuntu-latest`; localization JSON validation, restore, Rebalanced build, Vanilla sibling build, locale-marker verification, staging and artifact upload all passed.
+- Workflow artifact ID: `10547166000`.
+- Artifact: `PrayerClarity-shared-ui-1.0.24-rebalanced-0.2.0-ci-26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- Artifact ZIP digest: `sha256:54a49d9a460d255a594b788089cde9b26433f38eb0f1214d6a3a5efa94c5051f`.
+- Handoff filename: `PrayerClarity.Rebalanced-0.2.0-ci.dll`.
+- Handoff DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`.
+- Supported target: Graveyard Keeper 1.407, Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- Mechanics scope: accepted 0.2.0 resource-family balance, revised CQ ladders, BSS Soul's Repose q30/60/120, fixed specialist outputs through stock success-only prayer output items, and best-existing-tier Repose narrowing.
+- Shared presentation scope: current Soul Gratitude pulpit metric for Soul's Repose; contextual Repose endpoint replacement derived from current player/body data; all new strings present in 11 official locales.
+- Performance shape: no per-frame work; corpse tier catalogue is inspected only on relevant Donkey delivery or pulpit redraw; stock `GameSave.GenerateBody` remains authoritative.
+- Runtime status: **not yet accepted**. Focused in-game acceptance is required; do not promote to `main` yet.
+
+
+## PrayerClarity: Vanilla 1.0.25 — shared clarity candidate
+
+- Type: shared Clarity/pulpit follow-up for the Vanilla sibling; **no prayer mechanics or balance changes**.
+- Frozen candidate ref: `candidate/vanilla-1.0.25`.
+- Exact source SHA: `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
+- GitHub Actions run: `35347730945`.
+- Workflow result: **success** on `ubuntu-latest`; 11 localization JSON files validated, restore/build passed, embedded-locale markers passed, candidate/Nexus staging passed.
+- Workflow artifact ID: `10547383753`.
+- Artifact: `PrayerClarity-1.0.25-ci-ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
+- Artifact ZIP digest: `sha256:d7fb3fe9bd789a6568a0204d033c044c2f17c028b8b6125b15858317cb6a0f92`.
+- Handoff filename: `PrayerClarity-1.0.25-ci.dll`.
+- Handoff DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
+- Supported target: Graveyard Keeper 1.407, Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- Scope:
+  - Soul's Repose pulpit context displays current Soul Gratitude as an additional input metric.
+  - Repose pulpit can replace the stock effect line with the localized endpoint message when the stock +1 maximum adds no higher ordinary corpse tier.
+  - shared corpse-tier catalogue/state lookup is presentation-only in Vanilla.
+  - all stock prayer requirements, outputs, formulas, buffs and corpse-generation mechanics remain unchanged.
+- Test Harness protocol: use the normal Vanilla Test Harness only. **Do not load PrayerClarity.TestHarness.RebalancedCompat** with Vanilla; that adapter exists only for the Rebalanced sibling and uses the legacy Vanilla GUID alias.
+- Runtime acceptance:
+  1. select Soul's Repose and confirm the additional Soul Gratitude row fits naturally;
+  2. select Repose and confirm the ordinary effect wording remains while a higher ordinary tier is available;
+  3. on a save at terminal Donkey progression, confirm the effect line becomes `Ещё более качественные тела недоступны.`;
+  4. confirm no stock mechanics/balance values changed.
+- Status: **ready for focused runtime verification; not accepted**.
+
+
+### Runtime check 2026-09-18 — Rebalanced 0.2.0 first pass
+
+User-tested candidate:
+- Rebalanced source: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
+- Test Harness 0.1.2 + Rebalanced Compatibility 0.1.2 + existing bridge set.
+
+Accepted observations from this pass:
+- Rebalanced 0.2.0 and Test Harness compatibility loaded successfully together.
+- Faith / Donations / Combo preview semantics and revised requirements appeared as designed.
+- Soul's Repose pulpit displayed the additional current Soul Gratitude metric without requiring manual layout tuning.
+- Soul's Repose Bronze and Gold screenshots matched the candidate ladder: q30 Bronze / q120 Gold and +50% / +150% success contribution.
+- RU/EN/DE/JA screenshots rendered the added context; JA is visually denser but no blocking clipping/overflow was reported.
+- User exercised multiple timed prayer previews/activations and reported matching descriptions across pulpit, Technology and active-effect/character surfaces.
+- Harness compatibility successfully projected Rebalanced tier state for real synthetic native buffs (observed Gold Excellence 54 min, Gold Roots 108 min, Gold Combat 108 min).
+- No PrayerClarity-specific exception/error was observed in the supplied runtime log.
+
+Not verified in this pass:
+- terminal Repose endpoint presentation/behavior: current save has not yet reached terminal corpse progression;
+- actual normal-sermon reward payout for the new fixed-only Faith/Donations and percentage-only Combo family: Test Harness synthetic preview bypasses normal sermon rewards by design;
+- exhaustive visual acceptance of every locale; multi-language switching was exercised, with screenshots supplied for representative locales;
+- exact timed-effect duration audit was not manually repeated because durations are unchanged by the candidate.
+
+Status:
+- **presentation/semantic/timed-buff first pass accepted**;
+- candidate remains pending the narrow normal-sermon reward check and terminal Repose check (the latter can wait until a suitable save/progression state exists).
+
+
+### Runtime check 2026-09-18 — Vanilla 1.0.25 shared-Clarity pass
+
+User-tested candidate:
+- Vanilla source: `ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+- DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`
+- Test Harness 0.1.2 + existing bridge set; Rebalanced Compatibility correctly absent.
+
+Accepted observations:
+- PrayerClarity 1.0.25 loaded successfully as the clarity-only sibling.
+- Soul's Repose displayed the added current Soul Gratitude row at the pulpit.
+- Vanilla Soul's Repose retained stock q60 Gold and stock sermon contributions; the shared UI addition did not alter mechanics.
+- Vanilla Repose Gold retained its stock q50/effect presentation on the tested non-terminal save, so the endpoint replacement did not trigger prematurely.
+- No PrayerClarity-specific exception/error was observed in the supplied runtime log.
+
+Not verified:
+- terminal Repose endpoint wording, because no available save has terminal Donkey corpse progression.
+
+Status:
+- **Vanilla 1.0.25 shared-Clarity runtime pass accepted except terminal Repose endpoint**, which can wait for a suitable save.

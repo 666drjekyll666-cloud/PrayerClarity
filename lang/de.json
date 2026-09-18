@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "Effekt",
   "forecast.graveyard_quality": "Friedhofsqualität: (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "Seelendankbarkeit: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Garantiert",
   "forecast.success_bonus": "Bei Erfolg ({0}%)",
   "forecast.dependency_note": "(faith) Glaube — Kirchenqualität\n(slv) Spenden — Friedhofsqualität",
@@ -18,7 +19,8 @@
   "tech.quantity": "Menge",
   "tech.effect.imagination_intro": "Verbessert die Schreibqualität.",
   "tech.effect.excellence_intro": "Verbessert die Herstellungsqualität.",
-  "tech.souls_base_faith": "Glaube hängt von Kirchenqualität und Seelendankbarkeit ab.",
+  "tech.souls_base_faith": "Glaube hängt von Kirchenqualität und Seelendankbarkeit ab.",  "repose.endpoint": "Keine Leichen höherer Qualität sind verfügbar.",
+
   "buff.souls_repose": "(faith) hängt von Kirchenqualität und (gratitude_points) ab.",
   "active.sword": "+{0:0.##} Schaden",
   "active.shield": "+{0:0.##} Rüstung",
