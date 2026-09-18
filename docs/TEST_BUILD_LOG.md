@@ -519,3 +519,19 @@ Status:
 - Buffs whose mechanics are tier-invariant in Rebalanced (Imagination, Soul Contentment, Thorough Cleansing) rely on their native buff definition only.
 - Save-safety note: this intentionally uses the real live save buff list. Synthetic buffs should be removed before preserving a test save; the console provides per-effect Remove and Remove all.
 - Scope limit: this helper does not simulate sermon payout-only mechanics (Faith, Donations, Combo, Soul's Repose) or Imagination's success-only story reward. Those require a separate verified one-shot/sermon-path helper if runtime testing later warrants it.
+
+
+### Rebalanced Test Console 0.1.2 — synthetic Boost II edge probe
+
+- Type: research-only runtime helper for Rebalanced 0.2.2 Roots acceptance.
+- Frozen candidate ref: `candidate/rebalanced-test-console-0.1.2`.
+- Exact source SHA: `f50fff1d7dc314f7f27ac125d1e760346a6ce6fe`.
+- GitHub Actions run: `35383083880` — **success**.
+- Artifact ID: `10563027281`.
+- Artifact ZIP digest: `sha256:2449224f347692e1c640b55b1eae9b3166d2c5afd29217a220885c54bd42f3e7`.
+- DLL SHA-256: `cd0804631532ea6d0c1d2faa4b086b233591f48b63b9ebb06573d540087d4729`.
+- Adds a UI toggle `Boost II growth simulation`.
+- When enabled, it changes only the runtime return value of `grow_time` to at least 3 for an active plant craft whose native expression already consumes both `grow_time` and `buff_plant`.
+- It does not grant an item, mutate serialized crop/plot data, or persist fertilizer state.
+- Existing Roots diagnostic is retained and now logs `boost_ii_sim`.
+- Intended acceptance test: enable simulation, activate Gold Roots, plant one ordinary crop, return the log. Expected ordinary 1440-second crop result: `grow_time=3`, `craft_time_with_roots=72`; no expression errors or instant completion.
