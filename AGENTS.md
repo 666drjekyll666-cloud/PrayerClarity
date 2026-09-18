@@ -31,7 +31,7 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 ### Current accepted stable baselines
 
 - **PrayerClarity: Vanilla 1.0.25** — tag `v1.0.25`, accepted ref `accepted/vanilla-1.0.25`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
-- **PrayerClarity: Rebalanced 0.2.2** — accepted ref `accepted/rebalanced-0.2.2`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`, accepted DLL SHA-256 `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`. The source is promoted to `main`; stable GitHub Release publication remains a separate repository-distribution step until `rebalanced-v0.2.2` exists.
+- **PrayerClarity: Rebalanced 0.2.2** — tag/release `rebalanced-v0.2.2`, accepted ref `accepted/rebalanced-0.2.2`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`, accepted/released DLL SHA-256 `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
 - Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
 
