@@ -345,3 +345,21 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Status: **pending user runtime capture**.
 
 Do not treat this probe as a release candidate or production architecture. Once its narrow questions are answered, durable derived facts belong in `docs/PRAYER_MECHANICS.md` and the probe should not become a permanent runtime dependency.
+
+## PrayerClarity: Rebalanced 0.2.0 — first executable candidate
+
+- Type: executable candidate for the accepted 2026-09-18 fairness/rework specification.
+- Frozen candidate ref: `candidate/rebalanced-0.2.0`.
+- Exact build source SHA: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- GitHub Actions run: `35346055221`.
+- Workflow result: **success** on `ubuntu-latest`; localization JSON validation, restore, Rebalanced build, Vanilla sibling build, locale-marker verification, staging and artifact upload all passed.
+- Workflow artifact ID: `10547166000`.
+- Artifact: `PrayerClarity-shared-ui-1.0.24-rebalanced-0.2.0-ci-26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- Artifact ZIP digest: `sha256:54a49d9a460d255a594b788089cde9b26433f38eb0f1214d6a3a5efa94c5051f`.
+- Handoff filename: `PrayerClarity.Rebalanced-0.2.0-ci.dll`.
+- Handoff DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`.
+- Supported target: Graveyard Keeper 1.407, Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- Mechanics scope: accepted 0.2.0 resource-family balance, revised CQ ladders, BSS Soul's Repose q30/60/120, fixed specialist outputs through stock success-only prayer output items, and best-existing-tier Repose narrowing.
+- Shared presentation scope: current Soul Gratitude pulpit metric for Soul's Repose; contextual Repose endpoint replacement derived from current player/body data; all new strings present in 11 official locales.
+- Performance shape: no per-frame work; corpse tier catalogue is inspected only on relevant Donkey delivery or pulpit redraw; stock `GameSave.GenerateBody` remains authoritative.
+- Runtime status: **not yet accepted**. Focused in-game acceptance is required; do not promote to `main` yet.
