@@ -4,7 +4,7 @@
     <LangVersion>7.3</LangVersion>
     <AssemblyName>PrayerClarity.Rebalanced</AssemblyName>
     <RootNamespace>PrayerClarity</RootNamespace>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -39,6 +39,7 @@
     <Compile Include="src/RebalancedStaticProjection.cs" />
     <Compile Include="src/RebalancedExpressionProjection.cs" />
     <Compile Include="src/RebalancedTierState.cs" />
+    <Compile Include="src/RebalancedRoots.cs" />
     <Compile Include="src/RebalancedRepose.cs" />
     <Compile Include="src/RebalancedCombat.cs" />
     <Compile Include="src/RebalancedExcellence.cs" />
