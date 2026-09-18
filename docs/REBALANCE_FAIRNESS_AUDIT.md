@@ -2052,3 +2052,204 @@ For balance modeling, distinguish:
 External community tests independently match the direct formula. A March 2026 discussion rewrites the base as \`CQ/5 + (SG-CQ)/10\`, which algebraically equals \`(CQ+SG)/10\` before Eloquence.
 
 This strengthens the q120 Gold Soul's Repose concept: the extraordinary payout requires both a prepared church and deliberate accumulation of a large **current** Soul Gratitude stockpile, rather than passive lifetime completion.
+
+
+## Pre-production candidate audit — consolidated next step
+
+Status: **review candidate, not yet production-accepted**. This section consolidates the latest working decisions so historical alternatives elsewhere in this research file do not obscure the next coherent implementation candidate.
+
+### Proposed mechanics / progression roster
+
+| Prayer | Proposed q | Proposed Rebalanced special/resource behavior |
+| --- | ---: | --- |
+| Ordinary | 10 | stock |
+| Faith | 20 / 40 / 60 | +50% Faith at every tier; +5 / +10 / +15 flat Faith; no prayer-owned donation bonus |
+| Donations | 20 / 40 / 60 | +50% donations at every tier; +3 / +6 / +9 silver flat; no prayer-owned Faith bonus |
+| Combo | 40 / 60 / 80 | +100% / +150% / +200% Faith and donations; no prayer-owned flat Faith/money |
+| Prosperity | 10 / 20 / 30 | stock 1 / 2 / 3 Commercial Blessings and stock outputs |
+| Shoots & Roots | 10 / 30 / 50 | -20% / -30% / -40% growth time |
+| Repentance | 20 / 40 / 60 | 50% / 75% / 100% daily confession probability |
+| Repose | 20 / 40 / 50 | Bronze stock range; Silver halfway from stock distribution to certainty; Gold guarantees best eligible corpse tier |
+| Combat | 20 / 40 / 60 | +5 / +10 / +15 damage; +4 armor; 1 / 2 / 4 HP/s regeneration |
+| Imagination | 20 / 40 / 60 | +0.7 writing quality all tiers; successful Silver +3 Silver Stories; Gold +3 Gold Stories |
+| Excellence | 20 / 60 / 90 | +0.2 / +0.5 / +1.0 linked-craft quality |
+| BSS Soul's Repose | 30 / 60 / 120 | +50% / +100% / +150% Faith on the verified Souls base; remove off-theme prayer-owned donation/fixed outputs |
+| BSS Soul Contentment | 20 / 40 / 60 | +20% Soul Gratitude gain all tiers |
+| BSS Thorough Cleansing | 30 / 60 / 90 | x2 Sin Shards all tiers |
+
+All timed prayer durations remain **stock 1.407**. Rebalanced does not rebalance duration.
+
+### Philosophy audit
+
+**Temptation parity: PASS**
+
+Each prayer has a credible stage/niche rather than being forced into permanent numerical parity. Natural obsolescence remains allowed:
+- specialists age out into Combo;
+- Prosperity exhausts its merchant-tier role;
+- Repose stock/Bronze can exhaust its tier-expansion role;
+- Roots remains useful when farming throughput still matters.
+
+Narrow prayers may remain deliberately strong:
+- Combat is powerful but deep, Book-class and combat-only;
+- Cleansing is a strong scarce-resource multiplier but Souls-workflow-specific;
+- Excellence is powerful but bounded by craft-quality ceilings.
+
+**Progression grammar: PASS**
+
+The core economic handoff matches the game's production hierarchy:
+- Chapter specialists: q20/40/60;
+- premium Book Combo: q40/60/80;
+- near-max passive premium effects: q90;
+- one deliberate aspirational DLC Gold ritual: q120.
+
+Imagination is normalized to 20/40/60 because its deep blue-point/Hard-Book access means q20 does not punish the opening game and removes the awkward 10/40/60 ladder.
+
+**Fun-first / avoid tuning for symmetry: PASS**
+
+No change is proposed solely because a duration or number is large:
+- Roots keeps its long Gold duration because exploiting it requires more active farming throughput;
+- Combat keeps its long duration because combat is narrow and not the game's dominant economy;
+- Soul Contentment stops at q60 rather than being raised to 70 merely for symmetry.
+
+**Readable choice without spreadsheet: PASS, with one deliberate exception**
+
+The ordinary resource grammar is immediately legible:
+- need Faith -> Faith specialist;
+- need money -> Donations;
+- need both -> Combo.
+
+Soul's Repose is intentionally state-dependent. The pulpit already states that Faith depends on Church Quality + Soul Gratitude; the next candidate should also display the **current Soul Gratitude value** so the player can see the changing input without exposing the final resolved Faith payout.
+
+Do not show a calculated final Faith prediction; preserve the sermon reward reveal.
+
+**Reward-reveal contract: PASS**
+
+New q/effect values are intrinsic prayer properties and may be shown exactly. Current CQ/GQ/Soul Gratitude are input state. Fully resolved Faith/donation totals remain hidden before the sermon.
+
+**Minimal UI / no wiki wall: PASS**
+
+No new Technology prose is planned for Repose endpoints or the q120 ritual.
+- Repose endpoint information is pulpit-only and contextual.
+- Soul's Repose gains one additional current-state metric, not a new explanatory panel.
+
+**Runtime/performance: PASS by design**
+
+The proposed mechanics continue to use load-time/static projection and the existing narrow runtime seams.
+New contextual presentation should be computed only on pulpit redraw/open:
+- current Soul Gratitude: direct player parameter read;
+- Repose endpoint/effective-range status: direct/cached canonical progression data.
+No per-frame work, scene scan or repeated broad reflection is justified.
+
+**Single semantic source: REQUIRED**
+
+All changed q/effects must be represented by the same Rebalanced rule/semantic model used by:
+- mechanics;
+- Technology;
+- prayer-item tooltip;
+- pulpit;
+- Temporary Effects.
+
+Do not special-case display numbers separately from effective rules.
+
+**Localization: REQUIRED**
+
+Any new player-facing line must ship in all 11 supported locales.
+Prefer existing game terminology/icons. New strings currently expected:
+- current Soul Gratitude context label if vanilla localization cannot be reused safely;
+- Repose no-further-quality endpoint line.
+
+### Soul's Repose q120 nuance
+
+The verified sermon architecture preserves base Faith on failure.
+
+For BSS Soul's Repose:
+
+\`base = (CQ + current GP) * 0.1 * EloquenceFactor\`
+
+is the **base sermon Faith**, not the success-only prayer bonus.
+
+Therefore q120 gates the Gold prayer's **+150% success contribution**, not the entire Soul-Gratitude-powered payout.
+
+Example without Eloquence/rounding:
+- CQ 120, GP 200 -> base = 32 Faith;
+- failure still gives ~32 base Faith;
+- Gold success adds another ~48 Faith -> ~80 total.
+
+This does not invalidate q120. It changes the interpretation:
+- large current GP creates a valuable base even on failure;
+- the same large base makes the +150% success bonus extremely valuable in absolute terms;
+- church preparation increases both reliability and, through CQ itself, the Souls base.
+
+Do not describe q120 as a hard output lock.
+
+### New pulpit context: current Soul Gratitude
+
+For \`b_souls\` only, add a third dynamic resource/context metric after the existing Church/Graveyard context:
+
+\`Soul Gratitude: <current gratitude_points>\`
+
+Show **current value only**, not \`current / capacity\`, because current GP is the formula input and capacity is not.
+
+Implementation should extend the context-metric model generically rather than create a bespoke label object for one prayer.
+
+Current layout evidence:
+- the accepted context widget is sized for the existing three lines;
+- adding a fourth line is likely to force \`ShrinkContent\` or crowding;
+- the accepted enlarged pulpit has vertical headroom, so the first implementation should increase context height/content-driven spacing for the extra metric rather than reduce font size globally.
+
+This is a **visual acceptance gate**: final geometry must be judged in runtime after implementation.
+
+### Repose endpoint pulpit replacement
+
+Normal Vanilla wording:
+\`Осёл может привозить более качественные тела.\`
+
+When the prayer cannot improve corpse quality/tier at the player's current progression:
+\`Ещё более качественные тела недоступны.\`
+
+This **replaces** the effect line; it is not appended.
+
+Do not put this in Technology.
+
+Rebalanced:
+- Bronze follows the stock endpoint rule;
+- Silver/Gold retain their reliability wording whenever narrowing the current eligible range can still improve the distribution;
+- only use the endpoint replacement when the selected tier cannot change the resulting eligible range at all.
+
+### Remaining evidence gates before production implementation
+
+**BLOCKING — Repose terminal range / no-effect predicate**
+
+Direct project evidence proves stock +1 max behavior and Rebalanced range narrowing, but does not yet directly prove the exact terminal stock 1.407 corpse range or safe no-effect predicate.
+
+Before implementing the contextual "no higher-quality bodies" line:
+- establish the final/effective Donkey tier range directly in 1.407;
+- verify what stock \`GenerateBody\` does when Repose's +1 max is beyond the last real corpse tier;
+- verify whether Rebalanced Silver/Gold still improve distribution at that endpoint.
+
+This should be one narrow read-only/static/runtime research question, not a broad new investigation.
+
+**NON-BLOCKING — q120 reachability evidence strength**
+
+External/current evidence shows Cathedral setups well above 120 CQ with candles/incense and an extreme temporary maximum far above it. The design does not require the exact absolute maximum, only that q120 is a realistically preparable aspirational threshold.
+
+A direct 1.407 furniture/consumable audit would strengthen documentation but is not required to implement q120 unless current runtime contradicts the established external evidence.
+
+### Proposed execution sequence after user approval
+
+1. Close the narrow Repose terminal-range evidence gap.
+2. Create a new development branch from stable \`main\`.
+3. Implement the consolidated mechanics/q roster above; **do not change durations**.
+4. Extend the semantic/forecast context with current Soul Gratitude.
+5. Implement the Repose contextual effect replacement from the verified endpoint predicate.
+6. Update all 11 locales and candidate docs.
+7. Run one coherent Release build/CI gate; do not build on every intermediate commit.
+8. User runtime acceptance focuses only on changed behavior:
+   - Soul's Repose pulpit: Soul Gratitude line fits and reads naturally;
+   - Repose endpoint: normal vs no-effect wording is correct;
+   - representative Faith / Donations / Combo values and q thresholds;
+   - q120 Soul's Repose success threshold / presentation;
+   - one or two representative timed effects to ensure unchanged durations and new q values did not regress presentation.
+9. Only after runtime acceptance update canonical Rebalanced rules/docs and promote a new stable Rebalanced release.
+
+No Vanilla balance behavior changes are proposed. Shared Vanilla presentation changes are limited to the truthful Repose endpoint context where verified.
