@@ -266,16 +266,35 @@ Do **not** show the fully resolved current Faith/donation payout before the serm
 
 ## Evidence / acceptance gates
 
-### Blocking before Repose endpoint implementation
+### Repose terminal-range gate: CLOSED
 
-Directly close the final Donkey/corpse-range question in stock 1.407:
+Existing direct 1.407 evidence was sufficient; no new runtime probe is required.
 
-1. establish the terminal effective `tier_min/tier_max` range;
-2. verify what stock body generation does when the prayer's +1 maximum extends beyond the final real corpse tier;
-3. verify whether Rebalanced Silver/Gold still improve the distribution at that endpoint;
-4. derive the safe on-demand predicate for showing the endpoint replacement.
+Verified terminal normal progression:
 
-This should be one narrow evidence task, not a broad new research project.
+- permanent Donkey range = **2..3**;
+- ordinary BodyDefinitions exist only through tier **3**;
+- stock Repose evaluates **2..4**, but tier 4 has no ordinary BodyDefinition;
+- `GenerateBody` filters definitions by inclusive tier range and does not clamp an empty tier to the nearest available tier.
+
+Consequences:
+
+- Vanilla Repose has no corpse-quality/distribution effect at terminal progression, so the pulpit may truthfully replace its normal effect line with the endpoint wording there.
+- Rebalanced Silver/Gold can retain late-game value by narrowing to **the highest actually existing eligible tier (3)**.
+- Do **not** narrow by blindly assigning raw `tier_min = tier_max` when raw max is 4. Stable 0.1.5 currently does that and therefore has a latent terminal edge-case that the next candidate must fix.
+
+Safe Rebalanced rule:
+
+1. obtain the evaluated ordinary Donkey tier range;
+2. resolve the highest existing ordinary BodyDefinition tier inside that range;
+3. Bronze leaves the range unchanged;
+4. Silver, on its reliability branch, raises `tier_min` to that existing best tier;
+5. Gold always raises `tier_min` to that existing best tier;
+6. leave stock `GenerateBody` and its BodyDefinition RNG authoritative.
+
+Safe Vanilla endpoint predicate for the normal progression case: the prayer's +1 maximum introduces **no additional ordinary BodyDefinition tier** compared with the unbuffed normal range.
+
+Implementation should derive this from current data/state rather than hard-code the numeral 3, so the presentation and mechanics remain robust if the loaded body catalogue differs.
 
 ### Runtime acceptance after implementation
 
