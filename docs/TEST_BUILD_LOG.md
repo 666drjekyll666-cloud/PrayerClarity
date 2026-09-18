@@ -418,3 +418,24 @@ Not verified in this pass:
 Status:
 - **presentation/semantic/timed-buff first pass accepted**;
 - candidate remains pending the narrow normal-sermon reward check and terminal Repose check (the latter can wait until a suitable save/progression state exists).
+
+
+### Runtime check 2026-09-18 — Vanilla 1.0.25 shared-Clarity pass
+
+User-tested candidate:
+- Vanilla source: `ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+- DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`
+- Test Harness 0.1.2 + existing bridge set; Rebalanced Compatibility correctly absent.
+
+Accepted observations:
+- PrayerClarity 1.0.25 loaded successfully as the clarity-only sibling.
+- Soul's Repose displayed the added current Soul Gratitude row at the pulpit.
+- Vanilla Soul's Repose retained stock q60 Gold and stock sermon contributions; the shared UI addition did not alter mechanics.
+- Vanilla Repose Gold retained its stock q50/effect presentation on the tested non-terminal save, so the endpoint replacement did not trigger prematurely.
+- No PrayerClarity-specific exception/error was observed in the supplied runtime log.
+
+Not verified:
+- terminal Repose endpoint wording, because no available save has terminal Donkey corpse progression.
+
+Status:
+- **Vanilla 1.0.25 shared-Clarity runtime pass accepted except terminal Repose endpoint**, which can wait for a suitable save.
