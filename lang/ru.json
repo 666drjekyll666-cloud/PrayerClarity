@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "Эффект",
   "forecast.graveyard_quality": "Качество кладбища: (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "Благодарность душ: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Гарантировано",
   "forecast.success_bonus": "При успехе ({0}%)",
   "forecast.dependency_note": "(faith) Вера — от качества церкви\n(slv) Пожертвования — от качества кладбища",
@@ -18,7 +19,8 @@
   "tech.quantity": "Количество",
   "tech.effect.imagination_intro": "Повышает качество письма.",
   "tech.effect.excellence_intro": "Повышает качество изделий.",
-  "tech.souls_base_faith": "Вера зависит от качества церкви и Благодарности душ.",
+  "tech.souls_base_faith": "Вера зависит от качества церкви и Благодарности душ.",  "repose.endpoint": "Ещё более качественные тела недоступны.",
+
   "buff.souls_repose": "(faith) зависит от качества церкви и (gratitude_points).",
   "active.sword": "+{0:0.##} к урону",
   "active.shield": "+{0:0.##} к броне",
