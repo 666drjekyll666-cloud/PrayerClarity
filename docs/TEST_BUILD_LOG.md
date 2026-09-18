@@ -345,3 +345,12 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Status: **pending user runtime capture**.
 
 Do not treat this probe as a release candidate or production architecture. Once its narrow questions are answered, durable derived facts belong in `docs/PRAYER_MECHANICS.md` and the probe should not become a permanent runtime dependency.
+
+## PrayerClarity: Rebalanced 0.2.0 — candidate build
+
+- Type: first executable candidate for the accepted 2026-09-18 fairness/rework specification.
+- Candidate ref: `candidate/rebalanced-0.2.0`.
+- Scope: resource-family rebalance, revised CQ ladders, BSS Soul's Repose q120 ladder, shared Soul Gratitude pulpit metric, contextual Repose endpoint wording, and best-existing-tier Repose narrowing.
+- Safety/performance: no per-frame work; corpse-tier lookup occurs only on relevant Donkey delivery / pulpit redraw; stock `GenerateBody` remains authoritative.
+- Vanilla sibling: shared Clarity presentation additions only; no intended vanilla prayer-mechanics changes.
+- Status: **build pending**. Runtime acceptance requires only the focused checks listed in `docs/PRAYER_REBALANCE_CANDIDATE.md`.
