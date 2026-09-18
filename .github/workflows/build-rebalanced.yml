@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'candidate/rebalanced-*'
+      - '!candidate/rebalanced-test-console-*'
 
 permissions:
   contents: read
