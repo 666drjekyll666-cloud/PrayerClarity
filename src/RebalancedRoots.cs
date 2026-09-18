@@ -75,13 +75,14 @@ namespace PrayerClarity
 
         private sealed class ScopedPlantParamState
         {
-            internal object Wgo;
+            internal object RuntimeEffect;
             internal float OriginalValue;
         }
 
         private static ManualLogSource _log;
-        private static MethodInfo _getParam;
-        private static MethodInfo _setParam;
+        private static MethodInfo _runtimeEffectGet;
+        private static MethodInfo _runtimeEffectSet;
+        private static MethodInfo _runtimeEffectRemoveZeroValues;
         private static MethodInfo _getRawExpression;
         private static bool _runtimeFailureLogged;
 
@@ -92,9 +93,11 @@ namespace PrayerClarity
             Type craftComponent = R.GameType("CraftComponent");
             Type worldGameObject = R.GameType("WorldGameObject");
             Type smartExpression = R.GameType("SmartExpression");
+            Type gameRes = R.GameType("GameRes");
             if (craftComponent == null) throw new MissingMemberException("CraftComponent");
             if (worldGameObject == null) throw new MissingMemberException("WorldGameObject");
             if (smartExpression == null) throw new MissingMemberException("SmartExpression");
+            if (gameRes == null) throw new MissingMemberException("GameRes");
 
             MethodInfo doAction = R.Method(
                 craftComponent,
@@ -104,17 +107,23 @@ namespace PrayerClarity
             if (doAction == null)
                 throw new MissingMethodException("CraftComponent.DoAction(WorldGameObject,float,bool)");
 
-            _getParam = worldGameObject.GetMethod(
-                "GetParam",
+            _runtimeEffectGet = gameRes.GetMethod(
+                "Get",
                 R.Inst,
                 null,
                 new[] { typeof(string), typeof(float) },
                 null);
-            _setParam = worldGameObject.GetMethod(
-                "SetParam",
+            _runtimeEffectSet = gameRes.GetMethod(
+                "Set",
                 R.Inst,
                 null,
                 new[] { typeof(string), typeof(float) },
+                null);
+            _runtimeEffectRemoveZeroValues = gameRes.GetMethod(
+                "RemoveZeroValues",
+                R.Inst,
+                null,
+                Type.EmptyTypes,
                 null);
             _getRawExpression = smartExpression.GetMethod(
                 "GetRawExpressionString",
@@ -123,8 +132,9 @@ namespace PrayerClarity
                 Type.EmptyTypes,
                 null);
 
-            if (_getParam == null) throw new MissingMethodException("WorldGameObject.GetParam(string,float)");
-            if (_setParam == null) throw new MissingMethodException("WorldGameObject.SetParam(string,float)");
+            if (_runtimeEffectGet == null) throw new MissingMethodException("GameRes.Get(string,float)");
+            if (_runtimeEffectSet == null) throw new MissingMethodException("GameRes.Set(string,float)");
+            if (_runtimeEffectRemoveZeroValues == null) throw new MissingMethodException("GameRes.RemoveZeroValues()");
             if (_getRawExpression == null) throw new MissingMethodException("SmartExpression.GetRawExpressionString()");
 
             R.PatchHooks(
@@ -177,16 +187,26 @@ namespace PrayerClarity
                 object wgo = R.Get(__instance, "wgo");
                 if (wgo == null) return;
 
-                float original = Convert.ToSingle(_getParam.Invoke(wgo, new object[] { StockPlantParam, 0f }));
+                // WGOpar(name) is data.GetParam(name, 0) + wgo.totem_effect.Get(name, 0).
+                // totem_effect is a native NonSerialized runtime aggregate, so this scopes
+                // the Rebalanced bridge to the current native craft evaluation without
+                // touching the plant's serialized Item data.
+                object runtimeEffect = R.Get(wgo, "totem_effect");
+                if (runtimeEffect == null) return;
+
+                float original = Convert.ToSingle(
+                    _runtimeEffectGet.Invoke(runtimeEffect, new object[] { StockPlantParam, 0f }));
                 float projectedStockValue = reduction / 0.20f;
 
                 __state = new ScopedPlantParamState
                 {
-                    Wgo = wgo,
+                    RuntimeEffect = runtimeEffect,
                     OriginalValue = original
                 };
 
-                _setParam.Invoke(wgo, new object[] { StockPlantParam, original + projectedStockValue });
+                _runtimeEffectSet.Invoke(
+                    runtimeEffect,
+                    new object[] { StockPlantParam, original + projectedStockValue });
             }
             catch (Exception ex)
             {
@@ -204,10 +224,17 @@ namespace PrayerClarity
 
         private static void Restore(ScopedPlantParamState state)
         {
-            if (state == null || state.Wgo == null) return;
+            if (state == null || state.RuntimeEffect == null) return;
             try
             {
-                _setParam.Invoke(state.Wgo, new object[] { StockPlantParam, state.OriginalValue });
+                _runtimeEffectSet.Invoke(
+                    state.RuntimeEffect,
+                    new object[] { StockPlantParam, state.OriginalValue });
+
+                // A temporary zero entry is semantically empty and totem_effect is
+                // NonSerialized. Removing zero entries keeps the runtime aggregate clean.
+                if (Math.Abs(state.OriginalValue) <= 0.0001f)
+                    _runtimeEffectRemoveZeroValues.Invoke(state.RuntimeEffect, null);
             }
             catch (Exception ex)
             {
