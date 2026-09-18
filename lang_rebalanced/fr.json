@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "Les confessions sont plus fréquentes dans chaque confessionnal.",
   "rebalanced.tech.repose_intro": "L’âne peut apporter des corps de meilleure qualité.",
   "rebalanced.tech.combat_intro": "Renforce le Gardien au combat.",
-  "rebalanced.active.plant": "Temps de croissance des plantes : -{0:0} %",
+  "rebalanced.active.plant": "Temps de croissance des plantes : -{0:0} % · Réduction cumulée max. : -{1:0} %",
   "rebalanced.active.sins": "Chance de confession : {0:0} %",
   "rebalanced.active.repose.bronze": "L’âne peut apporter un corps d’un niveau de qualité supérieur",
   "rebalanced.active.repose.silver": "Dans la moitié des cas, le meilleur corps est garanti",
