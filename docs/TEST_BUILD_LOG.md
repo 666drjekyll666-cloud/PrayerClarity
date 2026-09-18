@@ -2,6 +2,36 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+
+## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
+
+- User acceptance: **2026-09-18**. After separate runtime passes, the user explicitly approved both candidates for promotion to `main` and stable GitHub publication.
+- Frozen accepted refs:
+  - `accepted/vanilla-1.0.25` -> source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+  - `accepted/rebalanced-0.2.0` -> source SHA `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- **PrayerClarity: Vanilla 1.0.25**
+  - accepted CI run: `35347730945`
+  - artifact ID: `10547383753`
+  - artifact: `PrayerClarity-1.0.25-ci-ebe069b4ad202ae786af9c63ded0ffb00502cff7`
+  - artifact ZIP digest: `sha256:d7fb3fe9bd789a6568a0204d033c044c2f17c028b8b6125b15858317cb6a0f92`
+  - release asset: `PrayerClarity.dll`
+  - DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`
+- **PrayerClarity: Rebalanced 0.2.0**
+  - accepted CI run: `35346055221`
+  - artifact ID: `10547166000`
+  - artifact: `PrayerClarity-shared-ui-1.0.24-rebalanced-0.2.0-ci-26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+  - artifact ZIP digest: `sha256:54a49d9a460d255a594b788089cde9b26433f38eb0f1214d6a3a5efa94c5051f`
+  - release asset: `PrayerClarity.Rebalanced.dll`
+  - DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
+- Stable publication policy: publish these **exact accepted bytes without rebuilding**.
+- Vanilla runtime acceptance: current Soul Gratitude row rendered correctly for Soul's Repose; stock Gold Soul's Repose remained q60; non-terminal Repose retained normal stock wording; no PrayerClarity-specific runtime error was observed.
+- Rebalanced runtime acceptance: revised Faith/Donations/Combo and requirements rendered as designed; Soul's Repose q30/60/120 and Soul Gratitude context rendered correctly; representative timed prayers matched across pulpit/Technology/Temporary Effects; Test Harness + Rebalanced Compatibility operated correctly; no PrayerClarity-specific runtime error was observed.
+- Deferred, non-blocking runtime verification:
+  - terminal Repose endpoint wording/behavior awaits a save with terminal Donkey corpse progression;
+  - the real successful Silver/Gold Imagination sermon has not yet been visually observed dropping its 3 premium Stories, although the implementation uses the verified native sermon-drop path.
+- Any future change required by deferred verification must use a new version; the accepted 1.0.25 / 0.2.0 binaries are immutable.
+- Promotion/publication metadata is appended after the stable merge and release workflow complete.
+
 ## Stable sibling releases — Vanilla 1.0.24 / Rebalanced 0.1.5
 
 - User acceptance: 2026-09-18. The tested shared candidate was explicitly approved for promotion to the stable line for both sibling editions.
