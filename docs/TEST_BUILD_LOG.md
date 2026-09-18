@@ -475,3 +475,22 @@ Not verified:
 
 Status:
 - **Vanilla 1.0.25 shared-Clarity runtime pass accepted except terminal Repose endpoint**, which can wait for a suitable save.
+
+
+## PrayerClarity: Rebalanced 0.2.1 — Roots runtime fix candidate
+
+- Type: focused bug-fix candidate over accepted Rebalanced 0.2.0.
+- Candidate ref: `candidate/rebalanced-0.2.1`.
+- Triggering bug: Rebalanced 0.2.0 rewrote plant `craft_time` with `Ppar("buff_plant")*Ppar("prayerclarity_rebalanced_plant_reduction")`; live Graveyard Keeper 1.407 evaluation throws `InvalidCastException` inside Expressive and `SmartExpression.EvaluateFloat` falls back to `1f`, causing auto-growth to finish almost immediately.
+- Vanilla control: PrayerClarity: Vanilla 1.0.25 leaves plant mechanics untouched and the same carrot/cabbage scenario shows no SmartExpression/Expressive exception.
+- Fix architecture: keep the verified stock `craft_time` expression unchanged. On affected plant `CraftComponent.DoAction` calls only, temporarily project the active Rebalanced Roots reduction into the stock WGO-owned `buff_plant` parameter as `reduction / 0.20` (1 / 1.5 / 2 for Bronze/Silver/Gold), then restore the exact original WGO value in a Harmony finalizer.
+- Semantics: preserves the game's additive `grow_time + buff_plant` formula rather than multiplying elapsed time externally.
+- Save safety: the injected WGO parameter exists only for the duration of the native `DoAction` call and is restored even when the original call throws; no persistent plant parameter is intended.
+- Performance shape: no per-frame polling or scans. One narrow `CraftComponent.DoAction` hook exits immediately for non-Roots plant crafts; affected auto-growth already executes through this native path at the game's own cadence.
+- Build status: pending hosted candidate build.
+- Required runtime gate after a clean build:
+  1. ordinary freshly planted carrot/cabbage no longer completes in seconds and produces no SmartExpression/Expressive error;
+  2. with active Roots, Bronze/Silver/Gold retains the intended -20/-30/-40 percentage-point term in the native additive growth formula;
+  3. repeat one case with `grow_time` fertilizer to verify the additive interaction remains intact;
+  4. return the runtime log so the absence of the 0.2.0 exception can be confirmed.
+- Broader Rebalanced behavior-risk audit is intentionally deferred until this blocker is closed; it remains a required follow-up requested by the user.
