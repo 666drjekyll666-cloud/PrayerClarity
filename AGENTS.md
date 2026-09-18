@@ -31,7 +31,7 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 ### Current accepted stable baselines
 
 - **PrayerClarity: Vanilla 1.0.25** — tag `v1.0.25`, accepted ref `accepted/vanilla-1.0.25`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
-- **PrayerClarity: Rebalanced 0.2.0** — tag `rebalanced-v0.2.0`, accepted ref `accepted/rebalanced-0.2.0`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted source SHA `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`.
+- **PrayerClarity: Rebalanced 0.2.2** — accepted ref `accepted/rebalanced-0.2.2`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`, accepted DLL SHA-256 `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`. The source is promoted to `main`; stable GitHub Release publication remains a separate repository-distribution step until `rebalanced-v0.2.2` exists.
 - Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
 
@@ -154,7 +154,7 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced 0.2.0 ruleset. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset unless a later accepted runtime-safety constraint is recorded in `docs/TEST_BUILD_LOG.md`. Rebalanced 0.2.2 adds the accepted 95% combined growth-time-reduction safety cap without changing the nominal Roots 20/30/40% ladder. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 
@@ -211,6 +211,19 @@ Localization requirements:
 - a candidate is not localization-complete if any new player-facing string exists only in English/Russian.
 
 Language switching must not introduce per-frame polling. Resolve/reload localization at an existing language/UI lifecycle boundary or lazily when rendering relevant UI.
+
+## Native-mechanics implementation gate
+
+PrayerClarity follows the global DevRules host-native-first gate, with these Graveyard Keeper-specific defaults:
+
+- when a verified stock formula already consumes a parameter such as `buff_plant`, `add_damage`, `add_armor`, `craft_q`, or another game-owned modifier, prefer supplying the intended value through that parameter/state seam and leave the stock calculation authoritative;
+- prefer changing verified `CraftDefinition`, `BuffDefinition`, `GameRes`, player/WGO parameters, or other stock-owned data that the existing execution path already consumes;
+- a game-owned `SmartExpression` parser or FlowCanvas graph engine does **not** make a newly authored replacement expression/graph "native": ownership of the formula/graph still moved into the mod;
+- do not replace an existing SmartExpression, FlowCanvas computation, or host algorithm merely to change one operand/constant until the relevant input/parameter/extension seams have been directly inspected and documented insufficient;
+- an empty stock extension point (for example a BuffDefinition tick expression deliberately executed by the game's own buff lifecycle) may be populated when it adds new behavior without replacing an existing host-owned calculation;
+- when a full formula/graph replacement is genuinely necessary, document why narrower seams cannot express the accepted semantics, then runtime-test the exact live execution path and at least one material stacking/edge interaction before acceptance.
+
+The preferred architecture is: **Graveyard Keeper owns calculation, lifecycle, stacking, rounding and side effects; PrayerClarity supplies the smallest changed input.**
 
 ## Runtime and performance constraints
 
