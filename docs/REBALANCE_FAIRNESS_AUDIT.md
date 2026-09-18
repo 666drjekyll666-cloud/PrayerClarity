@@ -776,3 +776,290 @@ Player-facing interpretation requires no two-week calculation:
 - Combo visibly gives two substantial percentages at once.
 
 This candidate should be the first premium-Combo multiplier ladder modeled in the next quantitative pass.
+
+
+## Community signal — church progression visibility and Combo crafting hierarchy
+
+Current community research adds two relevant signals.
+
+### Players do question why church progression should continue
+
+A 2026 Steam discussion explicitly asks what Graveyard Quality does because the player cannot identify the mechanic from the game itself. In the same discussion, a near-100% player says there is little incentive to improve the graveyard beyond ~200 or the church interior beyond ~60.
+
+A 2024 Reddit thread is explicitly titled "Should I keep improving the church? Does it make sermons more effective?" Replies explain that higher Church Quality still increases Faith even after q60 guarantees all stock prayers, but this is community knowledge rather than a strong in-game progression signal.
+
+Other older Steam threads likewise explain that higher Church Quality continues increasing sermon Faith, often with approximate "5 CQ -> 1 Faith" guidance.
+
+Classification: **community signal + UX finding support**, not mechanics proof. Direct project evidence already proves the underlying base-Faith formula.
+
+Implication: higher Rebalanced q thresholds can create a new **visible progression reason** to improve the church beyond the stock q60 ceiling. This is stronger player-facing motivation than the vanilla hidden/poorly explained base-output scaling.
+
+### Players already read Combo as a premium Book prayer
+
+Community comparisons repeatedly describe:
+
+- Faith/Donations as easier to craft because they need a Chapter;
+- Combo as harder because it needs a Book;
+- Gold Combo as requiring substantially more writing infrastructure / a high-quality Book;
+- stock Combo as equal to the corresponding specialist percentages while adding the second resource.
+
+One 2023 Reddit thread asks almost exactly "why make Prayer for Faith instead of Combo?" because Combo is objectively better at the same quality; replies point to the higher Church Quality threshold and Book production as the reason Faith is the easier entry.
+
+A 2025 thread similarly says Gold Combo and Gold Donations produce the same donation percentage, but Combo also gives Faith; the explicit downside identified is q60 vs q50 and the difficulty of producing a sufficiently good Book.
+
+Classification: **community signal matching direct mechanics evidence**.
+
+Implication: the game/community already has a learned grammar of **Chapter specialist = easier entry; Book Combo = premium/generalist**. A redesign that strengthens this grammar should feel more natural than one that makes Chapter specialists the most progression-demanding prayers.
+
+Community references:
+
+- https://steamcommunity.com/app/599140/discussions/0/780944762959117296/
+- https://www.reddit.com/r/GraveyardKeeper/comments/1cwli34
+- https://www.reddit.com/r/GraveyardKeeper/comments/100eswp
+- https://www.reddit.com/r/GraveyardKeeper/comments/1k3y63m
+
+## Resource-prayer family — staged handoff candidate
+
+The three prayers should be balanced as **one competitive family**:
+
+- Prayer for Faith;
+- Prayer for Donations;
+- Combo Prayer.
+
+The new design objective is a visible progression handoff rather than permanent equal-meta coexistence.
+
+### Player-facing role grammar
+
+Early / mid game:
+
+- Faith specialist = strongest simple Faith injection;
+- Donations specialist = strongest simple money injection;
+- both are Chapter-class and comparatively easy to produce.
+
+Late game:
+
+- Combo = premium Book-class generalist;
+- no flat outputs;
+- strong percentage scaling on both resources;
+- higher Church Quality requirements;
+- eventually becomes the natural universal late-game sermon.
+
+Natural specialist obsolescence is acceptable here because it is a deliberate progression arc, not accidental domination.
+
+### Candidate A — clean flat-to-percent handoff
+
+**Research hypothesis only; not accepted.**
+
+Specialist requirements:
+
+- Bronze q20
+- Silver q40
+- Gold q60
+
+Combo requirements:
+
+- Bronze q40
+- Silver q60
+- Gold q80
+
+This creates the requested one-tier progression relationship:
+
+- specialist Silver and Combo Bronze become guaranteed together at CQ40;
+- specialist Gold and Combo Silver become guaranteed together at CQ60;
+- Combo Gold becomes the final premium step at CQ80.
+
+#### Prayer for Faith
+
+Shared percentage across all qualities:
+
+- **+50% Faith**
+
+Tier flat Faith:
+
+- Bronze **+5 Faith**
+- Silver **+10 Faith**
+- Gold **+15 Faith**
+
+No prayer-owned donation percentage or flat donation reward. Normal base donations remain.
+
+#### Prayer for Donations
+
+Shared percentage across all qualities:
+
+- **+50% donations**
+
+Tier flat money:
+
+- Bronze **+2 silver**
+- Silver **+4 silver**
+- Gold **+6 silver**
+
+No prayer-owned Faith percentage or flat Faith reward. Normal base Faith remains.
+
+#### Combo Prayer
+
+No prayer-owned flat Faith or money.
+
+Percentage bonuses:
+
+- Bronze **+100% Faith / +100% donations**
+- Silver **+150% / +150%**
+- Gold **+200% / +200%**
+
+Recipe class remains Book +7 Faith unless later evidence shows an additional material tax is required.
+
+### Why these numbers form a coherent handoff
+
+Let `F` be base Faith and `D` be base donations.
+
+Faith specialist versus same-quality Combo crosses over when:
+
+- Bronze: `1.5F + 5 = 2F` -> `F = 10`;
+- Silver: `1.5F + 10 = 2.5F` -> `F = 10`;
+- Gold: `1.5F + 15 = 3F` -> `F = 10`.
+
+Donation specialist similarly crosses at:
+
+- Bronze: `1.5D + 2 = 2D` -> `D = 4 silver`;
+- Silver: `1.5D + 4 = 2.5D` -> `D = 4 silver`;
+- Gold: `1.5D + 6 = 3D` -> `D = 4 silver`.
+
+Thus the tier ladder changes **access and total power** without moving the underlying economic handoff point.
+
+Those base thresholds map naturally onto progression:
+
+- Faith base 10 = CQ50 without Eloquence, or roughly CQ39 with Eloquence;
+- donation base 4 silver = GQ100 with Cardinal, or roughly GQ133 without Cardinal.
+
+The player should never see these equations. They are internal proof that the visible design has a stable progression boundary.
+
+### Representative stage snapshots
+
+These are internal sanity checks, not intended tooltip content.
+
+#### CQ20 / GQ50, no income perks
+
+Base Faith = 4; base donations = 1.5 silver.
+
+Guaranteed Bronze specialist:
+
+- Faith Bronze: **11 Faith** on success;
+- Donations Bronze: **4.25 silver** on success.
+
+Bronze Combo q40 is only about 50% reliable and has no flat floor beyond the normal sermon base.
+
+Interpretation: specialists are clearly the early tools.
+
+#### CQ40 / GQ100, Cardinal active
+
+Base Faith = 8 without Eloquence; donations = 4 silver.
+
+At this point:
+
+- Specialist Silver is guaranteed;
+- Combo Bronze is guaranteed.
+
+Outputs on success:
+
+- Faith Silver: **22 Faith**;
+- Combo Bronze: **16 Faith + 8 silver**;
+- Donations Silver: **10 silver**.
+
+Interpretation: specialists remain clearly better at their target; Combo buys breadth.
+
+#### CQ60 / GQ150, Eloquence + Cardinal active
+
+Base Faith = 15.6; donations = 6 silver.
+
+At this point:
+
+- Specialist Gold is guaranteed;
+- Combo Silver is guaranteed.
+
+Outputs on success:
+
+- Faith Gold: **38.4 Faith**;
+- Combo Silver: **39 Faith + 15 silver**;
+- Donations Gold: **15 silver**.
+
+Interpretation: this is the intended handoff point. Premium Combo Silver roughly catches Gold specialists even in their target while also producing the other resource.
+
+#### CQ80 / GQ200, Eloquence + Cardinal active
+
+Base Faith = 20.8; donations = 8 silver.
+
+Gold Combo is guaranteed:
+
+- Gold Faith specialist: **46.2 Faith**;
+- Gold Donations specialist: **18 silver**;
+- Gold Combo: **62.4 Faith + 24 silver**.
+
+Interpretation: late-game Combo is now unambiguously the premium universal sermon.
+
+### Why Candidate A is attractive
+
+1. **No spreadsheet required for the player.**
+   - Flat number visually says "strong now".
+   - Percentage visually says "scales with my developed church/graveyard".
+   - q ladder visibly says when each prayer belongs.
+
+2. **Crafting grammar and power grammar agree.**
+   - Chapter specialists are earlier and cheaper.
+   - Book Combo is later and stronger.
+
+3. **Church progression gains visible milestones beyond stock q60.**
+   - CQ40: Combo Bronze / specialist Silver.
+   - CQ60: Combo Silver / specialist Gold.
+   - CQ80: Combo Gold.
+
+4. **The meta changes over time instead of being permanently replaced.**
+   - early specialist meta;
+   - transitional choice;
+   - late Combo meta.
+
+5. **Natural obsolescence is deliberate.**
+   The specialists eventually becoming inefficient is acceptable because they have already served a clear progression role.
+
+### Main risks to test
+
+- +5/+10/+15 Faith may accelerate early Faith progression too aggressively.
+- +2/+4/+6 silver may matter very differently depending on when Merchant/Tavern income comes online.
+- Eloquence moves the Faith crossover earlier; Cardinal moves the donation crossover earlier.
+- q20/40/60 vs q40/60/80 is elegant, but exact prayer acquisition timing must be checked so Combo does not become available far earlier than its intended reliable-use stage.
+- removing all Combo flat outputs changes a familiar stock presentation; this is acceptable only if the stronger percentage identity reads more clearly.
+- Gold Combo at q80 must still feel worth producing given the Book quality chain.
+
+## Current architecture comparison
+
+Three coherent family architectures are now on the table:
+
+### Architecture 1 — current Rebalanced 0.1.5
+
+- specialists: very high percentages;
+- specialists: harder q than Combo;
+- Combo: stock;
+- intended outcome: permanent focused-vs-generalist choice.
+
+Strength: preserves Combo exactly.
+Weakness: crafting hierarchy and q hierarchy point opposite directions; crossover logic is mathematically fair but not obvious.
+
+### Architecture 2 — proportional parity premium Combo
+
+- specialists: +200/+300/+400 target;
+- Combo: +100/+150/+200 both;
+- potentially higher Combo q.
+
+Strength: specialists remain best at their own resource forever; very clean proportional power budget.
+Weakness: cheaper Chapter specialists remain permanent top-end tools, so Book-class progression still does not create a full handoff.
+
+### Architecture 3 — staged flat-to-percent handoff (Candidate A)
+
+- specialists: low shared percentage + strong tier flat output;
+- Combo: no flats + strong dual percentages;
+- specialist q20/40/60;
+- Combo q40/60/80.
+
+Strength: clearest progression language and strongest alignment between crafting, q and power.
+Weakness: largest mechanical departure from stock/current Rebalanced; requires careful economy modeling.
+
+Candidate A is currently the most promising architecture for the newly stated product goal, but it is **not accepted** until the early/mid/late economy is modeled more deeply and the 1.407 sermon-quality crafting path is directly verified.
