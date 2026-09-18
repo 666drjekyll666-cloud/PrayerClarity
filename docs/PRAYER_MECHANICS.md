@@ -390,3 +390,77 @@ Two stock-1.407 anomalies remain important boundaries:
 - Prayer for Shoots and Roots: the `-20%` growth formula exists, but the stock prayer buff and formula read/write different parameter owners.
 
 **PrayerClarity: Vanilla 1.0.24** preserves these stock mechanics and presents them truthfully. **PrayerClarity: Rebalanced 0.1.5** intentionally repairs/reworks the affected behavior according to the separate accepted ruleset in `PRAYER_REBALANCE_OPTIONS.md`. Do not rewrite this stock evidence to match Rebalanced behavior.
+
+## Repose terminal corpse progression — direct closure
+
+Status: **direct stock 1.407 evidence; no new probe required**.
+
+The previously archived read-only `PrayerClarity-audit-0.1.4` plus existing GameBalance/IL dumps close the late-game Repose endpoint.
+
+### Permanent Donkey progression
+
+The loaded `body_min` / `body_max` graph audit found only three owner graphs: `npc_bishop`, `npc_donkey`, and `npc_inquisitor`.
+
+Permanent progression writes are:
+
+- Bishop church-opening progression establishes `body_min = 1`, `body_max = 1`.
+- Inquisitor `@inquisitor_tent_ready` raises `body_min` by +1, with compatibility/set path `body_min = 2`.
+- Inquisitor `second_witch_burning` raises `body_max` by +1, with compatibility/set path `body_max = 2`.
+- Later Inquisitor Dark Body progression raises `body_max` by +1 again, with compatibility/set path `body_max = 3`.
+- The loaded Inquisitor graph contains exactly two `body_min` occurrences (the +1 write and set-to-2 compatibility path); no permanent `body_min = 3` step exists on the inspected loaded graph.
+- The Donkey graph's `add_body_min` / `add_body_max` values are separate temporary/event modifiers and are reset by that flow; they are not another permanent corpse-quality tier.
+
+Therefore the normal terminal permanent range is:
+
+`body_min = 2`
+`body_max = 3`
+
+### Available ordinary body tiers
+
+The direct 1.407 `GameBalance.bodies_data` dump contains ordinary `linked_item_id="body"` definitions at tiers 0, 1, 2 and 3.
+
+After the tier-3 ordinary definitions, the remaining body definitions jump to special/story tiers 100, 101, 228 and 666. There is **no ordinary tier-4 BodyDefinition**.
+
+### GenerateBody behavior
+
+`GameSave.GenerateBody(tier_min, tier_max, ...)`:
+
+1. enumerates `GameBalance.bodies_data`;
+2. keeps definitions whose `BodyDefinition.tier` is between `tier_min` and `tier_max` inclusive;
+3. returns null if no definition survives;
+4. otherwise chooses a random surviving BodyDefinition.
+
+There is no clamp from an empty requested tier to the nearest existing tier.
+
+### Stock Repose endpoint
+
+At terminal normal progression the ordinary Donkey range is `2..3`.
+
+Stock `buff_skull` adds +1 only to player `body_max`, so the evaluated range becomes `2..4`.
+
+Because no ordinary tier-4 body exists, the candidate BodyDefinition set for `2..4` is identical to the candidate set for `2..3`: tiers 2 and 3 only.
+
+**Fact:** stock Prayer for Repose has no corpse-quality/distribution effect at terminal normal progression. It can still have ordinary sermon Faith/donation value.
+
+This directly supports a contextual pulpit endpoint message in PrayerClarity: Vanilla.
+
+### Rebalanced consequence
+
+The Rebalanced concept "best eligible tier" must mean the **highest actually existing ordinary BodyDefinition tier inside the evaluated range**, not the raw numeric `tier_max`.
+
+At terminal progression with Repose active:
+
+- raw evaluated range: `2..4`;
+- highest existing ordinary tier in that range: `3`.
+
+Therefore the safe intended behavior is:
+
+- Bronze: leave stock `2..4` unchanged (same effective stock pool 2/3);
+- Silver: on the reliability branch, narrow to existing tier 3;
+- Gold: always narrow to existing tier 3.
+
+This preserves the Rebalanced late-game reliability benefit without inventing tier 4.
+
+The current stable Rebalanced 0.1.5 implementation sets `tier_min = tier_max` directly. At the terminal raw `2..4` state that would request `4..4`, for which stock `GenerateBody` has no definition and returns null. This is a newly identified **latent late-game edge-case in 0.1.5**, not an accepted behavior target.
+
+The next Rebalanced implementation must resolve the best existing eligible body tier before narrowing.
