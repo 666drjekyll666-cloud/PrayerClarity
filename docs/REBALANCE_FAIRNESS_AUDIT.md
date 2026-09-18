@@ -481,3 +481,253 @@ Before production code:
 4. do not reopen effect magnitude unless these native cost levers fail to produce interesting decisions.
 
 No hosted CI is justified for this research pass.
+
+
+## Readability constraint — the player must not solve the balance model
+
+New product constraint from direct player feedback:
+
+> A good prayer choice may be validated by formulas internally, but the player should not need formulas, expected-value calculations or a two-week spreadsheet to understand the intended choice.
+
+The target decision grammar should be legible from normal game information:
+
+- **need Faith -> Faith specialist;**
+- **need donations -> Donations specialist;**
+- **need both -> Combo;**
+- Church Quality / displayed success chance tells the player whether the ambitious option is currently reliable.
+
+The internal two-week benchmark remains useful as a balance test, but it must not become required player knowledge.
+
+### Consequence for tuning
+
+Avoid balance that depends on narrow hidden crossovers such as "specialists are better only above CQ X and GQ Y" unless the UI makes the relevant state obvious.
+
+Prefer **robust role ordering**:
+
+1. a Faith specialist should plainly provide the strongest Faith result on a successful sermon;
+2. a Donations specialist should plainly provide the strongest donation result;
+3. Combo should plainly provide the strongest broad/balanced proposition when both resources matter;
+4. perks should reinforce these roles rather than flip them;
+5. q / success chance should create a visible progression/reliability tradeoff, not an invisible expected-value puzzle.
+
+Exact math should prove that these intuitive rules remain healthy across representative states.
+
+## Sermon-income perks — direct 1.407 mechanics
+
+Project mechanics evidence resolves both relevant perks.
+
+### Eloquence
+
+Ordinary sermon base Faith:
+
+`base_faith = CQ * 0.2 * (1 + 0.3 * E)`
+
+Souls sermon base Faith:
+
+`base_faith = (CQ + GP) * 0.1 * (1 + 0.3 * E)`
+
+where `E = p_eloquence` (0/1).
+
+Therefore Eloquence is exactly **+30% to the Faith base before sermon percentage bonuses**, subject to the normal integer rounding path.
+
+Prayer percentage Faith bonus is later calculated from that already-modified base. Consequently Eloquence also increases the absolute gain from Faith/Combo/Souls percentage modifiers. Prayer-owned flat Faith outputs are not multiplied by Eloquence.
+
+Example ignoring rounding:
+
+- CQ 50 without Eloquence -> ordinary base Faith 10;
+- with Eloquence -> base Faith 13.
+
+Eloquence is a Game of Crone progression perk tied to a particular quest outcome, so core balance must not assume every player owns it.
+
+### Cardinal
+
+Ordinary/Souls base donation pool:
+
+`base_money = GQ * (0.03 + 0.01 * C)`
+
+where `C = p_cardinal` (0/1).
+
+Therefore Cardinal changes the base coefficient from **3% of Graveyard Quality to 4%**, i.e. a **+33.33% relative increase** to base donations.
+
+Prayer percentage donation bonuses are calculated from that larger base, so Cardinal also increases their absolute value. Prayer-owned flat money outputs are not multiplied.
+
+Example:
+
+- GQ 100 without Cardinal -> base donation pool 3 silver;
+- with Cardinal -> 4 silver.
+
+Cardinal is unlocked by the same **Price of Faith** technology that unlocks Prayer for Donations and Combo. Therefore it is especially relevant to the specialist-vs-Combo comparison: once that branch is unlocked, the proportional donation game is naturally more important while fixed +silver outputs become relatively less dominant.
+
+### Balance implication
+
+Both perks scale the **base** used by percentage prayers. They do not create a special hidden preference for Combo.
+
+If specialist percentage > Combo percentage, Eloquence/Cardinal preserve that ordering and increase the absolute reward for specialization. This is good for readable design: late progression makes the explicit percentage choice matter more instead of introducing a new opaque rule.
+
+## Crafting grammar — Chapter prayers versus Book prayers
+
+### Accepted project-level cost distinction
+
+Current direct project evidence already establishes the recipe-class split:
+
+- Faith / Donations / Roots / Repentance / Prosperity: **Chapter + 5 Faith**;
+- Combo / Repose / Retribution / Protection / Imagination / Excellence: **Book + 7 Faith**.
+
+A Chapter itself is produced from **3 Notes**.
+
+A Book adds another production layer: **Chapter + cover -> Book**.
+
+This means the game already communicates an implicit class hierarchy:
+
+- **Chapter prayer:** cheaper/easier entry;
+- **Book prayer:** more advanced, more expensive, harder to quality-upgrade.
+
+### Cover chain
+
+Current external wiki data:
+
+- Softcover: 2 Pigskin Paper;
+- Bronze Hard Cover: Softcover + Tanning Agent + Faith;
+- higher Hard Cover quality requires additional advanced materials;
+- Gold Hard Cover can require 2 Gold Jewelry Details;
+- a Book can be made with either a Softcover or a Hard Cover;
+- better cover quality increases the resulting Book quality.
+
+A Hard Cover is **not directly required by Combo**. Combo requires a Book. Hard Covers are one route to a better-quality Book.
+
+The quality of a Book is driven by Chapter quality + cover quality and Book-specific quality modifiers such as Desk II/Jeweler. Current sources agree that Writer/Playwright are not Book-quality bonuses; Jeweler is the dedicated +0.7 Book-quality perk.
+
+External references:
+
+- https://graveyardkeeper.fandom.com/wiki/Book
+- https://graveyardkeeper.fandom.com/wiki/Chapter
+- https://graveyardkeeper.fandom.com/wiki/Softcover
+- https://graveyardkeeper.fandom.com/wiki/Hard_cover
+- https://graveyardkeeper.fandom.com/wiki/Perks
+
+### Gold Combo does not mean "must consume a Gold Book"
+
+Writing quality is probabilistic rather than a strict ingredient-tier lock. Current community/wiki documentation describes the general writing model as:
+
+`result tier = craft difficulty + ingredient quality + applicable quality bonuses`
+
+with the fractional part acting as the chance to upgrade to the next tier.
+
+Current sources also report that most sermon crafts can receive writing-quality bonuses (Desk II / Writer / Playwright / Inspiration), while Book crafting has its own Chapter/cover/Jeweler path. Therefore a Gold Combo prayer is not conceptually equivalent to "recipe requires one Gold Book"; a sufficiently good lower-tier Book plus writing modifiers can potentially roll upward.
+
+There is a documentation conflict between current wiki subpages over the exact sermon-quality modifiers/complexities. The project has **not yet directly audited the 1.407 prayer-crafting quality formula**. Do not make a production recipe/quality redesign depend on exact external probabilities until that path is verified directly.
+
+### Perceived-balance finding
+
+Even without exact probabilities, the material grammar is unambiguous:
+
+`Chapter -> specialist`
+
+versus
+
+`Chapter -> Book (cover layer) -> Combo`.
+
+Vanilla therefore gives the player an intuitive explanation for Combo's breadth/power: it is a **Book-class prayer**.
+
+The accepted Rebalanced roster partially reverses this grammar:
+
+- the Chapter specialists are much stronger in their target resource;
+- they are cheaper to manufacture;
+- but they compensate through higher Church Quality requirements.
+
+This can be mathematically fair while still feeling **counterintuitive**, because the material cost and visible item hierarchy say "Book is premium" while the output can say "Chapter is better".
+
+That perceived inconsistency is a real UX/balance finding, not merely an economic calculation issue.
+
+## New design hypothesis — early specialists, premium late-game Combo
+
+A promising alternate architecture is to restore a coherent visible progression grammar:
+
+### Specialists
+
+- remain **Chapter-class** prayers;
+- available earlier;
+- lower crafting burden;
+- lower Church Quality requirements;
+- genuinely strong in one resource;
+- remain the obvious answer when the player has one urgent goal.
+
+### Combo
+
+- remains or becomes an explicitly **premium Book-class** prayer;
+- materially harder/costlier to produce at high quality;
+- substantially higher Church Quality requirement;
+- rewards that investment with broad Faith+donation power;
+- remains the natural answer when both resources matter;
+- does **not** need to beat a specialist at that specialist's one resource.
+
+This is a cleaner player mental model:
+
+`cheap + focused + earlier`
+
+versus
+
+`expensive + broad + later`.
+
+The cost of Combo is then legible without formulas: the player sees the Book, cover chain, extra Faith and higher church requirement before ever comparing expected values.
+
+### Important distinction: signaling cost vs recurring balance cost
+
+Recipe/material cost and Church Quality should not be treated as interchangeable.
+
+- **Recipe/material cost** is mostly a one-time cost. It is weak at controlling infinite long-run sermon output, but extremely useful for **progression and signaling**: "this is an advanced prayer".
+- **Church Quality requirement** controls reliability every week until the church matures. It is a much stronger long-run progression lever.
+
+A coherent design may deliberately use both:
+
+- expensive Book recipe says **premium class**;
+- high q says **you are not yet ready to use this premium class reliably**;
+- strong broad output says **the investment has a visible payoff**.
+
+### Do not raise Combo q without increasing its proposition
+
+A stock-output Combo with a dramatically higher q and higher crafting cost would simply become unattractive.
+
+If Combo is moved into a stronger late-game/premium role, its reward proposition must be re-audited as well. The design target is not "tax Combo until specialists win"; it is:
+
+> specialists are the best focused tools; Combo is the expensive high-progression broad tool.
+
+Possible value-space to model next, not accepted:
+
+- leave specialist target multipliers strong;
+- raise Combo's Faith+donation multipliers enough that its **combined** output clearly justifies Book-class cost;
+- keep each specialist's target output above Combo's corresponding single-resource output;
+- use higher Combo q to make the broad convenience/power a later progression reward.
+
+This could make the choice categorical rather than mathematical:
+
+- "I need Faith" -> specialist;
+- "I need money" -> specialist;
+- "I need both and my church/book infrastructure is mature" -> Combo.
+
+### q100 warning
+
+A conceptual Combo ladder such as 60/80/100 is useful for thinking, but q100 exceeds the currently observed ~94-96 passive Cathedral ceiling. Gold would therefore require temporary Church Quality boosts for 100% reliability.
+
+That may be an intentional "ultimate ritual" design, but it would also create recurring candle/incense preparation. Under the current fun-first policy, prefer testing ladders that keep fully developed passive certainty possible (for example candidates ending at q80-q90) before choosing q100.
+
+## Updated next gate
+
+The fairness audit now has two competing architectures to model:
+
+1. **Current architecture:** Combo remains stock/easier-q; specialists pay higher q for stronger focus.
+2. **Premium-Combo architecture:** specialists are earlier/cheaper focused tools; Combo becomes a later, costlier, higher-q broad tool with a correspondingly stronger combined proposition.
+
+The second architecture has a major UX advantage: it matches the game's existing Chapter-vs-Book crafting language and makes the intended decision understandable without expected-value math.
+
+Before production work:
+
+1. directly verify 1.407 sermon-quality crafting probabilities/bonus owners if recipe quality becomes part of the new balance;
+2. model a few explicit Combo multiplier/q ladders against the locked specialist values;
+3. require the following invariant across representative states:
+   - specialist wins its own resource;
+   - Combo wins or strongly competes on combined/balanced value;
+   - player can infer that relationship from the tooltip/recipe without calculations;
+4. keep the stable Rebalanced 0.1.5 untouched until one architecture is explicitly selected.
+
+No hosted CI is justified for this research pass.
