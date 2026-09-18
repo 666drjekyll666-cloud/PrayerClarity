@@ -109,3 +109,38 @@ Neither should be assumed safe merely because parsing succeeds. They are the hig
 7. normal successful sermon payout spot-check for Faith / Donations / Combo and one real Imagination premium Story reward.
 
 Do not repeat already-closed tests unless a code change touches their mechanism.
+
+
+## Roots overflow design hypothesis
+
+Status: **design hypothesis; not yet production behavior**.
+
+The narrow preferred correction is to preserve the verified native additive relationship but cap the **combined** growth-time reduction at **90% of base time** (minimum remaining growth time 10% of base).
+
+For stock fertilizer reductions 0/20/40/60% and Rebalanced Roots 20/30/40%, the uncapped matrix is:
+
+| Fertilizer | Bronze Roots | Silver Roots | Gold Roots |
+| ---: | ---: | ---: | ---: |
+| 0% | 20% | 30% | 40% |
+| 20% | 40% | 50% | 60% |
+| 40% | 60% | 70% | 80% |
+| 60% | 80% | 90% | **100%** |
+
+A 90% cap changes only the final dangerous cell: Gold + maximum Boost becomes 90% instead of 100%. All other stock combinations remain numerically unchanged.
+
+Why this is preferred over alternatives:
+- do **not** change Roots to multiplicative stacking: that would alter every fertilizer+Roots combination and contradict the already accepted native-additive design;
+- do **not** lower Gold Roots globally: the issue exists only when another source has already consumed almost all remaining growth time;
+- do **not** clamp to the game's <=0.001 completion threshold: that would merely turn instant growth into practically instant growth;
+- a round 90% aggregate cap is easy to explain and keeps at least 10% of base growth time.
+
+Implementation shape under consideration:
+- before temporary Roots projection, read the current WGO's existing `grow_time` and `buff_plant` contributions;
+- compute how much headroom remains before 90% total reduction;
+- inject only `min(configured Roots reduction, available headroom) / 0.20` into the nonserialized `totem_effect["buff_plant"]`;
+- restore the original runtime aggregate in the existing finalizer;
+- do not mutate serialized crop data or rewrite the native craft expression.
+
+Player-facing Clarity should disclose the cap once in the shared Roots semantics (for example: combined growth-time reductions cannot reduce growth below 10% of base time) if this design is accepted.
+
+Because 0.2.1 was already handed out, any implementation change uses a new Rebalanced version; do not replace 0.2.1 bytes.
