@@ -483,12 +483,17 @@ Status:
 - Candidate ref: `candidate/rebalanced-0.2.1`.
 - Triggering bug: Rebalanced 0.2.0 rewrote plant `craft_time` with `Ppar("buff_plant")*Ppar("prayerclarity_rebalanced_plant_reduction")`; live Graveyard Keeper 1.407 evaluation throws `InvalidCastException` inside Expressive and `SmartExpression.EvaluateFloat` falls back to `1f`, causing auto-growth to finish almost immediately.
 - Vanilla control: PrayerClarity: Vanilla 1.0.25 leaves plant mechanics untouched and the same carrot/cabbage scenario shows no SmartExpression/Expressive exception.
-- Fix architecture: keep the verified stock `craft_time` expression unchanged. On affected plant `CraftComponent.DoAction` calls only, temporarily project the active Rebalanced Roots reduction into the stock WGO-owned `buff_plant` parameter as `reduction / 0.20` (1 / 1.5 / 2 for Bronze/Silver/Gold), then restore the exact original WGO value in a Harmony finalizer.
+- Fix architecture: keep the verified stock `craft_time` expression unchanged. On affected plant `CraftComponent.DoAction` calls only, temporarily project the active Rebalanced Roots reduction into the stock WGO-owned **NonSerialized `totem_effect`** `buff_plant` entry as `reduction / 0.20` (1 / 1.5 / 2 for Bronze/Silver/Gold), then restore the exact original runtime-effect value in a Harmony finalizer.
 - Semantics: preserves the game's additive `grow_time + buff_plant` formula rather than multiplying elapsed time externally.
-- Save safety: the injected WGO parameter exists only for the duration of the native `DoAction` call and is restored even when the original call throws; no persistent plant parameter is intended.
+- Save safety: the injected value lives only in the native NonSerialized `totem_effect` aggregate for the duration of `DoAction`, and is restored even when the original call throws; serialized plant Item data is never modified.
 - Performance shape: no per-frame polling or scans. One narrow `CraftComponent.DoAction` hook exits immediately for non-Roots plant crafts; affected auto-growth already executes through this native path at the game's own cadence.
-- Build status: pending hosted candidate build.
-- Required runtime gate after a clean build:
+- Exact candidate source SHA: `d13655e01a1b8e797ed019b636f040b3d2f2a55f`.
+- GitHub Actions run: `35377381232` — success.
+- Workflow artifact ID: `10560138983` (`PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.1-ci-d13655e01a1b8e797ed019b636f040b3d2f2a55f`).
+- Handoff filename: `PrayerClarity.Rebalanced-0.2.1-ci.dll`.
+- Handoff DLL SHA-256: `adb0bfc90c1245cb652662a826a168f6f4410a696a352e9360abfe8507ab20c7`.
+- Build result: success on `ubuntu-latest`; Rebalanced and Vanilla compiled, all 11 locale sets validated/staged, and the shared artifact uploaded.
+- Required runtime gate after the clean build:
   1. ordinary freshly planted carrot/cabbage no longer completes in seconds and produces no SmartExpression/Expressive error;
   2. with active Roots, Bronze/Silver/Gold retains the intended -20/-30/-40 percentage-point term in the native additive growth formula;
   3. repeat one case with `grow_time` fertilizer to verify the additive interaction remains intact;
