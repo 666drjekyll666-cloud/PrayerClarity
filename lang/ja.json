@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "効果",
   "forecast.graveyard_quality": "墓地の品質：(wskull) {0:0.#}",
+  "forecast.soul_gratitude": "魂の感謝度：(gratitude_points) {0:0.#}",
   "forecast.guaranteed": "確定",
   "forecast.success_bonus": "成功時（{0}%）",
   "forecast.dependency_note": "(faith) 信仰 — 教会の質\n(slv) 寄付金 — 墓地の質",
@@ -18,7 +19,8 @@
   "tech.quantity": "数量",
   "tech.effect.imagination_intro": "執筆品質を高めます。",
   "tech.effect.excellence_intro": "製作品質を高めます。",
-  "tech.souls_base_faith": "信仰は教会の質と魂の感謝度に左右されます。",
+  "tech.souls_base_faith": "信仰は教会の質と魂の感謝度に左右されます。",  "repose.endpoint": "これ以上高品質な死体はありません。",
+
   "buff.souls_repose": "(faith)は教会の質と(gratitude_points)に左右されます。",
   "active.sword": "ダメージ +{0:0.##}",
   "active.shield": "防御 +{0:0.##}",
