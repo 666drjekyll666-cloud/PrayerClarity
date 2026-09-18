@@ -28,6 +28,13 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 
 `PrayerClarity` remains the family/repository/codebase name. Existing technical identifiers such as the repository name, plugin identity and canonical DLL filename do not need to change merely because the public edition is named **PrayerClarity: Vanilla**.
 
+### Current accepted stable baselines
+
+- **PrayerClarity: Vanilla 1.0.24** — tag `v1.0.24`, accepted ref `accepted/vanilla-1.0.24`, canonical DLL `PrayerClarity.dll`.
+- **PrayerClarity: Rebalanced 0.1.5** — tag `rebalanced-v0.1.5`, accepted ref `accepted/rebalanced-0.1.5`, canonical DLL `PrayerClarity.Rebalanced.dll`.
+- Both accepted binaries were built from runtime/source SHA `3b7cea7986138f57d7ace6998b9cc6bca952af1e` and promoted without rebuilding.
+- `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
+
 The internal evidence/design categories remain distinct from public edition naming:
 
 1. **Clarity** — information only; no mechanics changes.
@@ -147,7 +154,7 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` contains candidate rebalanced rules only; nothing there is accepted until explicitly narrowed, implemented and runtime-tested as required.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset for the current stable Rebalanced edition. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 
@@ -224,7 +231,7 @@ Long-lived findings belong primarily in:
 - `docs/PLAYER_UX_RESEARCH.md` — presentation/player evidence;
 - `docs/PRAYER_DESIGN_AUDIT.md` — role/balance/fix judgements;
 - `docs/PRAYER_POWER_BUDGET.md` — quantitative full-cost/progression analysis;
-- `docs/PRAYER_REBALANCE_OPTIONS.md` — candidate rebalanced roster options, explicitly non-accepted until narrowed/tested;
+- `docs/PRAYER_REBALANCE_OPTIONS.md` — canonical accepted Rebalanced roster/ruleset for the current stable edition;
 - `docs/DESIGN_NOTES.md` — product/UI architecture and accepted design direction;
 - `docs/PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary;
 - `docs/TEST_BUILD_LOG.md` — only when distributable/testable production candidates exist.
