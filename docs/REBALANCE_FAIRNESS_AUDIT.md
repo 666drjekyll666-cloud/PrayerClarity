@@ -1548,3 +1548,86 @@ Direct facts:
 Conclusion: the proposed staged grammar is now directly supported by stock 1.407 crafting structure. Chapter specialists are materially easier to quality-up than Book Combo, and Combo pays both an extra intermediate quality roll and a harder final recipe. This evidence removes the previous need for an additional crafting-quality probe before comparing the staged-handoff architecture.
 
 Do not commit the raw runtime dump; retain only these minimal derived facts.
+
+
+## Working baseline accepted for further research — staged economic handoff
+
+The user accepts the staged economic-prayer construction as the **working design baseline** for subsequent balancing/research. This is not yet a production acceptance.
+
+Working values:
+
+- Prayer for Faith: q20/40/60, +50% Faith at all tiers, +5/+10/+15 flat Faith, no prayer-owned money bonus.
+- Prayer for Donations: q20/40/60, +50% donations at all tiers, +3/+6/+9 silver flat, no prayer-owned Faith bonus.
+- Combo Prayer: q40/60/80, +100/+150/+200% Faith and donations, no prayer-owned flat Faith or money.
+- BSS Soul's Repose: old +200/+300/+400% Rebalanced scaling is reopened; leading direction is stock-like +50/+100/+150% with Soul Gratitude as its intrinsic scaling axis.
+- Repentance: must be evaluated as a weekly Faith + Story engine, not merely a utility buff.
+
+Design intent:
+
+- early specialists are strong, cheap Chapter-class tools;
+- midgame exposes specialist-versus-Combo choice;
+- late-game Gold Combo becomes the ordinary universal economic sermon;
+- specialists are allowed to age out naturally;
+- DLC/active-effort prayers can occupy distinct late-game niches without invalidating the core progression.
+
+## Aspirational ritual hypothesis — q~120 "wonder prayer"
+
+A separate design desire is now explicit: the roster should ideally contain at least one **optional super-late-game aspirational prayer** whose certainty is deliberately above a mature passive Cathedral and therefore rewards temporary preparation with candles/incense.
+
+Target feel:
+
+- requirement around q120 (illustrative, not accepted);
+- not part of the mandatory Faith/Donations/Combo handoff;
+- not the weekly default;
+- strong enough that the player intentionally prepares the church for a special service;
+- success should feel like an event / "wonder" rather than a maintenance tax;
+- normal passive late-game play must remain complete without it.
+
+At practical passive CQ ~94, q120 gives only ~78% success, so certainty requires roughly +26 temporary Church Quality. This is exactly the kind of gap that can give candles/incense an aspirational use without making them compulsory every week.
+
+### Best current homes
+
+**1. Gold Prayer for Excellence — strongest architectural fit**
+
+Why it fits:
+- Gold Excellence is already one of the largest vertical upgrades in the Rebalanced roster (+1.0 linked-craft quality vs stock +0.2).
+- The effect is bounded by a crafting session and by item-quality ceilings rather than being an uncapped weekly resource engine.
+- A player can deliberately prepare a high-CQ service before a planned "masterpiece" crafting session.
+- It gives candles/incense a special-event use instead of a weekly upkeep role.
+- It does not disturb the newly clean economic-prayer ladder.
+- It is thematically coherent: an exceptional church ritual grants an exceptional quality-crafting window.
+
+Potential ladder to investigate, not accepted:
+- Bronze q20-30;
+- Silver q60;
+- Gold q120.
+
+The large Gold jump would be intentional: Gold Excellence is the "miracle" tier rather than merely the next linear upgrade.
+
+**2. Gold BSS Soul's Repose — strongest spectacle/output fit**
+
+Why it fits:
+- Soul Gratitude already creates an extraordinary late-game Faith ceiling.
+- DLC progression and Soul-room investment make it naturally late.
+- q120 would make the enormous Gold payout feel earned rather than free.
+
+Why it is weaker architecturally:
+- it is DLC-exclusive;
+- its output can already become extreme from Soul Gratitude alone;
+- making certainty require consumables on an uncapped Faith engine could feel like an optimization tax rather than a special event.
+
+**3. A new dedicated "Grand" prayer — cleanest fantasy, highest implementation cost**
+
+A separate new prayer could be designed specifically for q120+, but this would require new item/recipe/presentation/localization/possibly-icon work and would expand the mod beyond rebalancing existing content. Do not prefer this while an existing prayer can carry the role.
+
+### Current leading hypothesis
+
+Use **Gold Excellence** as the first q120 candidate.
+
+The intended progression would be:
+
+- core economic system reaches its normal apex at Gold Combo q80;
+- ordinary passive Cathedral completion remains satisfying around q90-100;
+- Gold Excellence sits above that as an optional aspirational ritual that specifically rewards temporary church preparation.
+
+This preserves the clean economic handoff while still giving the endgame a visible "one more mountain" to climb.
