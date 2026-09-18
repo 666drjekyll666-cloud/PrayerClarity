@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "Effet",
   "forecast.graveyard_quality": "Qualité du cimetière : (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "Gratitude des âmes : (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Garanti",
   "forecast.success_bonus": "En cas de succès ({0} %)",
   "forecast.dependency_note": "(faith) Foi — qualité de l’église\n(slv) Dons — qualité du cimetière",
@@ -18,7 +19,8 @@
   "tech.quantity": "Quantité",
   "tech.effect.imagination_intro": "Améliore la qualité d’écriture.",
   "tech.effect.excellence_intro": "Améliore la qualité de fabrication.",
-  "tech.souls_base_faith": "La Foi dépend de la qualité de l’église et de la Gratitude des âmes.",
+  "tech.souls_base_faith": "La Foi dépend de la qualité de l’église et de la Gratitude des âmes.",  "repose.endpoint": "Aucun corps de meilleure qualité n’est disponible.",
+
   "buff.souls_repose": "La (faith) dépend de la qualité de l’église et de (gratitude_points).",
   "active.sword": "+{0:0.##} dégâts",
   "active.shield": "+{0:0.##} armure",
