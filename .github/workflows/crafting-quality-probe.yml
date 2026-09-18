@@ -36,16 +36,16 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          asset='PrayerClarity.CraftingQualityProbe.0.1.0.dll'
+          asset='PrayerClarity.CraftingQualityProbe.0.1.1.dll'
           cp 'bin/CraftingQualityProbe/PrayerClarity.CraftingQualityProbe.dll' "dist/$asset"
           hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           echo "asset=$asset" >> "$GITHUB_OUTPUT"
           echo "sha256=$hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity CraftingQuality probe 0.1.0 SHA-256: $hash"
+          echo "PrayerClarity CraftingQuality probe 0.1.1 SHA-256: $hash"
       - name: Upload probe DLL
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-CraftingQualityProbe-0.1.0
+          name: PrayerClarity-CraftingQualityProbe-0.1.1
           path: dist/${{ steps.artifact.outputs.asset }}
           if-no-files-found: error
           retention-days: 7
