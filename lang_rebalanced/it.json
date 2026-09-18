@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "Le confessioni avvengono più spesso in ogni confessionale.",
   "rebalanced.tech.repose_intro": "L’asino può portare corpi di qualità migliore.",
   "rebalanced.tech.combat_intro": "Rafforza il Custode in combattimento.",
-  "rebalanced.active.plant": "Tempo di crescita delle piante: -{0:0}%",
+  "rebalanced.active.plant": "Tempo di crescita delle piante: -{0:0}% · Riduzione totale max: -{1:0}%",
   "rebalanced.active.sins": "Probabilità di confessione: {0:0}%",
   "rebalanced.active.repose.bronze": "L’asino può portare un corpo di un livello di qualità migliore",
   "rebalanced.active.repose.silver": "Nella metà dei casi è garantito il corpo migliore",
