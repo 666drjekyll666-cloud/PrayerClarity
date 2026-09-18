@@ -1453,15 +1453,13 @@ Continuous expected throughput with both confessionals:
 
 Discrete scheduler alignment can move the actual count by roughly one daily roll around effect boundaries.
 
-For an exact **six-day sermon week**, Gold 100% with two confessionals yields:
+For an exact **six-day sermon week**, Gold 100% always creates 12 confession events across the two church slots, but Faith/Story yield depends on which confessional tier occupies those slots:
 
-- 12 confession events;
-- **18 extra Faith**;
-- 12 Stories;
-- expected Story mix:
-  - 4.2 Bronze;
-  - 6.0 Silver;
-  - 1.8 Gold.
+| Church setup | Extra Faith | Expected Story mix |
+| --- | ---: | --- |
+| 2 x Confessional I | **12 Faith** | 8.4 Bronze / 3.6 Silver |
+| 1 x Confessional I + 1 x Confessional II | **18 Faith** | 4.2 Bronze / 6.0 Silver / 1.8 Gold |
+| 2 x Confessional II | **24 Faith** | 8.4 Silver / 3.6 Gold |
 
 This is **in addition to the Repentance sermon payout itself**.
 
@@ -1472,7 +1470,7 @@ At CQ40 without Eloquence, Gold Repentance's retained stock sermon contribution 
 - +3 fixed Faith;
 - sermon total ~= **17 Faith**.
 
-If all six days of confessions are collected, the weekly Faith package is therefore about **35 Faith + 12 Stories**.
+With two Confessional II and all six days collected, the weekly package is therefore about **41 Faith + 12 Stories**.
 
 This is substantially stronger than treating Repentance as a small utility buff. The power is compensated by:
 
