@@ -104,19 +104,19 @@ The original audit incorrectly treated whole-expression replacement through the 
 
 This section is retained as a postmortem so the earlier reasoning is not reused. Native parser/interpreter usage does not by itself preserve native formula ownership.
 
-### Repentance (`b_sins` / `buff_sins`) — behavior target closed; mechanism target reopened
+### Repentance (`b_sins` / `buff_sins`) — accepted 0.2.3 target
 
-Keep the stock once-per-day `church_budka_roll` scheduler and confessional RNG graph.
+Keep the stock once-per-day `church_budka_roll` scheduler, stock reset expression, confessional loop, RNG and interaction flow unchanged.
 
-Replace only the daily probability reset expression so stock 15% remains without the prayer and the active prayer yields 50/75/100%:
+Accepted seam:
+- leave the stock reset exactly `SetPpar("confession_probability", 0.15)`;
+- patch the semantic FlowCanvas accessor `Flow_GetPlayerParam.Invoke(string)`;
+- only when `param == "confession_probability"`, native `buff_sins` is live and a valid Rebalanced tier is captured, return 0.50 / 0.75 / 1.00;
+- otherwise return the untouched stock result.
 
-`SetPpar("confession_probability", 0.15 + Ppar("buff_sins") * Ppar("prayerclarity_confession_bonus"))`
+The old whole-SmartExpression replacement and persisted confession-bonus scalar are superseded.
 
-Persisted bonus values: `.35/.60/.85`.
-
-The 50/75/100% behavior target remains accepted, but the whole-expression replacement mechanism is reopened by the native-seam audit. Before any further production work, trace the downstream `confession_probability` consumer and determine whether the stock 0.15 reset can remain authoritative while Rebalanced changes only the effective parameter/value at a narrower seam.
-
-Do not treat native SmartExpression parsing as sufficient architectural justification for replacing the reset expression.
+Runtime acceptance in 0.2.3 directly observed effective probabilities 0.50 / 0.75 / 1.00 for Bronze / Silver / Gold while the controlled stored stock value remained 0.15 before each accessor read.
 
 ### Repose (`b_skull` / `buff_skull`) — closed target
 
@@ -142,27 +142,47 @@ Runtime node numeric IDs/UIDs are not stable enough to be production identity; t
 
 **Production predicate:** operate only on a `Flow_DropBody` whose owner graph is `npc_donkey` / donkey WGO and whose `Tier min` and `Tier max` inputs have the ordinary-delivery dynamic player-param connection fingerprint. Never globally patch `GameSave.GenerateBody` based only on Repose being active.
 
-### Combat (`b_sword`; `b_shield` legacy alias) — closed target
+### Combat (`b_sword`; `b_shield` legacy alias) — accepted 0.2.3 target
 
 Locked package: +5/+10/+15 damage, +4 armor, 1/2/4 HP/sec.
 
-Keep stock `buff_sword.res=+5 damage` and `buff_shield.res=+4 armor`.
+The separate Protection prayer is retired from new crafting/unlocks. Legacy `b_shield` prayer items converge on the unified `buff_sword` lifecycle.
 
 #### Regeneration
 
 Use native `PlayerBuff.CustomUpdate` tick behavior, not PrayerClarity polling/coroutines:
 
 - `tick_period=1s`;
-- `se_tick=AddPpar("hp", Ppar("prayerclarity_combat_regen"))`;
+- `se_tick=AddPpar("hp", Ppar("prayerclarity_rebalanced_combat_regen"))`;
 - persisted regen values 1/2/4.
 
-Only canonical Combat gets the regen tick; legacy Protection must converge on the same effective lifecycle and must not create a second tick.
+This is a stock buff extension point; 0.2.3 runtime evidence observed +1 / +2 / +4 HP behavior with native max-HP clamping.
 
 #### Damage
 
-Implementation Seam Probe 0.1.0 closed the outgoing damage seam: `WorldGameObject.GetDamage(DamageType)` has a player-only path that reads weapon calculated damage and then adds player parameter `add_damage`.
+`WorldGameObject.GetDamage(DamageType)` already owns the native `add_damage` arithmetic.
 
-Use that native extension seam. Rebalanced should maintain an effective active `add_damage` of +5/+10/+15 while Combat is active. Do not patch attack animations, hit colliders, generic `damage`, generic `GetParam`, or every hit.
+Accepted 0.2.3 seam:
+- keep stock `buff_sword.res=+5 damage`;
+- Bronze adds no custom delta;
+- Silver/Gold temporarily project only +5/+10 beyond stock into nonserialized `player.totem_effect["add_damage"]` during native `GetDamage`;
+- restore the exact prior runtime value in a finalizer.
+
+This preserves stock branch semantics, including the no-weapon fallback path that does not consume `add_damage`.
+
+Runtime acceptance observed tier deltas 0 / +5 / +10 while persisted stock `add_damage` remained 5.
+
+#### Armor
+
+`HPActionComponent.DecHP(float)` already owns the native `add_armor` subtraction.
+
+Accepted 0.2.3 seam:
+- while Combat is live, temporarily project +4 into nonserialized `player.totem_effect["add_armor"]` only around native `DecHP`;
+- restore the exact prior runtime value in a finalizer;
+- do not mutate `buff_sword.res`, avoiding first-install/update problems when a save already contains an active older/stock `buff_sword`;
+- do not use the superseded ThreadStatic context or a global generic `WorldGameObject.GetParam` patch.
+
+Runtime acceptance with controlled 20 damage observed 20 stock HP loss vs 16 with Combat: exactly 4 damage prevented.
 
 ### Combat alias / Protection retirement — closed target
 
