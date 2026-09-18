@@ -2,6 +2,7 @@
   "forecast.result_header": "",
   "forecast.effect_header": "Effect",
   "forecast.graveyard_quality": "Graveyard quality: (wskull) {0:0.#}",
+  "forecast.soul_gratitude": "Soul Gratitude: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Guaranteed",
   "forecast.success_bonus": "On success ({0}%)",
   "forecast.dependency_note": "(faith) Faith — from Church Quality\n(slv) Donations — from Graveyard Quality",
@@ -18,7 +19,8 @@
   "tech.quantity": "Quantity",
   "tech.effect.imagination_intro": "Improves writing quality.",
   "tech.effect.excellence_intro": "Improves crafted-item quality.",
-  "tech.souls_base_faith": "Faith depends on Church Quality and Soul Gratitude.",
+  "tech.souls_base_faith": "Faith depends on Church Quality and Soul Gratitude.",  "repose.endpoint": "No higher-quality bodies are available.",
+
   "buff.souls_repose": "(faith) depends on Church Quality and (gratitude_points).",
   "active.sword": "+{0:0.##} damage",
   "active.shield": "+{0:0.##} armor",
