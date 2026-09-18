@@ -731,3 +731,48 @@ Before production work:
 4. keep the stable Rebalanced 0.1.5 untouched until one architecture is explicitly selected.
 
 No hosted CI is justified for this research pass.
+
+
+## Emerging premium-Combo coefficient candidate — exact two-week proportional parity
+
+A particularly clean candidate falls directly out of the locked specialist ladder.
+
+Keep specialists:
+
+- Bronze: +200% target resource;
+- Silver: +300%;
+- Gold: +400%.
+
+Candidate Combo:
+
+- Bronze: **+100% Faith and +100% donations**;
+- Silver: **+150% / +150%**;
+- Gold: **+200% / +200%**.
+
+Ignoring flat outputs and treating `F` / `D` as their own independent base units:
+
+| Quality | One specialist week: target / other | One Combo week: Faith / donations | Two-week specialist rotation per resource | Two Combo weeks per resource |
+| --- | --- | --- | ---: | ---: |
+| Bronze | 3x / 1x | 2x / 2x | 4x | 4x |
+| Silver | 4x / 1x | 2.5x / 2.5x | 5x | 5x |
+| Gold | 5x / 1x | 3x / 3x | 6x | 6x |
+
+Therefore the **proportional two-week output is exactly equal at every tier** before flat outputs.
+
+This gives an unusually readable strategic structure:
+
+- specialist = same broad two-week power budget redistributed aggressively into one resource;
+- Combo = same proportional budget distributed evenly across both resources;
+- stock flat Combo outputs then give the premium Book prayer a modest total-value/convenience edge;
+- specialists remain cheaper and can use lower q;
+- Combo can justify higher Book-class crafting/progression requirements without needing to beat specialists at their own resource.
+
+This is not an accepted value set yet. Base Faith and donations have different economic utility, flat outputs matter, and q/reliability must still be modeled. But as an **internal balance invariant** it is substantially cleaner than relying on narrow CQ/GQ crossover arithmetic.
+
+Player-facing interpretation requires no two-week calculation:
+
+- Faith specialist visibly has the largest Faith percentage;
+- Donations specialist visibly has the largest donation percentage;
+- Combo visibly gives two substantial percentages at once.
+
+This candidate should be the first premium-Combo multiplier ladder modeled in the next quantitative pass.
