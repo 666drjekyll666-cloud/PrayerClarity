@@ -1861,3 +1861,46 @@ Rebalanced Silver/Gold should instead communicate reliability:
 - Gold: guarantees the best eligible corpse tier.
 
 If the current evaluated range is already a single tier, a dynamic contextual line such as **"No further corpse-tier benefit at current progression"** would be more truthful than a static late-game warning. This can be computed on demand when the prayer UI opens; no per-frame work is required.
+
+
+## Balance-time policy — vanilla only
+
+User decision: all Rebalanced balance decisions use **stock Graveyard Keeper 1.407 time**.
+
+Longer Days or other day-length mods may affect runtime screenshots/logs from the user's installation and therefore must be accounted for when interpreting observed "days remaining", but they are **not** balance targets.
+
+Canonical vanilla day basis:
+
+- 1 day = 450 seconds = 7.5 real minutes;
+- 6-day sermon interval = 45 real minutes;
+- 18/36/54-minute prayer durations = 2.4 / 4.8 / 7.2 vanilla days;
+- 36/72/108-minute prayer durations = 4.8 / 9.6 / 14.4 vanilla days.
+
+Current Rebalanced 0.1.5 does **not** alter prayer duration values. Rebalanced mechanics change magnitude/behavior while leaving stock prayer `dur_parameter` values intact.
+
+External cross-check:
+- official Graveyard Keeper Wiki Effects / sermon pages report the same real-minute prayer duration families;
+- official/community day references report a 7.5-minute vanilla day.
+Some individual wiki prayer pages retain stale parenthetical "days" labels that imply an older day length; use the verified real-minute values plus the 450-second 1.407 day basis rather than those stale parentheticals.
+
+## Repose pulpit UX policy
+
+Do not add Repose endpoint/obsolescence text to Technology; that surface is already dense and static.
+
+Preferred surface: **pulpit forecast only**, where the player's current corpse-progression state is available and the information affects the immediate sermon decision.
+
+Vanilla target behavior:
+- when Repose can still increase the maximum eligible corpse tier, show the normal verified effect;
+- when current progression has no higher tier for the stock +1-max mechanic to unlock, add a concise factual contextual line indicating that the corpse-tier effect currently has no further upgrade available;
+- do not say "do not use this prayer", because the sermon can still have ordinary Faith/donation value.
+
+Preferred wording direction (not localization-accepted yet):
+- "Corpse tier: no higher tier is currently available."
+- RU sense: "Уровень трупов: более высокий уровень сейчас недоступен."
+
+Rebalanced:
+- Bronze follows the stock endpoint logic;
+- Silver/Gold may retain reliability value even after the stock maximum can no longer increase, because they narrow the eligible range toward the best tier;
+- do not show the vanilla "no further tier effect" line for Silver/Gold unless direct runtime state proves the evaluated range is already a single tier.
+
+Implementation, if accepted, should be on-demand at pulpit redraw/open using canonical player/donkey progression parameters; no per-frame scans or Technology mutation.
