@@ -159,6 +159,8 @@ namespace PrayerClarity
             }
 
             lines.Add("  " + Localization.F("forecast.graveyard_quality", forecast.GraveyardQuality));
+            if (forecast.UsesSoulGratitude)
+                lines.Add("  " + Localization.F("forecast.soul_gratitude", forecast.SoulGratitude));
             return string.Join("\n", lines.ToArray());
         }
 
