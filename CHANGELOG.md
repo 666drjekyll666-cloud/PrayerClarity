@@ -1,5 +1,23 @@
 # Changelog
 
+## PrayerClarity: Vanilla 1.0.24
+
+- Refined Technology prayer tooltips around a shared-effect -> tier-specific-value hierarchy.
+- Improved semantic emphasis, wrapping, atomic rows, and content-driven width for clearer Bronze/Silver/Gold comparison.
+- Removed the redundant shared Prosperity effect line while preserving the tier-specific Commercial Blessing x1/x2/x3 rewards.
+- Kept prayer-item, pulpit, and Temporary Effects wording synchronized with the same mechanics semantics.
+- Preserved stock Graveyard Keeper 1.407 prayer mechanics and balance.
+
+## PrayerClarity: Rebalanced 0.1.5
+
+- First accepted Rebalanced sibling release.
+- Includes the full PrayerClarity presentation layer plus intentional prayer rebalance/rework.
+- Uses the accepted specialist Faith/Donations/Soul's Repose progression of +200% / +300% / +400%.
+- Rebalances Repentance, Shoots & Roots, Repose, Combat, Imagination, Excellence, Soul Contentment, and Thorough Cleansing with tier-aware effects and durations.
+- Synchronizes Technology, prayer-item, pulpit, and Temporary Effects presentation with the effective Rebalanced mechanics.
+- Keeps full localization coverage for all 11 supported interface languages.
+
+
 ## 1.0.20
 
 - Added a clear vertical gap before the crafting-location footer in prayer Technology tooltips.

@@ -1,0 +1,51 @@
+name: Build PrayerClarity Repose owner probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/rebalanced-1.0.20-baseline
+    paths:
+      - 'PrayerClarity.ReposeOwnerProbe.csproj'
+      - 'src/PrayerClarityReposeOwnerProbe.cs'
+      - '.github/workflows/repose-owner-probe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayerclarity-repose-owner-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PrayerClarity.ReposeOwnerProbe.csproj
+      - name: Build probe DLL
+        run: dotnet build PrayerClarity.ReposeOwnerProbe.csproj -c Release --no-restore
+      - name: Stage artifact
+        id: artifact
+        shell: bash
+        run: |
+          mkdir -p dist
+          asset='PrayerClarity.ReposeOwnerProbe.0.1.0.dll'
+          cp 'bin/ReposeOwnerProbe/PrayerClarity.ReposeOwnerProbe.dll' "dist/$asset"
+          hash=$(sha256sum "dist/$asset" | awk '{print $1}')
+          echo "asset=$asset" >> "$GITHUB_OUTPUT"
+          echo "sha256=$hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity Repose owner probe 0.1.0 SHA-256: $hash"
+      - name: Upload probe DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerClarity-ReposeOwnerProbe-0.1.0
+          path: dist/${{ steps.artifact.outputs.asset }}
+          if-no-files-found: error
+          retention-days: 7

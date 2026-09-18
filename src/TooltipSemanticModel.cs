@@ -21,14 +21,6 @@ namespace PrayerClarity
         {
             if (tier == null || string.IsNullOrEmpty(tier.CraftId)) return null;
 
-            // Only decompose a pure reward special. Mixed event/buff/reward specials keep
-            // the generic verified SpecialCoreText path rather than hiding information.
-            string key = tier.SpecialSemanticKey;
-            if (string.IsNullOrEmpty(key) ||
-                !key.StartsWith("rewards:", StringComparison.Ordinal) ||
-                key.IndexOf('|') >= 0)
-                return null;
-
             object craft = R.BalanceData(tier.CraftId, "CraftDefinition", true);
             IEnumerable output = craft == null ? null : R.Get(craft, "output") as IEnumerable;
             if (output == null) return null;
@@ -44,9 +36,10 @@ namespace PrayerClarity
                     string.Equals(id, "money", StringComparison.Ordinal))
                     continue;
 
-                // Property-first reward rendering is deliberately narrow: one concrete
-                // non-currency output. Unexpected multi-reward specials fall back to the
-                // existing complete SpecialCoreText instead of being partially rendered.
+                // Technology may decompose one concrete item reward even when the same
+                // prayer also has a timed/special effect (for example Rebalanced
+                // Imagination). Unexpected multi-item rewards still fall back to the
+                // complete special-text path rather than being partially rendered.
                 if (found != null) return null;
                 found = new RewardDetails(id, value);
             }

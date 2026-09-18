@@ -76,19 +76,52 @@ namespace PrayerClarity
 
         private static string BuildSharedEffect(List<PrayerForecast.TierDetails> tiers)
         {
+            string editionShared;
+            if (TryGetCommonEditionTechnologyEffect(tiers, out editionShared))
+                return BuildEffectSection(editionShared);
+
+            if (AllUseSoulGratitude(tiers))
+                return Localization.F("tech.souls_base_faith");
+
             TooltipSemanticModel.RewardDetails commonReward;
             if (TryGetCommonReward(tiers, out commonReward))
             {
-                return Localization.F("forecast.effect_header") + ":\n" +
-                       R.VanillaLocalize(commonReward.Id) + " ×" +
-                       commonReward.Count.ToString(CultureInfo.InvariantCulture);
+                string rewardName = R.VanillaLocalize(commonReward.Id);
+                List<string> lines = new List<string>
+                {
+                    TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":",
+                    TechnologyTooltipTextStyle.RewardName(commonReward.Id, rewardName)
+                };
+
+                return string.Join("\n", lines.ToArray());
             }
 
             if (!IsSpecialShared(tiers)) return null;
             string core = tiers[0].SpecialCoreText;
             if (string.IsNullOrEmpty(core)) return null;
 
-            return Localization.F("forecast.effect_header") + ":\n" + core;
+            string family = PrayerFamily(tiers[0].CraftId);
+            if (string.Equals(family, "b_pen", StringComparison.Ordinal))
+            {
+                return BuildEffectSection(
+                    Localization.F("tech.effect.imagination_intro") + "\n" +
+                    TechnologyTooltipTextStyle.GoldValueAfterColon(core));
+            }
+
+            if (string.Equals(family, "b_star", StringComparison.Ordinal))
+            {
+                return BuildEffectSection(
+                    Localization.F("tech.effect.excellence_intro") + "\n" +
+                    TechnologyTooltipTextStyle.Atomic(core));
+            }
+
+            return BuildEffectSection(core);
+        }
+
+        private static string BuildEffectSection(string body)
+        {
+            if (string.IsNullOrEmpty(body)) return null;
+            return TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":\n" + body;
         }
 
         private static string BuildSharedDuration(List<PrayerForecast.TierDetails> tiers)
@@ -125,11 +158,27 @@ namespace PrayerClarity
 
             AddTierFixedAndRewardLines(lines, tier, allTiers);
 
-            if (!IsSpecialShared(allTiers))
+            string editionShared;
+            string editionTier;
+            bool editionHandled = PrayerEditionSemantics.TryBuildTechnologyEffect(
+                tier.CraftId,
+                out editionShared,
+                out editionTier);
+
+            if (editionHandled)
+            {
+                if (!string.IsNullOrEmpty(editionTier))
+                    lines.Add(FormatEditionTierEffect(tier, editionTier));
+            }
+            else if (!IsSpecialShared(allTiers))
             {
                 TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
                 if (reward == null && !string.IsNullOrEmpty(tier.SpecialCoreText))
-                    lines.Add(Localization.F("forecast.effect_header") + ": " + tier.SpecialCoreText);
+                {
+                    lines.Add(
+                        TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) +
+                        ": " + tier.SpecialCoreText);
+                }
             }
 
             if (!IsDurationShared(allTiers) && tier.HasSpecialDuration)
@@ -140,6 +189,20 @@ namespace PrayerClarity
             }
 
             return lines.Count == 0 ? null : string.Join("\n", lines.ToArray());
+        }
+
+        private static string FormatEditionTierEffect(PrayerForecast.TierDetails tier, string text)
+        {
+            string family = PrayerFamily(tier.CraftId);
+            if (string.Equals(family, "b_plant", StringComparison.Ordinal) ||
+                string.Equals(family, "b_sins", StringComparison.Ordinal) ||
+                string.Equals(family, "b_sword", StringComparison.Ordinal))
+                return TechnologyTooltipTextStyle.Atomic(text);
+
+            if (string.Equals(family, "b_star", StringComparison.Ordinal))
+                return TechnologyTooltipTextStyle.QualityValueAfterColon(tier.QualityTier, text);
+
+            return text;
         }
 
         private static string BuildTierRateLine(
@@ -182,9 +245,11 @@ namespace PrayerClarity
             TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
             if (!rewardIsShared && reward != null)
             {
-                lines.Add(
-                    R.VanillaLocalize(reward.Id) + " ×" +
-                    reward.Count.ToString(CultureInfo.InvariantCulture));
+                string rewardName = TechnologyTooltipTextStyle.RewardName(
+                    reward.Id,
+                    R.VanillaLocalize(reward.Id));
+                lines.Add(TechnologyTooltipTextStyle.Atomic(
+                    rewardName + " ×" + reward.Count.ToString(CultureInfo.InvariantCulture)));
             }
         }
 
@@ -248,6 +313,40 @@ namespace PrayerClarity
             return true;
         }
 
+        private static bool TryGetCommonEditionTechnologyEffect(
+            List<PrayerForecast.TierDetails> tiers,
+            out string sharedText)
+        {
+            sharedText = null;
+            if (tiers == null || tiers.Count == 0) return false;
+
+            string first = null;
+            for (int i = 0; i < tiers.Count; i++)
+            {
+                PrayerForecast.TierDetails tier = tiers[i];
+                string shared;
+                string tierText;
+                if (tier == null ||
+                    !PrayerEditionSemantics.TryBuildTechnologyEffect(tier.CraftId, out shared, out tierText) ||
+                    string.IsNullOrEmpty(shared))
+                    return false;
+
+                if (i == 0) first = shared;
+                else if (!string.Equals(first, shared, StringComparison.Ordinal)) return false;
+            }
+
+            sharedText = first;
+            return !string.IsNullOrEmpty(sharedText);
+        }
+
+        private static bool AllUseSoulGratitude(List<PrayerForecast.TierDetails> tiers)
+        {
+            if (tiers == null || tiers.Count == 0) return false;
+            foreach (PrayerForecast.TierDetails tier in tiers)
+                if (tier == null || !tier.UsesSoulGratitude) return false;
+            return true;
+        }
+
         private static bool TryGetCommonReward(
             List<PrayerForecast.TierDetails> tiers,
             out TooltipSemanticModel.RewardDetails common)
@@ -271,18 +370,28 @@ namespace PrayerClarity
             return true;
         }
 
+        private static string PrayerFamily(string craftId)
+        {
+            if (string.IsNullOrEmpty(craftId) || !craftId.StartsWith("pray:", StringComparison.Ordinal))
+                return string.Empty;
+
+            int last = craftId.LastIndexOf(':');
+            if (last <= 5) return string.Empty;
+            return craftId.Substring(5, last - 5);
+        }
+
         private static string FormatPercent(float rate)
         {
             float percent = rate * 100f;
             if (Math.Abs(percent) < Epsilon) return "0%";
-            string sign = percent > 0f ? "+" : "−";
+            string sign = percent > 0f ? "+" : "-";
             return sign + Math.Abs(percent).ToString("0.##", CultureInfo.InvariantCulture) + "%";
         }
 
         private static string FormatSignedNumber(float value)
         {
             if (Math.Abs(value) < Epsilon) return "0";
-            string sign = value > 0f ? "+" : "−";
+            string sign = value > 0f ? "+" : "-";
             return sign + Math.Abs(value).ToString("0.##", CultureInfo.InvariantCulture);
         }
 

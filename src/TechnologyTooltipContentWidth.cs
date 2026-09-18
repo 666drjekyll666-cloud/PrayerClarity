@@ -7,12 +7,10 @@ namespace PrayerClarity
 {
     internal static class TechnologyTooltipContentWidth
     {
-        // Ownership marker for PrayerClarity's Technology mechanics body. This stays
-        // deliberately wider than any expected final body so the live UILabel can be
-        // measured before we replace its native overflow ceiling with the atomic-row
-        // anchor derived below.
         internal const int OwnedMaxWidth = 900;
         private const int MinimumAnchorWidth = 150;
+        private const string NoBreakSpace = "\u00A0";
+        private const int SoftProseWordThreshold = 5;
 
         private static ManualLogSource _log;
         private static bool _errorLogged;
@@ -59,8 +57,6 @@ namespace PrayerClarity
 
                 R.Set(label, "text", fullText);
                 R.Set(label, "overflowWidth", anchorWidth);
-                // Force NGUI to rebuild processedText immediately so the enclosing
-                // WidgetsBubbleGUI reads the final wrapped dimensions in the same draw.
                 R.Get(label, "processedText");
             }
             catch (Exception ex)
@@ -92,12 +88,14 @@ namespace PrayerClarity
                     continue;
                 }
 
-                bool isEffectHeader = string.Equals(line, effectHeader, StringComparison.Ordinal);
+                string semanticLine = TechnologyTooltipTextStyle.StripColorEncoding(line);
+                bool isEffectHeader = string.Equals(semanticLine, effectHeader, StringComparison.Ordinal);
                 bool soft = previousWasEffectHeader ||
                             isEffectHeader ||
-                            line.StartsWith(effectHeader + " ", StringComparison.Ordinal) ||
-                            line.IndexOf(" ×", StringComparison.Ordinal) >= 0 ||
-                            IsSectionHeading(line);
+                            semanticLine.StartsWith(effectHeader + " ", StringComparison.Ordinal) ||
+                            semanticLine.IndexOf(" ×", StringComparison.Ordinal) >= 0 ||
+                            IsSectionHeading(semanticLine) ||
+                            IsLongProse(line, semanticLine);
 
                 previousWasEffectHeader = isEffectHeader;
                 if (soft) continue;
@@ -116,10 +114,32 @@ namespace PrayerClarity
             return Mathf.Clamp(measured, MinimumAnchorWidth, measurementCeiling);
         }
 
+        private static bool IsLongProse(string rawLine, string semanticLine)
+        {
+            if (string.IsNullOrEmpty(semanticLine)) return false;
+
+            // A fully atomic mechanics row replaces every ordinary space with NBSP.
+            // A prose sentence may still contain one smaller atomic cluster (for
+            // example ↑ + white skull + red skull); normal spaces around that cluster
+            // remain valid wrapping opportunities and the sentence must stay soft.
+            bool hasNoBreakSpace = rawLine.IndexOf(NoBreakSpace) >= 0;
+            bool hasOrdinarySpace = rawLine.IndexOf(' ') >= 0;
+            if (hasNoBreakSpace && !hasOrdinarySpace) return false;
+
+            int words = 1;
+            bool inSpace = false;
+            for (int i = 0; i < semanticLine.Length; i++)
+            {
+                bool space = char.IsWhiteSpace(semanticLine[i]);
+                if (space && !inSpace) words++;
+                inSpace = space;
+            }
+
+            return words >= SoftProseWordThreshold;
+        }
+
         private static bool IsSectionHeading(string line)
         {
-            // Headings organize the body but should not become width owners merely
-            // because one localization spells the heading with a long phrase.
             return line.EndsWith(":", StringComparison.Ordinal) &&
                    line.IndexOf("100%", StringComparison.Ordinal) < 0;
         }

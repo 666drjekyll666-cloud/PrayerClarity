@@ -114,8 +114,17 @@ namespace PrayerClarity
 
         private static bool ShouldShowStrategicDuration(string buffId)
         {
-            return !string.Equals(buffId, "buff_plant", StringComparison.Ordinal) &&
-                   !string.Equals(buffId, "buff_sins", StringComparison.Ordinal);
+            if (!string.Equals(buffId, "buff_plant", StringComparison.Ordinal) &&
+                !string.Equals(buffId, "buff_sins", StringComparison.Ordinal))
+                return true;
+
+            // Stock Roots/Repentance are intentionally presented as inactive/unverified,
+            // so their long timer is not promoted into the description. Rebalanced
+            // installs concrete active semantics for these same buff IDs; once present,
+            // the duration is meaningful and belongs on the active-effect surface.
+            string editionText;
+            return PrayerEditionSemantics.TryBuildActiveEffect(buffId, out editionText) &&
+                   !string.IsNullOrEmpty(editionText);
         }
 
         private static bool IsPrayerTimedBuff(string buffId)
@@ -244,6 +253,15 @@ namespace PrayerClarity
             if (string.IsNullOrEmpty(commonKey)) return null;
             string lore = R.VanillaLocalize(commonKey);
             if (string.IsNullOrEmpty(lore) || string.Equals(lore, commonKey, StringComparison.Ordinal)) return null;
+
+            if (string.Equals(commonKey, "b_village_d", StringComparison.Ordinal))
+            {
+                lore = TechnologyTooltipTextStyle.AccentLoreEntity(
+                    lore,
+                    "blessing_commerce",
+                    R.VanillaLocalize("blessing_commerce"));
+            }
+
             return lore;
         }
 

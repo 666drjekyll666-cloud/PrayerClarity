@@ -1,0 +1,13 @@
+{
+  "rebalanced.tech.plant_intro": "Acelera o crescimento das plantas.",
+  "rebalanced.tech.sins_intro": "As confissões acontecem com mais frequência em cada confessionário.",
+  "rebalanced.tech.repose_intro": "O burro pode trazer corpos de melhor qualidade.",
+  "rebalanced.tech.combat_intro": "Fortalece o Guardião em combate.",
+  "rebalanced.active.plant": "Tempo de crescimento das plantas: -{0:0}%",
+  "rebalanced.active.sins": "Chance de confissão: {0:0}%",
+  "rebalanced.active.repose.bronze": "O burro pode trazer um corpo um nível de qualidade melhor",
+  "rebalanced.active.repose.silver": "Em metade dos casos, o melhor corpo é garantido",
+  "rebalanced.active.repose.gold": "O burro traz garantidamente o melhor corpo",
+  "rebalanced.active.combat": "Dano +{0:0.##} · Armadura +{1:0.##} · Regeneração {2:0.##} PV/s",
+  "rebalanced.active.gratitude": "Ao curar uma alma: +{0:0}% de gratidão"
+}

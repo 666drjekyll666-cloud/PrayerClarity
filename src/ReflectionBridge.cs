@@ -189,9 +189,6 @@ namespace PrayerClarity
 
         internal static string VanillaLocalize(string key)
         {
-            // Direct audit evidence places GJL in Assembly-CSharp-firstpass on 1.407,
-            // not in Assembly-CSharp. Resolve it once across loaded assemblies, then
-            // reuse the exact L(string) method at relevant UI redraw boundaries.
             if (!_vanillaLocalizeResolved)
             {
                 Type type = AnyType("GJL");
@@ -214,15 +211,25 @@ namespace PrayerClarity
 
         internal static void Patch(string harmonyId, Type owner, MethodInfo target, string postfixName)
         {
+            PatchHooks(harmonyId, owner, target, null, postfixName, null);
+        }
+
+        internal static void PatchPrefix(string harmonyId, Type owner, MethodInfo target, string prefixName)
+        {
+            PatchHooks(harmonyId, owner, target, prefixName, null, null);
+        }
+
+        internal static void PatchHooks(string harmonyId, Type owner, MethodInfo target, string prefixName, string postfixName, string finalizerName)
+        {
             if (target == null) throw new MissingMethodException("PrayerClarity patch target");
             Type harmonyType = AnyType("HarmonyLib.Harmony");
             Type harmonyMethodType = AnyType("HarmonyLib.HarmonyMethod");
             if (harmonyType == null || harmonyMethodType == null) throw new InvalidOperationException("Harmony unavailable");
 
             object harmony = Activator.CreateInstance(harmonyType, new object[] { harmonyId });
-            MethodInfo postfix = owner.GetMethod(postfixName, Stat);
-            if (postfix == null) throw new MissingMethodException(owner.FullName, postfixName);
-            object harmonyPostfix = Activator.CreateInstance(harmonyMethodType, new object[] { postfix });
+            object prefix = CreateHarmonyMethod(harmonyMethodType, owner, prefixName);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, owner, postfixName);
+            object finalizer = CreateHarmonyMethod(harmonyMethodType, owner, finalizerName);
 
             MethodInfo patch = harmonyType.GetMethods(Inst)
                 .FirstOrDefault(m => m.Name == "Patch" && m.GetParameters().Length >= 5 && typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
@@ -230,11 +237,27 @@ namespace PrayerClarity
 
             object[] args = new object[patch.GetParameters().Length];
             args[0] = target;
-            args[1] = null;
-            args[2] = harmonyPostfix;
+            args[1] = prefix;
+            args[2] = postfix;
             args[3] = null;
-            args[4] = null;
+            args[4] = finalizer;
             patch.Invoke(harmony, args);
+        }
+
+        private static object CreateHarmonyMethod(Type harmonyMethodType, Type owner, string methodName)
+        {
+            if (string.IsNullOrEmpty(methodName)) return null;
+            MethodInfo method = owner.GetMethod(methodName, Stat);
+            if (method == null) throw new MissingMethodException(owner.FullName, methodName);
+
+            ConstructorInfo ctor = harmonyMethodType.GetConstructor(new[] { typeof(MethodInfo) });
+            if (ctor != null) return ctor.Invoke(new object[] { method });
+
+            object harmonyMethod = Activator.CreateInstance(harmonyMethodType);
+            FieldInfo methodField = harmonyMethodType.GetField("method", Inst);
+            if (methodField == null) throw new MissingMemberException("HarmonyMethod.method");
+            methodField.SetValue(harmonyMethod, method);
+            return harmonyMethod;
         }
     }
 }

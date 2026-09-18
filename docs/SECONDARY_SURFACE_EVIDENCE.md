@@ -28,6 +28,17 @@ The verified prefab hierarchy contains the existing description label directly u
 
 Runtime testing of 0.1.15 confirmed that the quantitative prayer-buff descriptions are readable in the real Character -> Temporary Effects surface for representative prayer buffs. This presentation is accepted as the current Clarity direction.
 
+Current ownership/synchronization contract:
+
+- the game keeps the active buff header and icon; PrayerClarity does not replace them;
+- the header comes from `BuffDefinition.GetLocalizedName()` and the icon from `BuffDefinition.GetIconName()`, so the visible icon is technically the buff/effect icon rather than an item-icon copy;
+- PrayerClarity replaces only `txt_descr` for verified prayer buffs, using the current active-effect semantic projection rather than copying Technology tooltip prose;
+- shared/Vanilla active effects read the live `BuffDefinition` values where applicable and format them through `active.*` localization keys;
+- Rebalanced installs its own active-effect resolver, which reads the captured active prayer tier and the current `RebalancedRuleSet` for tier-dependent repaired/reworked effects. This keeps active-effect numbers aligned with the same effective rules used by the edition rather than maintaining a second numeric table;
+- Technology-specific explanatory strings (`tech.*` / `rebalanced.tech.*`) are intentionally not mirrored verbatim into Temporary Effects. The status list uses a shorter context-specific sentence, although several concrete effect-value strings are deliberately shared between surfaces.
+
+A 2026-09-18 source audit found one stale exception to that contract: long-duration promotion for `buff_plant` and `buff_sins` had been suppressed for the original Vanilla broken/unverified state and the suppression also carried into Rebalanced after those mechanics were repaired. Candidate Rebalanced 0.1.5 makes that suppression edition-aware: Vanilla behavior remains unchanged, while a concrete Rebalanced active-effect resolver makes the remaining duration meaningful and therefore visible in the description.
+
 ## Prayer-buff timer evidence
 
 A second read-only probe, `PrayerClarity AuditProbe 0.1.8`, source commit `1389a1f56d928f0c1776a0939add1c73faaafd8f`, closed the timer-state question against the same verified game MVID.

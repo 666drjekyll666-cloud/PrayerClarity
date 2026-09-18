@@ -2,6 +2,118 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity Test Harness Rebalanced Compatibility 0.1.2
+
+- Type: research/test-only compatibility adapter; not production PrayerClarity behavior.
+- Purpose: replace the failed 0.1.1 probe with a hook on the already runtime-verified Harness seam `BuffsLogics.AddBuff(string, Nullable<float>)`. Before the synthetic PlayerBuff is added, the adapter infers Bronze/Silver/Gold from the Harness duration override and writes the same Rebalanced tier/effect tokens that the normal successful-sermon path would capture.
+- Source branch: `research/test-harness-rebalanced-compat`.
+- Candidate ref: `candidate/test-harness-rebalanced-compat-0.1.2`.
+- Exact source SHA: `437e8020208a91818d6ca8aef4dc9f44c2a3fd22`.
+- GitHub Actions run: `35289408160`.
+- Workflow result: success on `ubuntu-latest`; `net472` Release build and artifact upload passed.
+- Workflow artifact ID: `10525896671` (`PrayerClarity-TestHarness-RebalancedCompat-0.1.2-ci-437e8020208a91818d6ca8aef4dc9f44c2a3fd22`).
+- Artifact ZIP digest: `sha256:1de2867e41cfd2008be8c06920cb2189b9a4a59d047601159ed418045ac642fd`.
+- Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.2-ci.dll`; SHA-256: `4b1e13c70e23ae0b02c8a3ef080518f7f054abf6ee7d2112b2deb6c90694788b`.
+- Test protocol: replace compatibility 0.1.1 with 0.1.2; keep Rebalanced 0.1.5 and the existing Harness/bridges; use Silver; activate each canonical timed prayer once and skip retired Protection/b_shield. The log should contain `Synthetic Rebalanced tier projected at BuffsLogics.AddBuff` for Roots, Repentance, Repose, Combat and Excellence before judging Temporary Effects text.
+- Expected Silver Temporary Effects: Repentance 75%; Roots -30% growth time; Repose Silver reliability wording; Combat +10 damage / +4 armor / 2 HP/s; Imagination +0.7; Excellence +0.5; Soul Contentment +20%; Thorough Cleansing x2.
+- Runtime result, 2026-09-18: **passed**. Rebalanced 0.1.5 loaded with compatibility 0.1.2 and the legacy Harness/bridges. The log records successful tier projection immediately before native AddBuff for Silver Roots (`buff_plant`, 72), Repentance (`buff_sins`, 36), Repose (`buff_skull`, 36), Combat (`buff_sword`, 72) and Excellence (`buff_star`, 36). The resulting Temporary Effects UI shows the expected Silver semantics: Roots -30%, Repentance 75%, Repose's half-guaranteed-best wording, Combat +10/+4/2 HP/s, Imagination +0.7, Excellence +0.5, Soul Contentment +20% and Thorough Cleansing x2.
+- The current Rebalanced log contains no `InvalidCastException` or `SmartExpression` failure. The earlier Roots exception is therefore **not reproduced** under the correctly tier-projected test path and is no longer treated as a confirmed current blocker. Reopen only if it appears in a normal-sermon/runtime path.
+- Status: **test adapter verified; Temporary Effects Silver presentation gate passed; research-only artifact remains non-production**.
+
+## PrayerClarity Test Harness Rebalanced Compatibility 0.1.1
+
+- Type: research/test-only compatibility adapter; not production PrayerClarity behavior.
+- Purpose: retain the 0.1.0 Vanilla-GUID compatibility alias and additionally mirror Rebalanced's successful-prayer tier/effect-token capture immediately before the legacy Harness synthetically activates a timed buff. This makes Temporary Effects tests representative of Silver/Gold Rebalanced semantics without running the real sermon/reward path.
+- Source branch: `research/test-harness-rebalanced-compat`.
+- Candidate ref: `candidate/test-harness-rebalanced-compat-0.1.1`.
+- Exact source SHA: `0652b8f9feb18eb6dd72c77756bda6f23b32e3d6`.
+- GitHub Actions run: `35288758209`.
+- Workflow result: success on `ubuntu-latest`; `net472` Release build and artifact upload passed.
+- Workflow artifact ID: `10525277772` (`PrayerClarity-TestHarness-RebalancedCompat-0.1.1-ci-0652b8f9feb18eb6dd72c77756bda6f23b32e3d6`).
+- Artifact ZIP digest: `sha256:c48907ef8e721a4c450fdef8c148bf481efdcb499e46c6efea68b3545c5a5d08`.
+- Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.1-ci.dll`; SHA-256: `f5ee41d053a49411754cbc4dabb645fdb9d59c480711d8e7fed24dc4501642b6`.
+- Test protocol: replace compatibility 0.1.0 with 0.1.1, keep Rebalanced 0.1.5 and the existing Harness/bridges, use Silver, activate each timed prayer once, and **skip retired Protection/b_shield** when validating canonical Combat because both Combat and Protection resolve to the same `buff_sword` and double activation extends its timer. Do not save the game with synthetic buffs active.
+- Expected Silver Temporary Effects: Repentance 75%; Roots -30% growth time; Repose Silver reliability wording; Combat +10 damage / +4 armor / 2 HP/s; Imagination +0.7; Excellence +0.5; Soul Contentment +20%; Thorough Cleansing x2. Durations should continue to reflect the active Longer Days day length.
+- Runtime result, 2026-09-18: **failed before installing the adapter patch**. Startup throws `MissingMethodException: PrayCraftGUI.DoPrayForBuff()` because 0.1.1 incorrectly assumed a zero-argument overload. Test Harness 0.1.2 and its bridges still load afterward, so the screenshot necessarily remains stock/fallback for tier-dependent Rebalanced effects.
+- Status: **superseded by compatibility 0.1.2; do not use 0.1.1**.
+
+## PrayerClarity Test Harness Rebalanced Compatibility 0.1.0
+
+- Type: research/test-only compatibility shim; no prayer mechanics, save state, UI or Harmony patches.
+- Purpose: allow the existing legacy PrayerClarity Test Harness to load while testing PrayerClarity: Rebalanced. The legacy Harness hard-depends on the Vanilla plugin GUID `nikich.graveyardkeeper.prayerclarity`; the shim exposes only that dependency identity and itself hard-depends on `nikich.graveyardkeeper.prayerclarity.rebalanced`, forcing Rebalanced to load first.
+- Source branch: `research/test-harness-rebalanced-compat`.
+- Candidate ref: `candidate/test-harness-rebalanced-compat-0.1.0-build2`.
+- Exact source SHA: `c251c45687c5e2f45bff9b703719ad7478c5f888`.
+- GitHub Actions run: `35287963473`.
+- Workflow result: success on `ubuntu-latest`; `net472` Release build and artifact upload passed.
+- Workflow artifact ID: `10524862386` (`PrayerClarity-TestHarness-RebalancedCompat-0.1.0-ci-c251c45687c5e2f45bff9b703719ad7478c5f888`).
+- Artifact ZIP digest: `sha256:93e6d50dcc4d7519fd4060d18c24dd6e0eccf459cf425df06ad141a34cb8cde4`.
+- Handoff filename: `PrayerClarity.TestHarness.RebalancedCompat-0.1.0-ci.dll`; SHA-256: `721b63377b365f7d483a1ac93c4b90fc6e7188154180910acfc88ada3190f23a`.
+- Runtime gate: install only alongside PrayerClarity: Rebalanced and the existing Test Harness/bridge DLLs. Confirm the Harness and bridges now load and appear in Configuration Manager. If the Harness has a compile-time assembly reference to `PrayerClarity.dll` rather than only the BepInEx GUID dependency, this shim will not be sufficient; the next runtime log will prove that distinction.
+- Runtime result, 2026-09-18: **dependency compatibility proved**. Rebalanced 0.1.5, compatibility 0.1.0, Test Harness 0.1.2 and all three Harness bridge plugins loaded together. The next test exposed that the legacy Buff Bridge bypasses Rebalanced tier capture, so 0.1.0 is superseded by 0.1.1 for tier-dependent Temporary Effects verification.
+- Status: **dependency question answered; superseded by compatibility 0.1.1 for active-effect testing**.
+
+## Shared polish candidate — PrayerClarity: Vanilla 1.0.24 / Rebalanced 0.1.5
+
+- Type: narrow shared presentation correction plus one Rebalanced Temporary Effects consistency repair; no prayer balance values, success formulas or gameplay mechanics changed in this candidate.
+- Development branch: `dev/shared-tooltip-polish-1.0.24-0.1.5`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.5-runtime`; one exact source state intentionally produces both sibling editions.
+- Exact build source SHA: `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
+- GitHub Actions run: `35286685613`.
+- Workflow result: success on `ubuntu-latest`; all 11 base and Rebalanced localization JSON files parsed, Rebalanced `net472` Release build passed, Vanilla sibling `net472` Release build passed, required embedded locale markers were present, and both candidate DLL pairs were staged and uploaded.
+- Workflow artifact ID: `10524397397` (`PrayerClarity-shared-ui-1.0.24-rebalanced-0.1.5-ci-3b7cea7986138f57d7ace6998b9cc6bca952af1e`).
+- Artifact ZIP digest: `sha256:b09478ceb3009ff5c7ebb603b9e5de7dcb0404270eeb71c859263230ca72c5d4`.
+- Vanilla handoff filename: `PrayerClarity-1.0.24-ci.dll`; canonical filename: `PrayerClarity.dll`; SHA-256: `ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879`.
+- Rebalanced handoff filename: `PrayerClarity.Rebalanced-0.1.5-ci.dll`; canonical filename: `PrayerClarity.Rebalanced.dll`; SHA-256: `aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf`.
+- Technology fix: a reward is hoisted into the shared Effect block only when both reward identity **and quantity** are invariant across tiers. Prosperity therefore no longer shows the orphan shared `Effect: Commercial Blessing`; its `x1/x2/x3` Commercial Blessing outputs remain tier-local.
+- Temporary Effects audit/fix: the vanilla game still owns the buff title and icon. PrayerClarity replaces only the active-buff description and strategic timer presentation. Rebalanced Roots/Repentance now promote their meaningful remaining duration into that description when their repaired edition-specific active semantics are available; Vanilla keeps the stock broken/unverified presentation policy.
+- Requested user test: first inspect Prosperity in Technology in either edition and confirm the shared `Effect: Commercial Blessing` line is gone while Bronze/Silver/Gold still show `x1/x2/x3`. In Rebalanced, activate Shoots & Roots or Repentance and open Character -> Temporary Effects; confirm the concrete effect text is present together with the remaining-duration text when at least one in-game day remains, while the stock title/icon still look normal. No full sermon/mechanics regression pass is required.
+- Runtime result, 2026-09-18: the user confirmed Prayer for Prosperity now renders correctly in Technology: the meaningless shared `Effect: Commercial Blessing` line is gone and the Bronze/Silver/Gold `x1/x2/x3` Commercial Blessing quantities remain intact. This Technology fix is accepted.
+- Temporary Effects verification is currently blocked by the installed legacy Test Harness. Runtime log shows `PrayerClarity Test Harness 0.1.2` is rejected because its hard dependency is `nikich.graveyardkeeper.prayerclarity` (Vanilla GUID), while the active sibling is `nikich.graveyardkeeper.prayerclarity.rebalanced`; all Harness bridge plugins then skip because the Harness did not load.
+- The same runtime log exposed an independent Rebalanced Roots issue before the requested Temporary Effects test: projected plant `SmartExpression` evaluation repeatedly throws `InvalidCastException` on `Ppar("buff_plant")*Ppar("prayerclarity_rebalanced_plant_reduction")`. Treat this as a new mechanics/runtime defect requiring diagnosis before Roots is accepted; do not attribute it to the Test Harness because the Harness never loaded.
+- Follow-up runtime evidence, 2026-09-18: compatibility shim 0.1.0 worked. BepInEx loaded Rebalanced 0.1.5, the compatibility alias, Test Harness 0.1.2, Buff Bridge 0.1.4, Button Bridge 0.1.3 and Item Cell Bridge 0.1.5 in one session. The Harness was configured to Silver and synthetic Silver timed buffs were activated across the roster.
+- Temporary Effects screenshot/result: tier-invariant effects render correctly (Imagination +0.7, Soul Contentment +20%, Thorough Cleansing x2). Tier-dependent effects fall back to stock/Vanilla presentation: Repentance and Roots show the known-issue text; Repose shows stock +1-tier wording; Combat shows only stock +5 damage; Excellence shows stock +0.2 instead of Silver +0.5. This does **not** yet prove a production Rebalanced presentation defect.
+- Root cause of that mismatch is the test path: the Harness Buff Bridge directly calls native `BuffsLogics.AddBuff` and explicitly bypasses the normal sermon path. Rebalanced quality capture is owned by `PlayerComponent.StartPrayAnimation(CraftDefinition,bool)`, so the synthetic path never writes the persisted tier/effect tokens consumed by Rebalanced Temporary Effects. The test harness therefore needs a Rebalanced tier-capture adapter before this surface can be judged.
+- Combat timer note: the session activated both canonical Combat `b_sword:2` and retired Protection alias `b_shield:2`; Rebalanced maps both to `buff_sword`, so the same buff was added twice and the screenshot's 12.8-day duration is a Harness artifact rather than the canonical Silver Combat duration.
+- Final Temporary Effects runtime result, 2026-09-18: compatibility 0.1.2 correctly projected Silver tier state before synthetic AddBuff. The Rebalanced screenshot matches the expected semantics across every canonical timed prayer: Roots -30%, Repentance 75%, Repose Silver reliability text, Combat +10 damage / +4 armor / 2 HP/s, Imagination +0.7, Excellence +0.5, Soul Contentment +20%, Thorough Cleansing x2. The user explicitly reported the surface as working correctly.
+- Vanilla sibling spot-check, 2026-09-18: PrayerClarity 1.0.24 loaded instead of the compatibility alias (BepInEx correctly skipped the lower-version duplicate GUID shim). Vanilla Temporary Effects retained stock/known-issue semantics as intended; the reported long Rage timer came from accidental repeated synthetic activation and is not a PrayerClarity defect.
+- The earlier Rebalanced Roots `InvalidCastException`/SmartExpression concern was not reproduced in the correctly tier-projected session. It is downgraded from a confirmed blocker to a non-reproduced prior anomaly; reopen only on normal-sermon evidence.
+- Status: **Prosperity Technology correction accepted; Temporary Effects presentation accepted for both sibling editions within the tested scope. No remaining blocker from this polish pass.**
+
+## Shared UI candidate — PrayerClarity: Vanilla 1.0.21 / Rebalanced 0.1.2
+
+- Type: shared Technology information-design/presentation candidate for both editions, plus the accepted Rebalanced specialist-bonus adjustment from **+250/+350/+450%** to **+200/+300/+400%** for Faith, Donations and BSS Soul's Repose. No other Rebalanced mechanic/hook architecture changes.
+- Development branch: `dev/shared-tooltip-polish-1.0.21-0.1.2`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.2`; one frozen source state intentionally produces both sibling editions.
+- Exact build source SHA: `a0bdbc8a66e28a4175376765419ff004d7bae6a7`.
+- GitHub Actions run: `35277513366`.
+- Workflow result: success on `ubuntu-latest`; all 11 base and Rebalanced localization JSON files parsed, Rebalanced `net472` Release build passed, Vanilla sibling `net472` Release build passed, all required embedded locale markers were present, and both candidate DLL pairs were staged in one run.
+- Workflow artifact ID: `10521206721` (`PrayerClarity-shared-ui-1.0.21-rebalanced-0.1.2-ci-a0bdbc8a66e28a4175376765419ff004d7bae6a7`).
+- Artifact ZIP digest: `sha256:9a9ac2480d23dd05732da29f539135bfdd7a7b2fa9eccbaf126a25a7ef9d66cc`.
+- Vanilla handoff filename: `PrayerClarity-1.0.21-ci.dll`; canonical filename: `PrayerClarity.dll`; SHA-256: `847953001c7fb2a5be008d7d705b2da5971faa38b2b5d33244140a8c9b8be8f6`.
+- Rebalanced handoff filename: `PrayerClarity.Rebalanced-0.1.2-ci.dll`; canonical filename: `PrayerClarity.Rebalanced.dll`; SHA-256: `7b08540adb952466e84cd92246e853c07b9a5e26a1e4f22f949439c65c069ddf`.
+- Shared presentation scope: Technology follows `shared in-world effect -> terse quality delta`; short mechanics rows are atomic; Effect/special-entity labels gain restrained semantic accents; Commercial Blessing keeps one consistent entity accent; Excellence can color only its key tier value Bronze/Silver/Gold; durations remain plain; new strings ship in all 11 locales. Vanilla and Rebalanced compile the same shared renderer/style/localization infrastructure while edition-specific semantics remain separate.
+- Rebalanced wording scope: Roots uses a shared plant-growth explanation plus `growth time -20/-30/-40%`; Repentance uses a shared daily-confessional explanation plus `confession chance 50/75/100%`; Repose uses a shared better-corpse cue with upward/white-skull/red-skull symbols and the accepted natural Bronze/Silver/Gold reliability wording; Imagination lifts its invariant +0.7 writing-quality effect above the tiers and preserves Silver/Gold Story rewards; Excellence presents its +0.2/+0.5/+1.0 values as the key quality ladder; BSS Soul's Repose explicitly explains that base Faith depends on Church Quality and Soul Gratitude before the tier percentage is applied.
+- Requested user test: install **one edition at a time**. Primary gate is Rebalanced 0.1.2 in Russian: inspect Repose, Repentance, Shoots & Roots, Imagination, Excellence, Prosperity, Faith, Donations and BSS Soul's Repose where available. Confirm the shared/tier hierarchy reads naturally; skull/up icons render; semantic colors render rather than exposing raw NGUI tags; atomic label/value rows do not split awkwardly; Commercial Blessing and Story accents are coherent; and the tooltip remains viewport-safe. Then spot-check Vanilla 1.0.21 (especially Repose, Imagination/Excellence and Prosperity) to confirm the same shared grammar improves presentation without changing stock mechanics. Existing 0.1.0/0.1.1 runtime evidence already covers the underlying Rebalanced mechanic seams; this pass does not require repeating the full sermon/mechanics smoke unless the UI or values expose a discrepancy.
+- Status: **ready for runtime visual/UX verification; not accepted**.
+
+## PrayerClarity: Rebalanced 0.1.1 — presentation/localization polish candidate
+
+- Type: Rebalanced presentation/localization follow-up; **no prayer-mechanics or balance changes** and no Technology-tooltip layout redesign.
+- Development branch: `dev/rebalanced-0.1.1`.
+- Frozen candidate ref: `candidate/rebalanced-0.1.1-runtime`.
+- Exact build source SHA: `40c5f60062267e887756864e096a0f731efe54f0`.
+- GitHub Actions run: `35255682271`.
+- Workflow result: success on `ubuntu-latest`; Rebalanced `net472` Release build, sibling Vanilla shared-source build, all 11 base/Rebalanced locale-resource checks, artifact staging and upload passed.
+- Workflow artifact ID: `10512445366` (`PrayerClarity-Rebalanced-0.1.1-ci-40c5f60062267e887756864e096a0f731efe54f0`).
+- Artifact ZIP digest: `sha256:0c97f4fe018d8fb03ef933f0cf8c327283804e6ee67ef8c3ebe483582dc6aedc`.
+- Handoff filename: `PrayerClarity.Rebalanced-0.1.1-ci.dll`.
+- Canonical install filename inside the artifact: `PrayerClarity.Rebalanced.dll`.
+- Handoff/canonical DLL SHA-256: `93313be354b5fc965c6cbef3a456b37c7ef10371935696f0ba1229452f01d721`.
+- Scope: Bronze Repose no longer calls the parameterized stock `active.skull` localization key without its required argument; it uses a dedicated Rebalanced semantic string describing the stock-style expanded body range. Roots, Repentance, Repose, Combat and Soul Contentment presentation remains driven by the same effective-rule semantic layer; new Rebalanced wording was shortened and made more player-facing in all 11 `lang_rebalanced` overlays. Common `lang/*.json`, mechanics rules/hooks and Technology layout were not changed. Version metadata/build packaging was advanced to 0.1.1.
+- Requested user test: in Russian, inspect the Technology tooltips for Repose (all three qualities), Shoots & Roots, Repentance and Soul Contentment; optionally spot-check Combat. Confirm Bronze Repose is Russian rather than falling back to English, the new effect lines are shorter/easier to parse, and no new clipping/wrapping or excessive tooltip height appears. No sermon execution or mechanics test is required for this candidate.
+- Status: **ready for short runtime visual retest; not accepted**.
+
 ## PrayerClarity 1.0.10 — Technology tier-first UX candidate
 
 - Type: Clarity-only Technology presentation candidate; no prayer-mechanics or balance changes.
@@ -92,7 +204,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 
 - Type: Clarity-only presentation/calibration candidate; no intended prayer-mechanics or balance changes.
 - Frozen candidate ref: `candidate/0.1.6`.
-- Exact build source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
+- Exact source SHA: `adf752e1a04c93172bdedc54b913d4b926413c0d`.
 - GitHub Actions run: `34891988740`.
 - Workflow artifact ID: `10367390730` (`PrayerClarity-0.1.6-ci-adf752e1a04c93172bdedc54b913d4b926413c0d`).
 - Handoff filename: `PrayerClarity-0.1.6-ci.dll`.
@@ -145,7 +257,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Type: Clarity-only presentation candidate; no intended prayer-mechanics or balance changes.
 - Purpose: validate the 0.1.2 information model with a less dense, fixed-column pulpit layout and stable font sizing.
 - Frozen candidate ref: `candidate/0.1.3`.
-- Exact build source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
+- Exact source SHA: `dbbb6d26b2b87ee46819984e6ae50c60b44328e0`.
 - GitHub Actions run: `34877867872`.
 - Workflow artifact ID: `10360339790`.
 - Handoff DLL SHA-256: `e24b93a6e70c69f6c440da08d7f2bdf91c9d6bafc2a979cd6307d0ae7092066c`.

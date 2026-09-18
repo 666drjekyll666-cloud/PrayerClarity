@@ -1,0 +1,13 @@
+{
+  "rebalanced.tech.plant_intro": "Beschleunigt das Pflanzenwachstum.",
+  "rebalanced.tech.sins_intro": "In jedem Beichtstuhl finden Beichten häufiger statt.",
+  "rebalanced.tech.repose_intro": "Der Esel kann hochwertigere Körper bringen.",
+  "rebalanced.tech.combat_intro": "Stärkt den Hüter im Kampf.",
+  "rebalanced.active.plant": "Pflanzenwachstumszeit: -{0:0}%",
+  "rebalanced.active.sins": "Beichtchance: {0:0}%",
+  "rebalanced.active.repose.bronze": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen",
+  "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste Körper garantiert",
+  "rebalanced.active.repose.gold": "Der Esel bringt garantiert den besten Körper",
+  "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
+  "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% Dankbarkeit"
+}

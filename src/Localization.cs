@@ -111,13 +111,31 @@ namespace PrayerClarity
                 throw new InvalidOperationException("Embedded English localization resource is missing.");
             }
 
+            Dictionary<string, string> parsed = ReadResource(resource);
+
+            // Sibling editions share the base Clarity dictionary. Rebalanced may embed
+            // an optional locale overlay with mechanics-specific strings; Vanilla does
+            // not include these resources and therefore keeps the accepted 1.0.20 text
+            // byte-for-byte at the source level.
+            string overlaySuffix = ".lang_rebalanced." + code + ".json";
+            string overlayResource = _assembly.GetManifestResourceNames()
+                .FirstOrDefault(x => x.EndsWith(overlaySuffix, StringComparison.OrdinalIgnoreCase));
+            if (overlayResource != null)
+            {
+                Dictionary<string, string> overlay = ReadResource(overlayResource);
+                foreach (KeyValuePair<string, string> pair in overlay)
+                    parsed[pair.Key] = pair.Value;
+            }
+
+            Cache[code] = parsed;
+            return parsed;
+        }
+
+        private static Dictionary<string, string> ReadResource(string resource)
+        {
             using (Stream stream = _assembly.GetManifestResourceStream(resource))
             using (StreamReader reader = new StreamReader(stream ?? throw new InvalidOperationException("Cannot open localization resource " + resource), Encoding.UTF8, true))
-            {
-                Dictionary<string, string> parsed = FlatJson.Parse(reader.ReadToEnd());
-                Cache[code] = parsed;
-                return parsed;
-            }
+                return FlatJson.Parse(reader.ReadToEnd());
         }
 
         private static string Normalize(string raw)
