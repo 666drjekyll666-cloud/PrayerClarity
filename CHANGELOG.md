@@ -1,5 +1,16 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.3
+
+- Preserved the accepted Rebalanced prayer balance while closing the remaining runtime architecture audit.
+- Shoots & Roots keeps the stock growth expression authoritative and uses the accepted 95% combined growth-time reduction cap.
+- Repentance now leaves the stock daily 15% reset and confession RNG flow intact, projecting only the effective 50 / 75 / 100% probability through the native FlowCanvas player-param accessor while the prayer is active.
+- Combat damage now follows the native `add_damage` path: Bronze keeps stock +5, Silver/Gold add only the scoped +5 / +10 tier delta during native damage calculation.
+- Combat armor now follows native `add_armor` handling through a scoped nonserialized +4 projection during `DecHP`, removing the previous ThreadStatic/global `GetParam` interception.
+- Combat regeneration remains on the game's native buff `se_tick` extension point and was runtime-verified at +1 / +2 / +4 HP per second.
+- Runtime verification confirmed Repentance 0.50 / 0.75 / 1.00, Combat damage deltas 0 / +5 / +10, exactly +4 armor, and tiered regeneration with no PrayerClarity runtime error.
+- Research Test Console diagnostics remain development-only and are not shipped in the release.
+
 ## PrayerClarity: Vanilla 1.0.25
 
 - Added the current Soul Gratitude value to the pulpit context for Soul's Repose.
