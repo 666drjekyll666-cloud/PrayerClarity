@@ -154,7 +154,8 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset for the current stable Rebalanced edition. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset for the current stable Rebalanced edition.
+`docs/PRAYER_REBALANCE_CANDIDATE.md` is the canonical strong design target for the next Rebalanced candidate on the active research/development line; it does not describe current stable runtime behavior. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 
