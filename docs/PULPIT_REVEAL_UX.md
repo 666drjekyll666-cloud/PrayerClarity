@@ -1,6 +1,6 @@
 # Pulpit reward-reveal UX decision
 
-Status: user-approved design direction, 2026-09-15. Documentation only; not yet implemented or runtime-accepted.
+Status: **implemented and runtime-accepted** in the stable PrayerClarity sibling presentation layer. Original design decision approved 2026-09-15; current stable baselines are Vanilla 1.0.24 and Rebalanced 0.1.5.
 
 This decision was made after reviewing the current pulpit prototype that exposes exact pre-sermon Faith and donation totals.
 
@@ -97,10 +97,8 @@ Default player-facing rendering must not expose those exact current sermon total
 
 No side-effecting prayer calculation should be invoked for preview rendering; existing side-effect-free forecast constraints remain unchanged.
 
-## Scope and handoff
+## Accepted implementation state
 
-This is a design decision, not a production-code change. It should be integrated into the active pulpit implementation only after reconciling it with the latest development branch.
+This design is now part of the stable shared Clarity presentation used by both sibling editions. The pulpit preserves the `guaranteed/base dependency -> success-only prayer contribution -> special effect` decomposition while withholding the fully resolved current Faith/donation payout until the sermon animation.
 
-When integrated, update the canonical `AGENTS.md` / `docs/DESIGN_NOTES.md` wording so they no longer require exact current Faith/donation totals as the default pulpit presentation. Preserve the already-verified mechanics model and the `guaranteed + success-only + special effect` semantic decomposition.
-
-No hosted CI is justified for this documentation-only decision.
+Future pulpit changes should treat this reward-reveal boundary as an accepted product constraint unless new player/runtime evidence explicitly justifies reopening it.

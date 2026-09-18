@@ -351,6 +351,6 @@ The mechanics re-checks that previously blocked a complete prayer-by-prayer whit
 - Shoots and Roots end-to-end wiring: closed as a stock parameter-scope mismatch;
 - Prayer of Repentance: no gameplay consumer found, externally corroborated as apparently inert.
 
-No further mechanics probe or user runtime test is currently justified.
+The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been implemented and runtime-accepted through PrayerClarity: Vanilla 1.0.24 and the shared presentation in Rebalanced 0.1.5.
 
-`docs/DESIGN_NOTES.md` favors a **compact dynamic breakdown in the existing prayer-selection context**. The next step is a narrow UI prototype that reports verified stock behavior and explicitly avoids presenting intended-but-disconnected effects as working mechanics.
+There is currently no open UX-research gate in this document. New research should be driven by fresh player feedback or a concrete presentation problem observed in the stable siblings rather than by the historical pre-prototype checklist.

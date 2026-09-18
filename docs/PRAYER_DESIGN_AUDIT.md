@@ -1,14 +1,12 @@
 # Prayer Design Audit — Graveyard Keeper 1.407
 
-Status: **final cross-roster design audit, rebased to PrayerClarity: Vanilla 1.0.20 on 2026-09-17**. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; the locked gameplay target is in `PRAYER_REBALANCE_OPTIONS.md`.
+Status: **final cross-roster design audit reconciled with stable PrayerClarity: Vanilla 1.0.24 / Rebalanced 0.1.5**. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; the accepted Rebalanced gameplay ruleset is in `PRAYER_REBALANCE_OPTIONS.md`.
 
-No Balance/Rework mechanic is an accepted runtime result until the relevant implementation and user/runtime evidence exists.
+The current Rebalanced roster is an accepted runtime result. Historical alternatives in this document are analysis only when they differ from `PRAYER_REBALANCE_OPTIONS.md`.
 
 ## Baseline reconciliation
 
-The accepted presentation/runtime baseline is **PrayerClarity: Vanilla 1.0.20**, exact accepted source `c7ac91c1cea6c498fb406323725768b605d8139f`, accepted ref `accepted/clarity-1.0.20`, public release `v1.0.20`.
-
-The current research line starts from the later `main` documentation/naming state. The commits after the accepted runtime source changed documentation/repository hygiene only; production Clarity source did not change. Therefore the late 2026-09-16 balance audit can be carried forward without reopening mechanics or power-budget conclusions.
+The current stable sibling releases share accepted runtime/source `3b7cea7986138f57d7ace6998b9cc6bca952af1e`: Vanilla 1.0.24 (`accepted/vanilla-1.0.24`, `v1.0.24`) and Rebalanced 0.1.5 (`accepted/rebalanced-0.1.5`, `rebalanced-v0.1.5`). The late 2026-09-16 design audit remains the rationale for the accepted roster, but its earlier candidate numbers are superseded where the final accepted ruleset differs.
 
 Accepted public family naming is now:
 
@@ -38,25 +36,25 @@ The final roster was checked against these principles:
 | Prayer/family | Audit verdict | Reason |
 | --- | --- | --- |
 | Ordinary | **No change** | Starter baseline and intentional replacement target. |
-| Faith | **Locked rework** | True Faith specialist: +250/+350/+450%, q25/40/70. |
-| Donations | **Locked rework** | True money specialist: +250/+350/+450%, q25/40/70; +1/+2/+3 silver protects the early role. |
+| Faith | **Accepted Rebalanced rework** | True Faith specialist: +200/+300/+400%, q25/40/70. |
+| Donations | **Accepted Rebalanced rework** | True money specialist: +200/+300/+400%, q25/40/70; +1/+2/+3 silver protects the early role. |
 | Combo | **No balance change** | Generalist remains broader, more expensive to craft and easier to guarantee. |
-| Repentance | **Locked rework** | 50/75/100% daily confession probability creates a meaningful reliability/throughput ladder. |
-| Shoots & Roots | **Locked fix + rework** | Proven scope mismatch repaired; -20/-30/-40% creates quality progression in a narrow farming niche. |
-| Repose | **Locked rework** | Premium quality buys corpse-tier reliability without skipping story tiers. |
-| Combat | **Locked structural/numeric rework** | Offense, defense and regeneration form one coherent narrow weekly combat-preparation package. |
-| Imagination | **Locked rework** | Preserve healthy +0.7 core; premium value comes from duration plus 3 Silver/3 Gold Stories. |
-| Excellence | **Locked first runtime target** | +0.2/+0.5/+1.0 makes premium qualities matter in a narrower craft scope. |
+| Repentance | **Accepted Rebalanced rework** | 50/75/100% daily confession probability creates a meaningful reliability/throughput ladder. |
+| Shoots & Roots | **Accepted fix + Rebalanced scaling** | Proven scope mismatch repaired; -20/-30/-40% creates quality progression in a narrow farming niche. |
+| Repose | **Accepted Rebalanced rework** | Premium quality buys corpse-tier reliability without skipping story tiers. |
+| Combat | **Accepted structural/numeric rework** | Offense, defense and regeneration form one coherent narrow weekly combat-preparation package. |
+| Imagination | **Accepted Rebalanced rework** | Preserve healthy +0.7 core; premium value comes from duration plus 3 Silver/3 Gold Stories. |
+| Excellence | **Accepted Rebalanced rework** | +0.2/+0.5/+1.0 makes premium qualities matter in a narrower craft scope. |
 | Prosperity | **No change** | 1/2/3 Blessings already provides strong quality progression and healthy eventual obsolescence. |
-| BSS Soul's Repose | **Locked rework** | Align with Faith-specialist grammar while preserving a Soul-Gratitude-dependent niche. |
-| Soul Contentment | **Locked rework** | +20% all tiers; duration is the premium axis. |
+| BSS Soul's Repose | **Accepted Rebalanced rework** | Align with Faith-specialist grammar while preserving a Soul-Gratitude-dependent niche. |
+| Soul Contentment | **Accepted Rebalanced rework** | +20% all tiers; duration is the premium axis. |
 | Thorough Cleansing | **No magnitude increase** | x2 is already strong; duration is sufficient premium scaling. |
 
 ## Cross-family finding — Faith / Donations / Combo
 
 Combo keeps stock q **15/30/60**, +50/+100/+150% Faith and donations, stock fixed outputs and the Hard Book +7 Faith production gate.
 
-Faith and Donations use q **25/40/70** and +250/+350/+450% in the chosen resource. The specialists are Chapter +5 Faith prayers but require exactly +10 more Church Quality than Combo at every tier. This creates a clean trade:
+Faith and Donations use q **25/40/70** and +200/+300/+400% in the chosen resource. The specialists are Chapter +5 Faith prayers but require exactly +10 more Church Quality than Combo at every tier. This creates a clean trade:
 
 - Combo: broader, costlier item, easier success gate;
 - specialist: narrower, cheaper item, harder gate, substantially stronger target output.
@@ -72,7 +70,7 @@ Verified stock bases are:
 - ordinary Faith-family base: `0.2 * CQ * EloquenceFactor`;
 - BSS Soul's Repose base: `0.1 * (CQ + GP) * EloquenceFactor`.
 
-If Soul's Repose stayed stock while ordinary Faith moved to +250/+350/+450%, ordinary Faith would dominate the DLC prayer through ordinary Soul Gratitude states. The accepted correction gives Soul's Repose the same +250/+350/+450% ladder and q25/40/70 while preserving its Soul-Gratitude base and 2 Sin Shard cost.
+If Soul's Repose stayed stock while ordinary Faith moved to +200/+300/+400%, ordinary Faith would dominate the DLC prayer through ordinary Soul Gratitude states. The accepted correction gives Soul's Repose the same +200/+300/+400% ladder and q25/40/70 while preserving its Soul-Gratitude base and 2 Sin Shard cost.
 
 This produces a stable state-dependent choice, ignoring integer rounding:
 
@@ -112,57 +110,20 @@ No harmful collision remains after the locked changes:
 - **Prosperity:** stock 1/2/3 permanent Blessings remains coherent and may naturally become obsolete.
 - **Contentment / Thorough Cleansing:** constant magnitude plus longer duration avoids unjustified magnitude×duration double scaling.
 
-## Implementation-risk findings
+## Implementation seam findings — resolved in Rebalanced 0.1.5
 
-These do not reopen the roster but must be proven before runtime acceptance.
+The implementation audit identified several seams that had to be proven before the roster could become runtime behavior. They are now resolved in the accepted Rebalanced implementation:
 
-### Shared effective semantic model
+- **shared effective semantics:** gameplay and Pulpit/Technology/item-tooltip/Temporary-Effects presentation consume the same Rebalanced rule source rather than independent UI-only values;
+- **Combat legacy alias:** saved `b_shield` prayer crafts remain readable and are projected onto the canonical `buff_sword` lifecycle; the duplicate future Protection crafting/unlock path is retired rather than deleting legacy IDs;
+- **Roots:** the stock parameter-owner mismatch is repaired by replacing the verified stock prayer term at the affected growth-expression scope, preserving the native additive expression model;
+- **Repose:** tier-dependent reliability is applied at the verified corpse-generation lifecycle while respecting the stock progression ceiling;
+- **Repentance:** the effective confession probability is injected into the stock daily-roll expression instead of relying on a one-time value that stock resets;
+- **edition packaging:** Vanilla and Rebalanced use separate canonical DLLs and plugin GUIDs, with Vanilla declaring the Rebalanced GUID incompatible;
+- **VFX:** no acceptable cheap native visual effect was found, so VFX remain outside accepted scope.
 
-PrayerClarity: Vanilla 1.0.20 already derives Pulpit, Technology, prayer-item and Temporary Effects presentation from shared semantic data. Rebalanced cannot patch gameplay independently and leave those readers on stock `GameBalance` values.
+## Accepted roster result
 
-The next engineering task is therefore to define one effective prayer-definition seam that supplies both gameplay and presentation. The Vanilla edition must resolve stock semantics; the Rebalanced edition must resolve the locked effective semantics. No second manually maintained UI-only table of prayer values.
+The balance roster is closed for the current stable Rebalanced 0.1.5 release. The canonical values are those in `PRAYER_REBALANCE_OPTIONS.md`, including the final specialist ladder of **+200/+300/+400%** rather than earlier candidate ladders.
 
-### Combat legacy alias
-
-`b_shield` remains save-safe as a same-quality alias of canonical `b_sword`. Because Combat duration can span later sermon weeks, the two IDs must resolve to one effective buff/refresh lifecycle and must never stack two Combat packages.
-
-### Roots lifecycle
-
-The verified stock bug is a parameter-owner mismatch. Implementation must preserve the native additive growth expression and attach the effective prayer term at the verified evaluation scope instead of inventing an external growth timer.
-
-### Repose RNG
-
-Reliability scaling must hook the verified corpse-selection lifecycle and preserve all stock progression ceilings. Silver must remain mathematically halfway from the current stock best-tier probability to certainty.
-
-### Repentance scheduler
-
-The stock logic resets confession probability to 15% before the daily roll. Rebalanced must inject the effective tier probability at the daily roll seam rather than writing a one-time player parameter that stock overwrites.
-
-### Protection retirement
-
-Do not delete or rewrite saved `b_shield` IDs. Hide/retire only the redundant future crafting/unlock path after its exact lifecycle is verified.
-
-### Edition packaging
-
-PrayerClarity: Vanilla and PrayerClarity: Rebalanced are separate player-facing editions, but should share source/presentation infrastructure rather than drift into forks. Exact plugin GUID, DLL filename and mutual-exclusion mechanism remain implementation evidence questions.
-
-### VFX
-
-Two runtime native-FX auditions failed to expose a cheap clean aura/weapon effect. VFX are outside the first Rebalanced production scope and are not an implementation gate.
-
-## Roster-lock result
-
-The **balance roster remains closed at the design level after reconciliation with PrayerClarity: Vanilla 1.0.20 and the new edition naming**. The naming change introduces no mechanical contradiction and does not reopen any prayer-choice decision.
-
-The old 1.0.1 waiting condition is obsolete: the required stable Clarity baseline now exists. The next work is implementation-target discovery, not another balance round.
-
-## Next engineering step
-
-On the 1.0.20-based research line:
-
-1. audit how to insert one effective prayer-definition/model layer between stock data and both mechanics/presentation;
-2. close the narrow Roots, Repose, Repentance, Combat/alias, Protection-crafting and edition-packaging seams;
-3. only after those assumptions are evidenced, create a build-bearing `dev/*` branch and implement one coherent candidate;
-4. ask the user only for runtime tests that prove changed gameplay behavior and presentation consistency.
-
-No hosted CI is required for this documentation/rebase audit.
+There is currently no unresolved design/implementation gate in this audit. Reopen a prayer only when new runtime evidence, compatibility evidence, or player UX feedback establishes a concrete problem.
