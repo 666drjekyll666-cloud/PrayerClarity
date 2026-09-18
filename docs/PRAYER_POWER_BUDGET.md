@@ -1,6 +1,6 @@
 # Prayer Power Budget — Graveyard Keeper 1.407
 
-Status: quantitative design-analysis input, 2026-09-14. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; this document evaluates the **price of choosing a prayer** and identifies rework pressure. No rebalanced numbers are accepted or implemented.
+Status: **historical quantitative design-analysis input**, 2026-09-14, retained as rationale for the accepted Rebalanced roster. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; current accepted Rebalanced values are canonical only in `PRAYER_REBALANCE_OPTIONS.md`. Candidate coefficient examples below are historical and must not override the stable 0.1.5 ruleset.
 
 The technology and recipe values below were recovered from direct 1.407 `GameBalance`/craft-registry runtime dumps rather than inferred from the wiki. Where a technology is hidden/quest-gated, its internal `price` field is not automatically treated as a player-paid cost.
 
@@ -74,7 +74,7 @@ Those advantages matter early. Once books and church quality are routine, they c
 
 **Design diagnosis:** this is the clearest systemic rework pressure in the base roster. A healthy specialist/generalist relationship should normally make the specialist best at the thing it specializes in.
 
-### Preferred rework direction to test
+### Historical preferred rework direction
 
 Do not nerf Combo first. Test a **specialist premium**:
 
@@ -83,7 +83,7 @@ Do not nerf Combo first. Test a **specialist premium**:
 - Donations becomes the best money-producing ordinary sermon;
 - silver/gold specialist progression should increasingly reward committing to the specialty.
 
-Illustrative coefficient families such as `.75 / 1.5 / 2.25` for the specialist versus Combo's `.5 / 1 / 1.5` are **design hypotheses only**, not accepted values. The next design pass should model actual outputs at representative church/graveyard qualities before choosing numbers.
+Illustrative coefficient families such as `.75 / 1.5 / 2.25` were **historical design hypotheses only**. They were superseded by the accepted Rebalanced 0.1.5 specialist ladder documented in `PRAYER_REBALANCE_OPTIONS.md`.
 
 ## Combo gate — candidate levers
 
@@ -199,17 +199,8 @@ These may be fine once effect, quality progression and relevance window are visi
 
 These show that a niche prayer can be highly desirable without becoming the universal meta.
 
-## Next design gate
+## Design gate result
 
-The next deliverable should be a **candidate rebalanced roster**, not another mechanics probe.
+This gate is complete. The candidate roster was narrowed, implemented and runtime-accepted as PrayerClarity: Rebalanced 0.1.5. This file remains useful for the underlying unlock/craft/quality/opportunity-cost evidence, but it is **not** the source of truth for current Rebalanced numbers.
 
-For each Tier-1 family, draft 2–3 coherent options with representative outputs at realistic progression states. Each option must state:
-
-- bronze/silver/gold behavior;
-- tech/recipe/q requirements;
-- expected advantage over Combo or other alternatives;
-- why the niche is tempting;
-- why it does not become the new universal default;
-- whether the change is Vanilla Fix or Balance/Rework.
-
-No in-game test is required until one roster is narrow enough to implement as a runtime candidate.
+Any future rebalance should reuse this full-cost framework and create a new explicit proposal rather than resurrecting the superseded candidate values above.
