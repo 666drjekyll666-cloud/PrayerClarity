@@ -111,7 +111,7 @@ Neither should be assumed safe merely because parsing succeeds. They are the hig
 Do not repeat already-closed tests unless a code change touches their mechanism.
 
 
-## Roots overflow design hypothesis
+## Roots overflow cap
 
 Status: **accepted design; implemented in Rebalanced 0.2.2 candidate, runtime acceptance pending**.
 
@@ -124,7 +124,7 @@ For stock fertilizer reductions 0/20/40/60% and Rebalanced Roots 20/30/40%, the 
 | 0% | 20% | 30% | 40% |
 | 20% | 40% | 50% | 60% |
 | 40% | 60% | 70% | 80% |
-| 60% | 80% | 95% | **100%** |
+| 60% | 80% | 90% | **100%** |
 
 A 95% cap changes only the final dangerous cell: Gold + maximum Boost becomes 95% instead of 100%. All other stock combinations remain numerically unchanged.
 
@@ -134,14 +134,14 @@ Why this is preferred over alternatives:
 - do **not** clamp to the game's <=0.001 completion threshold: that would merely turn instant growth into practically instant growth;
 - a round 95% aggregate cap is easy to explain and keeps at least 5% of base growth time.
 
-Implementation shape under consideration:
+Implemented 0.2.2 shape:
 - before temporary Roots projection, read the current WGO's existing `grow_time` and `buff_plant` contributions;
 - compute how much headroom remains before 95% total reduction;
 - inject only `min(configured Roots reduction, available headroom) / 0.20` into the nonserialized `totem_effect["buff_plant"]`;
 - restore the original runtime aggregate in the existing finalizer;
 - do not mutate serialized crop data or rewrite the native craft expression.
 
-Player-facing Clarity should disclose the cap once in the shared Roots semantics (for example: combined growth-time reductions cannot reduce growth below 5% of base time) if this design is accepted.
+Player-facing Clarity discloses the nominal prayer reduction together with the 95% combined cap across all Rebalanced prayer surfaces.
 
 Because 0.2.1 was already handed out, any implementation change uses a new Rebalanced version; do not replace 0.2.1 bytes.
 
