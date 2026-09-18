@@ -19,6 +19,8 @@ namespace PrayerClarity
         internal readonly float[] MoneyBonusRates;
         internal readonly bool RemoveFixedFaith;
         internal readonly bool RemoveFixedMoney;
+        internal readonly int[] FixedFaithBonuses;
+        internal readonly int[] FixedMoneyBonusesCents;
         internal readonly float[] GrowthReduction;
         internal readonly float[] ConfessionProbability;
         internal readonly ReposeQualityMode[] ReposeModes;
@@ -40,6 +42,8 @@ namespace PrayerClarity
             float[] moneyBonusRates = null,
             bool removeFixedFaith = false,
             bool removeFixedMoney = false,
+            int[] fixedFaithBonuses = null,
+            int[] fixedMoneyBonusesCents = null,
             float[] growthReduction = null,
             float[] confessionProbability = null,
             ReposeQualityMode[] reposeModes = null,
@@ -60,6 +64,8 @@ namespace PrayerClarity
             MoneyBonusRates = moneyBonusRates;
             RemoveFixedFaith = removeFixedFaith;
             RemoveFixedMoney = removeFixedMoney;
+            FixedFaithBonuses = fixedFaithBonuses;
+            FixedMoneyBonusesCents = fixedMoneyBonusesCents;
             GrowthReduction = growthReduction;
             ConfessionProbability = confessionProbability;
             ReposeModes = reposeModes;
@@ -99,20 +105,20 @@ namespace PrayerClarity
             new Dictionary<string, RebalancedPrayerRule>(StringComparer.Ordinal)
             {
                 ["b_empty"] = new RebalancedPrayerRule("b_empty"),
-                ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(25f, 40f, 70f), faithBonusRates: F(2f, 3f, 4f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
-                ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(25f, 40f, 70f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(2f, 3f, 4f), removeFixedFaith: true),
-                ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money"),
-                ["b_sins"] = new RebalancedPrayerRule("b_sins", confessionProbability: F(0.50f, 0.75f, 1.00f)),
-                ["b_plant"] = new RebalancedPrayerRule("b_plant", growthReduction: F(0.20f, 0.30f, 0.40f)),
-                ["b_skull"] = new RebalancedPrayerRule("b_skull", reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
-                ["b_sword"] = new RebalancedPrayerRule("b_sword", combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
-                ["b_shield"] = new RebalancedPrayerRule("b_shield", combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
-                ["b_pen"] = new RebalancedPrayerRule("b_pen", craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
-                ["b_star"] = new RebalancedPrayerRule("b_star", craftQualityBonus: F(0.2f, 0.5f, 1.0f)),
+                ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(20f, 40f, 60f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true, fixedFaithBonuses: I(5, 10, 20)),
+                ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(20f, 40f, 60f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true, fixedMoneyBonusesCents: I(500, 1000, 1500)),
+                ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money", requirements: F(40f, 60f, 80f), faithBonusRates: F(1f, 1.5f, 2f), moneyBonusRates: F(1f, 1.5f, 2f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_sins"] = new RebalancedPrayerRule("b_sins", requirements: F(20f, 40f, 60f), confessionProbability: F(0.50f, 0.75f, 1.00f)),
+                ["b_plant"] = new RebalancedPrayerRule("b_plant", requirements: F(10f, 30f, 50f), growthReduction: F(0.20f, 0.30f, 0.40f)),
+                ["b_skull"] = new RebalancedPrayerRule("b_skull", requirements: F(20f, 40f, 50f), reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
+                ["b_sword"] = new RebalancedPrayerRule("b_sword", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
+                ["b_shield"] = new RebalancedPrayerRule("b_shield", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
+                ["b_pen"] = new RebalancedPrayerRule("b_pen", requirements: F(20f, 40f, 60f), craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
+                ["b_star"] = new RebalancedPrayerRule("b_star", requirements: F(20f, 60f, 90f), craftQualityBonus: F(0.2f, 0.5f, 1.0f)),
                 ["b_village"] = new RebalancedPrayerRule("b_village"),
-                ["b_souls"] = new RebalancedPrayerRule("b_souls", optionalDlc: true, requirements: F(25f, 40f, 70f), faithBonusRates: F(2f, 3f, 4f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
-                ["b_grat_points_incr"] = new RebalancedPrayerRule("b_grat_points_incr", optionalDlc: true, soulGratitudeBonusRate: F(0.20f, 0.20f, 0.20f)),
-                ["b_sin_shard"] = new RebalancedPrayerRule("b_sin_shard", optionalDlc: true, sinShardMultiplier: F(2f, 2f, 2f))
+                ["b_souls"] = new RebalancedPrayerRule("b_souls", optionalDlc: true, requirements: F(30f, 60f, 120f), faithBonusRates: F(0.5f, 1f, 1.5f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true),
+                ["b_grat_points_incr"] = new RebalancedPrayerRule("b_grat_points_incr", optionalDlc: true, requirements: F(20f, 40f, 60f), soulGratitudeBonusRate: F(0.20f, 0.20f, 0.20f)),
+                ["b_sin_shard"] = new RebalancedPrayerRule("b_sin_shard", optionalDlc: true, requirements: F(30f, 60f, 90f), sinShardMultiplier: F(2f, 2f, 2f))
             };
 
         internal static IEnumerable<RebalancedPrayerRule> All => Rules.Values;
@@ -128,6 +134,8 @@ namespace PrayerClarity
                 RequireThree(rule.PrayerId, nameof(rule.Requirements), rule.Requirements);
                 RequireThree(rule.PrayerId, nameof(rule.FaithBonusRates), rule.FaithBonusRates);
                 RequireThree(rule.PrayerId, nameof(rule.MoneyBonusRates), rule.MoneyBonusRates);
+                RequireThree(rule.PrayerId, nameof(rule.FixedFaithBonuses), rule.FixedFaithBonuses);
+                RequireThree(rule.PrayerId, nameof(rule.FixedMoneyBonusesCents), rule.FixedMoneyBonusesCents);
                 RequireThree(rule.PrayerId, nameof(rule.GrowthReduction), rule.GrowthReduction);
                 RequireThree(rule.PrayerId, nameof(rule.ConfessionProbability), rule.ConfessionProbability);
                 RequireThree(rule.PrayerId, nameof(rule.ReposeModes), rule.ReposeModes);
