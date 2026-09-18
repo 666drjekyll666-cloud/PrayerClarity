@@ -1631,3 +1631,136 @@ The intended progression would be:
 - Gold Excellence sits above that as an optional aspirational ritual that specifically rewards temporary church preparation.
 
 This preserves the clean economic handoff while still giving the endgame a visible "one more mountain" to climb.
+
+
+## Whole-roster progression audit — post staged-economic baseline
+
+The staged Faith/Donations/Combo baseline is now treated as the ordinary economic spine. The rest of the roster is re-audited against *when its role matters* and *whether Silver/Gold power has outgrown its current Church Quality gate*.
+
+This is a **candidate q audit**, not production acceptance.
+
+| Prayer | Rebalanced effect | Current q | Progression reading | Leading q direction |
+| --- | --- | ---: | --- | ---: |
+| Ordinary | stock baseline | 10 | starter only | **10 keep** |
+| Faith | +50% +5/10/15 Faith | working 20/40/60 | early/mid specialist, ages out | **20/40/60 working baseline** |
+| Donations | +50% +3/6/9s | working 20/40/60 | early/mid cash specialist, ages out | **20/40/60 working baseline** |
+| Combo | +100/+150/+200% both, no flats | working 40/60/80 | ordinary late-game economic apex | **40/60/80 working baseline** |
+| Prosperity | 1/2/3 Blessings | 10/20/30 | extremely useful early, naturally exhausts vendor-tier role | **10/20/30 keep** |
+| Roots | -20/-30/-40%, 36/72/108 min | 10/20/30 | farming-stage utility; Gold lasts ~14.4 game days | **10/30/50 candidate** |
+| Repentance | 50/75/100% daily confession, 18/36/54 min | 10/20/40 | deep Theology route; Gold can add ~24 Faith + 12 Stories/week with 2x Confessional II | **20/40/60 leading** |
+| Repose | corpse-tier reliability, ceiling max+1, 18/36/54 | 20/40/50 | finite early/mid corpse progression, then obsolete | **20/40/50 keep** |
+| Combat | +5/+10/+15 dmg, +4 armor, 1/2/4 HP/s, 36/72/108 | 10/20/40 | very deep unlock; huge Gold package lasting >2 weeks but narrow combat niche | **20/40/60 leading; 70 upper test** |
+| Imagination | +0.7 writing q; 18/36/54; +3 Silver/Gold Stories at S/G | 10/40/60 | powerful writing accelerator; Book prayer; community shows Silver can already create extreme writing sessions | **10/40/60 defensible; test 20/50/70 only if play/economy evidence demands** |
+| Excellence | +0.2/+0.5/+1.0 craft q, 18/36/54 | 10/40/60 | late infrastructure prayer; Gold is a major deterministic-quality jump | **20/60/90 leading** |
+| BSS Soul's Repose | leading +50/+100/+150% Faith on CQ+GP base | old 25/40/70 | DLC endgame Faith engine; GP creates uncapped-looking late scaling; final prayer craft is relatively easy Chapter-class | **30/60/120 leading miracle ladder** |
+| BSS Soul Contentment | +20% GP, 36/72/108 | 10/20/30 | narrow Soul workflow; Gold persists ~14.4 days and amplifies the future Soul's Repose axis | **20/40/60 candidate** |
+| BSS Thorough Cleansing | x2 Sin Shards, 36/72/108 | 10/20/30 | extremely strong scarce-resource multiplier; Gold covers >2 sermon weeks | **30/60/90 leading** |
+
+### High-confidence q corrections
+
+#### Repentance -> 20 / 40 / 60
+
+Gold is no longer a vague utility effect. With two Confessional II it can add roughly 24 Faith and 12 Stories over a six-day sermon week, on top of its own sermon payout.
+
+The prayer also requires player interaction and confessional infrastructure, so it should not be priced like a universal passive resource engine. q60 is a sufficient visible premium; q80+ would likely double-tax the activity cost.
+
+#### Combat -> 20 / 40 / 60
+
+The deep Martial Skills route and Hard Book already pay much of the acquisition cost. However q10/20/40 understates the Rebalanced package: Gold grants +15 damage, +4 armor and 4 HP/s for ~14.4 game days.
+
+q60 makes Gold feel earned without pushing a combat preparation prayer so late that the remaining combat content is gone. q70 is an upper stress-test, not the leading value.
+
+#### Excellence -> 20 / 60 / 90
+
+Gold +1.0 craft quality is a qualitatively different tool from Bronze +0.2 and can turn premium outcomes deterministic.
+
+Because its scope is bounded by item-quality ceilings, it does not need q120. q90 makes Gold an aspirational near-max-passive Cathedral reward while preserving the separate q120 miracle slot for BSS Soul's Repose.
+
+#### BSS Thorough Cleansing -> 30 / 60 / 90
+
+x2 Sin Shards is already a major rare-resource multiplier, and Gold lasts ~14.4 game days (>2 sermon intervals). Current q30 makes this premium nearly free once BSS is online.
+
+Community players describe it as one of the strongest prayers because it can effectively halve the corpse throughput needed for high-end soul/corpse work. A 30/60/90 ladder makes the DLC progression visible without requiring consumables for certainty at a mature passive Cathedral.
+
+### The q120 miracle candidate: BSS Soul's Repose -> 30 / 60 / 120
+
+This is now the strongest architectural hypothesis for the super-late ritual.
+
+Why it fits better than Excellence:
+
+- BSS is optional lateral/endgame content by construction;
+- Soul Gratitude creates a second progression axis after the ordinary Church/Graveyard economy is already mature;
+- high GP can make the Gold payout spectacular even with stock-like +150% rather than the old Rebalanced +400%;
+- current community evidence reports several-hundred-Faith Soul's Repose sermons at high GP;
+- the prayer's item recipe is Chapter-class and the 1.407 final craft row has difficulty 0, so its quality-production burden is materially softer than premium Book prayers;
+- a q120 sermon gate therefore gives the extraordinary payout a visible cost that matches its fantasy.
+
+Candidate ladder:
+
+- Bronze **q30** — BSS prayer becomes usable without being free;
+- Silver **q60** — mature ordinary church;
+- Gold **q120** — deliberate miracle service.
+
+At passive CQ94, Gold q120 is about 78% success; at CQ96, 80%. Certainty therefore requires roughly +24-26 temporary CQ.
+
+That is comfortably achievable by the game's existing temporary church system: Candle (4) gives +3 CQ per candle and Incense II gives +4 per burner use. A Cathedral has enough candle capacity that +24-26 is not an exotic theoretical ceiling; it is a deliberate consumable-preparation target.
+
+This creates the desired fantasy:
+ordinary prayer progression is complete -> BSS/GP investment creates an extraordinary Faith opportunity -> the player lights candles/incense for a special Gold Soul's Repose service.
+
+### Moderate / uncertain q changes
+
+#### Roots -> 10 / 30 / 50 candidate
+
+Gold is strong because both magnitude and duration scale: -40% growth time for ~14.4 days. Current q30 undersells that.
+
+But Roots is stage-sensitive. Raising Gold to q60-80 risks making the prayer reliable only after farming acceleration matters less. q50 is the current upper useful target.
+
+#### Soul Contentment -> 20 / 40 / 60 candidate
+
++20% magnitude is not extreme, but Gold lasts ~14.4 days and indirectly feeds the Soul Gratitude axis that powers Soul's Repose.
+
+q60 creates a useful BSS preparation loop:
+Gold Contentment during active soul processing -> build GP over a long window -> later prepare q120 Gold Soul's Repose.
+
+This should be modeled for actual GP throughput before acceptance.
+
+#### Imagination -> provisionally keep 10 / 40 / 60
+
+It is extremely powerful in the right planned writing session. A July 2026 community report describes Silver Imagination enabling a four-day writing burst with large skill-point/profit output.
+
+However:
+- it is a Hard Book prayer;
+- its +0.7 core does not increase by tier;
+- Silver/Gold mostly buy duration plus Story return;
+- the prayer itself helps solve the same writing-quality bottleneck that makes premium prayer crafting expensive.
+
+Therefore q10/40/60 remains defensible. Do not raise it merely because the effect is good. A 20/50/70 stress-test is appropriate only if the full writing-economy model shows Silver/Gold trivialize progression too early.
+
+### q values that should not rise
+
+#### Prosperity -> keep 10 / 20 / 30
+
+Community repeatedly identifies it as exceptionally useful early for vendor tiers. Its reward naturally exhausts itself once those tiers are open. Raising q would move the prayer out of the stage in which its role exists.
+
+#### Repose -> keep 20 / 40 / 50
+
+Gold certainty is strong, but the corpse-tier ceiling is unchanged and the effect becomes useless once normal progression reaches the final eligible corpse tier. Recent 2026 community discussion explicitly describes this obsolescence.
+
+A higher q would shorten an already finite usefulness window.
+
+## Emerging full progression grammar
+
+Ordinary base game:
+
+- q10: starter / early utility;
+- q20-30: first specialist/niche tools;
+- q40: midgame quality step;
+- q50-60: mature specialist / strong situational tools;
+- q80: Gold Combo, ordinary economic apex;
+- q90: exceptional bounded Gold effects such as Excellence / Thorough Cleansing;
+- q120: BSS Gold Soul's Repose miracle ritual requiring temporary Church Quality preparation.
+
+This produces multiple visible reasons to keep improving the church beyond vanilla q60 without turning every prayer into the same ladder.
+
+Status: research hypothesis. The staged economic baseline is accepted for further research; the non-economic q changes above still require cross-roster acceptance before implementation.
