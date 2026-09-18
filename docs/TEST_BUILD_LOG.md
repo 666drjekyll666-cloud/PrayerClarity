@@ -542,3 +542,18 @@ Assessment:
 - Additive interaction with fertilizer is runtime-confirmed.
 - Manual removal correctly exercises the same stock removal path as timed expiry.
 - Gold is not separately runtime-sampled in this log, but it has no distinct control-flow branch: the same verified bridge uses the persisted tier reduction scalar (.20/.30/.40). Bronze and Silver runtime samples plus definition validation cover the mechanism; no additional Gold-specific runtime test is required unless behavior changes.
+
+
+### 2026-09-18 — Rebalanced 0.2.1 acceptance paused by max-stack Roots edge
+
+User explicitly accepted the tested 0.2.1 behavior after the ordinary/Bronze/Silver/fertilizer/removal runtime checks. Before stable promotion completed, the requested edge-case audit identified a distinct unresolved maximum-stack question:
+
+- verified native crop formula is additive: `1 - 0.2*grow_time - 0.2*buff_plant`;
+- Rebalanced Gold Roots projects 2.0 stock prayer units = -40 percentage points;
+- current external farming references describe Boost fertilizer II as -60% growth time;
+- if the live 1.407 Boost-II state is `grow_time=3`, the combination evaluates to zero;
+- direct `CraftComponent.DoAction` inspection proves evaluated craft time <= 0.001 immediately sets craft progress to 1.
+
+Therefore the user's acceptance is recorded, but **stable promotion is intentionally paused** because the same user message asked to audit this exact edge and that requested behavior is not yet closed. Existing 0.2.1 bytes/source remain frozen and immutable.
+
+Required user runtime action: apply Boost fertilizer II to one bed, activate Gold Roots with Test Console 0.1.1, plant one crop, and return the log. No timing measurement is needed.
