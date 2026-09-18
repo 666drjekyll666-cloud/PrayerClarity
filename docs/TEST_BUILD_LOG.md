@@ -494,3 +494,28 @@ Status:
   3. repeat one case with `grow_time` fertilizer to verify the additive interaction remains intact;
   4. return the runtime log so the absence of the 0.2.0 exception can be confirmed.
 - Broader Rebalanced behavior-risk audit is intentionally deferred until this blocker is closed; it remains a required follow-up requested by the user.
+
+
+## PrayerClarity: Rebalanced Test Console 0.1.0 — research helper
+
+- Type: research-only helper DLL; never part of the production Rebalanced package.
+- Purpose: activate/remove real timed prayer buffs without using the pulpit or consuming the weekly sermon opportunity.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.0`.
+- Exact source SHA: `e15cdc5a3db66a3549a35ccfd231df0ddd699ed1`.
+- GitHub Actions run: `35378519902` — success.
+- Workflow artifact ID: `10561915314`.
+- Handoff filename: `PrayerClarity.RebalancedTestConsole-0.1.0-ci.dll`.
+- DLL SHA-256: `3f4b01b80509e05a91c6a870e28fa743bac24997601fb7607d992aa1aa81ff4b`.
+- Target: PrayerClarity: Rebalanced 0.2.1 / Graveyard Keeper 1.407.
+- UI: F1 toggles a small IMGUI test console; Escape closes it.
+- Native seam: `BuffsLogics.AddBuff(string, Nullable<float>)` for activation and `BuffsLogics.RemoveBuff(string)` for removal.
+- Included timed effects: Shoots & Roots, Repentance, Repose, Combat, Imagination, Excellence, BSS Soul Contentment, BSS Thorough Cleansing.
+- Tier-dependent Rebalanced state is projected exactly for the current 0.2.1 rules before the native buff call:
+  - Roots reduction .20/.30/.40;
+  - Repentance extra probability .35/.60/.85 over the stock .15 base;
+  - Repose tier token 1/2/3;
+  - Combat extra damage 0/5/10 and regen 1/2/4;
+  - Excellence tier token 1/2/3.
+- Buffs whose mechanics are tier-invariant in Rebalanced (Imagination, Soul Contentment, Thorough Cleansing) rely on their native buff definition only.
+- Save-safety note: this intentionally uses the real live save buff list. Synthetic buffs should be removed before preserving a test save; the console provides per-effect Remove and Remove all.
+- Scope limit: this helper does not simulate sermon payout-only mechanics (Faith, Donations, Combo, Soul's Repose) or Imagination's success-only story reward. Those require a separate verified one-shot/sermon-path helper if runtime testing later warrants it.
