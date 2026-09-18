@@ -4,21 +4,26 @@ PrayerClarity is a pair of alternative BepInEx mods for **Graveyard Keeper 1.407
 
 ## Editions
 
-### PrayerClarity: Vanilla — 1.0.24
+### PrayerClarity: Vanilla — 1.0.25
 
 *Understand what your prayers actually do — without changing how they work.*
 
 Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improving prayer descriptions, quality comparisons, success requirements, pulpit information, item tooltips, and Character -> Temporary Effects.
 
-[Download PrayerClarity: Vanilla 1.0.24](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.24)
+[Download PrayerClarity: Vanilla 1.0.25](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.25)
 
-### PrayerClarity: Rebalanced — 0.1.5
+### PrayerClarity: Rebalanced — 0.2.0
 
 Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices.
 
-[Download PrayerClarity: Rebalanced 0.1.5](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.1.5)
+[Download PrayerClarity: Rebalanced 0.2.0](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.0)
 
 **Install one edition, not both.**
+
+## Current stable differences
+
+- **Vanilla 1.0.25:** adds current Soul Gratitude to the Soul's Repose pulpit context and can explain when stock Repose can no longer open a higher ordinary corpse tier; prayer mechanics and balance remain stock 1.407.
+- **Rebalanced 0.2.0:** introduces the accepted full-roster balance pass: flat Faith/Donations specialists, percentage-only Combo scaling, revised Church Quality ladders, q120 Gold Soul's Repose, tuned timed prayers, and safe best-existing-tier Repose handling.
 
 ## Shared clarity features
 
