@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.2";
+        public const string PluginVersion = "0.1.3";
 
         private sealed class TimedEffect
         {
@@ -43,6 +43,7 @@ namespace PrayerClarityResearch
         private static Action<string> _removeBuff;
         private static MethodInfo _findBuffById;
         private static bool _simulateBoostII;
+        private static int _regenDiagnosticsRemaining;
         private static readonly HashSet<string> RootsDiagnosticLoggedCrafts = new HashSet<string>(StringComparer.Ordinal);
 
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
@@ -56,6 +57,7 @@ namespace PrayerClarityResearch
             ResolveBuffApi();
             PatchRootsDiagnostic();
             PatchBoostIISimulation();
+            PatchCombatRegenDiagnostic();
 
             _effects.Add(new TimedEffect(
                 "Shoots & Roots",
@@ -73,13 +75,7 @@ namespace PrayerClarityResearch
                 "Repentance",
                 "buff_sins",
                 18f,
-                tier =>
-                {
-                    SetPlayerParam("prayerclarity_rebalanced_confession_tier", tier);
-                    SetPlayerParam(
-                        "prayerclarity_rebalanced_confession_bonus",
-                        Tier(tier, 0.35f, 0.60f, 0.85f));
-                }));
+                tier => SetPlayerParam("prayerclarity_rebalanced_confession_tier", tier)));
 
             _effects.Add(new TimedEffect(
                 "Repose",
@@ -94,9 +90,6 @@ namespace PrayerClarityResearch
                 tier =>
                 {
                     SetPlayerParam("prayerclarity_rebalanced_combat_tier", tier);
-                    SetPlayerParam(
-                        "prayerclarity_rebalanced_combat_extra_damage",
-                        Math.Max(0f, Tier(tier, 5f, 10f, 15f) - 5f));
                     SetPlayerParam(
                         "prayerclarity_rebalanced_combat_regen",
                         Tier(tier, 1f, 2f, 4f));
@@ -135,7 +128,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.2");
+                "PrayerClarity: Rebalanced Test Console 0.1.3");
         }
 
         private void DrawWindow(int id)
@@ -171,6 +164,21 @@ namespace PrayerClarityResearch
                 RemoveAll();
 
             GUILayout.Space(8f);
+            GUILayout.Label("Native-seam probes (0.2.3):");
+
+            if (GUILayout.Button("Probe Repentance probability"))
+                ProbeRepentanceProbability();
+
+            if (GUILayout.Button("Probe Combat outgoing damage"))
+                ProbeCombatDamage();
+
+            if (GUILayout.Button("Probe Combat armor (controlled 20 damage; HP restored)"))
+                ProbeCombatArmor();
+
+            if (GUILayout.Button("Prepare Combat regen probe (set HP to max - 20)"))
+                PrepareCombatRegenProbe();
+
+            GUILayout.Space(8f);
 
             if (GUILayout.Button(
                 _simulateBoostII
@@ -191,6 +199,257 @@ namespace PrayerClarityResearch
             GUILayout.Label("Status: " + _status);
 
             GUI.DragWindow(new Rect(0f, 0f, 10000f, 24f));
+        }
+
+        private void ProbeRepentanceProbability()
+        {
+            object player = GetPlayer();
+            if (player == null)
+            {
+                _status = "Repentance probe failed: player unavailable.";
+                return;
+            }
+
+            try
+            {
+                Type getterType = FindType("FlowCanvas.Nodes.Flow_GetPlayerParam");
+                MethodInfo invoke = getterType?.GetMethod(
+                    "Invoke",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(string) },
+                    null);
+                if (invoke == null)
+                    throw new MissingMethodException("Flow_GetPlayerParam.Invoke(string)");
+
+                float original = GetPlayerParam(player, "confession_probability", 0f);
+                float result;
+                try
+                {
+                    SetPlayerParam("confession_probability", 0.15f);
+                    object getter = Activator.CreateInstance(getterType);
+                    result = Convert.ToSingle(invoke.Invoke(getter, new object[] { "confession_probability" }));
+                }
+                finally
+                {
+                    SetPlayerParam("confession_probability", original);
+                }
+
+                int tier = (int)Math.Round(
+                    GetPlayerParam(player, "prayerclarity_rebalanced_confession_tier", 0f));
+                bool active = IsActive("buff_sins");
+
+                _status = "Repentance probe: active=" + active +
+                          ", tier=" + tier +
+                          ", effective probability=" + result.ToString("0.###") + ".";
+                _log?.LogInfo(
+                    "REPENTANCE_DIAGNOSTIC active=" + active +
+                    " tier=" + tier +
+                    " stock_stored_for_probe=0.15" +
+                    " effective_probability=" + result.ToString("0.###"));
+            }
+            catch (Exception ex)
+            {
+                _status = "Repentance probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Repentance probe failed. " + ex);
+            }
+        }
+
+        private void ProbeCombatDamage()
+        {
+            object player = GetPlayer();
+            if (player == null)
+            {
+                _status = "Combat damage probe failed: player unavailable.";
+                return;
+            }
+
+            try
+            {
+                if (!IsActive("buff_sword"))
+                {
+                    _status = "Combat damage probe requires an active synthetic Combat buff.";
+                    return;
+                }
+
+                MethodInfo getEquippedWeapon = player.GetType().GetMethod(
+                    "GetEquippedWeapon",
+                    AnyInstance,
+                    null,
+                    Type.EmptyTypes,
+                    null);
+                if (getEquippedWeapon == null || getEquippedWeapon.Invoke(player, null) == null)
+                {
+                    _status = "Combat damage probe requires an equipped weapon (native GetDamage otherwise uses its 10-damage fallback).";
+                    return;
+                }
+
+                Type damageType = FindType("ObjectDefinition+DamageType");
+                MethodInfo getDamage = player.GetType().GetMethod(
+                    "GetDamage",
+                    AnyInstance,
+                    null,
+                    new[] { damageType },
+                    null);
+                if (damageType == null || getDamage == null)
+                    throw new MissingMethodException("WorldGameObject.GetDamage(DamageType)");
+
+                float originalTier = GetPlayerParam(
+                    player,
+                    "prayerclarity_rebalanced_combat_tier",
+                    0f);
+                object defaultDamageType = Enum.ToObject(damageType, 0);
+
+                float bronzeBaseline;
+                float actual;
+                try
+                {
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", 1f);
+                    bronzeBaseline = Convert.ToSingle(
+                        getDamage.Invoke(player, new[] { defaultDamageType }));
+
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", originalTier);
+                    actual = Convert.ToSingle(
+                        getDamage.Invoke(player, new[] { defaultDamageType }));
+                }
+                finally
+                {
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", originalTier);
+                }
+
+                float delta = actual - bronzeBaseline;
+                _status = "Combat damage probe: Bronze/native=" +
+                          bronzeBaseline.ToString("0.###") +
+                          ", current=" + actual.ToString("0.###") +
+                          ", tier delta=" + delta.ToString("0.###") + ".";
+                _log?.LogInfo(
+                    "COMBAT_DAMAGE_DIAGNOSTIC tier=" + originalTier.ToString("0") +
+                    " bronze_native_result=" + bronzeBaseline.ToString("0.###") +
+                    " current_result=" + actual.ToString("0.###") +
+                    " tier_delta=" + delta.ToString("0.###") +
+                    " stored_add_damage=" + GetPlayerParam(player, "add_damage", 0f).ToString("0.###"));
+            }
+            catch (Exception ex)
+            {
+                _status = "Combat damage probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Combat damage probe failed. " + ex);
+            }
+        }
+
+        private void ProbeCombatArmor()
+        {
+            object player = GetPlayer();
+            if (player == null)
+            {
+                _status = "Combat armor probe failed: player unavailable.";
+                return;
+            }
+
+            try
+            {
+                if (!IsActive("buff_sword"))
+                {
+                    _status = "Combat armor probe requires an active synthetic Combat buff.";
+                    return;
+                }
+
+                object components = Get(player, "components");
+                object hpComponent = Get(components, "hp");
+                MethodInfo decHp = hpComponent?.GetType().GetMethod(
+                    "DecHP",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(float) },
+                    null);
+                if (decHp == null)
+                    throw new MissingMethodException("HPActionComponent.DecHP(float)");
+
+                float originalTier = GetPlayerParam(
+                    player,
+                    "prayerclarity_rebalanced_combat_tier",
+                    0f);
+                float originalHp = GetPlayerParam(player, "hp", 0f);
+
+                float stockLoss;
+                float combatLoss;
+                try
+                {
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", 0f);
+                    SetPlayerParam("hp", originalHp);
+                    decHp.Invoke(hpComponent, new object[] { 20f });
+                    stockLoss = originalHp - GetPlayerParam(player, "hp", originalHp);
+
+                    SetPlayerParam("hp", originalHp);
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", originalTier);
+                    decHp.Invoke(hpComponent, new object[] { 20f });
+                    combatLoss = originalHp - GetPlayerParam(player, "hp", originalHp);
+                }
+                finally
+                {
+                    SetPlayerParam("hp", originalHp);
+                    SetPlayerParam("prayerclarity_rebalanced_combat_tier", originalTier);
+                }
+
+                float prevented = stockLoss - combatLoss;
+                _status = "Combat armor probe: stock loss=" +
+                          stockLoss.ToString("0.###") +
+                          ", Combat loss=" + combatLoss.ToString("0.###") +
+                          ", prevented=" + prevented.ToString("0.###") + ".";
+                _log?.LogInfo(
+                    "COMBAT_ARMOR_DIAGNOSTIC tier=" + originalTier.ToString("0") +
+                    " input_damage=20" +
+                    " stock_loss=" + stockLoss.ToString("0.###") +
+                    " combat_loss=" + combatLoss.ToString("0.###") +
+                    " prevented_by_rebalanced_armor=" + prevented.ToString("0.###"));
+            }
+            catch (Exception ex)
+            {
+                _status = "Combat armor probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Combat armor probe failed. " + ex);
+            }
+        }
+
+        private void PrepareCombatRegenProbe()
+        {
+            object player = GetPlayer();
+            if (player == null)
+            {
+                _status = "Combat regen probe failed: player unavailable.";
+                return;
+            }
+
+            try
+            {
+                if (!IsActive("buff_sword"))
+                {
+                    _status = "Combat regen probe requires an active synthetic Combat buff.";
+                    return;
+                }
+
+                Type mainGame = FindType("MainGame");
+                object me = GetStatic(mainGame, "me");
+                object save = Get(me, "save");
+                float maxHp = Convert.ToSingle(Get(save, "max_hp"));
+                float target = Math.Max(1f, maxHp - 20f);
+
+                _regenDiagnosticsRemaining = 3;
+                SetPlayerParam("hp", target);
+
+                int tier = (int)Math.Round(
+                    GetPlayerParam(player, "prayerclarity_rebalanced_combat_tier", 0f));
+                _status = "Combat regen probe armed at HP " +
+                          target.ToString("0.###") + "/" + maxHp.ToString("0.###") +
+                          "; waiting for native se_tick.";
+                _log?.LogInfo(
+                    "COMBAT_REGEN_PROBE_ARMED tier=" + tier +
+                    " hp=" + target.ToString("0.###") +
+                    " max_hp=" + maxHp.ToString("0.###"));
+            }
+            catch (Exception ex)
+            {
+                _status = "Combat regen probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Combat regen probe failed. " + ex);
+            }
         }
 
         private static void ResolveBuffApi()
@@ -226,6 +485,97 @@ namespace PrayerClarityResearch
 
             _addBuff = (Action<string, float?>)Delegate.CreateDelegate(typeof(Action<string, float?>), add);
             _removeBuff = (Action<string>)Delegate.CreateDelegate(typeof(Action<string>), remove);
+        }
+
+        private static void PatchCombatRegenDiagnostic()
+        {
+            Type worldGameObject = FindType("WorldGameObject");
+            if (worldGameObject == null)
+                throw new MissingMemberException("WorldGameObject");
+
+            MethodInfo setParam = worldGameObject.GetMethod(
+                "SetParam",
+                AnyInstance,
+                null,
+                new[] { typeof(string), typeof(float) },
+                null);
+            if (setParam == null)
+                throw new MissingMethodException("WorldGameObject.SetParam(string,float)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.regendiag" });
+
+            MethodInfo prefixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(HpSetParamPrefix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(HpSetParamPostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+
+            object prefix = CreateHarmonyMethod(harmonyMethodType, prefixMethod);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = setParam;
+            args[1] = prefix;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void HpSetParamPrefix(object __instance, string param_name, ref float __state)
+        {
+            __state = float.NaN;
+            if (_regenDiagnosticsRemaining <= 0 ||
+                !string.Equals(param_name, "hp", StringComparison.Ordinal) ||
+                !IsActive("buff_sword") ||
+                !IsPlayer(__instance))
+                return;
+
+            __state = GetPlayerParam(__instance, "hp", 0f);
+        }
+
+        private static void HpSetParamPostfix(object __instance, string param_name, float value, float __state)
+        {
+            if (float.IsNaN(__state) ||
+                _regenDiagnosticsRemaining <= 0 ||
+                !string.Equals(param_name, "hp", StringComparison.Ordinal))
+                return;
+
+            float after = GetPlayerParam(__instance, "hp", value);
+            float delta = after - __state;
+            if (delta <= 0.0001f) return;
+
+            int tier = (int)Math.Round(
+                GetPlayerParam(__instance, "prayerclarity_rebalanced_combat_tier", 0f));
+            _regenDiagnosticsRemaining--;
+
+            _log?.LogInfo(
+                "COMBAT_REGEN_DIAGNOSTIC tier=" + tier +
+                " before=" + __state.ToString("0.###") +
+                " after=" + after.ToString("0.###") +
+                " delta=" + delta.ToString("0.###") +
+                " samples_remaining=" + _regenDiagnosticsRemaining);
+        }
+
+        private static bool IsPlayer(object instance)
+        {
+            object value = Get(instance, "is_player");
+            return value != null && Convert.ToBoolean(value);
         }
 
         private static void PatchRootsDiagnostic()
