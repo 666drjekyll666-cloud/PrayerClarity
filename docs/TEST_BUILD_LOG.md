@@ -563,3 +563,14 @@ Accepted edge-case runtime evidence:
 - No `ExpressiveException`, `InvalidCastException`, `SmartExpression`, or `Error in expression` failure occurred in the supplied test log.
 
 Result: the original 0.2.0 instant-growth regression and the later 100%-stack edge are both closed. Rebalanced 0.2.2 is the accepted stable baseline for Roots.
+
+
+### 2026-09-18 — Rebalanced 0.2.2 stable publication
+
+- Stable tag/release: `rebalanced-v0.2.2`.
+- Release target: exact accepted runtime source `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`.
+- Publication reused the exact accepted CI artifact from run `35382737488`; no rebuild occurred.
+- Published asset: `PrayerClarity.Rebalanced.dll`.
+- Published DLL SHA-256: `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
+- Publication workflow run: `35385706077` — success.
+- Release page: `https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.2`.
