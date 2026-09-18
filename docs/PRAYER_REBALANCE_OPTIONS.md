@@ -1,8 +1,8 @@
 # PrayerClarity: Rebalanced — roster specification
 
-Status: **design specification, roster-locked**. Rebased on the accepted PrayerClarity: Vanilla 1.0.20 baseline on 2026-09-17. Stock Graveyard Keeper 1.407 remains canonical in `PRAYER_MECHANICS.md`. Values below are deliberate Balance/Rework design unless explicitly identified as a Vanilla Fix; they are not claims about recovered vanilla intent. Runtime-sensitive behavior remains unaccepted until implemented and tested where required.
+Status: **canonical accepted Rebalanced ruleset**. The roster below is implemented and runtime-accepted in PrayerClarity: Rebalanced 0.1.5. Stock Graveyard Keeper 1.407 remains canonical in `PRAYER_MECHANICS.md`; values here are deliberate Balance/Rework design unless explicitly identified as a Vanilla Fix and must not be described as recovered vanilla intent.
 
-Runtime baseline for future implementation: PrayerClarity: Vanilla **1.0.20**, accepted source `c7ac91c1cea6c498fb406323725768b605d8139f`, accepted ref `accepted/clarity-1.0.20`, published as `v1.0.20`. The research branch is based on later `main` documentation/naming commits, but production source after the accepted runtime SHA has not changed.
+Current shared accepted runtime/source: `3b7cea7986138f57d7ace6998b9cc6bca952af1e`. Frozen refs are `accepted/vanilla-1.0.24` and `accepted/rebalanced-0.1.5`; public releases are `v1.0.24` and `rebalanced-v0.1.5`. Exact binary hashes and runtime gates are recorded in `TEST_BUILD_LOG.md`.
 
 `PRAYER_DESIGN_AUDIT.md` records the role/cross-roster rationale. `PRAYER_POWER_BUDGET.md` remains the quantitative stock cost/progression input; any older candidate numbers there are historical analysis, not the current roster.
 
@@ -195,25 +195,15 @@ The pure-resource specialists are cleaned because off-theme success bonuses dire
 
 The intended user-facing structure is two separate Nexus offerings backed by one shared source/design system:
 
-1. **PrayerClarity: Vanilla** — accepted 1.0.20 Clarity UX over stock prayer mechanics.
-2. **PrayerClarity: Rebalanced** — the same Clarity UX plus the complete ruleset above.
+1. **PrayerClarity: Vanilla 1.0.24** — accepted Clarity UX over stock prayer mechanics, canonical DLL `PrayerClarity.dll`, plugin GUID `nikich.graveyardkeeper.prayerclarity`.
+2. **PrayerClarity: Rebalanced 0.1.5** — the same Clarity UX plus the complete accepted ruleset above, canonical DLL `PrayerClarity.Rebalanced.dll`, plugin GUID `nikich.graveyardkeeper.prayerclarity.rebalanced`.
 
-A user installs one edition or the other. Prefer source sharing/build composition over copy-pasted forks. The Vanilla artifact must remain mechanically inert by construction. Exact DLL names, BepInEx GUIDs and mutual-exclusion behavior are implementation questions to verify, not assumptions.
+A user installs one edition or the other. Both are built from shared source/presentation infrastructure rather than copy-pasted forks. Vanilla declares Rebalanced as incompatible so the sibling alternatives are not intended to run together.
 
-## Rebase status and next engineering gate
+## Accepted implementation state
 
-The design specification is now rebased onto the complete PrayerClarity: Vanilla 1.0.20 code/UI baseline. There is no longer a reason to wait for another Clarity release before implementation-target discovery.
+The implementation-target/effective-model audit was completed and the integrated ruleset was accepted in Rebalanced 0.1.5.
 
-Do **not** start broad production implementation yet. First close the narrow effective-model/mechanics audit:
+The stable implementation uses one shared rules/semantic source across gameplay and the four Clarity surfaces; repairs Roots at the verified expression scope; applies Repentance probability at the native daily-roll logic; narrows Repose corpse selection at the verified generation seam; captures tier-dependent Combat state with one effective `buff_sword` lifecycle; preserves `b_shield` as a legacy alias while retiring its future crafting path; and ships Vanilla/Rebalanced as separate plugin identities and DLLs.
 
-1. define one effective prayer-definition/model seam so gameplay and Pulpit, Technology, item tooltip and Temporary Effects cannot disagree;
-2. verify Roots SmartExpression lifecycle/scope integration;
-3. verify Repose corpse RNG seam;
-4. verify Repentance daily-roll tier seam;
-5. verify Combat tier capture, regeneration lifecycle and non-stacking alias behavior;
-6. verify safe retirement/hiding of the duplicate Protection recipe;
-7. verify mutually exclusive packaging/plugin identity for Vanilla vs Rebalanced.
-
-After those seams are evidenced, create the build-bearing `dev/*` line from this 1.0.20-based research state and implement the smallest coherent integrated candidate.
-
-No hosted CI is required for this documentation/rebase pass.
+There is no open implementation gate attached to this roster. Any future value or algorithm change is a new Balance/Rework proposal and must go through the normal evidence, candidate, runtime-test and acceptance process.
