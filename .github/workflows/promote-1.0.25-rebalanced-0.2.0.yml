@@ -75,6 +75,7 @@ jobs:
               --title 'PrayerClarity: Rebalanced 0.2.0' \
               --latest=false \
               --notes "Accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Reworks the prayer roster around clearer specialist/generalist roles: flat Faith and Donations specialists, percentage-only Combo scaling, revised Church Quality ladders, q120 Gold Soul's Repose, tuned timed prayers, and safe best-existing-tier Repose handling. Adds current Soul Gratitude to the pulpit context and keeps all 11 supported interface languages. Exact accepted DLL SHA-256: 84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1."
+          fi
 
       - name: Publish Vanilla 1.0.25 without rebuilding
         shell: bash
@@ -89,3 +90,4 @@ jobs:
               --title 'PrayerClarity: Vanilla 1.0.25' \
               --latest \
               --notes "Accepted PrayerClarity: Vanilla release for Graveyard Keeper 1.407. Adds current Soul Gratitude to the Soul's Repose pulpit context and contextual Repose endpoint wording while preserving stock prayer mechanics and balance. Includes all 11 supported interface languages. Exact accepted DLL SHA-256: 72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9."
+          fi
