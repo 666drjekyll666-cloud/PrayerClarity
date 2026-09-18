@@ -102,8 +102,11 @@ namespace PrayerClarity
 
                 bool forceBest = mode == PendingMode.Best ||
                                  (mode == PendingMode.HalfwayToBest && UnityEngine.Random.Range(0, 2) == 0);
-                if (forceBest)
-                    tier_min = tier_max;
+                if (!forceBest) return;
+
+                int bestExistingTier;
+                if (CorpseTierSemantics.TryGetHighestExistingOrdinaryTier(tier_min, tier_max, out bestExistingTier))
+                    tier_min = bestExistingTier;
             }
             catch (Exception ex)
             {
