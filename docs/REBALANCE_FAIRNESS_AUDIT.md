@@ -2253,3 +2253,112 @@ A direct 1.407 furniture/consumable audit would strengthen documentation but is 
 9. Only after runtime acceptance update canonical Rebalanced rules/docs and promote a new stable Rebalanced release.
 
 No Vanilla balance behavior changes are proposed. Shared Vanilla presentation changes are limited to the truthful Repose endpoint context where verified.
+
+
+## Final resource-family simplification candidate — flat specialists / percentage Combo
+
+User identified a remaining clarity problem in the working economic family: the specialists still mix a shared +50% target-resource modifier with tiered flat output. This weakens the otherwise clean role grammar.
+
+### Candidate
+
+Keep q progression:
+- Faith: 20 / 40 / 60
+- Donations: 20 / 40 / 60
+- Combo: 40 / 60 / 80
+
+Change successful prayer-owned resource bonuses to:
+
+**Prayer for Faith**
+- Bronze: +5 Faith
+- Silver: +10 Faith
+- Gold: +20 Faith
+- k_faith = 0
+- no prayer-owned donation bonus/output
+
+**Prayer for Donations**
+- Bronze: +5 silver
+- Silver: +10 silver
+- Gold: +15 silver
+- k_money = 0
+- no prayer-owned Faith bonus/output
+
+**Combo**
+- Bronze: +100% Faith and donations
+- Silver: +150% Faith and donations
+- Gold: +200% Faith and donations
+- no prayer-owned flat Faith/money
+
+Base sermon Faith/donations remain unchanged for all prayers.
+
+### Why Faith is 5 / 10 / 20 instead of 5 / 10 / 15
+
+Direct stock 1.407 data:
+- Faith k_faith = .5 / 1 / 1.5, stock flat Faith = 1 / 2 / 3;
+- Donations k_money = .5 / 1 / 1.5, stock flat money = 1 / 2 / 3 silver.
+
+At representative guaranteed CQ with no Eloquence:
+
+| CQ | Base Faith | Stock same-tier Faith | Flat 5/10/15 | Flat 5/10/20 |
+| ---: | ---: | ---: | ---: | ---: |
+| 20 | 4 | 7 | 9 | 9 |
+| 40 | 8 | 18 | 18 | 18 |
+| 60 | 12 | 33 | 27 | 32 |
+
+Thus 5/10/15 causes a conspicuous Gold drop exactly when Gold becomes guaranteed. 5/10/20 preserves almost the entire vanilla Gold target output at CQ60 while retaining the flat-only grammar.
+
+Eloquence deliberately accelerates the late handoff to Combo because it scales percentage-based base Faith but not flat Faith. At CQ60 with Eloquence, approximate target Faith:
+- Gold flat specialist +20: 36;
+- Silver Combo: 40.
+This is acceptable: Eloquence is non-universal later progression and should naturally make percentage scaling more attractive.
+
+### Donations 5 / 10 / 15 works without extra Gold compensation
+
+Assuming Cardinal (same Price of Faith progression) for representative donation states:
+
+| GQ | Base donations | Stock same-tier target | Flat specialist |
+| ---: | ---: | ---: | ---: |
+| 50 | 2s | 4s Bronze | 7s Bronze |
+| 100 | 4s | 10s Silver | 14s Silver |
+| 150 | 6s | 18s Gold | 21s Gold |
+| 200 | 8s | 23s Gold | 23s Gold |
+| 250 | 10s | 28s Gold | 25s Gold |
+
+The flat Donations specialist is strongly attractive during its intended early/mid economic window, reaches parity with vanilla Gold around GQ200, then naturally loses scaling as GQ continues to rise.
+
+A +20s Gold would keep Donations ahead of Gold Combo for too long around normal Cathedral/GQ200 states, weakening the intended late universal Combo handoff.
+
+### Representative handoff snapshot
+
+No Eloquence; Cardinal active for donations:
+
+| Progression state | Faith specialist | Faith from available Combo | Donations specialist | Donations from available Combo |
+| --- | ---: | ---: | ---: | ---: |
+| CQ20 / GQ50 | Bronze = 9 | Combo not yet guaranteed | Bronze = 7s | Combo not yet guaranteed |
+| CQ40 / GQ100 | Silver = 18 | Bronze Combo = 16 | Silver = 14s | Bronze Combo = 8s |
+| CQ60 / GQ150 | Gold = 32 | Silver Combo = 30 | Gold = 21s | Silver Combo = 15s |
+| CQ80 / GQ200 | Gold = 36 | Gold Combo = 48 | Gold = 23s | Gold Combo = 24s |
+
+This is an unusually clean staged handoff:
+- early specialists clearly win their own resource;
+- at CQ60 Gold specialists still narrowly beat the currently guaranteed Silver Combo in their own resource;
+- at CQ80/GQ200 Gold Combo overtakes both specialists while producing both resources simultaneously.
+
+### UX advantage
+
+Player-facing success contribution becomes categorical:
+
+- Faith: \`+5 / +10 / +20 Faith\`
+- Donations: \`+5 / +10 / +15 silver\`
+- Combo: \`+100 / +150 / +200% Faith and donations\`
+
+No specialist mixes flat and percentage scaling. This removes one whole concept from each specialist tooltip and makes the premium Book prayer's percentage-scaling identity explicit.
+
+### Implementation note
+
+This does **not** require a new reward mechanic.
+
+Stock prayer crafts already carry success-only \`faith\` and \`money\` output items. Production only needs the Rebalanced rule/projection layer to set those existing output values and zero the corresponding percentage coefficients/off-theme outputs.
+
+The current rule model removes fixed outputs but does not yet expose tiered fixed Faith/money replacement arrays, so implementation should add those values to the single Rebalanced semantic/rule source rather than hard-code output edits in a separate patch.
+
+Status: **leading final resource-family candidate; awaiting explicit user acceptance before production implementation.**
