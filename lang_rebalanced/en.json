@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "Confessions happen more often in each confessional.",
   "rebalanced.tech.repose_intro": "The Donkey may bring better-quality bodies.",
   "rebalanced.tech.combat_intro": "Strengthens the Keeper in combat.",
-  "rebalanced.active.plant": "Plant growth time: -{0:0}%",
+  "rebalanced.active.plant": "Plant growth time: -{0:0}% · Combined maximum: -{1:0}%",
   "rebalanced.active.sins": "Confession chance: {0:0}%",
   "rebalanced.active.repose.bronze": "The Donkey may bring a body one quality tier better",
   "rebalanced.active.repose.silver": "In half of cases, the best body is guaranteed",
