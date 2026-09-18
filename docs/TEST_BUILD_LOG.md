@@ -542,3 +542,24 @@ Assessment:
 - Additive interaction with fertilizer is runtime-confirmed.
 - Manual removal correctly exercises the same stock removal path as timed expiry.
 - Gold is not separately runtime-sampled in this log, but it has no distinct control-flow branch: the same verified bridge uses the persisted tier reduction scalar (.20/.30/.40). Bronze and Silver runtime samples plus definition validation cover the mechanism; no additional Gold-specific runtime test is required unless behavior changes.
+
+
+### 2026-09-18 — Rebalanced 0.2.2 Roots edge accepted
+
+- Accepted runtime source: `924900365d44cd1ec9e530c9dd9b7e2f6a796bed`.
+- Accepted ref: `accepted/rebalanced-0.2.2`.
+- Production promotion: PR #5 merged to `main` as `1c4c395d375209e1505a312c922f4f176d78b0da`.
+- CI run: `35382737488` — success, 0 warnings / 0 errors.
+- Rebalanced DLL SHA-256: `4655fea2a57125aa78965a807fde76f9a056dbbd7f361246cf12351ff45074d6`.
+- Runtime helper: Rebalanced Test Console 0.1.2, source `f50fff1d7dc314f7f27ac125d1e760346a6ce6fe` (research-only; not promoted to production).
+
+Accepted edge-case runtime evidence:
+- Test Console enabled its nonpersistent Boost-II simulation, which supplies `grow_time=3` only to verified plant expressions that consume both `grow_time` and `buff_plant`.
+- Gold Shoots & Roots was activated through native `BuffsLogics.AddBuff`.
+- `tree_growing`, whose stock expression has no `grow_time` term, remained ordinary Gold Roots: `1800 -> 1080` (-40%); the Boost-II simulation did not leak into that consumer.
+- `garden_wheat_growing` reported `grow_time=3`, effective WGO `buff_plant=1.75`, fertilizer-only baseline `576`, and capped Gold result `72`.
+- For the 1440-second stock crop base, 72 seconds is exactly 5% remaining time = 95% combined reduction.
+- The effective prayer contribution at the cap is 35 percentage points (1.75 stock prayer units), so 60% fertilizer + 35% applied Gold = 95%; Silver + the same fertilizer remains 90%, preserving a real Silver -> Gold upgrade.
+- No `ExpressiveException`, `InvalidCastException`, `SmartExpression`, or `Error in expression` failure occurred in the supplied test log.
+
+Result: the original 0.2.0 instant-growth regression and the later 100%-stack edge are both closed. Rebalanced 0.2.2 is the accepted stable baseline for Roots.
