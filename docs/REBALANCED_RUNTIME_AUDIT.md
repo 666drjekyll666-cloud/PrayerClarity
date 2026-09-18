@@ -158,3 +158,15 @@ Because 0.2.1 was already handed out, any implementation change uses a new Rebal
 Implementation preserves the existing temporary nonserialized `totem_effect["buff_plant"]` bridge. Before injection it reads only modifier terms actually consumed by the verified stock expression, computes remaining headroom to the 95% aggregate cap, injects only the permitted prayer portion, and restores the original runtime value in the existing finalizer.
 
 Presentation now discloses both the nominal prayer reduction and the 95% combined cap in all 11 supported locales.
+
+
+### Synthetic Boost II acceptance helper
+
+Because the user does not currently own Boost Fertilizer II, Rebalanced Test Console 0.1.2 provides a nonpersistent runtime simulation instead of requiring item acquisition.
+
+- Candidate: `candidate/rebalanced-test-console-0.1.2`
+- Source: `f50fff1d7dc314f7f27ac125d1e760346a6ce6fe`
+- CI run: `35383083880` — success
+- DLL SHA-256: `cd0804631532ea6d0c1d2faa4b086b233591f48b63b9ebb06573d540087d4729`
+
+The simulation only affects the `grow_time` getter while an active plant craft already consumes both stock growth terms and Roots is live. It does not mutate save data.
