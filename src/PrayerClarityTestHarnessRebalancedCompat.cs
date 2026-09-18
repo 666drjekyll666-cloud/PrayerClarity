@@ -13,27 +13,34 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity Test Harness Rebalanced Compatibility";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.1.2";
 
         private const string HarmonyId = "nikich.graveyardkeeper.prayerclarity.testharness.rebalancedcompat";
         private static ManualLogSource _log;
-        private static bool _shieldAliasWarningLogged;
 
         private void Awake()
         {
             _log = Logger;
-            PatchHarnessBuffActivation();
-            Logger.LogInfo("PrayerClarity Test Harness compatibility active for PrayerClarity: Rebalanced. Legacy Vanilla GUID alias is provided and synthetic timed-buff activations project the selected Rebalanced tier before the Harness adds the native PlayerBuff.");
+            PatchNativeBuffAdd();
+            Logger.LogInfo("PrayerClarity Test Harness compatibility active for PrayerClarity: Rebalanced. Legacy Vanilla GUID alias is provided and synthetic timed-buff AddBuff calls project the selected Rebalanced tier from their verified duration override.");
         }
 
-        private static void PatchHarnessBuffActivation()
+        private static void PatchNativeBuffAdd()
         {
-            Type gui = FindType("PrayCraftGUI");
-            if (gui == null) throw new MissingMemberException("PrayCraftGUI");
+            Type buffsLogics = FindType("BuffsLogics");
+            if (buffsLogics == null) throw new MissingMemberException("BuffsLogics");
 
-            MethodInfo target = gui.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .FirstOrDefault(m => m.Name == "DoPrayForBuff" && m.GetParameters().Length == 0);
-            if (target == null) throw new MissingMethodException("PrayCraftGUI.DoPrayForBuff()");
+            Type nullableFloat = typeof(float?);
+            MethodInfo target = buffsLogics.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                {
+                    if (m.Name != "AddBuff") return false;
+                    ParameterInfo[] p = m.GetParameters();
+                    return p.Length == 2 &&
+                           p[0].ParameterType == typeof(string) &&
+                           p[1].ParameterType == nullableFloat;
+                });
+            if (target == null) throw new MissingMethodException("BuffsLogics.AddBuff(string, Nullable<float>)");
 
             Type harmonyType = FindType("HarmonyLib.Harmony");
             Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
@@ -42,7 +49,7 @@ namespace PrayerClarityResearch
 
             object harmony = Activator.CreateInstance(harmonyType, new object[] { HarmonyId });
             MethodInfo prefixMethod = typeof(PrayerClarityTestHarnessRebalancedCompat).GetMethod(
-                nameof(DoPrayForBuffPrefix),
+                nameof(AddBuffPrefix),
                 BindingFlags.NonPublic | BindingFlags.Static);
             object prefix = CreateHarmonyMethod(harmonyMethodType, prefixMethod);
 
@@ -73,48 +80,44 @@ namespace PrayerClarityResearch
             return instance;
         }
 
-        private static void DoPrayForBuffPrefix(object __instance)
+        private static void AddBuffPrefix(string __0, float? __1)
         {
             try
             {
-                object craft = Get(__instance, "pray_craft") ?? Get(__instance, "_pray_craft");
-                string craftId = Get(craft, "id") as string;
-                string prayerId;
-                int tier;
-                if (!TryParsePrayerCraft(craftId, out prayerId, out tier)) return;
+                string buffId = __0;
+                if (string.IsNullOrEmpty(buffId) || !__1.HasValue) return;
 
-                switch (prayerId)
+                int tier = InferTier(buffId, __1.Value);
+                if (tier == 0) return;
+
+                switch (buffId)
                 {
-                    case "b_plant":
+                    case "buff_plant":
                         SetPlayerParam("prayerclarity_rebalanced_plant_tier", tier);
                         SetPlayerParam("prayerclarity_rebalanced_plant_reduction", Tier(tier, 0.20f, 0.30f, 0.40f));
                         break;
-                    case "b_sins":
+                    case "buff_sins":
                         SetPlayerParam("prayerclarity_rebalanced_confession_tier", tier);
                         SetPlayerParam("prayerclarity_rebalanced_confession_bonus", Tier(tier, 0.35f, 0.60f, 0.85f));
                         break;
-                    case "b_skull":
+                    case "buff_skull":
                         SetPlayerParam("prayerclarity_rebalanced_repose_tier", tier);
                         break;
-                    case "b_sword":
-                    case "b_shield":
+                    case "buff_sword":
+                    case "buff_shield":
                         SetPlayerParam("prayerclarity_rebalanced_combat_tier", tier);
                         SetPlayerParam("prayerclarity_rebalanced_combat_extra_damage", Math.Max(0f, Tier(tier, 5f, 10f, 15f) - 5f));
                         SetPlayerParam("prayerclarity_rebalanced_combat_regen", Tier(tier, 1f, 2f, 4f));
-                        if (prayerId == "b_shield" && !_shieldAliasWarningLogged)
-                        {
-                            _shieldAliasWarningLogged = true;
-                            _log?.LogWarning("Synthetic Protection/b_shield is a retired Rebalanced alias for Combat and resolves to the same buff_sword. Activating both b_sword and b_shield in one test can extend the same buff duration twice; skip b_shield when validating the canonical Combat Temporary Effect.");
-                        }
                         break;
-                    case "b_star":
+                    case "buff_star":
                         SetPlayerParam("prayerclarity_rebalanced_excellence_tier", tier);
                         break;
                     default:
                         return;
                 }
 
-                _log?.LogInfo("Synthetic Rebalanced tier projected before buff activation: " + prayerId + " tier=" + tier + ".");
+                _log?.LogInfo("Synthetic Rebalanced tier projected at BuffsLogics.AddBuff: " + buffId +
+                              " tier=" + tier + " duration_override=" + __1.Value.ToString("0.###") + ".");
             }
             catch (Exception ex)
             {
@@ -122,22 +125,30 @@ namespace PrayerClarityResearch
             }
         }
 
-        private static bool TryParsePrayerCraft(string craftId, out string prayerId, out int tier)
+        private static int InferTier(string buffId, float durationMinutes)
         {
-            prayerId = null;
-            tier = 0;
-            if (string.IsNullOrEmpty(craftId)) return false;
+            float baseDuration;
+            switch (buffId)
+            {
+                case "buff_plant":
+                case "buff_sword":
+                case "buff_shield":
+                    baseDuration = 36f;
+                    break;
+                case "buff_sins":
+                case "buff_skull":
+                case "buff_star":
+                    baseDuration = 18f;
+                    break;
+                default:
+                    return 0;
+            }
 
-            string value = craftId.StartsWith("pray:", StringComparison.Ordinal)
-                ? craftId.Substring(5)
-                : craftId;
+            int tier = (int)Math.Round(durationMinutes / baseDuration);
+            if (tier < 1 || tier > 3) return 0;
 
-            int separator = value.LastIndexOf(':');
-            if (separator <= 0 || separator + 1 >= value.Length) return false;
-            if (!int.TryParse(value.Substring(separator + 1), out tier) || tier < 1 || tier > 3) return false;
-
-            prayerId = value.Substring(0, separator);
-            return prayerId.StartsWith("b_", StringComparison.Ordinal);
+            float expected = baseDuration * tier;
+            return Math.Abs(durationMinutes - expected) <= 0.05f ? tier : 0;
         }
 
         private static float Tier(int tier, float bronze, float silver, float gold)
