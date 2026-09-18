@@ -363,3 +363,30 @@ Do not treat this probe as a release candidate or production architecture. Once 
 - Shared presentation scope: current Soul Gratitude pulpit metric for Soul's Repose; contextual Repose endpoint replacement derived from current player/body data; all new strings present in 11 official locales.
 - Performance shape: no per-frame work; corpse tier catalogue is inspected only on relevant Donkey delivery or pulpit redraw; stock `GameSave.GenerateBody` remains authoritative.
 - Runtime status: **not yet accepted**. Focused in-game acceptance is required; do not promote to `main` yet.
+
+
+## PrayerClarity: Vanilla 1.0.25 — shared clarity candidate
+
+- Type: shared Clarity/pulpit follow-up for the Vanilla sibling; **no prayer mechanics or balance changes**.
+- Frozen candidate ref: `candidate/vanilla-1.0.25`.
+- Exact source SHA: `ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
+- GitHub Actions run: `35347730945`.
+- Workflow result: **success** on `ubuntu-latest`; 11 localization JSON files validated, restore/build passed, embedded-locale markers passed, candidate/Nexus staging passed.
+- Workflow artifact ID: `10547383753`.
+- Artifact: `PrayerClarity-1.0.25-ci-ebe069b4ad202ae786af9c63ded0ffb00502cff7`.
+- Artifact ZIP digest: `sha256:d7fb3fe9bd789a6568a0204d033c044c2f17c028b8b6125b15858317cb6a0f92`.
+- Handoff filename: `PrayerClarity-1.0.25-ci.dll`.
+- Handoff DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
+- Supported target: Graveyard Keeper 1.407, Assembly-CSharp MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
+- Scope:
+  - Soul's Repose pulpit context displays current Soul Gratitude as an additional input metric.
+  - Repose pulpit can replace the stock effect line with the localized endpoint message when the stock +1 maximum adds no higher ordinary corpse tier.
+  - shared corpse-tier catalogue/state lookup is presentation-only in Vanilla.
+  - all stock prayer requirements, outputs, formulas, buffs and corpse-generation mechanics remain unchanged.
+- Test Harness protocol: use the normal Vanilla Test Harness only. **Do not load PrayerClarity.TestHarness.RebalancedCompat** with Vanilla; that adapter exists only for the Rebalanced sibling and uses the legacy Vanilla GUID alias.
+- Runtime acceptance:
+  1. select Soul's Repose and confirm the additional Soul Gratitude row fits naturally;
+  2. select Repose and confirm the ordinary effect wording remains while a higher ordinary tier is available;
+  3. on a save at terminal Donkey progression, confirm the effect line becomes `Ещё более качественные тела недоступны.`;
+  4. confirm no stock mechanics/balance values changed.
+- Status: **ready for focused runtime verification; not accepted**.
