@@ -30,7 +30,13 @@ This file records handed executable artifacts once PrayerClarity research reache
   - terminal Repose endpoint wording/behavior awaits a save with terminal Donkey corpse progression;
   - the real successful Silver/Gold Imagination sermon has not yet been visually observed dropping its 3 premium Stories, although the implementation uses the verified native sermon-drop path.
 - Any future change required by deferred verification must use a new version; the accepted 1.0.25 / 0.2.0 binaries are immutable.
-- Promotion/publication metadata is appended after the stable merge and release workflow complete.
+- Stable promotion PR: **#3**, squash-merged to `main` as `d62d44b5b58b5f799432d7ec8475b1e3fe50dbf6`.
+- Publication workflow: `35353739384`; result: **success**.
+- Publication downloaded the two exact accepted CI artifacts, re-verified both DLL SHA-256 values, renamed only to canonical install filenames, and created:
+  - tag/release `v1.0.25` -> target `ebe069b4ad202ae786af9c63ded0ffb00502cff7`, asset `PrayerClarity.dll`;
+  - tag/release `rebalanced-v0.2.0` -> target `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`, asset `PrayerClarity.Rebalanced.dll`.
+- Initial publication run `35353663348` stopped after artifact/hash verification because of a shell-control syntax error in the temporary release workflow; no release asset was created or modified by that failed attempt. The workflow-only fix did not change either accepted binary.
+- Status: **accepted, merged to main, frozen by accepted refs, and published as two stable sibling releases**.
 
 ## Stable sibling releases — Vanilla 1.0.24 / Rebalanced 0.1.5
 
