@@ -5,7 +5,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 ## Current stable baselines — 2026-09-19
 
 - **PrayerClarity: Vanilla 1.0.25** — `accepted/vanilla-1.0.25`, source `ebe069b4ad202ae786af9c63ded0ffb00502cff7`, release `v1.0.25`, DLL SHA-256 `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
-- **PrayerClarity: Rebalanced 0.2.3** — `accepted/rebalanced-0.2.3`, source `ab1eb67cbf2465a912c392120395011503b720c3`, release `rebalanced-v0.2.3`, DLL SHA-256 `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`.
+- **PrayerClarity: Rebalanced 0.2.4** — `accepted/rebalanced-0.2.4`, source `4d5d3021c0b9eef16d09402c5f25851ff7a66981`, release `rebalanced-v0.2.4`, DLL SHA-256 `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
@@ -611,3 +611,22 @@ Research helper identity:
 - Test Console 0.1.3 source: `5de0f27e97cb38a72fb2b53b93e02131225012e7`.
 - Test Console DLL SHA-256: `f7624c8696f5dbbf1bf64a959ea370c545c198332bbfe0c1b8eeec4e0775d6fc`.
 - The helper remains research-only and is not part of the public release.
+
+### 2026-09-19 — Rebalanced 0.2.4 accepted and published
+
+- User acceptance: after testing the 0.2.4 candidate, the user reported Repentance and Repose duration presentation as **2.7 / 3.7 / 4.8 in-game days** under Longer Days +50% and explicitly approved fixing, publishing, and documentation consolidation.
+- Accepted behavior: Repentance and Repose duration **30 / 42 / 54 min**. Repentance probability remains 50 / 75 / 100%; Repose Bronze/Silver/Gold corpse-quality logic is unchanged.
+- Implementation: tiered duration is projected to stock `CraftDefinition.dur_parameter` through the existing once-per-load static projection. No new Harmony hook, polling, persistent mod timer state, or runtime algorithm was introduced.
+- Accepted ref: `accepted/rebalanced-0.2.4`.
+- Exact accepted runtime source: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`.
+- Candidate CI run: `35441674008` — success, 0 warnings / 0 errors.
+- Artifact ID: `10583657918`.
+- Artifact: `PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.4-ci-4d5d3021c0b9eef16d09402c5f25851ff7a66981`.
+- Artifact ZIP digest: `sha256:1e8759dee5652d5e9d8f0180462a8875e569174d375ec70dc7b85a6591f865a5`.
+- Accepted/released Rebalanced DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`.
+- Stable promotion: PR #8 merged to `main` as `d176fec0eb42852019956a55347dd3af29b3fe1f`.
+- Stable tag/release: `rebalanced-v0.2.4`, targeting the exact accepted runtime source.
+- Release asset ID: `574716424`, canonical filename `PrayerClarity.Rebalanced.dll`, asset digest `sha256:ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`.
+- Publication workflow run: `35442370524` — success.
+- Publication downloaded artifact `10583657918`, verified the accepted source/version/hash, and uploaded the exact accepted DLL; **no rebuild occurred**.
+
