@@ -258,3 +258,20 @@ New Roots presentation observation:
 - the 95% aggregate growth-time reduction cap is mechanically important but visually noisy in prayer-selection tooltips;
 - a candidate direction is to keep the cap visible in Character -> Temporary Effects, where it describes the live interaction boundary, while keeping prayer-selection surfaces focused on the tier's direct -20/-30/-40% effect;
 - this is a design follow-up, not a change to the accepted 95% runtime cap.
+
+
+### 2026-09-20 follow-up candidate — 1.0.29 / 0.2.8
+
+The user accepted the compact Base result grammar:
+- `Faith (Church Quality)`;
+- `Donations (Graveyard Quality)`;
+- Soul's Repose keeps the additional Soul Gratitude input inside the Faith parentheses.
+
+This replaces the earlier dash/from wording rather than inserting a forced line break. The intent is to reduce width without adding vertical height or controller-specific awkwardness.
+
+The user also accepted the Roots presentation split:
+- prayer-selection surfaces show the direct tier effect only (-20/-30/-40% growth time);
+- Character -> Temporary Effects retains the 95% combined reduction boundary because that surface describes the live interaction state;
+- the 95% runtime cap itself, buff duration, repeated-buff native duration extension, tier strength and fertilizer interaction remain unchanged.
+
+Candidate 1.0.29 / 0.2.8 implements only these presentation decisions plus the already accepted 1.0.28 / 0.2.7 Clarity polish. The Russian top-HUD decimal dot remains an explicitly accepted residual presentation behavior.
