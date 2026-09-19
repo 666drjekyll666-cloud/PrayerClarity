@@ -1,5 +1,13 @@
 # Changelog
 
+## Shared candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
+
+- Simplifies Faith/donation percentage rows to the resource plus signed percentage, removing the redundant “of base value” suffix.
+- Renders single-item prayer rewards as one atomic `localized name ×N` row instead of a separate Quantity line.
+- Reuses the existing PrayerClarity-owned content-width mechanism for prayer-item success rows so the 100% success threshold stays visually intact.
+- Refreshes the game locale once on the first long-prayer HUD timer render, covering BepInEx initialization before Graveyard Keeper loads GameSettings without adding per-frame language polling.
+- Preserves all prayer mechanics and the accepted Base result / Bonuses on success structure; runtime acceptance is still required.
+
 ## PrayerClarity: Rebalanced 0.2.4
 
 - Increased Repentance duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted 50 / 75 / 100% daily confession probabilities.
