@@ -212,3 +212,26 @@ The approved presentation design is implemented as a shared candidate in both si
 
 The HUD implementation reuses the game's existing `BuffsGUI.Update() -> BuffIcon.Redraw()` cadence. A narrow `BuffIcon.Redraw` prefix handles only recognized long prayer timers and skips the original timer formatter for that one case; it adds no independent Update/polling owner and writes the label only when the formatted one-decimal value changes.
 
+
+
+### 2026-09-20 runtime review — corrected 0.2.5 identity and 1.0.28 / 0.2.7 follow-up
+
+The user's visual/runtime pass was executed with a misversioned corrected Rebalanced `0.2.5` binary from source `2e6276c36af31e405100eba6d431324c10b611df`. Repository comparison proved that the correctly numbered Rebalanced `0.2.6` source `3f5301e32c424f9f70b7ef48eb339d793c778f78` differs from that runtime only in version/workflow/documentation identity; the UI/runtime implementation is the same. The pass is therefore valid evidence for the corrected implementation, while both handed numbers remain immutable historical identities.
+
+Accepted visual findings from that pass:
+- native **Base result** and **Bonuses on success** headings are clear and retained;
+- base Faith / donations dependency wording, including Soul's Repose Soul Gratitude context, is retained;
+- tier blocks and percentage/fixed separation are retained;
+- percentage rows should drop the redundant “of base value” phrase and show only the resource plus signed percentage;
+- structured single-item rewards should use one compact atomic row, `<localized item name> ×N`, with no separate “Quantity” row;
+- the concrete prayer-item 100%-success threshold must remain an atomic mechanics row and may widen only the PrayerClarity-owned text row when needed;
+- Technology/item timed-effect text and Character -> Temporary Effects day wording are retained.
+
+The same runtime log also explains the Russian HUD decimal-separator miss without requiring a new polling owner: BepInEx initializes PrayerClarity before Graveyard Keeper executes `LoadGameSettings` / loads the Russian language resource. The existing HUD path cached English formatting early, while later Technology/Character surfaces explicitly refreshed the game language. Rebalanced 0.2.7 / Vanilla 1.0.28 therefore add one late locale refresh on the first long-prayer HUD timer render, then keep the existing native `BuffIcon.Redraw()` cadence with no per-frame language polling.
+
+Acceptance gate for the next shared candidate:
+- no “of base value” suffix on Faith/donation percentage rows;
+- Commercial Blessing, Good Story, Excellent Story and any equivalent single-item prayer reward render as `name ×N` on one semantic row;
+- prayer-item `For 100% success requires N (cross)` remains visually unbroken;
+- Russian long-prayer HUD timer uses the locale decimal separator if the one-time late refresh is sufficient; if not, do not add a heavier workaround solely for punctuation;
+- all previously accepted 1.0.27 / 0.2.6 structure and mechanics remain unchanged.
