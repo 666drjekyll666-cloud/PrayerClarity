@@ -7,7 +7,8 @@ using System.Text;
 using BepInEx;
 using UnityEngine;
 
-// Read-only research probe; not production code.\nnamespace PrayerClarityResearch
+// Read-only research probe; not production code.
+namespace PrayerClarityResearch
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public sealed class PrayerClarityHudTimerProbe : BaseUnityPlugin
