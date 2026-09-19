@@ -9,6 +9,29 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
+## Shared candidate — Vanilla 1.0.31 / Rebalanced 0.2.10
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.10`.
+- Exact build/source SHA: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
+- GitHub Actions run: `35475014644`; result: **success**.
+- Artifact ID: `10594265029`.
+- Artifact: `PrayerClarity-shared-ui-1.0.31-rebalanced-0.2.10-ci-30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
+- Artifact ZIP digest: `sha256:a01744655280ee598451c79d64bee3c845e1e5d521c253cc64e082342adf3c0a`.
+- **PrayerClarity: Rebalanced 0.2.10** handoff DLL SHA-256: `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`.
+- **PrayerClarity: Vanilla 1.0.31** handoff DLL SHA-256: `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- Candidate change:
+  - replace the ineffective `BubbleWidgetBlankSeparatorData` item-tooltip spacing attempt with one controlled leading newline on PrayerClarity-owned **Base result** and **Bonuses on success** title rows;
+  - apply this only to prayer-item tooltips, including the fallback append path;
+  - remove the now-unused blank-separator helper from `ItemTooltipPresentation`;
+  - Technology comparison tooltips remain unchanged.
+- All accepted 0.2.9 behavior is preserved: Repose q20/q40/q60, stock Excellence lore fallback, compact Base-result dependency grammar, Roots cap presentation and existing mechanics.
+- Runtime acceptance requested:
+  - inspect a prayer item with lore and confirm visible `lore -> gap -> Base result -> gap -> Bonuses on success` rhythm;
+  - spot-check that no excessive double-gap appears when the stock prayer description itself wraps;
+  - no mechanics, Repose, Excellence-lore or Technology retest is required unless the presentation exposes a discrepancy.
+- Numbered binaries are immutable after this handoff.
+
 ## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
 
 - Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
