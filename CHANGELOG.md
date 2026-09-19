@@ -1,5 +1,13 @@
 # Changelog
 
+## Shared candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
+
+- Keeps the runtime-accepted 1.0.28 / 0.2.7 tooltip structure and compact reward rows.
+- Shortens Base result dependency wording to parenthetical source labels, e.g. `Faith (Church Quality)` and `Donations (Graveyard Quality)`; Soul's Repose keeps Soul Gratitude in the Faith source.
+- Rebalanced Shoots & Roots prayer-selection surfaces now show only the direct tier effect (-20/-30/-40% growth time); the existing 95% combined safety cap remains mechanically unchanged and stays visible on the active Temporary Effects surface.
+- Leaves the accepted HUD decimal punctuation behavior unchanged; no heavier punctuation-only workaround is added.
+- No prayer balance values, stacking rules, duration rules, or runtime mechanics are changed.
+
 ## Shared candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
 
 - Simplifies Faith/donation percentage rows to the resource plus signed percentage, removing the redundant “of base value” suffix.
