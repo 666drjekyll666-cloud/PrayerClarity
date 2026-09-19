@@ -179,6 +179,14 @@ For the pulpit specifically, preserve the sermon as the reveal moment for the ex
 
 Prefer concrete intrinsic values, short dependency explanations and visual hierarchy over raw formulas. `docs/PULPIT_REVEAL_UX.md` is the canonical detailed rationale for this reward-reveal boundary.
 
+### Post-audit architecture closure
+
+`docs/POST_AUDIT_VERDICT.md` is the mandatory starting point for future PrayerClarity architecture/lifecycle audits.
+
+The 2026-09-19 post-audit closed the remaining Rebalanced tier-state save/load question and set both current lines to **A — no architecture action**. In particular, do not reopen the accepted Repentance seam, Combat scoped modifiers, Roots stock-formula/input-bridge design, Excellence `GetBuffValue("buff_star")` seam, Soul Contentment live-graph projection, or persistent tier-token strategy without new direct evidence, changed source/game binary, or a concrete runtime conflict.
+
+The remaining terminal Repose endpoint check is presentation-only/non-blocking. Do not require user progression solely to close it.
+
 Use one mod-owned semantic model for all prayer presentation surfaces so technology text, item tooltip, pulpit forecast, active-buff presentation and effective configured mechanics cannot contradict each other.
 
 ## Localization / language support
