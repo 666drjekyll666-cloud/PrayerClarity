@@ -16,6 +16,7 @@ namespace PrayerClarity
         private static bool _techErrorLogged;
         private static bool _timerErrorLogged;
         private static bool _hudTimerErrorLogged;
+        private static bool _hudTimerLocaleReady;
         private static ConstructorInfo _bubbleTextConstructor;
         private static MethodInfo _tooltipAddDataMethod;
         private static Type _blankSeparatorType;
@@ -113,6 +114,15 @@ namespace PrayerClarity
 
                 object timerLabel = R.Get(__instance, "txt_timer");
                 if (timerLabel == null) return true;
+
+                // Plugins initialize before Graveyard Keeper loads GameSettings. If this
+                // icon reached Redraw without a later Draw binding, refresh the locale
+                // once here after the save/UI lifecycle is definitely live.
+                if (!_hudTimerLocaleReady)
+                {
+                    Localization.UseCurrentGameLanguage();
+                    _hudTimerLocaleReady = true;
+                }
 
                 string desired = Localization.F("active.timer_days_compact", remainingDays);
                 string current = R.Get(timerLabel, "text") as string;
