@@ -110,7 +110,7 @@ namespace PrayerClarity
             {
                 lines.Add(
                     icon + " " + label + ": " +
-                    Localization.F("tech.percent_of_base", FormatPercent(rate(tiers[0]))));
+                    FormatPercent(rate(tiers[0])));
             }
 
             if (sharedFixed)
@@ -135,9 +135,9 @@ namespace PrayerClarity
                 List<string> lines = new List<string>
                 {
                     TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":",
-                    TechnologyTooltipTextStyle.RewardName(commonReward.Id, rewardName),
-                    Localization.F("tech.quantity") + ": ×" +
-                    commonReward.Count.ToString(CultureInfo.InvariantCulture)
+                    TechnologyTooltipTextStyle.RewardName(
+                        commonReward.Id,
+                        rewardName + " ×" + commonReward.Count.ToString(CultureInfo.InvariantCulture))
                 };
 
                 return string.Join("\n", lines.ToArray());
@@ -263,7 +263,7 @@ namespace PrayerClarity
             {
                 lines.Add(
                     "(faith) " + R.VanillaLocalize("faith") + ": " +
-                    Localization.F("tech.percent_of_base", FormatPercent(tier.FaithBonusRate)));
+                    FormatPercent(tier.FaithBonusRate));
             }
 
             if (Math.Abs(tier.MoneyBonusRate) >= Epsilon &&
@@ -271,7 +271,7 @@ namespace PrayerClarity
             {
                 lines.Add(
                     "(slv) " + Localization.F("tech.donations") + ": " +
-                    Localization.F("tech.percent_of_base", FormatPercent(tier.MoneyBonusRate)));
+                    FormatPercent(tier.MoneyBonusRate));
             }
 
             return lines.Count == 0 ? null : string.Join("\n", lines.ToArray());
@@ -314,9 +314,8 @@ namespace PrayerClarity
                 string rewardName = TechnologyTooltipTextStyle.RewardName(
                     reward.Id,
                     R.VanillaLocalize(reward.Id));
-                lines.Add(rewardName);
                 lines.Add(
-                    Localization.F("tech.quantity") + ": ×" +
+                    rewardName + " ×" +
                     reward.Count.ToString(CultureInfo.InvariantCulture));
             }
         }
