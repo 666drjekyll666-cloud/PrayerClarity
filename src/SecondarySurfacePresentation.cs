@@ -15,6 +15,7 @@ namespace PrayerClarity
         private static bool _buffErrorLogged;
         private static bool _techErrorLogged;
         private static bool _timerErrorLogged;
+        private static bool _hudTimerErrorLogged;
         private static ConstructorInfo _bubbleTextConstructor;
         private static MethodInfo _tooltipAddDataMethod;
         private static Type _blankSeparatorType;
@@ -28,15 +29,18 @@ namespace PrayerClarity
             _log = log;
 
             Type perkBuffItemGui = R.GameType("PerkBuffItemGUI");
+            Type buffIcon = R.GameType("BuffIcon");
             Type playerBuff = R.GameType("PlayerBuff");
             Type techUnlock = R.GameType("TechUnlock");
             Type tooltip = R.GameType("Tooltip");
             Type mainGame = R.GameType("MainGame");
 
             MethodInfo drawBuff = R.Method(perkBuffItemGui, "Draw", false, new[] { playerBuff });
+            MethodInfo redrawBuffIcon = R.Method(buffIcon, "Redraw", false, 0);
             MethodInfo getTooltip = R.Method(techUnlock, "GetTooltip", false, new[] { tooltip });
             MethodInfo getTimerText = R.Method(playerBuff, "GetTimerText", false, 0);
             if (drawBuff == null) throw new MissingMethodException("PerkBuffItemGUI.Draw(PlayerBuff)");
+            if (redrawBuffIcon == null) throw new MissingMethodException("BuffIcon.Redraw()");
             if (getTooltip == null) throw new MissingMethodException("TechUnlock.GetTooltip(Tooltip)");
             if (getTimerText == null) throw new MissingMethodException("PlayerBuff.GetTimerText()");
 
@@ -48,6 +52,7 @@ namespace PrayerClarity
                 throw new MissingMemberException("Verified prayer-buff timer state is unavailable.");
 
             R.Patch(harmonyId + ".activeeffects", typeof(SecondarySurfacePresentation), drawBuff, nameof(PerkBuffDrawPostfix));
+            R.PatchPrefix(harmonyId + ".hudprayertimer", typeof(SecondarySurfacePresentation), redrawBuffIcon, nameof(BuffIconRedrawPrefix));
             R.Patch(harmonyId + ".technology", typeof(SecondarySurfacePresentation), getTooltip, nameof(TechUnlockTooltipPostfix));
             R.Patch(harmonyId + ".prayertimer", typeof(SecondarySurfacePresentation), getTimerText, nameof(PlayerBuffTimerPostfix));
         }
@@ -78,6 +83,44 @@ namespace PrayerClarity
                 if (_buffErrorLogged) return;
                 _buffErrorLogged = true;
                 _log?.LogError("PrayerClarity active-effect presentation failed; vanilla Temporary Effects text remains available. " + ex);
+            }
+        }
+
+        private static bool BuffIconRedrawPrefix(object __instance)
+        {
+            try
+            {
+                if (__instance == null) return true;
+
+                object showTimerValue = R.Get(__instance, "show_timer");
+                if (!(showTimerValue is bool) || !(bool)showTimerValue) return true;
+
+                object playerBuff = R.Get(__instance, "linked_buff");
+                float remainingDays;
+                if (!TryGetRemainingPrayerDays(playerBuff, out remainingDays) || remainingDays < 1f)
+                    return true;
+
+                object timerLabel = R.Get(__instance, "txt_timer");
+                if (timerLabel == null) return true;
+
+                string desired = Localization.F("active.timer_days_compact", remainingDays);
+                string current = R.Get(timerLabel, "text") as string;
+                if (!string.Equals(current, desired, StringComparison.Ordinal))
+                    R.Set(timerLabel, "text", desired);
+
+                // BuffsGUI already calls this native Redraw at its own cadence.
+                // For long prayer timers the compact day count fully replaces the
+                // stock clock text; below one day we return true and preserve stock.
+                return false;
+            }
+            catch (Exception ex)
+            {
+                if (!_hudTimerErrorLogged)
+                {
+                    _hudTimerErrorLogged = true;
+                    _log?.LogError("PrayerClarity HUD prayer-buff day timer failed; vanilla timer remains available. " + ex);
+                }
+                return true;
             }
         }
 
@@ -151,18 +194,15 @@ namespace PrayerClarity
             try
             {
                 List<object> crafts = ResolvePrayerCrafts(__instance);
-                string summary = BuildTechnologySummary(crafts);
-                if (string.IsNullOrEmpty(summary) || __0 == null) return;
+                if (crafts == null || crafts.Count == 0 || __0 == null) return;
 
                 Localization.UseCurrentGameLanguage();
+                TooltipPresentationSections sections = BuildTechnologySections(crafts);
+                if (sections == null || !sections.HasContent) return;
+
                 string vanillaLore = ResolveVanillaPrayerLore(crafts);
-                if (!TryReplaceVanillaPrayerMechanics(__0, summary, TechnologyTooltipMaxWidth, vanillaLore))
-                {
-                    object blank = CreateBlankSeparator();
-                    if (blank != null) AddTooltipData(__0, blank);
-                    AddTooltipData(__0, CreateTextData(Localization.F("tech.prayer_details"), 3));
-                    AddTooltipData(__0, CreateTextData(summary, 4, TechnologyTooltipMaxWidth));
-                }
+                if (!TryReplaceVanillaPrayerMechanics(__0, sections, TechnologyTooltipMaxWidth, vanillaLore))
+                    AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
 
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
@@ -174,7 +214,7 @@ namespace PrayerClarity
             }
         }
 
-        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, string summary, int maxWidth, string vanillaLore)
+        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, TooltipPresentationSections sections, int maxWidth, string vanillaLore)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -202,9 +242,19 @@ namespace PrayerClarity
             object body = list[headerIndex + 1];
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
-            R.Set(header, "text", Localization.F("tech.prayer_details"));
-            list[headerIndex + 1] = CreateTextData(summary, 4, maxWidth);
-            TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
+            R.Set(header, "text", Localization.F("tech.base_result"));
+            list[headerIndex + 1] = CreateTextData(sections.BaseResult, 4, maxWidth);
+
+            int insertIndex = headerIndex + 2;
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) list.Insert(insertIndex++, separator);
+                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
+            }
+
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
 
             if (headerIndex > 0 && !string.IsNullOrEmpty(vanillaLore))
             {
@@ -221,7 +271,7 @@ namespace PrayerClarity
             return true;
         }
 
-        private static string BuildTechnologySummary(List<object> crafts)
+        private static TooltipPresentationSections BuildTechnologySections(List<object> crafts)
         {
             if (crafts == null || crafts.Count == 0) return null;
 
@@ -233,7 +283,27 @@ namespace PrayerClarity
             }
             if (tiers.Count == 0) return null;
 
-            return TechnologyTooltipTierRenderer.Build(tiers);
+            return TechnologyTooltipTierRenderer.BuildSections(tiers);
+        }
+
+        private static void AppendTechnologySections(object tooltip, TooltipPresentationSections sections, int maxWidth)
+        {
+            object blank = CreateBlankSeparator();
+            if (blank != null) AddTooltipData(tooltip, blank);
+
+            if (!string.IsNullOrEmpty(sections.BaseResult))
+            {
+                AddTooltipData(tooltip, CreateTextData(Localization.F("tech.base_result"), 3));
+                AddTooltipData(tooltip, CreateTextData(sections.BaseResult, 4, maxWidth));
+            }
+
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) AddTooltipData(tooltip, separator);
+                AddTooltipData(tooltip, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                AddTooltipData(tooltip, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
+            }
         }
 
         private static string ResolveVanillaPrayerLore(List<object> crafts)
