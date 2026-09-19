@@ -630,3 +630,38 @@ Research helper identity:
 - Publication workflow run: `35442370524` — success.
 - Publication downloaded artifact `10583657918`, verified the accepted source/version/hash, and uploaded the exact accepted DLL; **no rebuild occurred**.
 
+### 2026-09-19 — shared Clarity UX candidate: Vanilla 1.0.26 / Rebalanced 0.2.5
+
+Purpose: runtime/visual acceptance candidate for the user-approved shared Technology, prayer-item-tooltip, and HUD-duration presentation changes. No prayer mechanics were changed.
+
+Exact built source:
+- candidate branch: `candidate/rebalanced-0.2.5`
+- source SHA: `b0da2732a4033db68487cdc3c4e67ec6890e0de6`
+- draft promotion PR: #9 (must remain unmerged until runtime acceptance)
+
+Build evidence:
+- GitHub Actions run: `35468764675`
+- job: `105965783298`
+- result: success
+- Rebalanced build: 0 warnings / 0 errors
+- Vanilla build: 0 warnings / 0 errors
+- all 11 base locales validated; all 11 Rebalanced locale overlays validated
+- artifact ID: `10592495316`
+- artifact: `PrayerClarity-shared-ui-1.0.26-rebalanced-0.2.5-ci-b0da2732a4033db68487cdc3c4e67ec6890e0de6`
+- artifact ZIP digest: `sha256:02b50391fcabe6ac1b0476ad86bdd0c0a4875ec2f46c95c6f27b8daeb799b399`
+
+Exact handoff binaries:
+- Vanilla `PrayerClarity-1.0.26-ci.dll` — SHA-256 `99b879c22c49c86be30f886cc0b2afa09987d101d127474a7c3064efe72ba03a`
+- Rebalanced `PrayerClarity.Rebalanced-0.2.5-ci.dll` — SHA-256 `153f659247a1f4d1bd7b5c4686291d9f0f791b8d1812f9e544d5fbf68f771ed0`
+
+Requested runtime gate:
+1. In Technology and the prayer-item tooltip, confirm the two native heading levels: **Base result** and **Bonuses on success**.
+2. Confirm Faith/Donations base dependencies appear under Base result, while the quality-glyph 100% threshold appears under Bonuses on success.
+3. On a prayer with percentage + fixed reward, confirm variant-B presentation is immediately unambiguous: separate icon-bearing percentage-of-base and fixed-value lines.
+4. On a timed prayer, confirm Technology/item tooltip retains the localized day suffix.
+5. With a recognized prayer buff at >=1 in-game day remaining, confirm the top HUD timer is only the locale-formatted one-decimal number; below 1 day the stock precise timer should resume.
+6. Confirm no PrayerClarity errors in the BepInEx log.
+7. Russian Repose terminal copy is `Более качественные тела недоступны.`; this remains non-blocking if the current save cannot expose that state.
+
+Acceptance status: awaiting user runtime/visual test. Do not merge PR #9 or publish either version before that acceptance.
+
