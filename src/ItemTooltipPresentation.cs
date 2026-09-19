@@ -233,7 +233,7 @@ namespace PrayerClarity
             return _blankSeparatorType == null ? null : Activator.CreateInstance(_blankSeparatorType);
         }
 
-        private static object CreateTextData(string text, int styleValue)
+        private static object CreateTextData(string text, int styleValue, int maxWidth = -1)
         {
             if (_bubbleTextConstructor == null)
             {
@@ -257,7 +257,7 @@ namespace PrayerClarity
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
             // NGUIText.Alignment: Automatic=0, Left=1.
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
-            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
+            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, maxWidth });
         }
     }
 }
