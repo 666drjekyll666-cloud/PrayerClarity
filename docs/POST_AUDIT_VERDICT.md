@@ -18,14 +18,14 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Rebalanced
 
-- accepted/released version: **0.2.3**
-- accepted ref: `accepted/rebalanced-0.2.3`
-- exact runtime source: `ab1eb67cbf2465a912c392120395011503b720c3`
-- DLL SHA-256: `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`
-- release: `rebalanced-v0.2.3`
-- stable promotion merge: `f953e34901de139a5f7af7162af6fc62bb02b4d9`
+- accepted/released version: **0.2.4**
+- accepted ref: `accepted/rebalanced-0.2.4`
+- exact runtime source: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
+- DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
+- release: `rebalanced-v0.2.4`
+- stable promotion merge: `d176fec0eb42852019956a55347dd3af29b3fe1f`
 
-No Rebalanced runtime source changed between the accepted 0.2.3 source and the current `main`; later differences are documentation/repository/CI housekeeping only.
+The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations via the already accepted once-per-load `CraftDefinition.dur_parameter` projection; it added no new runtime hook, persistent state, polling, or lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
 The Vanilla files compiled by `PrayerClarity.csproj` that appear in the broader history range were rechecked by blob identity where relevant; the accepted shared runtime blobs remain identical on current `main`.
 
@@ -193,7 +193,7 @@ The same terminal Repose endpoint presentation case remains optional/non-blockin
 
 The production Rebalanced project does not compile the research Test Console and no research diagnostic hotkeys or `FEATURE_DIAGNOSTIC` probes are part of the released DLL.
 
-One stale informational startup sentence in the 0.2.3 source still says:
+One stale informational startup sentence still present in the 0.2.4 source says:
 
 `Runtime behavior is development-only until accepted.`
 
@@ -209,14 +209,10 @@ No hosted CI is required for this documentation-only post-audit closure.
 
 ## Final decision
 
-No production bug was discovered.
+At the time of this post-audit closure, no architecture/lifecycle production bug was discovered and no architecture change was required.
 
-Therefore:
-- no production source change;
-- no version bump;
-- no new build;
-- no new release;
-- no new runtime test;
-- no balance change.
+### 2026-09-19 Rebalanced 0.2.4 addendum
+
+A later balance decision changed Repentance and Repose duration from 18/36/54 to **30/42/54 minutes**. The accepted implementation reused the existing static prayer projection and did not alter the architecture audited here. Runtime presentation showed the expected 2.7/3.7/4.8 in-game-day values under the user's Longer Days +50% setup, and the exact accepted CI binary was published as `rebalanced-v0.2.4` without rebuilding.
 
 Future PrayerClarity architecture audits should start from this verdict rather than re-litigating the closed mechanisms above without new evidence.
