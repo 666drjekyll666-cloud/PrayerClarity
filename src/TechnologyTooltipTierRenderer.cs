@@ -137,7 +137,8 @@ namespace PrayerClarity
                     TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":",
                     TechnologyTooltipTextStyle.RewardName(
                         commonReward.Id,
-                        rewardName + " ×" + commonReward.Count.ToString(CultureInfo.InvariantCulture))
+                        rewardName.Replace(" ", NoBreakSpace)) + NoBreakSpace +
+                    "×" + commonReward.Count.ToString(CultureInfo.InvariantCulture)
                 };
 
                 return string.Join("\n", lines.ToArray());
@@ -313,9 +314,9 @@ namespace PrayerClarity
             {
                 string rewardName = TechnologyTooltipTextStyle.RewardName(
                     reward.Id,
-                    R.VanillaLocalize(reward.Id));
+                    R.VanillaLocalize(reward.Id).Replace(" ", NoBreakSpace));
                 lines.Add(
-                    rewardName + " ×" +
+                    rewardName + NoBreakSpace + "×" +
                     reward.Count.ToString(CultureInfo.InvariantCulture));
             }
         }
