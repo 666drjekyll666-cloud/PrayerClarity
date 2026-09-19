@@ -9,5 +9,6 @@
   "rebalanced.active.repose.silver": "有一半的情况保证获得最佳尸体",
   "rebalanced.active.repose.gold": "驴子保证带来最佳尸体",
   "rebalanced.active.combat": "伤害 +{0:0.##} · 护甲 +{1:0.##} · 生命恢复 {2:0.##}/秒",
-  "rebalanced.active.gratitude": "治疗灵魂：感恩值 +{0:0}%"
+  "rebalanced.active.gratitude": "治疗灵魂：感恩值 +{0:0}%",
+  "rebalanced.tech.plant_tier": "植物生长时间：-{0:0}%"
 }
