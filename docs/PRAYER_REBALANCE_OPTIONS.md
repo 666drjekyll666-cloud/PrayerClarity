@@ -1,22 +1,23 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical Rebalanced ruleset**. The current stable runtime remains PrayerClarity: Rebalanced 0.2.3. On 2026-09-19 the user accepted a 0.2.4 balance candidate that changes only Repentance and Repose duration to **30 / 42 / 54 min**; it is not stable until its numbered runtime build is tested and accepted.
+Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.4**. On 2026-09-19 the user runtime-tested and accepted the Repentance/Repose duration revision to **30 / 42 / 54 min**.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
 Current stable runtime identity:
 
-- Rebalanced version: **0.2.3**
-- frozen accepted ref: `accepted/rebalanced-0.2.3`
-- exact accepted runtime source SHA: `ab1eb67cbf2465a912c392120395011503b720c3`
+- Rebalanced version: **0.2.4**
+- frozen accepted ref: `accepted/rebalanced-0.2.4`
+- exact accepted runtime source SHA: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
-- accepted/released DLL SHA-256: `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`
+- accepted/released DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
 
 Version history relevant to this spec:
 
 - **0.2.0** accepted the roster and values below.
 - **0.2.2** repaired Shoots & Roots runtime behavior while retaining the nominal `-20/-30/-40%` ladder and adding the accepted **95% combined growth-time-reduction safety cap**.
 - **0.2.3** retained the roster and moved Repentance plus Combat damage/armor onto the accepted narrower host-native seams documented in `REBALANCED_NATIVE_SEAM_AUDIT.md`.
+- **0.2.4** retains those seams and changes only Repentance/Repose duration to **30 / 42 / 54 min** through the existing once-per-load `CraftDefinition.dur_parameter` projection.
 
 The sibling Vanilla release remains mechanically stock and is documented separately.
 
@@ -40,8 +41,8 @@ The sibling Vanilla release remains mechanically stock and is documented separat
 | Combo `b_faith_money` | **40 / 60 / 80** | Success bonus is percentage only: **+100 / +150 / +200% Faith and donations**. No prayer-owned flat Faith/money. |
 | Prosperity `b_village` | **10 / 20 / 30** | Keep stock 1 / 2 / 3 Commercial Blessings and stock sermon outputs. |
 | Shoots & Roots `b_plant` | **10 / 30 / 50** | Repair stock scope; growth time **-20 / -30 / -40%**. Duration **36 / 72 / 108 min**. |
-| Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. 0.2.4 candidate duration **30 / 42 / 54 min** (stable 0.2.3: 18 / 36 / 54). |
-| Repose `b_skull` | **20 / 40 / 50** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. 0.2.4 candidate duration **30 / 42 / 54 min** (stable 0.2.3: 18 / 36 / 54). |
+| Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. Duration **30 / 42 / 54 min**. |
+| Repose `b_skull` | **20 / 40 / 50** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. Duration **30 / 42 / 54 min**. |
 | Combat `b_sword` (`b_shield` legacy alias) | **20 / 40 / 60** | Damage **+5 / +10 / +15**, armor **+4**, regeneration **1 / 2 / 4 HP/s**. Duration **36 / 72 / 108 min**. |
 | Imagination `b_pen` | **20 / 40 / 60** | Writing quality **+0.7** at all tiers; successful Silver gives **3 Silver Stories**, successful Gold gives **3 Gold Stories**. Duration **18 / 36 / 54 min**. |
 | Excellence `b_star` | **20 / 60 / 90** | Linked-craft quality **+0.2 / +0.5 / +1.0**. Duration **18 / 36 / 54 min**. |
@@ -161,14 +162,15 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-The current stable edition is **PrayerClarity: Rebalanced 0.2.3**.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.4**.
 
-Accepted next design candidate: **Rebalanced 0.2.4** changes only Repentance and Repose duration from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged. Runtime acceptance is still required before stable promotion.
+The 0.2.4 duration revision changes only Repentance and Repose from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged.
 
 The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent accepted releases kept those nominal values while repairing implementation details:
 
 - 0.2.2 closed the instant-growth regression and the 100%-stack edge for Shoots & Roots, retaining the nominal 20/30/40% reduction ladder with a 95% combined safety cap;
 - 0.2.3 runtime-verified Repentance at 50/75/100% and Combat at +5/+10/+15 damage, +4 armor and 1/2/4 HP/s through the narrower accepted native seams;
+- 0.2.4 runtime-verified the revised Repentance/Repose duration presentation at approximately 2.7 / 3.7 / 4.8 in-game days under Longer Days +50%, corresponding to 30 / 42 / 54 real-time minutes;
 - current architecture/save-lifecycle status is **A — no architecture action**, per `POST_AUDIT_VERDICT.md`.
 
 The original 0.2.0 acceptance also covered the revised Faith / Donations / Combo semantics and requirements, Soul's Repose q30/60/120 plus current Soul Gratitude context, representative localization, synchronized presentation surfaces, and absence of PrayerClarity-specific runtime exceptions in the supplied acceptance logs.
@@ -178,4 +180,4 @@ Deferred, non-blocking verification remains:
 - terminal Repose wording/presentation on a save that has reached terminal Donkey corpse progression;
 - physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been visually observed in the user's runtime, although it uses the verified native non-Faith/non-money sermon-drop path.
 
-These are evidence gaps, not blockers for 0.2.3. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.3 bytes.
+These are evidence gaps, not blockers for 0.2.4. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.4 bytes.
