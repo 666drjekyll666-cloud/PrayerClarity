@@ -113,7 +113,7 @@ namespace PrayerClarity
                 ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money", requirements: F(40f, 60f, 80f), faithBonusRates: F(1f, 1.5f, 2f), moneyBonusRates: F(1f, 1.5f, 2f), removeFixedFaith: true, removeFixedMoney: true),
                 ["b_sins"] = new RebalancedPrayerRule("b_sins", requirements: F(20f, 40f, 60f), confessionProbability: F(0.50f, 0.75f, 1.00f), durationMinutes: F(30f, 42f, 54f)),
                 ["b_plant"] = new RebalancedPrayerRule("b_plant", requirements: F(10f, 30f, 50f), growthReduction: F(0.20f, 0.30f, 0.40f)),
-                ["b_skull"] = new RebalancedPrayerRule("b_skull", requirements: F(20f, 40f, 50f), durationMinutes: F(30f, 42f, 54f), reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
+                ["b_skull"] = new RebalancedPrayerRule("b_skull", requirements: F(20f, 40f, 60f), durationMinutes: F(30f, 42f, 54f), reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
                 ["b_sword"] = new RebalancedPrayerRule("b_sword", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
                 ["b_shield"] = new RebalancedPrayerRule("b_shield", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
                 ["b_pen"] = new RebalancedPrayerRule("b_pen", requirements: F(20f, 40f, 60f), craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
