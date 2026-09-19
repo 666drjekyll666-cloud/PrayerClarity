@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 concurrency:
   group: prayerclarity-shared-${{ github.ref }}
@@ -72,9 +73,9 @@ jobs:
           done
 
           mkdir -p dist
-          reb_handoff='PrayerClarity.Rebalanced-0.2.4-ci.dll'
+          reb_handoff='PrayerClarity.Rebalanced-0.2.5-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
-          van_handoff='PrayerClarity-1.0.25-ci.dll'
+          van_handoff='PrayerClarity-1.0.26-ci.dll'
           van_canonical='PrayerClarity.dll'
 
           cp "$rebalanced" "dist/$reb_handoff"
@@ -95,13 +96,13 @@ jobs:
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
             echo
             echo "PrayerClarity: Vanilla"
-            echo "Version: 1.0.25"
+            echo "Version: 1.0.26"
             echo "Handoff DLL: $van_handoff"
             echo "Canonical DLL: $van_canonical"
             echo "DLL SHA-256: $van_hash"
             echo
             echo "PrayerClarity: Rebalanced"
-            echo "Version: 0.2.4"
+            echo "Version: 0.2.5"
             echo "Handoff DLL: $reb_handoff"
             echo "Canonical DLL: $reb_canonical"
             echo "DLL SHA-256: $reb_hash"
@@ -113,12 +114,12 @@ jobs:
           echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
           echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
           echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity: Rebalanced 0.2.4 DLL SHA-256: $reb_hash"
-          echo "PrayerClarity: Vanilla 1.0.25 DLL SHA-256: $van_hash"
+          echo "PrayerClarity: Rebalanced 0.2.5 DLL SHA-256: $reb_hash"
+          echo "PrayerClarity: Vanilla 1.0.26 DLL SHA-256: $van_hash"
       - name: Upload shared runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.4-ci-${{ github.sha }}
+          name: PrayerClarity-shared-ui-1.0.26-rebalanced-0.2.5-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
@@ -127,3 +128,21 @@ jobs:
             dist/BUILD_INFO.txt
           if-no-files-found: error
           retention-days: 14
+      - name: Report candidate workflow run
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$JOB_STATUS" in
+            success) state=success ;;
+            cancelled) state=error ;;
+            *) state=failure ;;
+          esac
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="$state" \
+            -f context="PrayerClarity shared candidate" \
+            -f description="Shared candidate workflow: $JOB_STATUS" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"

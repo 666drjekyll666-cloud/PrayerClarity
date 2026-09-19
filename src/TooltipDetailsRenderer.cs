@@ -4,10 +4,93 @@ using System.Globalization;
 
 namespace PrayerClarity
 {
+    internal sealed class TooltipPresentationSections
+    {
+        internal string BaseResult;
+        internal string SuccessBonuses;
+
+        internal bool HasContent
+        {
+            get { return !string.IsNullOrEmpty(BaseResult) || !string.IsNullOrEmpty(SuccessBonuses); }
+        }
+    }
+
     internal static class TooltipDetailsRenderer
     {
         private const float Epsilon = 0.0001f;
         private const string NoBreakSpace = "\u00A0";
+
+        internal static TooltipPresentationSections BuildSingleSections(PrayerForecast.TierDetails tier)
+        {
+            if (tier == null) return null;
+
+            return new TooltipPresentationSections
+            {
+                BaseResult = PresentationText.DependencyMap(tier.UsesSoulGratitude),
+                SuccessBonuses = BuildSingleSuccessBonuses(tier)
+            };
+        }
+
+        private static string BuildSingleSuccessBonuses(PrayerForecast.TierDetails tier)
+        {
+            List<string> sections = new List<string>();
+
+            if (tier.Requirement > 0)
+            {
+                string quality = TierPrefix(tier, false);
+                string threshold = Localization.F("tech.success_threshold", tier.Requirement);
+                sections.Add(string.IsNullOrEmpty(quality)
+                    ? threshold
+                    : quality + NoBreakSpace + threshold);
+            }
+
+            string faith = BuildSingleExplicitResourceBlock(
+                tier,
+                R.VanillaLocalize("faith"),
+                "(faith)",
+                t => t.FaithBonusRate,
+                t => t.FixedFaithBonus);
+            AddSection(sections, faith);
+
+            string money = BuildSingleExplicitResourceBlock(
+                tier,
+                Localization.F("tech.donations"),
+                "(slv)",
+                t => t.MoneyBonusRate,
+                t => t.FixedMoneyBonus);
+            AddSection(sections, money);
+
+            List<PrayerForecast.TierDetails> tiers = new List<PrayerForecast.TierDetails> { tier };
+            AddSection(sections, BuildEffect(tiers, false));
+            AddSection(sections, BuildDuration(tiers, false));
+
+            return sections.Count == 0 ? null : string.Join("\n\n", sections.ToArray());
+        }
+
+        private static string BuildSingleExplicitResourceBlock(
+            PrayerForecast.TierDetails tier,
+            string label,
+            string icon,
+            Func<PrayerForecast.TierDetails, float> rate,
+            Func<PrayerForecast.TierDetails, float> fixedValue)
+        {
+            float rateValue = rate(tier);
+            float fixedAmount = fixedValue(tier);
+            if (Math.Abs(rateValue) < Epsilon && Math.Abs(fixedAmount) < Epsilon) return null;
+
+            List<string> lines = new List<string> { label + ":" };
+            if (Math.Abs(rateValue) >= Epsilon)
+            {
+                lines.Add(
+                    icon + NoBreakSpace +
+                    Localization.F("tech.percent_of_base", FormatPercent(rateValue, false)));
+            }
+
+            if (Math.Abs(fixedAmount) >= Epsilon)
+                lines.Add(icon + NoBreakSpace + FormatSignedNumber(fixedAmount, false));
+
+            return string.Join("\n", lines.ToArray());
+        }
 
         internal static string BuildComparative(List<PrayerForecast.TierDetails> tiers)
         {

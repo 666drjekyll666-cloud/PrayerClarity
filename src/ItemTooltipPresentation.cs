@@ -67,19 +67,16 @@ namespace PrayerClarity
                 object craft = ResolvePrayerCraft(__instance);
                 if (craft == null) return;
 
-                PrayerForecast.TierDetails tier = PrayerForecast.BuildTierDetails(craft);
-                string summary = TooltipDetailsRenderer.BuildSingle(tier);
-                if (string.IsNullOrEmpty(summary)) return;
-
                 Localization.UseCurrentGameLanguage();
-                if (TryReplaceVanillaPrayerMechanics(list, summary)) return;
+                PrayerForecast.TierDetails tier = PrayerForecast.BuildTierDetails(craft);
+                TooltipPresentationSections sections = TooltipDetailsRenderer.BuildSingleSections(tier);
+                if (sections == null || !sections.HasContent) return;
+
+                if (TryReplaceVanillaPrayerMechanics(list, sections)) return;
 
                 // Unexpected vanilla shape: preserve everything already returned by the
                 // item tooltip and append current-item Clarity rather than deleting data.
-                object blank = CreateBlankSeparator();
-                if (blank != null) list.Add(blank);
-                list.Add(CreateTextData(Localization.F("tech.prayer_details"), 3));
-                list.Add(CreateTextData(summary, 4));
+                AppendSections(list, sections);
             }
             catch (Exception ex)
             {
@@ -111,7 +108,7 @@ namespace PrayerClarity
             return PrayerItemFamilies.Contains(family);
         }
 
-        private static bool TryReplaceVanillaPrayerMechanics(IList list, string summary)
+        private static bool TryReplaceVanillaPrayerMechanics(IList list, TooltipPresentationSections sections)
         {
             if (list == null || list.Count < 2) return false;
             if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
@@ -136,11 +133,22 @@ namespace PrayerClarity
             object body = list[headerIndex + 1];
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
-            R.Set(header, "text", Localization.F("tech.prayer_details"));
-            // Current-item details are a structured scanning block, not centered lore.
-            // Replace only the mechanics body with a left-aligned native tooltip row.
-            list[headerIndex + 1] = CreateTextData(summary, 4);
-            TooltipTextPolish.NormalizeFollowingCraftingRow(list, headerIndex + 2, _bubbleTextType);
+            R.Set(header, "text", Localization.F("tech.base_result"));
+            // Current-item details are structured scanning blocks, not centered lore.
+            // Reuse native tooltip rows so both major sections use the game's own
+            // HintTitle / TinyDescription hierarchy.
+            list[headerIndex + 1] = CreateTextData(sections.BaseResult, 4);
+
+            int insertIndex = headerIndex + 2;
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) list.Insert(insertIndex++, separator);
+                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4));
+            }
+
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
 
             if (headerIndex > 0)
             {
@@ -155,6 +163,26 @@ namespace PrayerClarity
             }
 
             return true;
+        }
+
+        private static void AppendSections(IList list, TooltipPresentationSections sections)
+        {
+            object blank = CreateBlankSeparator();
+            if (blank != null) list.Add(blank);
+
+            if (!string.IsNullOrEmpty(sections.BaseResult))
+            {
+                list.Add(CreateTextData(Localization.F("tech.base_result"), 3));
+                list.Add(CreateTextData(sections.BaseResult, 4));
+            }
+
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) list.Add(separator);
+                list.Add(CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Add(CreateTextData(sections.SuccessBonuses, 4));
+            }
         }
 
         private static string StripStockRequirementLine(string text)

@@ -19,17 +19,20 @@
   "tech.quantity": "Quantité",
   "tech.effect.imagination_intro": "Améliore la qualité d’écriture.",
   "tech.effect.excellence_intro": "Améliore la qualité de fabrication.",
-  "tech.souls_base_faith": "La Foi dépend de la qualité de l’église et de la Gratitude des âmes.",  "repose.endpoint": "Aucun corps de meilleure qualité n’est disponible.",
-
+  "tech.souls_base_faith": "La Foi dépend de la qualité de l’église et de la Gratitude des âmes.",
+  "repose.endpoint": "Aucun corps de meilleure qualité n’est disponible.",
   "buff.souls_repose": "La (faith) dépend de la qualité de l’église et de (gratitude_points).",
   "active.sword": "+{0:0.##} dégâts",
   "active.shield": "+{0:0.##} armure",
-  "active.skull": "L’âne peut apporter un corps d’un niveau de qualité supérieur (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "L’âne peut apporter un corps d’un niveau de qualité supérieur (up) (skull) (rskull)",
   "active.pen": "Bonus de qualité d’écriture : +{0:0.##}",
   "active.star": "Bonus de qualité de fabrication : +{0:0.##}",
   "active.plant_inactive": "Problème connu : cette prière n’accélère pas la croissance des plantes",
   "active.sins_unverified": "Problème connu : cette prière ne rend pas les confessions plus fréquentes",
   "active.gratitude": "+10 % (gratitude_points) via le soin des âmes",
   "active.sin_shard": "Éclats de péché ×2 lors d’un soin d’âme réussi",
-  "active.timer_days": "{0:0.0} j"
+  "active.timer_days": "{0:0.0} j",
+  "tech.base_result": "Résultat de base",
+  "tech.percent_of_base": "{0} de la valeur de base",
+  "active.timer_days_compact": "{0:0.0}"
 }

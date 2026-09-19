@@ -110,3 +110,105 @@ The narrow production seams are now:
 All are relevant native UI/data lifecycle boundaries. No independent per-frame polling, global Unity scan, repeated reflection enumeration or duplicate subscription is required.
 
 The Clarity candidate must leave verified prayer mechanics unchanged.
+
+## 2026-09-19 follow-up — tooltip dependency context and top-HUD timer
+
+Status: **static research complete; one narrow 1.407 HUD prefab probe pending. No production change is accepted by this section.**
+
+### Item prayer requirement wording
+
+Current production ownership is already narrow: `ItemTooltipPresentation` patches only `ItemDefinition.GetTooltipData(Item, bool)` for recognized prayer items, and `TooltipDetailsRenderer.BuildSingle` owns the concrete item's requirement row.
+
+Current single-item grammar is structurally:
+
+`Requires: <prayer-quality glyph> <Church Quality amount> (cross)`.
+
+Therefore changing this to a localized contextual template such as “For <quality> quality, requires: <amount> (cross)” is presentation-only. No mechanics lookup, item mapping or new runtime hook is needed.
+
+Technology is deliberately different: its accepted tier-comparison grammar already says “For 100% success, requires <amount> (cross)”. Earlier usability evidence showed that a bare “Requires: 10” was ambiguous. Do not weaken the Technology threshold wording merely for visual symmetry with the concrete item tooltip.
+
+### Base Faith / donation dependency note
+
+The semantic source already exists. `PrayerForecast.TierDetails.UsesSoulGratitude` and `PresentationText.DependencyMap` distinguish:
+- ordinary prayers: Faith from Church Quality; donations from Graveyard Quality;
+- BSS Soul's Repose: Faith from Church Quality **and current Soul Gratitude**; donations from Graveyard Quality.
+
+Both Technology and item tooltip already consume the same `TierDetails` model. Therefore the safest implementation is one shared semantic dependency builder with surface-specific localized wording. The requested tooltip wording can be two intentional semantic lines:
+- Base Faith — from Church Quality;
+- Base donations — from Graveyard Quality.
+
+For Soul's Repose, only the first line gains Soul Gratitude. This should be inserted immediately after the Prayer details heading on Technology and item surfaces. The semantic newline is intentional; normal label wrapping should still remain enabled within each line for long locales.
+
+### Top HUD timer ownership
+
+Project runtime evidence had already proved that `PlayerBuff.end_time - MainGame.game_time` is the correct remaining **in-game-day** interval and remains correct with Longer Days because the normalized day state is preserved.
+
+Current PrayerClarity patches `PlayerBuff.GetTimerText()` and intentionally returns an empty string for prayer buffs while >=1 day remains. That decision came from the rejected 0.1.16 presentation: the stock compact timer font displayed localized day suffixes unreliably, leaving bare numbers. Character -> Temporary Effects therefore puts the strategic N.N-day value into its normal description label and restores vanilla precise timer text inside the final day.
+
+Independent public decompilation of Graveyard Keeper corroborates the UI ownership:
+- `BuffsGUI.Redraw()` creates a `BuffIcon` for each visible PlayerBuff;
+- `BuffIcon.Draw(PlayerBuff)` binds the PlayerBuff and icon;
+- `BuffsGUI.Update()` calls `BuffIcon.Redraw()`;
+- `BuffIcon.Redraw()` reads `linked_buff.GetTimerText()` into `txt_timer`.
+
+Consequently the missing top-HUD timer is explained by PrayerClarity's existing global `GetTimerText` suppression. A new timer state or independent polling loop is unnecessary.
+
+The remaining exact 1.407 question is the live `BuffIcon.txt_timer` font/geometry and the safest localized-label reuse strategy. A read-only probe was prepared on `research/hud-prayer-timer-probe`:
+- source SHA `672f0d5c1816447d9cbdc41635ecd6ed91e1db1b`;
+- CI run `35465475560`;
+- artifact `10591325714`;
+- DLL SHA-256 `f05c820802519b9033ba77e343e2374cb4a8a8221626e96293fbeca2fe18a8a2`;
+- build: 0 warnings / 0 errors.
+
+The probe has no Harmony patch and performs no game-state/UI mutation. It records exact 1.407 `BuffIcon`, `BuffsGUI`, `PlayerBuff.GetTimerText` signatures plus live HUD timer-label/font/geometry and Character-label comparison into `BepInEx/PrayerClarity-hud-timer-0.1.0.txt`.
+
+### Repose terminal wording
+
+Russian player feedback from one participant indicates that “Ещё более качественные тела недоступны.” can imply an unnecessary prior comparison. The requested Russian wording is “Более качественные тела недоступны.” This is localization-only; Repose mechanics and endpoint detection remain unchanged. Treat this as a one-player UX signal, not community consensus.
+
+### 2026-09-19 HUD probe runtime result
+
+User-provided runtime output from Graveyard Keeper 1.407 matched supported MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364` and confirmed the expected live owner:
+- `BuffsGUI` owns `UI Root/HUD: Buffs/Buffs bar`, its grid and `buff_icon_prefab`;
+- HUD `BuffIcon.txt_timer` is a 30x16, 16 px, `ShrinkContent` label using static bitmap `micro_font`;
+- Character -> Temporary Effects `txt_timer` also uses the same 16 px `micro_font`;
+- Character description uses a separate `tiny_font`, and its heading uses `small_font_bold`.
+
+This closes the font/geometry uncertainty. The previous 0.1.16 failure to render localized day suffixes in the compact timer font is structurally consistent with the live prefab. The minimal design hypothesis is therefore:
+- retain existing `PlayerBuff.GetTimerText()` suppression for >=1 day so Character does not duplicate the strategic duration already appended to its normal description;
+- patch the already-native `BuffIcon.Redraw()` HUD lifecycle narrowly for recognized prayer timed buffs;
+- for >=1 day, overwrite only the HUD `txt_timer` with a locale-formatted one-decimal **number only** (e.g. `3.2`);
+- below one day, do nothing and preserve vanilla precise timer text;
+- do not change the HUD font, label dimensions, grid, or introduce a new Update/polling owner.
+
+The host already calls `BuffIcon.Redraw()` every frame from `BuffsGUI.Update()`; a narrow postfix would extend that existing native timer refresh rather than add another polling loop. It should update text only when the formatted value actually changes.
+
+### 2026-09-19 wording / hierarchy follow-up
+
+User preference:
+- concrete prayer-item requirement should reuse the Technology grammar rather than invent a second phrase: quality glyph + localized “For 100% success requires N (cross)”;
+- Technology and item tooltip should expose base payout dependencies near the top:
+  - Base Faith — from Church Quality;
+  - Base donations — from Graveyard Quality;
+  - Soul's Repose adds Soul Gratitude to the Faith dependency;
+- `Success bonuses` should be a real native heading at the same visual level as `Prayer details`, not merely an inline TinyDescription label;
+- percentage success modifiers must explicitly state their base, so a stock-style `+150% +3` becomes semantically equivalent to `Faith: +150% of base Faith +3`;
+- fixed-only and percentage-only cases should omit the absent component rather than expose formula jargon.
+
+Static UI evidence supports the heading change without a custom font or new widget system: `Prayer details` is already emitted as native `BubbleWidgetTextData` style value 3 (`HintTitle`), while the mechanics body is style value 4 (`TinyDescription`). A `Success bonuses` heading can therefore be another native style-3 tooltip row inserted by the existing Technology/item tooltip hooks. A clean implementation should return structured tooltip sections rather than fake bold text inside the body string.
+
+### Shared Clarity candidate acceptance gate — Vanilla 1.0.26 / Rebalanced 0.2.5
+
+The approved presentation design is implemented as a shared candidate in both sibling editions. Runtime acceptance should verify:
+
+- Technology and prayer-item tooltips use native `HintTitle` rows for **Base result** and **Bonuses on success**;
+- Base result shows Faith -> Church Quality and Donations -> Graveyard Quality; Soul's Repose retains Soul Gratitude in the Faith dependency;
+- the 100% success threshold is inside the success section and each concrete tier keeps its native quality glyph;
+- percentage bonuses explicitly say they are percentages of the base value;
+- mixed percentage + fixed bonuses are split into separate value lines (variant B), with the resource icon repeated on each component line;
+- timed specialist effects keep localized day units in Technology/item tooltip text;
+- the normal-world HUD shows a localized one-decimal **number only** while at least one in-game day remains, then returns to the vanilla precise timer below one day;
+- Russian terminal Repose wording is `Более качественные тела недоступны.`.
+
+The HUD implementation reuses the game's existing `BuffsGUI.Update() -> BuffIcon.Redraw()` cadence. A narrow `BuffIcon.Redraw` prefix handles only recognized long prayer timers and skips the original timer formatter for that one case; it adds no independent Update/polling owner and writes the label only when the formatted one-decimal value changes.
+
