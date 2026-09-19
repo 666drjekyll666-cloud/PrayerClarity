@@ -166,3 +166,34 @@ The probe has no Harmony patch and performs no game-state/UI mutation. It record
 
 Russian player feedback from one participant indicates that “Ещё более качественные тела недоступны.” can imply an unnecessary prior comparison. The requested Russian wording is “Более качественные тела недоступны.” This is localization-only; Repose mechanics and endpoint detection remain unchanged. Treat this as a one-player UX signal, not community consensus.
 
+### 2026-09-19 HUD probe runtime result
+
+User-provided runtime output from Graveyard Keeper 1.407 matched supported MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364` and confirmed the expected live owner:
+- `BuffsGUI` owns `UI Root/HUD: Buffs/Buffs bar`, its grid and `buff_icon_prefab`;
+- HUD `BuffIcon.txt_timer` is a 30x16, 16 px, `ShrinkContent` label using static bitmap `micro_font`;
+- Character -> Temporary Effects `txt_timer` also uses the same 16 px `micro_font`;
+- Character description uses a separate `tiny_font`, and its heading uses `small_font_bold`.
+
+This closes the font/geometry uncertainty. The previous 0.1.16 failure to render localized day suffixes in the compact timer font is structurally consistent with the live prefab. The minimal design hypothesis is therefore:
+- retain existing `PlayerBuff.GetTimerText()` suppression for >=1 day so Character does not duplicate the strategic duration already appended to its normal description;
+- patch the already-native `BuffIcon.Redraw()` HUD lifecycle narrowly for recognized prayer timed buffs;
+- for >=1 day, overwrite only the HUD `txt_timer` with a locale-formatted one-decimal **number only** (e.g. `3.2`);
+- below one day, do nothing and preserve vanilla precise timer text;
+- do not change the HUD font, label dimensions, grid, or introduce a new Update/polling owner.
+
+The host already calls `BuffIcon.Redraw()` every frame from `BuffsGUI.Update()`; a narrow postfix would extend that existing native timer refresh rather than add another polling loop. It should update text only when the formatted value actually changes.
+
+### 2026-09-19 wording / hierarchy follow-up
+
+User preference:
+- concrete prayer-item requirement should reuse the Technology grammar rather than invent a second phrase: quality glyph + localized “For 100% success requires N (cross)”;
+- Technology and item tooltip should expose base payout dependencies near the top:
+  - Base Faith — from Church Quality;
+  - Base donations — from Graveyard Quality;
+  - Soul's Repose adds Soul Gratitude to the Faith dependency;
+- `Success bonuses` should be a real native heading at the same visual level as `Prayer details`, not merely an inline TinyDescription label;
+- percentage success modifiers must explicitly state their base, so a stock-style `+150% +3` becomes semantically equivalent to `Faith: +150% of base Faith +3`;
+- fixed-only and percentage-only cases should omit the absent component rather than expose formula jargon.
+
+Static UI evidence supports the heading change without a custom font or new widget system: `Prayer details` is already emitted as native `BubbleWidgetTextData` style value 3 (`HintTitle`), while the mechanics body is style value 4 (`TinyDescription`). A `Success bonuses` heading can therefore be another native style-3 tooltip row inserted by the existing Technology/item tooltip hooks. A clean implementation should return structured tooltip sections rather than fake bold text inside the body string.
+
