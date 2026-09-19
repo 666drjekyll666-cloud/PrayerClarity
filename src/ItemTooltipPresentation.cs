@@ -35,6 +35,8 @@ namespace PrayerClarity
             "b_cross"
         };
 
+        private const int ItemTooltipMaxWidth = TechnologyTooltipContentWidth.OwnedMaxWidth;
+
         private static ManualLogSource _log;
         private static bool _errorLogged;
         private static Type _bubbleTextType;
@@ -145,7 +147,7 @@ namespace PrayerClarity
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Insert(insertIndex++, separator);
                 list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
             }
 
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
@@ -181,7 +183,7 @@ namespace PrayerClarity
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Add(separator);
                 list.Add(CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
-                list.Add(CreateTextData(sections.SuccessBonuses, 4));
+                list.Add(CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
             }
         }
 
