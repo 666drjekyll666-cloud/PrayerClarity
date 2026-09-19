@@ -19,17 +19,20 @@
   "tech.quantity": "Quantidade",
   "tech.effect.imagination_intro": "Melhora a qualidade da escrita.",
   "tech.effect.excellence_intro": "Melhora a qualidade da fabricação.",
-  "tech.souls_base_faith": "A Fé depende da qualidade da igreja e da Gratidão das almas.",  "repose.endpoint": "Não há corpos de qualidade superior disponíveis.",
-
+  "tech.souls_base_faith": "A Fé depende da qualidade da igreja e da Gratidão das almas.",
+  "repose.endpoint": "Não há corpos de qualidade superior disponíveis.",
   "buff.souls_repose": "A (faith) depende da qualidade da igreja e de (gratitude_points).",
   "active.sword": "+{0:0.##} de dano",
   "active.shield": "+{0:0.##} de armadura",
-  "active.skull": "O burro pode trazer um corpo um nível de qualidade melhor (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "O burro pode trazer um corpo um nível de qualidade melhor (up) (skull) (rskull)",
   "active.pen": "Bônus de qualidade da escrita: +{0:0.##}",
   "active.star": "Bônus de qualidade da fabricação: +{0:0.##}",
   "active.plant_inactive": "Problema conhecido: esta oração não acelera o crescimento das plantas",
   "active.sins_unverified": "Problema conhecido: esta oração não torna as confissões mais frequentes",
   "active.gratitude": "+10% (gratitude_points) ao curar almas",
   "active.sin_shard": "Fragmentos de pecado ×2 ao curar uma alma com sucesso",
-  "active.timer_days": "{0:0.0} dias"
+  "active.timer_days": "{0:0.0} dias",
+  "tech.base_result": "Resultado base",
+  "tech.percent_of_base": "{0} do valor base",
+  "active.timer_days_compact": "{0:0.0}"
 }
