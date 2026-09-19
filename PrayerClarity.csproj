@@ -34,6 +34,7 @@
     <Compile Include="src/SecondarySurfacePresentation.cs" />
     <Compile Include="src/TechnologyTooltipViewportClamp.cs" />
     <Compile Include="src/ItemTooltipPresentation.cs" />
+    <Compile Include="src/PrayerLorePresentation.cs" />
     <Compile Include="src/Localization.cs" />
   </ItemGroup>
   <ItemGroup>
