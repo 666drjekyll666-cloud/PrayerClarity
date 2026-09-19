@@ -326,3 +326,19 @@ Direct source inspection explains why:
 - therefore the visual height of a blank separator is entirely a prefab/layout property, not something the data row controls.
 
 Conclusion: another `BubbleWidgetBlankSeparatorData` is not a sufficient spacing mechanism for prayer-item tooltips. The 0.2.9 attempt is rejected only for this spacing subtask; Repose q60 and Excellence lore are accepted. A follow-up should use the narrowest reliable text-layout mechanism on the item-only surface (for example a controlled newline on PrayerClarity-owned rows) rather than custom pixel positioning or Technology-wide spacing.
+
+
+### 2026-09-20 item-tooltip spacing candidate — 1.0.31 / 0.2.10
+
+The 0.2.9 native blank-separator row was runtime-proven visually insufficient on the prayer-item tooltip surface.
+
+Direct source behavior supports a narrower replacement:
+- `BubbleWidgetTextData` renders its supplied text through a `UILabel`;
+- prayer-item **Base result** and **Bonuses on success** headers are already PrayerClarity-owned text rows;
+- a leading newline therefore expands those specific label rows through normal text layout, without custom coordinates, per-frame work, prefab mutation, or Technology-wide spacing.
+
+Candidate policy:
+- prefix the two item-tooltip section titles with one leading newline;
+- remove the ineffective extra blank-separator row and its unused helper;
+- keep Technology comparison tooltips unchanged;
+- accept only after the user verifies the visual rhythm in-game.
