@@ -35,6 +35,11 @@ This file records handed executable artifacts once PrayerClarity research reache
 - The supplied acceptance session loaded **PrayerClarity: Rebalanced 0.2.10** successfully; no PrayerClarity-specific error was reported. Repose q20/q40/q60 and the restored stock Excellence lore were already accepted in the preceding 0.2.9 pass and are carried forward unchanged.
 - Frozen accepted refs: `accepted/vanilla-1.0.31` and `accepted/rebalanced-0.2.10`, both pointing to exact tested source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
 - Stable promotion PR: **#14**, squash-merged to `main` as `1d4e196f51f067b8d0127aafa8505cfc4ee88d40`.
+- Stable publication workflow: `35476301759`; result: **success**. It downloaded artifact `10594265029` from the accepted CI run, re-verified both recorded DLL hashes, and published the exact accepted bytes without rebuilding.
+- Published releases:
+  - `v1.0.31` -> target `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, asset `PrayerClarity.dll`;
+  - `rebalanced-v0.2.10` -> target `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, asset `PrayerClarity.Rebalanced.dll`.
+- Final status: **accepted, merged to main, frozen by accepted refs, and published as stable sibling releases**.
 
 
 ## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
