@@ -611,3 +611,34 @@ Research helper identity:
 - Test Console 0.1.3 source: `5de0f27e97cb38a72fb2b53b93e02131225012e7`.
 - Test Console DLL SHA-256: `f7624c8696f5dbbf1bf64a959ea370c545c198332bbfe0c1b8eeec4e0775d6fc`.
 - The helper remains research-only and is not part of the public release.
+
+### 2026-09-19 — Rebalanced 0.2.4 duration candidate
+
+User accepted the balance design for both discrete daily-event prayers:
+- Repentance `b_sins`: duration **30 / 42 / 54 min**; confession probability remains **50 / 75 / 100%**.
+- Repose `b_skull`: duration **30 / 42 / 54 min**; Bronze/Silver/Gold corpse-quality behavior remains unchanged.
+- Stable Rebalanced remains **0.2.3** until this numbered candidate is runtime-tested and accepted.
+
+Implementation:
+- Added tiered `DurationMinutes` to the existing Rebalanced ruleset.
+- Existing one-shot load-time static projection writes the accepted value to stock `CraftDefinition.dur_parameter`.
+- No new Harmony hook, polling loop, mirrored timer state, or Repose/Repentance runtime algorithm was added.
+- Gold remains 54 min; only Bronze/Silver move from 18/36 to 30/42.
+
+Candidate identity:
+- frozen candidate branch: `candidate/rebalanced-0.2.4`
+- exact source SHA: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
+- GitHub Actions run: `35441674008` — success
+- artifact ID: `10583657918`
+- artifact: `PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.4-ci-4d5d3021c0b9eef16d09402c5f25851ff7a66981`
+- artifact ZIP digest: `sha256:1e8759dee5652d5e9d8f0180462a8875e569174d375ec70dc7b85a6591f865a5`
+- handoff DLL: `PrayerClarity.Rebalanced-0.2.4-ci.dll`
+- DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
+- CI result: Rebalanced + Vanilla compiled with 0 warnings / 0 errors; all locale validation/staging steps passed.
+
+Focused runtime gate:
+1. load Rebalanced 0.2.4 and confirm no PrayerClarity initialization/projection error;
+2. inspect Repentance and Repose tier duration presentation; with the user's Longer Days +50% setup, 30/42/54 real minutes should display as roughly **2.7 / 3.7 / 4.8 effective game days** rather than the stock-time 4.0/5.6/7.2-day interpretation;
+3. activate at least one changed Bronze/Silver tier if convenient and confirm Character -> Temporary Effects starts with the corresponding longer timer;
+4. no retest of confession probability, Repose corpse-tier narrowing, Combat, Roots, or other accepted mechanics is required unless a regression appears.
+
