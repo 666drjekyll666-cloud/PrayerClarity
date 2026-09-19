@@ -1,17 +1,20 @@
-name: Build PrayerClarity shared candidate
+name: Build PrayerClarity HUD timer research probe
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - 'candidate/rebalanced-*'
-      - '!candidate/rebalanced-test-console-*'
+      - 'research/hud-prayer-timer-probe'
+    paths:
+      - 'PrayerClarity.HudProbe.csproj'
+      - 'src/PrayerClarityHudTimerProbe.cs'
+      - '.github/workflows/build-rebalanced.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: prayerclarity-shared-${{ github.ref }}
+  group: prayerclarity-hud-timer-probe-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,106 +27,34 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Validate localization JSON
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          for root in (Path('lang'), Path('lang_rebalanced')):
-              files = sorted(root.glob('*.json'))
-              assert len(files) == 11, (root, len(files))
-              for path in files:
-                  with path.open(encoding='utf-8') as fh:
-                      json.load(fh)
-          PY
-      - name: Restore sibling projects
-        run: |
-          dotnet restore PrayerClarity.Rebalanced.csproj
-          dotnet restore PrayerClarity.csproj
-      - name: Build Rebalanced
-        run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
-      - name: Build Vanilla
-        run: dotnet build PrayerClarity.csproj -c Release --no-restore
-      - name: Verify locales and stage both runtime candidates
+      - name: Restore
+        run: dotnet restore PrayerClarity.HudProbe.csproj
+      - name: Build probe DLL
+        run: dotnet build PrayerClarity.HudProbe.csproj -c Release --no-restore
+      - name: Stage artifact
         id: artifact
         shell: bash
         run: |
           set -euo pipefail
-          rebalanced='bin/Rebalanced/PrayerClarity.Rebalanced.dll'
-          vanilla='bin/Release/PrayerClarity.dll'
-          test -f "$rebalanced"
-          test -f "$vanilla"
-
-          for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
-            grep -a -q ".lang.${locale}.json" "$rebalanced" || {
-              echo "Rebalanced base locale marker missing: ${locale}" >&2
-              exit 1
-            }
-            grep -a -q ".lang_rebalanced.${locale}.json" "$rebalanced" || {
-              echo "Rebalanced overlay locale marker missing: ${locale}" >&2
-              exit 1
-            }
-            grep -a -q ".lang.${locale}.json" "$vanilla" || {
-              echo "Vanilla locale marker missing: ${locale}" >&2
-              exit 1
-            }
-          done
-
           mkdir -p dist
-          reb_handoff='PrayerClarity.Rebalanced-0.2.4-ci.dll'
-          reb_canonical='PrayerClarity.Rebalanced.dll'
-          van_handoff='PrayerClarity-1.0.25-ci.dll'
-          van_canonical='PrayerClarity.dll'
-
-          cp "$rebalanced" "dist/$reb_handoff"
-          cp "$rebalanced" "dist/$reb_canonical"
-          cp "$vanilla" "dist/$van_handoff"
-          cp "$vanilla" "dist/$van_canonical"
-
-          reb_hash=$(sha256sum "dist/$reb_handoff" | awk '{print $1}')
-          reb_canonical_hash=$(sha256sum "dist/$reb_canonical" | awk '{print $1}')
-          van_hash=$(sha256sum "dist/$van_handoff" | awk '{print $1}')
-          van_canonical_hash=$(sha256sum "dist/$van_canonical" | awk '{print $1}')
-          test "$reb_hash" = "$reb_canonical_hash"
-          test "$van_hash" = "$van_canonical_hash"
-
+          asset='PrayerClarity.HudTimerProbe-0.1.0.dll'
+          cp 'bin/HudProbe/PrayerClarity.HudProbe.dll' "dist/$asset"
+          hash=$(sha256sum "dist/$asset" | awk '{print $1}')
           {
             echo "Source SHA: $GITHUB_SHA"
-            echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
-            echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
-            echo
-            echo "PrayerClarity: Vanilla"
-            echo "Version: 1.0.25"
-            echo "Handoff DLL: $van_handoff"
-            echo "Canonical DLL: $van_canonical"
-            echo "DLL SHA-256: $van_hash"
-            echo
-            echo "PrayerClarity: Rebalanced"
-            echo "Version: 0.2.4"
-            echo "Handoff DLL: $reb_handoff"
-            echo "Canonical DLL: $reb_canonical"
-            echo "DLL SHA-256: $reb_hash"
+            echo "DLL: $asset"
+            echo "SHA-256: $hash"
+            echo "Purpose: read-only Graveyard Keeper 1.407 BuffIcon/HUD timer label ownership, font and geometry audit"
           } > dist/BUILD_INFO.txt
-
-          echo "reb_handoff=$reb_handoff" >> "$GITHUB_OUTPUT"
-          echo "reb_canonical=$reb_canonical" >> "$GITHUB_OUTPUT"
-          echo "van_handoff=$van_handoff" >> "$GITHUB_OUTPUT"
-          echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
-          echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
-          echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity: Rebalanced 0.2.4 DLL SHA-256: $reb_hash"
-          echo "PrayerClarity: Vanilla 1.0.25 DLL SHA-256: $van_hash"
-      - name: Upload shared runtime candidates
+          echo "asset=$asset" >> "$GITHUB_OUTPUT"
+          echo "sha256=$hash" >> "$GITHUB_OUTPUT"
+          echo "HUD timer probe SHA-256: $hash"
+      - name: Upload probe
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-shared-ui-1.0.25-rebalanced-0.2.4-ci-${{ github.sha }}
+          name: PrayerClarity-HudTimerProbe-0.1.0-${{ github.sha }}
           path: |
-            dist/${{ steps.artifact.outputs.reb_handoff }}
-            dist/${{ steps.artifact.outputs.reb_canonical }}
-            dist/${{ steps.artifact.outputs.van_handoff }}
-            dist/${{ steps.artifact.outputs.van_canonical }}
+            dist/${{ steps.artifact.outputs.asset }}
             dist/BUILD_INFO.txt
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 7
