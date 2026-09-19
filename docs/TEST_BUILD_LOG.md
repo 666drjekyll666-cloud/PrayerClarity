@@ -31,6 +31,10 @@ This file records handed executable artifacts once PrayerClarity research reache
   - spot-check that the accepted Base result / Bonuses on success hierarchy, Soul's Repose dependency context, Technology durations and Character -> Temporary Effects remain unchanged.
 - The earlier run `35471702289` failed at compile time because `ItemTooltipPresentation.CreateTextData` had not yet exposed its existing native `max_width` constructor argument. No artifact was uploaded from that failed source. The corrected source above builds both sibling DLLs with 0 errors.
 - Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **the intended 1.0.28 / 0.2.7 presentation changes passed**. Percentage rows no longer contain the redundant “of base value” wording; single-item rewards render on one `name ×N` row; the concrete prayer-item 100%-success threshold remains intact; Technology and Character -> Temporary Effects remained readable, including the controller/gamepad presentation.
+- Russian long-prayer HUD punctuation did **not** change: the compact HUD timer still uses a dot rather than a comma. The user explicitly accepted leaving this alone rather than adding a heavier punctuation-only workaround. This is not a blocker for the candidate.
+- The supplied session loaded **PrayerClarity: Rebalanced 0.2.7** and exercised synthetic Gold Repose and Gold Shoots & Roots through the existing research console; no PrayerClarity-specific runtime error was reported in the supplied log.
+- Follow-up UX/design discussion remains open and therefore belongs to a later numbered candidate: whether to shorten/split the base-donation dependency line, and whether to move the Roots 95% aggregate-cap explanation out of prayer-selection tooltips while retaining it on the active-effect surface.
 
 ## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
 
