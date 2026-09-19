@@ -1,5 +1,12 @@
 # Changelog
 
+## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
+
+- Adds native blank spacing before **Base result** in single-prayer item tooltips; Technology comparison tooltips remain vertically compact.
+- Restores the stock Prayer for Excellence lore on crafting surfaces when Graveyard Keeper's multi-quality output path omits it, reusing the game's own localized `b_star_d` text rather than adding new copy.
+- Rebalanced Prayer for Repose changes only the Gold guaranteed-success Church Quality requirement from **50 to 60**; Bronze/Silver remain 20/40 and the accepted corpse-quality behavior plus 30/42/54-minute durations are unchanged.
+- Preserves all runtime-accepted 1.0.29 / 0.2.8 Clarity presentation, including compact Base result parentheses and the Roots 95% cap only on the active Temporary Effects surface.
+
 ## Shared candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
 
 - Keeps the runtime-accepted 1.0.28 / 0.2.7 tooltip structure and compact reward rows.
