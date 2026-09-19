@@ -313,3 +313,16 @@ Accepted implementation hypothesis for 1.0.30 / 0.2.9:
 - inspect the first output and act only for the Excellence family;
 - if the stock `b_star_d` localization resolves and is not already present, prefix that native localized lore to the craft description;
 - do not add custom copy, do not patch global `GJL.L`, and do not alter prayer mechanics.
+
+
+### 2026-09-20 item-tooltip spacing runtime correction
+
+Runtime screenshot evidence for Rebalanced 0.2.9 shows no meaningful added vertical gap before **Base result**. The existing gap before **Bonuses on success** is likewise visually minimal.
+
+Direct source inspection explains why:
+- `BubbleWidgetBlankSeparatorData` carries no sizing fields;
+- `BubbleWidgetBlankSeparator.Draw()` is empty;
+- `WidgetsBubbleGUI` sums the instantiated widget prefab's `UIWidget.localSize` for layout;
+- therefore the visual height of a blank separator is entirely a prefab/layout property, not something the data row controls.
+
+Conclusion: another `BubbleWidgetBlankSeparatorData` is not a sufficient spacing mechanism for prayer-item tooltips. The 0.2.9 attempt is rejected only for this spacing subtask; Repose q60 and Excellence lore are accepted. A follow-up should use the narrowest reliable text-layout mechanism on the item-only surface (for example a controlled newline on PrayerClarity-owned rows) rather than custom pixel positioning or Technology-wide spacing.
