@@ -9,6 +9,29 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
+## Shared UI candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.7`.
+- Exact build/source SHA: `94a8ecf4d5b17e5eed2115ec49c97b3a6aec2fa4`.
+- GitHub Actions run: `35471739528`; result: **success**.
+- Artifact ID: `10593055414`.
+- Artifact: `PrayerClarity-shared-ui-1.0.28-rebalanced-0.2.7-ci-94a8ecf4d5b17e5eed2115ec49c97b3a6aec2fa4`.
+- Artifact ZIP digest: `sha256:d0a3145aa2c201d983a66d7a3f579cc4481a5d44b22a07a81b6a8023b63ad7f6`.
+- **PrayerClarity: Rebalanced 0.2.7** handoff DLL SHA-256: `4e7dedfea65aaee7b4e5cc52ce782053fe1b208327976c0c689d28148e99a0dd`.
+- **PrayerClarity: Vanilla 1.0.28** handoff DLL SHA-256: `69a927a235ea3547a6b6392dab7db2d208f672fa57d4b2ad1736733fddfecbb6`.
+- Candidate changes:
+  - remove the redundant “of base value” phrase from Faith/donation percentage rows;
+  - render single-item prayer rewards as one atomic `localized name ×N` row;
+  - let PrayerClarity-owned prayer-item success rows use the existing content-width seam so the 100% success threshold does not split;
+  - refresh the active game locale once on the first long-prayer HUD timer render, covering plugin initialization before `LoadGameSettings` without per-frame language polling.
+- Runtime acceptance requested:
+  - verify percentage rows, Commercial Blessing / Story reward rows, and the concrete prayer-item success threshold in Russian;
+  - verify the long-prayer HUD timer uses a comma decimal separator on Russian UI; if it still renders a dot, do not add a heavier punctuation-only workaround without a new design decision;
+  - spot-check that the accepted Base result / Bonuses on success hierarchy, Soul's Repose dependency context, Technology durations and Character -> Temporary Effects remain unchanged.
+- The earlier run `35471702289` failed at compile time because `ItemTooltipPresentation.CreateTextData` had not yet exposed its existing native `max_width` constructor argument. No artifact was uploaded from that failed source. The corrected source above builds both sibling DLLs with 0 errors.
+- Numbered binaries are immutable after this handoff.
+
 ## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
 
 - User acceptance: **2026-09-18**. After separate runtime passes, the user explicitly approved both candidates for promotion to `main` and stable GitHub publication.
