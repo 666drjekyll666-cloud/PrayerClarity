@@ -4,26 +4,26 @@ PrayerClarity is a pair of alternative BepInEx mods for **Graveyard Keeper 1.407
 
 ## Editions
 
-### PrayerClarity: Vanilla — 1.0.25
+### PrayerClarity: Vanilla — 1.0.31
 
 *Understand what your prayers actually do — without changing how they work.*
 
 Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improving prayer descriptions, quality comparisons, success requirements, pulpit information, item tooltips, and Character -> Temporary Effects.
 
-[Download PrayerClarity: Vanilla 1.0.25](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.25)
+[Download PrayerClarity: Vanilla 1.0.31](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.31)
 
-### PrayerClarity: Rebalanced — 0.2.4
+### PrayerClarity: Rebalanced — 0.2.10
 
 Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices. Runtime-sensitive prayer effects are implemented through narrow Graveyard Keeper-native seams where verified.
 
-[Download PrayerClarity: Rebalanced 0.2.4](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.4)
+[Download PrayerClarity: Rebalanced 0.2.10](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.10)
 
 **Install one edition, not both.**
 
 ## Current stable differences
 
-- **Vanilla 1.0.25:** adds current Soul Gratitude to the Soul's Repose pulpit context and can explain when stock Repose can no longer open a higher ordinary corpse tier; prayer mechanics and balance remain stock 1.407.
-- **Rebalanced 0.2.4:** keeps the accepted full-roster balance and native-seam architecture, with Repentance and Repose duration revised to **30 / 42 / 54 minutes** so Bronze and Silver have clearer multi-day windows; Roots keeps the 95% combined growth-time safety cap.
+- **Vanilla 1.0.31:** keeps stock 1.407 prayer mechanics/balance while carrying the accepted compact Clarity hierarchy, parenthetical Base-result dependencies, cleaner item rewards and prayer-item spacing, plus the stock Prayer for Excellence lore fallback on the multi-quality crafting surface.
+- **Rebalanced 0.2.10:** includes the same Clarity layer plus the accepted full-roster rebalance; ordinary Repose now uses q20/q40/q60 with 30/42/54-minute durations, and Roots keeps the 95% combined growth-time safety cap on the active-effect surface.
 
 ## Shared clarity features
 
