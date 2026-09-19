@@ -19,17 +19,20 @@
   "tech.quantity": "数量",
   "tech.effect.imagination_intro": "執筆品質を高めます。",
   "tech.effect.excellence_intro": "製作品質を高めます。",
-  "tech.souls_base_faith": "信仰は教会の質と魂の感謝度に左右されます。",  "repose.endpoint": "これ以上高品質な死体はありません。",
-
+  "tech.souls_base_faith": "信仰は教会の質と魂の感謝度に左右されます。",
+  "repose.endpoint": "これ以上高品質な死体はありません。",
   "buff.souls_repose": "(faith)は教会の質と(gratitude_points)に左右されます。",
   "active.sword": "ダメージ +{0:0.##}",
   "active.shield": "防御 +{0:0.##}",
-  "active.skull": "ロバが品質が1段階高い死体を運んでくることがある (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "ロバが品質が1段階高い死体を運んでくることがある (up) (skull) (rskull)",
   "active.pen": "執筆品質ボーナス：+{0:0.##}",
   "active.star": "製作品質ボーナス：+{0:0.##}",
   "active.plant_inactive": "既知の問題：この祈りでは植物の成長が速くなりません",
   "active.sins_unverified": "既知の問題：この祈りでは告解が増えません",
   "active.gratitude": "魂の治療で +10% (gratitude_points)",
   "active.sin_shard": "罪の欠片：魂の治療成功時 ×2",
-  "active.timer_days": "{0:0.0}日"
+  "active.timer_days": "{0:0.0}日",
+  "tech.base_result": "基本結果",
+  "tech.percent_of_base": "基本値の{0}",
+  "active.timer_days_compact": "{0:0.0}"
 }
