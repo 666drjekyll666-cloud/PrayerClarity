@@ -1,6 +1,6 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.3**. The roster values were first accepted in 0.2.0; 0.2.2/0.2.3 repaired runtime safety/ownership without changing the nominal balance table below.
+Status: **canonical Rebalanced ruleset**. The current stable runtime remains PrayerClarity: Rebalanced 0.2.3. On 2026-09-19 the user accepted a 0.2.4 balance candidate that changes only Repentance and Repose duration to **30 / 42 / 54 min**; it is not stable until its numbered runtime build is tested and accepted.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
@@ -40,8 +40,8 @@ The sibling Vanilla release remains mechanically stock and is documented separat
 | Combo `b_faith_money` | **40 / 60 / 80** | Success bonus is percentage only: **+100 / +150 / +200% Faith and donations**. No prayer-owned flat Faith/money. |
 | Prosperity `b_village` | **10 / 20 / 30** | Keep stock 1 / 2 / 3 Commercial Blessings and stock sermon outputs. |
 | Shoots & Roots `b_plant` | **10 / 30 / 50** | Repair stock scope; growth time **-20 / -30 / -40%**. Duration **36 / 72 / 108 min**. |
-| Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. Duration **18 / 36 / 54 min**. |
-| Repose `b_skull` | **20 / 40 / 50** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. Duration **18 / 36 / 54 min**. |
+| Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. 0.2.4 candidate duration **30 / 42 / 54 min** (stable 0.2.3: 18 / 36 / 54). |
+| Repose `b_skull` | **20 / 40 / 50** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. 0.2.4 candidate duration **30 / 42 / 54 min** (stable 0.2.3: 18 / 36 / 54). |
 | Combat `b_sword` (`b_shield` legacy alias) | **20 / 40 / 60** | Damage **+5 / +10 / +15**, armor **+4**, regeneration **1 / 2 / 4 HP/s**. Duration **36 / 72 / 108 min**. |
 | Imagination `b_pen` | **20 / 40 / 60** | Writing quality **+0.7** at all tiers; successful Silver gives **3 Silver Stories**, successful Gold gives **3 Gold Stories**. Duration **18 / 36 / 54 min**. |
 | Excellence `b_star` | **20 / 60 / 90** | Linked-craft quality **+0.2 / +0.5 / +1.0**. Duration **18 / 36 / 54 min**. |
@@ -162,6 +162,8 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 ## Acceptance status
 
 The current stable edition is **PrayerClarity: Rebalanced 0.2.3**.
+
+Accepted next design candidate: **Rebalanced 0.2.4** changes only Repentance and Repose duration from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged. Runtime acceptance is still required before stable promotion.
 
 The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent accepted releases kept those nominal values while repairing implementation details:
 
