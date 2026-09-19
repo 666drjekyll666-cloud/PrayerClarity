@@ -23,6 +23,7 @@ namespace PrayerClarity
         internal readonly int[] FixedMoneyBonusesCents;
         internal readonly float[] GrowthReduction;
         internal readonly float[] ConfessionProbability;
+        internal readonly float[] DurationMinutes;
         internal readonly ReposeQualityMode[] ReposeModes;
         internal readonly float[] CombatDamage;
         internal readonly float[] CombatArmor;
@@ -46,6 +47,7 @@ namespace PrayerClarity
             int[] fixedMoneyBonusesCents = null,
             float[] growthReduction = null,
             float[] confessionProbability = null,
+            float[] durationMinutes = null,
             ReposeQualityMode[] reposeModes = null,
             float[] combatDamage = null,
             float[] combatArmor = null,
@@ -68,6 +70,7 @@ namespace PrayerClarity
             FixedMoneyBonusesCents = fixedMoneyBonusesCents;
             GrowthReduction = growthReduction;
             ConfessionProbability = confessionProbability;
+            DurationMinutes = durationMinutes;
             ReposeModes = reposeModes;
             CombatDamage = combatDamage;
             CombatArmor = combatArmor;
@@ -108,9 +111,9 @@ namespace PrayerClarity
                 ["b_faith"] = new RebalancedPrayerRule("b_faith", requirements: F(20f, 40f, 60f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true, fixedFaithBonuses: I(5, 10, 20)),
                 ["b_money"] = new RebalancedPrayerRule("b_money", requirements: F(20f, 40f, 60f), faithBonusRates: F(0f, 0f, 0f), moneyBonusRates: F(0f, 0f, 0f), removeFixedFaith: true, removeFixedMoney: true, fixedMoneyBonusesCents: I(500, 1000, 1500)),
                 ["b_faith_money"] = new RebalancedPrayerRule("b_faith_money", requirements: F(40f, 60f, 80f), faithBonusRates: F(1f, 1.5f, 2f), moneyBonusRates: F(1f, 1.5f, 2f), removeFixedFaith: true, removeFixedMoney: true),
-                ["b_sins"] = new RebalancedPrayerRule("b_sins", requirements: F(20f, 40f, 60f), confessionProbability: F(0.50f, 0.75f, 1.00f)),
+                ["b_sins"] = new RebalancedPrayerRule("b_sins", requirements: F(20f, 40f, 60f), confessionProbability: F(0.50f, 0.75f, 1.00f), durationMinutes: F(30f, 42f, 54f)),
                 ["b_plant"] = new RebalancedPrayerRule("b_plant", requirements: F(10f, 30f, 50f), growthReduction: F(0.20f, 0.30f, 0.40f)),
-                ["b_skull"] = new RebalancedPrayerRule("b_skull", requirements: F(20f, 40f, 50f), reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
+                ["b_skull"] = new RebalancedPrayerRule("b_skull", requirements: F(20f, 40f, 50f), durationMinutes: F(30f, 42f, 54f), reposeModes: new[] { ReposeQualityMode.Stock, ReposeQualityMode.HalfwayToBest, ReposeQualityMode.Best }),
                 ["b_sword"] = new RebalancedPrayerRule("b_sword", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
                 ["b_shield"] = new RebalancedPrayerRule("b_shield", requirements: F(20f, 40f, 60f), combatDamage: F(5f, 10f, 15f), combatArmor: F(4f, 4f, 4f), combatRegenPerSecond: F(1f, 2f, 4f)),
                 ["b_pen"] = new RebalancedPrayerRule("b_pen", requirements: F(20f, 40f, 60f), craftQualityBonus: F(0.7f, 0.7f, 0.7f), successRewardBaseItemId: "story", successRewardQualityTiers: I(0, 2, 3), successRewardCounts: I(0, 3, 3)),
@@ -138,6 +141,7 @@ namespace PrayerClarity
                 RequireThree(rule.PrayerId, nameof(rule.FixedMoneyBonusesCents), rule.FixedMoneyBonusesCents);
                 RequireThree(rule.PrayerId, nameof(rule.GrowthReduction), rule.GrowthReduction);
                 RequireThree(rule.PrayerId, nameof(rule.ConfessionProbability), rule.ConfessionProbability);
+                RequireThree(rule.PrayerId, nameof(rule.DurationMinutes), rule.DurationMinutes);
                 RequireThree(rule.PrayerId, nameof(rule.ReposeModes), rule.ReposeModes);
                 RequireThree(rule.PrayerId, nameof(rule.CombatDamage), rule.CombatDamage);
                 RequireThree(rule.PrayerId, nameof(rule.CombatArmor), rule.CombatArmor);
