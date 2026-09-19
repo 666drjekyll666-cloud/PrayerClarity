@@ -31,6 +31,9 @@ This file records handed executable artifacts once PrayerClarity research reache
   - inspect Rebalanced Shoots & Roots in Technology/prayer-item tooltip/pulpit and confirm the 95% cap text is gone there while Character -> Temporary Effects still shows the cap;
   - no sermon mechanics, stacking, duration, payout or balance retest is required unless the UI exposes a discrepancy.
 - Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **1.0.29 / 0.2.8 presentation scope passed**. Parenthetical Base result dependencies render correctly in Russian, including Soul's Repose with Soul Gratitude icon; Roots no longer shows the 95% cap on Technology/selection surfaces while Character -> Temporary Effects still shows the cap.
+- New follow-up observations are not regressions in this candidate: Rebalanced ordinary Repose still uses the accepted q20/40/50 ladder; prayer-item spacing may benefit from one additional native blank separator before Base result; Prayer for Excellence appears to lack its lore line at Desk II and requires source-localization investigation before any fix.
+
 
 ## Shared UI candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
 
