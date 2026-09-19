@@ -147,27 +147,16 @@ namespace PrayerClarity
                 }
             }
 
-            R.Set(header, "text", Localization.F("tech.base_result"));
+            R.Set(header, "text", "\n" + Localization.F("tech.base_result"));
             // Current-item details are structured scanning blocks, not centered lore.
-            // Reuse native tooltip rows so both major sections use the game's own
-            // HintTitle / TinyDescription hierarchy.
+            // A leading newline on PrayerClarity-owned title rows gives a reliable
+            // item-only visual gap without custom pixel positioning or Technology changes.
             list[headerIndex + 1] = CreateTextData(sections.BaseResult, 4);
-
-            // Single-quality item tooltips have enough vertical budget for the same
-            // native blank separator already used between Base result and success.
-            object leadingSeparator = CreateBlankSeparator();
-            if (leadingSeparator != null)
-            {
-                list.Insert(headerIndex, leadingSeparator);
-                headerIndex++;
-            }
 
             int insertIndex = headerIndex + 2;
             if (!string.IsNullOrEmpty(sections.SuccessBonuses))
             {
-                object separator = CreateBlankSeparator();
-                if (separator != null) list.Insert(insertIndex++, separator);
-                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("tech.success_reward_bonus"), 3));
                 list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
             }
 
@@ -177,20 +166,15 @@ namespace PrayerClarity
 
         private static void AppendSections(IList list, TooltipPresentationSections sections)
         {
-            object blank = CreateBlankSeparator();
-            if (blank != null) list.Add(blank);
-
             if (!string.IsNullOrEmpty(sections.BaseResult))
             {
-                list.Add(CreateTextData(Localization.F("tech.base_result"), 3));
+                list.Add(CreateTextData("\n" + Localization.F("tech.base_result"), 3));
                 list.Add(CreateTextData(sections.BaseResult, 4));
             }
 
             if (!string.IsNullOrEmpty(sections.SuccessBonuses))
             {
-                object separator = CreateBlankSeparator();
-                if (separator != null) list.Add(separator);
-                list.Add(CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Add(CreateTextData("\n" + Localization.F("tech.success_reward_bonus"), 3));
                 list.Add(CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
             }
         }
