@@ -1,5 +1,12 @@
 # Changelog
 
+## Shared candidate — Vanilla 1.0.31 / Rebalanced 0.2.10
+
+- Replaces the visually ineffective blank-separator spacing attempt from 1.0.30 / 0.2.9 with a controlled leading text line on PrayerClarity-owned **Base result** and **Bonuses on success** title rows in prayer-item tooltips only.
+- Keeps Technology comparison tooltips unchanged and vertically compact.
+- Preserves the accepted 1.0.30 / 0.2.9 Repose q20/q40/q60 requirement, Prayer for Excellence stock lore fallback, compact Base-result grammar, and all previously accepted mechanics/presentation behavior.
+- No prayer mechanics, balance values, durations, stacking rules, payouts, or HUD behavior change in this candidate.
+
 ## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
 
 - Adds native blank spacing before **Base result** in single-prayer item tooltips; Technology comparison tooltips remain vertically compact.
