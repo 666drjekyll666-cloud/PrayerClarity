@@ -96,6 +96,15 @@ namespace PrayerClarity
             {
                 Logger.LogError("PrayerClarity prayer-item tooltip surface is disabled; other Clarity surfaces remain active. " + ex);
             }
+
+            try
+            {
+                PrayerLorePresentation.Install(PluginGuid, Logger);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("PrayerClarity Excellence lore fallback is disabled; other Clarity surfaces remain active. " + ex);
+            }
         }
 
         private static void RedrawTextValuesPostfix(object __instance, float chance)
