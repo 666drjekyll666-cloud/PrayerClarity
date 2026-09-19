@@ -394,7 +394,7 @@ namespace PrayerClarity
             if (!comparative || tiers.Count == 1 || sameCount)
             {
                 lines.Add(
-                    rewardName + NoBreakSpace +
+                    rewardName.Replace(" ", NoBreakSpace) + NoBreakSpace +
                     "×" + firstCount.ToString(CultureInfo.InvariantCulture));
             }
             else
