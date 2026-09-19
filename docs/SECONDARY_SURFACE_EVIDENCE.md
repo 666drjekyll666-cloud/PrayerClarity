@@ -235,3 +235,26 @@ Acceptance gate for the next shared candidate:
 - prayer-item `For 100% success requires N (cross)` remains visually unbroken;
 - Russian long-prayer HUD timer uses the locale decimal separator if the one-time late refresh is sufficient; if not, do not add a heavier workaround solely for punctuation;
 - all previously accepted 1.0.27 / 0.2.6 structure and mechanics remain unchanged.
+
+
+### 2026-09-20 acceptance result — 1.0.28 / 0.2.7
+
+The user verified the shared presentation candidate in Russian on keyboard/mouse and controller/gamepad surfaces.
+
+Accepted:
+- Faith/donation percentage rows are concise without the “of base value” suffix;
+- structured item rewards stay on one semantic `name ×N` row;
+- the prayer-item 100%-success threshold remains visually atomic;
+- Technology, Character -> Temporary Effects and controller presentation remain readable.
+
+The attempted one-time late locale refresh did not change the top-HUD decimal punctuation: Russian still shows a dot. The user explicitly chose **no heavier workaround for punctuation alone**. Treat the dot as accepted residual presentation behavior unless new evidence makes it materially confusing.
+
+New UX observation, not yet implemented:
+- the Russian base-result line for donations is often the width-dominating row because `Пожертвования — от качества кладбища` is long;
+- splitting it after the dash would reduce width but adds vertical height and is especially awkward on centered controller presentation;
+- no change is accepted yet; prefer a shorter semantic formulation over a forced line break if a later candidate addresses this.
+
+New Roots presentation observation:
+- the 95% aggregate growth-time reduction cap is mechanically important but visually noisy in prayer-selection tooltips;
+- a candidate direction is to keep the cap visible in Character -> Temporary Effects, where it describes the live interaction boundary, while keeping prayer-selection surfaces focused on the tier's direct -20/-30/-40% effect;
+- this is a design follow-up, not a change to the accepted 95% runtime cap.
