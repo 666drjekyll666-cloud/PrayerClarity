@@ -294,3 +294,22 @@ Follow-up research finding for Prayer for Excellence:
 - the observed Desk II recipe presentation lacks the short lore line shown on other prayers;
 - PrayerClarity's item-tooltip replacement preserves rows before the vanilla mechanics header and does not intentionally delete lore;
 - external localization evidence contains the stock key `b_star_d` (“True words about the blessedness of hard work.”), while the absence/presence of quality-suffixed Excellence description keys in current 1.407 still needs direct game-resource confirmation before a production fallback is accepted.
+
+
+### 2026-09-20 Excellence crafting-lore mechanism
+
+Runtime observation: Prayer for Excellence lacks the short lore line on the Writing Desk II crafting surface while other prayer recipes commonly show one.
+
+Supporting source evidence:
+- decompiled `ItemDefinition.GetItemDescription(Item)` asks for `<item id>_d` and, when a colon-quality item such as `family:tier` misses that key, falls back to the unsuffixed family `*_d`;
+- decompiled `CraftDefinition.GetDescription()` uses `output[0].GetMultiqualityItemDescription()` for multi-quality outputs instead of `ItemDefinition.GetItemDescription`;
+- the multi-quality description path builds a different localization lookup and therefore does not inherit the colon-family fallback;
+- extracted localization data contains the stock `b_star_d` lore (“True words about the blessedness of hard work.” in English), while the observed Excellence multi-quality crafting path has no matching localized lore row.
+
+UX finding: this is a stock presentation omission, not missing lore content.
+
+Accepted implementation hypothesis for 1.0.30 / 0.2.9:
+- patch only `CraftDefinition.GetDescription()`;
+- inspect the first output and act only for the Excellence family;
+- if the stock `b_star_d` localization resolves and is not already present, prefix that native localized lore to the craft description;
+- do not add custom copy, do not patch global `GJL.L`, and do not alter prayer mechanics.
