@@ -197,3 +197,18 @@ User preference:
 
 Static UI evidence supports the heading change without a custom font or new widget system: `Prayer details` is already emitted as native `BubbleWidgetTextData` style value 3 (`HintTitle`), while the mechanics body is style value 4 (`TinyDescription`). A `Success bonuses` heading can therefore be another native style-3 tooltip row inserted by the existing Technology/item tooltip hooks. A clean implementation should return structured tooltip sections rather than fake bold text inside the body string.
 
+### Shared Clarity candidate acceptance gate — Vanilla 1.0.26 / Rebalanced 0.2.5
+
+The approved presentation design is implemented as a shared candidate in both sibling editions. Runtime acceptance should verify:
+
+- Technology and prayer-item tooltips use native `HintTitle` rows for **Base result** and **Bonuses on success**;
+- Base result shows Faith -> Church Quality and Donations -> Graveyard Quality; Soul's Repose retains Soul Gratitude in the Faith dependency;
+- the 100% success threshold is inside the success section and each concrete tier keeps its native quality glyph;
+- percentage bonuses explicitly say they are percentages of the base value;
+- mixed percentage + fixed bonuses are split into separate value lines (variant B), with the resource icon repeated on each component line;
+- timed specialist effects keep localized day units in Technology/item tooltip text;
+- the normal-world HUD shows a localized one-decimal **number only** while at least one in-game day remains, then returns to the vanilla precise timer below one day;
+- Russian terminal Repose wording is `Более качественные тела недоступны.`.
+
+The HUD implementation reuses the game's existing `BuffsGUI.Update() -> BuffIcon.Redraw()` cadence. A narrow `BuffIcon.Redraw` prefix handles only recognized long prayer timers and skips the original timer formatter for that one case; it adds no independent Update/polling owner and writes the label only when the formatted one-decimal value changes.
+
