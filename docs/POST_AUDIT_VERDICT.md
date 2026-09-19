@@ -10,22 +10,22 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Vanilla
 
-- accepted/released version: **1.0.25**
-- accepted ref: `accepted/vanilla-1.0.25`
-- exact source: `ebe069b4ad202ae786af9c63ded0ffb00502cff7`
-- DLL SHA-256: `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`
-- release: `v1.0.25`
+- accepted/released version: **1.0.31**
+- accepted ref: `accepted/vanilla-1.0.31`
+- exact source: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`
+- DLL SHA-256: `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`
+- release: `v1.0.31`
 
 ### PrayerClarity: Rebalanced
 
-- accepted/released version: **0.2.4**
-- accepted ref: `accepted/rebalanced-0.2.4`
-- exact runtime source: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
-- DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
-- release: `rebalanced-v0.2.4`
-- stable promotion merge: `d176fec0eb42852019956a55347dd3af29b3fe1f`
+- accepted/released version: **0.2.10**
+- accepted ref: `accepted/rebalanced-0.2.10`
+- exact runtime source: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`
+- DLL SHA-256: `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`
+- release: `rebalanced-v0.2.10`
+- stable promotion merge: `1d4e196f51f067b8d0127aafa8505cfc4ee88d40`
 
-The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations via the already accepted once-per-load `CraftDefinition.dur_parameter` projection; it added no new runtime hook, persistent state, polling, or lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
+The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
 The Vanilla files compiled by `PrayerClarity.csproj` that appear in the broader history range were rechecked by blob identity where relevant; the accepted shared runtime blobs remain identical on current `main`.
 
@@ -185,7 +185,7 @@ The only known unresolved Repose item is the **terminal Donkey-progression endpo
 
 ## Vanilla verdict
 
-Vanilla 1.0.25 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
+Vanilla 1.0.31 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
 
 The same terminal Repose endpoint presentation case remains optional/non-blocking.
 
@@ -193,11 +193,11 @@ The same terminal Repose endpoint presentation case remains optional/non-blockin
 
 The production Rebalanced project does not compile the research Test Console and no research diagnostic hotkeys or `FEATURE_DIAGNOSTIC` probes are part of the released DLL.
 
-One stale informational startup sentence still present in the 0.2.4 source says:
+One stale informational startup sentence was recorded in the 0.2.4 source:
 
 `Runtime behavior is development-only until accepted.`
 
-That sentence is now factually obsolete, but it has no gameplay/lifecycle effect. Do **not** create a new version solely to change this log line; correct it with the next real Rebalanced release.
+That historical sentence had no gameplay/lifecycle effect and was not a reason for a standalone release. Later accepted releases supersede that source state.
 
 ## Repository hygiene
 
@@ -214,5 +214,9 @@ At the time of this post-audit closure, no architecture/lifecycle production bug
 ### 2026-09-19 Rebalanced 0.2.4 addendum
 
 A later balance decision changed Repentance and Repose duration from 18/36/54 to **30/42/54 minutes**. The accepted implementation reused the existing static prayer projection and did not alter the architecture audited here. Runtime presentation showed the expected 2.7/3.7/4.8 in-game-day values under the user's Longer Days +50% setup, and the exact accepted CI binary was published as `rebalanced-v0.2.4` without rebuilding.
+
+### 2026-09-20 Rebalanced 0.2.10 / Vanilla 1.0.31 addendum
+
+The accepted shared source `30b036f16dc6a7964f7ef72e2e3ececa5951c812` carries the closed gameplay/save-lifecycle architecture forward. Rebalanced ordinary Repose Gold now uses q60 through the existing static definition projection. Shared presentation additions (compact Base-result wording, item-tooltip hierarchy/spacing, Excellence stock-lore fallback, and active-effect/Technology text refinements) run only on the relevant UI/crafting-description paths and add no save-owned state or per-frame polling. The exact accepted binaries were published as `v1.0.31` and `rebalanced-v0.2.10` without rebuilding.
 
 Future PrayerClarity architecture audits should start from this verdict rather than re-litigating the closed mechanisms above without new evidence.
