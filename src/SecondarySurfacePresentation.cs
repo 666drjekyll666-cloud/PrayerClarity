@@ -36,10 +36,12 @@ namespace PrayerClarity
             Type mainGame = R.GameType("MainGame");
 
             MethodInfo drawBuff = R.Method(perkBuffItemGui, "Draw", false, new[] { playerBuff });
+            MethodInfo drawBuffIcon = R.Method(buffIcon, "Draw", false, new[] { playerBuff });
             MethodInfo redrawBuffIcon = R.Method(buffIcon, "Redraw", false, 0);
             MethodInfo getTooltip = R.Method(techUnlock, "GetTooltip", false, new[] { tooltip });
             MethodInfo getTimerText = R.Method(playerBuff, "GetTimerText", false, 0);
             if (drawBuff == null) throw new MissingMethodException("PerkBuffItemGUI.Draw(PlayerBuff)");
+            if (drawBuffIcon == null) throw new MissingMethodException("BuffIcon.Draw(PlayerBuff)");
             if (redrawBuffIcon == null) throw new MissingMethodException("BuffIcon.Redraw()");
             if (getTooltip == null) throw new MissingMethodException("TechUnlock.GetTooltip(Tooltip)");
             if (getTimerText == null) throw new MissingMethodException("PlayerBuff.GetTimerText()");
@@ -52,6 +54,7 @@ namespace PrayerClarity
                 throw new MissingMemberException("Verified prayer-buff timer state is unavailable.");
 
             R.Patch(harmonyId + ".activeeffects", typeof(SecondarySurfacePresentation), drawBuff, nameof(PerkBuffDrawPostfix));
+            R.PatchPrefix(harmonyId + ".hudprayertimer.locale", typeof(SecondarySurfacePresentation), drawBuffIcon, nameof(BuffIconDrawPrefix));
             R.PatchPrefix(harmonyId + ".hudprayertimer", typeof(SecondarySurfacePresentation), redrawBuffIcon, nameof(BuffIconRedrawPrefix));
             R.Patch(harmonyId + ".technology", typeof(SecondarySurfacePresentation), getTooltip, nameof(TechUnlockTooltipPostfix));
             R.Patch(harmonyId + ".prayertimer", typeof(SecondarySurfacePresentation), getTimerText, nameof(PlayerBuffTimerPostfix));
@@ -84,6 +87,14 @@ namespace PrayerClarity
                 _buffErrorLogged = true;
                 _log?.LogError("PrayerClarity active-effect presentation failed; vanilla Temporary Effects text remains available. " + ex);
             }
+        }
+
+        private static void BuffIconDrawPrefix()
+        {
+            // BuffIcon.Draw is the native icon-binding lifecycle and immediately calls
+            // Redraw. Refresh localization here once per icon binding so the compact
+            // number uses the game's active locale without polling language every frame.
+            Localization.UseCurrentGameLanguage();
         }
 
         private static bool BuffIconRedrawPrefix(object __instance)
