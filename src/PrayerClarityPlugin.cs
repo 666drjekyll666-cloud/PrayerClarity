@@ -77,6 +77,15 @@ namespace PrayerClarity
                     Logger.LogError("PrayerClarity prayer-item tooltip surface is disabled; other Clarity surfaces remain active. " + ex);
                 }
 
+                try
+                {
+                    PrayerLorePresentation.Install(PluginGuid, Logger);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("PrayerClarity Excellence lore fallback is disabled; other Clarity surfaces remain active. " + ex);
+                }
+
                 Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Clarity-only pulpit, Technology, prayer-item tooltip and Temporary Effects presentation; prayer Technology tooltips receive atomic-anchor content width plus viewport safety; no prayer mechanics are changed.");
             }
             catch (Exception ex)
