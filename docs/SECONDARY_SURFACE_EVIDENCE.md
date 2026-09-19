@@ -197,7 +197,7 @@ User preference:
 
 Static UI evidence supports the heading change without a custom font or new widget system: `Prayer details` is already emitted as native `BubbleWidgetTextData` style value 3 (`HintTitle`), while the mechanics body is style value 4 (`TinyDescription`). A `Success bonuses` heading can therefore be another native style-3 tooltip row inserted by the existing Technology/item tooltip hooks. A clean implementation should return structured tooltip sections rather than fake bold text inside the body string.
 
-### Shared Clarity candidate acceptance gate — Vanilla 1.0.26 / Rebalanced 0.2.5
+### Shared Clarity candidate acceptance gate — Vanilla 1.0.27 / Rebalanced 0.2.6
 
 The approved presentation design is implemented as a shared candidate in both sibling editions. Runtime acceptance should verify:
 
