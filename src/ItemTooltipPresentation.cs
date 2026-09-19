@@ -135,23 +135,6 @@ namespace PrayerClarity
             object body = list[headerIndex + 1];
             if (body == null || !_bubbleTextType.IsInstanceOfType(body)) return false;
 
-            R.Set(header, "text", Localization.F("tech.base_result"));
-            // Current-item details are structured scanning blocks, not centered lore.
-            // Reuse native tooltip rows so both major sections use the game's own
-            // HintTitle / TinyDescription hierarchy.
-            list[headerIndex + 1] = CreateTextData(sections.BaseResult, 4);
-
-            int insertIndex = headerIndex + 2;
-            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
-            {
-                object separator = CreateBlankSeparator();
-                if (separator != null) list.Insert(insertIndex++, separator);
-                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
-            }
-
-            TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
-
             if (headerIndex > 0)
             {
                 object previous = list[headerIndex - 1];
@@ -164,6 +147,31 @@ namespace PrayerClarity
                 }
             }
 
+            R.Set(header, "text", Localization.F("tech.base_result"));
+            // Current-item details are structured scanning blocks, not centered lore.
+            // Reuse native tooltip rows so both major sections use the game's own
+            // HintTitle / TinyDescription hierarchy.
+            list[headerIndex + 1] = CreateTextData(sections.BaseResult, 4);
+
+            // Single-quality item tooltips have enough vertical budget for the same
+            // native blank separator already used between Base result and success.
+            object leadingSeparator = CreateBlankSeparator();
+            if (leadingSeparator != null)
+            {
+                list.Insert(headerIndex, leadingSeparator);
+                headerIndex++;
+            }
+
+            int insertIndex = headerIndex + 2;
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) list.Insert(insertIndex++, separator);
+                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
+            }
+
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
             return true;
         }
 
