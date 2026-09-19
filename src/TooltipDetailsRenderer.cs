@@ -96,7 +96,7 @@ namespace PrayerClarity
             {
                 lines.Add(
                     icon + " " + label + ": " +
-                    Localization.F("tech.percent_of_base", FormatPercent(rateValue, false)));
+                    FormatPercent(rateValue, false));
             }
 
             if (hasFixed)
@@ -374,10 +374,10 @@ namespace PrayerClarity
                 if (!string.Equals(rewardId, rewards[i].Id, StringComparison.Ordinal)) return null;
             }
 
+            string rewardName = R.VanillaLocalize(rewardId);
             List<string> lines = new List<string>
             {
-                Localization.F("forecast.effect_header") + ":",
-                R.VanillaLocalize(rewardId)
+                Localization.F("forecast.effect_header") + ":"
             };
 
             bool sameCount = true;
@@ -393,7 +393,9 @@ namespace PrayerClarity
 
             if (!comparative || tiers.Count == 1 || sameCount)
             {
-                lines.Add(Localization.F("tech.quantity") + ": ×" + firstCount.ToString(CultureInfo.InvariantCulture));
+                lines.Add(
+                    rewardName + NoBreakSpace +
+                    "×" + firstCount.ToString(CultureInfo.InvariantCulture));
             }
             else
             {
@@ -402,9 +404,10 @@ namespace PrayerClarity
                 {
                     values.Add(
                         TierPrefix(tiers[i], false) + NoBreakSpace +
+                        rewardName.Replace(" ", NoBreakSpace) + NoBreakSpace +
                         "×" + rewards[i].Count.ToString(CultureInfo.InvariantCulture));
                 }
-                lines.Add(Localization.F("tech.quantity") + ":\n" + JoinAtomicSegments(values));
+                lines.Add(JoinAtomicSegments(values));
             }
 
             if (string.Equals(rewardId, "blessing_commerce", StringComparison.Ordinal))
