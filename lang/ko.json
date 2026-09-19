@@ -19,17 +19,20 @@
   "tech.quantity": "수량",
   "tech.effect.imagination_intro": "글쓰기 품질을 높입니다.",
   "tech.effect.excellence_intro": "제작 품질을 높입니다.",
-  "tech.souls_base_faith": "신앙은 교회 품질과 영혼 감사도에 따라 달라집니다.",  "repose.endpoint": "더 높은 품질의 시체는 없습니다.",
-
+  "tech.souls_base_faith": "신앙은 교회 품질과 영혼 감사도에 따라 달라집니다.",
+  "repose.endpoint": "더 높은 품질의 시체는 없습니다.",
   "buff.souls_repose": "(faith)은 교회 품질과 (gratitude_points)에 따라 달라집니다.",
   "active.sword": "피해 +{0:0.##}",
   "active.shield": "방어력 +{0:0.##}",
-  "active.skull": "당나귀가 품질이 한 단계 더 좋은 시체를 가져올 수 있음 (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "당나귀가 품질이 한 단계 더 좋은 시체를 가져올 수 있음 (up) (skull) (rskull)",
   "active.pen": "글쓰기 품질 보너스: +{0:0.##}",
   "active.star": "제작 품질 보너스: +{0:0.##}",
   "active.plant_inactive": "알려진 문제: 이 기도는 식물 성장을 빠르게 하지 않습니다",
   "active.sins_unverified": "알려진 문제: 이 기도는 고해 빈도를 높이지 않습니다",
   "active.gratitude": "영혼 치유 시 +10% (gratitude_points)",
   "active.sin_shard": "죄의 파편: 영혼 치유 성공 시 ×2",
-  "active.timer_days": "{0:0.0}일"
+  "active.timer_days": "{0:0.0}일",
+  "tech.base_result": "기본 결과",
+  "tech.percent_of_base": "기본값의 {0}",
+  "active.timer_days_compact": "{0:0.0}"
 }
