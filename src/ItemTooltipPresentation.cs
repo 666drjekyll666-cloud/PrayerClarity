@@ -40,7 +40,6 @@ namespace PrayerClarity
         private static ManualLogSource _log;
         private static bool _errorLogged;
         private static Type _bubbleTextType;
-        private static Type _blankSeparatorType;
         private static ConstructorInfo _bubbleTextConstructor;
 
         internal static void Install(string harmonyId, ManualLogSource log)
@@ -216,13 +215,6 @@ namespace PrayerClarity
                 }
             }
             return -1;
-        }
-
-        private static object CreateBlankSeparator()
-        {
-            if (_blankSeparatorType == null)
-                _blankSeparatorType = R.GameType("BubbleWidgetBlankSeparatorData");
-            return _blankSeparatorType == null ? null : Activator.CreateInstance(_blankSeparatorType);
         }
 
         private static object CreateTextData(string text, int styleValue, int maxWidth = -1)
