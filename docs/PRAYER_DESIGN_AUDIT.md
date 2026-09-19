@@ -1,6 +1,6 @@
 # Prayer Design Audit — Graveyard Keeper 1.407
 
-Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-19 with PrayerClarity: Vanilla 1.0.25 and PrayerClarity: Rebalanced 0.2.3.
+Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-19 with PrayerClarity: Vanilla 1.0.25, stable PrayerClarity: Rebalanced 0.2.3, and the user-accepted Rebalanced 0.2.4 duration candidate.
 
 Stock mechanics remain canonical in `PRAYER_MECHANICS.md`. Exact current Rebalanced values are canonical in `PRAYER_REBALANCE_OPTIONS.md`. Historical alternatives and earlier coefficient experiments are retained in `PRAYER_POWER_BUDGET.md` and Git history as analysis only.
 
@@ -35,8 +35,8 @@ The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3
 | Combo | **Accepted generalist rework** | q40/60/80; success-only **+100/+150/+200% Faith and donations**; no prayer-owned flat Faith/money. |
 | Prosperity | **No balance change** | Stock q10/20/30 and 1/2/3 Commercial Blessings. |
 | Shoots & Roots | **Accepted repair + scaling** | q10/30/50; nominal growth time **-20/-30/-40%**, 36/72/108 min; current runtime also enforces the accepted 95% combined reduction safety cap. |
-| Repentance | **Accepted rework** | q20/40/60; daily confession probability **50/75/100%**, 18/36/54 min. |
-| Repose | **Accepted reliability rework** | q20/40/50; Bronze stock-style pool, Silver moves halfway toward certainty, Gold guarantees the best actually existing eligible ordinary corpse tier; 18/36/54 min. |
+| Repentance | **Accepted rework; 0.2.4 duration candidate accepted** | q20/40/60; daily confession probability **50/75/100%**; candidate duration **30/42/54 min** (stable 0.2.3: 18/36/54). |
+| Repose | **Accepted reliability rework; 0.2.4 duration candidate accepted** | q20/40/50; Bronze stock-style pool, Silver moves halfway toward certainty, Gold guarantees the best actually existing eligible ordinary corpse tier; candidate duration **30/42/54 min** (stable 0.2.3: 18/36/54). |
 | Combat | **Accepted structural/numeric rework** | q20/40/60; damage **+5/+10/+15**, armor **+4**, regen **1/2/4 HP/s**; 36/72/108 min. |
 | Imagination | **Accepted premium-output rework** | q20/40/60; writing quality **+0.7** all tiers; successful Silver -> 3 Silver Stories, Gold -> 3 Gold Stories; 18/36/54 min. |
 | Excellence | **Accepted magnitude rework** | q20/60/90; linked-craft quality **+0.2/+0.5/+1.0**; 18/36/54 min. |
@@ -72,9 +72,9 @@ The accepted q30/60/120 ladder gates a +50/+100/+150% prayer-owned Faith bonus. 
 
 The accepted design repairs an otherwise disconnected stock prayer by reusing the game's daily confession scheduler and two-confessional loop.
 
-Current probability ladder is 50% / 75% / 100%. Current accepted duration is 18/36/54 minutes.
+Current probability ladder is 50% / 75% / 100%. Stable 0.2.3 duration is 18/36/54 minutes. For 0.2.4, the accepted candidate is **30/42/54 minutes**.
 
-Because the effect acts only on once-per-game-day confession rolls, duration must be judged by how many future daily rolls actually occur while the buff is live, not just by the probability itself. This is the correct balance lens for any future duration revision.
+Because the effect acts only on once-per-game-day confession rolls, duration must be judged by how many future daily rolls actually occur while the buff is live, not just by the probability itself. The accepted 0.2.4 revision raises Bronze enough to cover about four stock-day opportunities, moves Silver to a distinct intermediate window, and leaves Gold unchanged.
 
 ## Imagination
 

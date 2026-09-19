@@ -146,6 +146,7 @@ namespace PrayerClarity
                    rule.RemoveFixedMoney ||
                    rule.FixedFaithBonuses != null ||
                    rule.FixedMoneyBonusesCents != null ||
+                   rule.DurationMinutes != null ||
                    !string.IsNullOrEmpty(rule.SuccessRewardBaseItemId);
         }
 
@@ -157,6 +158,8 @@ namespace PrayerClarity
                 R.Set(craft, "k_faith", rule.TierValue(rule.FaithBonusRates, tier));
             if (rule.MoneyBonusRates != null)
                 R.Set(craft, "k_money", rule.TierValue(rule.MoneyBonusRates, tier));
+            if (rule.DurationMinutes != null)
+                R.Set(craft, "dur_parameter", rule.TierValue(rule.DurationMinutes, tier));
 
             bool replaceFaith = rule.RemoveFixedFaith || rule.FixedFaithBonuses != null;
             bool replaceMoney = rule.RemoveFixedMoney || rule.FixedMoneyBonusesCents != null;

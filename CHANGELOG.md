@@ -1,5 +1,12 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.4 (candidate)
+
+- Increased Repentance duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted 50 / 75 / 100% daily confession probabilities.
+- Increased Repose duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted Bronze/Silver/Gold corpse-quality behavior unchanged.
+- The change targets discrete roughly once-per-day confession and Donkey-delivery opportunities: Bronze now has a credible multi-day window, Silver keeps a distinct intermediate duration step, and Gold remains unchanged.
+- No new runtime hooks or polling were added; duration is projected through the existing prayer craft data at the established load-time projection seam.
+
 ## PrayerClarity: Rebalanced 0.2.3
 
 - Preserved the accepted Rebalanced prayer balance while closing the remaining runtime architecture audit.
