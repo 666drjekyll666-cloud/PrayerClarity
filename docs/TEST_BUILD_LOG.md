@@ -2,11 +2,39 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## Current stable baselines — 2026-09-19
+## Current stable baselines — 2026-09-20
 
-- **PrayerClarity: Vanilla 1.0.25** — `accepted/vanilla-1.0.25`, source `ebe069b4ad202ae786af9c63ded0ffb00502cff7`, release `v1.0.25`, DLL SHA-256 `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
-- **PrayerClarity: Rebalanced 0.2.4** — `accepted/rebalanced-0.2.4`, source `4d5d3021c0b9eef16d09402c5f25851ff7a66981`, release `rebalanced-v0.2.4`, DLL SHA-256 `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`.
+- **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- **PrayerClarity: Rebalanced 0.2.10** — `accepted/rebalanced-0.2.10`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `rebalanced-v0.2.10`, DLL SHA-256 `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
+
+
+## Shared candidate — Vanilla 1.0.31 / Rebalanced 0.2.10
+
+- Status: **accepted and promoted to main; stable publication uses these exact handed bytes**.
+- Candidate branch: `candidate/rebalanced-0.2.10`.
+- Exact build/source SHA: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
+- GitHub Actions run: `35475014644`; result: **success**.
+- Artifact ID: `10594265029`.
+- Artifact: `PrayerClarity-shared-ui-1.0.31-rebalanced-0.2.10-ci-30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
+- Artifact ZIP digest: `sha256:a01744655280ee598451c79d64bee3c845e1e5d521c253cc64e082342adf3c0a`.
+- **PrayerClarity: Rebalanced 0.2.10** handoff DLL SHA-256: `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`.
+- **PrayerClarity: Vanilla 1.0.31** handoff DLL SHA-256: `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- Candidate change:
+  - replace the ineffective `BubbleWidgetBlankSeparatorData` item-tooltip spacing attempt with one controlled leading newline on PrayerClarity-owned **Base result** and **Bonuses on success** title rows;
+  - apply this only to prayer-item tooltips, including the fallback append path;
+  - remove the now-unused blank-separator helper from `ItemTooltipPresentation`;
+  - Technology comparison tooltips remain unchanged.
+- All accepted 0.2.9 behavior is preserved: Repose q20/q40/q60, stock Excellence lore fallback, compact Base-result dependency grammar, Roots cap presentation and existing mechanics.
+- Runtime acceptance requested:
+  - inspect a prayer item with lore and confirm visible `lore -> gap -> Base result -> gap -> Bonuses on success` rhythm;
+  - spot-check that no excessive double-gap appears when the stock prayer description itself wraps;
+  - no mechanics, Repose, Excellence-lore or Technology retest is required unless the presentation exposes a discrepancy.
+- Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **passed**. The prayer-item tooltip now shows a clearly visible lore -> gap -> Base result -> gap -> Bonuses on success rhythm. No additional spacing change is requested.
+- The supplied acceptance session loaded **PrayerClarity: Rebalanced 0.2.10** successfully; no PrayerClarity-specific error was reported. Repose q20/q40/q60 and the restored stock Excellence lore were already accepted in the preceding 0.2.9 pass and are carried forward unchanged.
+- Frozen accepted refs: `accepted/vanilla-1.0.31` and `accepted/rebalanced-0.2.10`, both pointing to exact tested source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`.
+- Stable promotion PR: **#14**, squash-merged to `main` as `1d4e196f51f067b8d0127aafa8505cfc4ee88d40`.
 
 
 ## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
