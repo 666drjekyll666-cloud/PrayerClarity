@@ -1,10 +1,10 @@
 # PrayerClarity: Rebalanced — implementation target audit
 
-Status: **research / architecture evidence complete enough to enter `dev/*`**, updated 2026-09-17 against PrayerClarity: Vanilla 1.0.20. This document identifies the accepted implementation seams. It does **not** make Rebalanced runtime behavior accepted; each implemented mechanic still requires executable/runtime verification before release.
+Status: **historical implementation-target audit, partially updated with later accepted seams**. It began on 2026-09-17 against PrayerClarity: Vanilla 1.0.20. For current Rebalanced 0.2.3 architecture/lifecycle decisions, `REBALANCED_NATIVE_SEAM_AUDIT.md` and `POST_AUDIT_VERDICT.md` are authoritative.
 
 Target game: Graveyard Keeper 1.407, `Assembly-CSharp` MVID `6f50b8e7-156b-49ac-bbe8-7505894b2364`.
 
-Accepted presentation/runtime base: PrayerClarity: Vanilla **1.0.20**, source `c7ac91c1cea6c498fb406323725768b605d8139f`.
+Historical presentation/runtime base used when this audit started: PrayerClarity: Vanilla **1.0.20**, source `c7ac91c1cea6c498fb406323725768b605d8139f`. Current stable baselines are Vanilla 1.0.25 and Rebalanced 0.2.3.
 
 Locked gameplay intent is in `PRAYER_REBALANCE_OPTIONS.md`. Stock behavior remains canonical in `PRAYER_MECHANICS.md`.
 
@@ -28,13 +28,11 @@ The same resolved rules supply:
 
 Do not maintain a second UI-only table of Rebalanced numbers. Do not replace the native sermon engine with a parallel calculator.
 
-## Per-save projection lifecycle — closed
+## Per-save projection lifecycle — superseded implementation guidance
 
-Independent accepted GK 1.407 runtime evidence establishes a clean mutation window:
+The early audit identified a clean load-time mutation window, but its instruction to use the first `CraftComponent.FillCraftsList()` as the production projection boundary is no longer the current implementation contract.
 
-`PrepareScene -> ClearCraftsListOnGameStart -> first CraftComponent.FillCraftsList() -> StartPlayingGame`
-
-Use the first `CraftComponent.FillCraftsList()` of each loaded save as the one-shot projection boundary; reset the one-shot guard on return to Main Menu. Apply absolute/idempotent values only. No polling or recurring scans.
+For stable Rebalanced 0.2.3, use the lifecycle recorded in `POST_AUDIT_VERDICT.md`: the native `CraftComponent.ClearCraftsListOnGameStart` reset boundary plus validated/idempotent once-per-load static projection before ordinary resumed gameplay. No polling or recurring scans.
 
 ### Live object identity — accepted runtime evidence
 
@@ -47,15 +45,17 @@ Lookup Identity Probe 0.1.0 confirmed for all 72 live `pray:*` rows:
 
 Therefore live `CraftDefinition` mutation is visible through normal GameBalance lookups and output-list projection needs no cache rebuild.
 
-## Safe native/static prayer projections
+## Safe native/static prayer projections — current roster
 
-Project from the effective-rule source into live prayer `CraftDefinition`s when stock `PrayLogics.CalculatePray` already owns the desired behavior:
+Project from the effective-rule source into live prayer `CraftDefinition`s when stock `PrayLogics.CalculatePray` already owns the desired behavior. Current stable 0.2.3 values are:
 
-- Faith: q25/40/70, `k_faith=2.5/3.5/4.5`, remove prayer-owned off-theme/fixed money and fixed Faith outputs;
-- Donations: q25/40/70, `k_money=2.5/3.5/4.5`, remove prayer-owned Faith contribution, retain +1/+2/+3 silver fixed money;
-- BSS Soul's Repose: q25/40/70, `k_faith=2.5/3.5/4.5`, remove prayer-owned fixed/off-theme money while preserving the Souls event formula and recipe;
-- Imagination Silver/Gold: add 3 Silver / 3 Gold Stories through the normal successful-prayer output list;
-- stock durations/q values that remain unchanged need no projection.
+- Faith: q20/40/60; remove prayer-owned percentage/off-theme outputs and use success-only flat +5/+10/+20 Faith;
+- Donations: q20/40/60; remove prayer-owned Faith/percentage outputs and use success-only flat +5/+10/+15 silver;
+- Combo: q40/60/80; use only `k_faith=1/1.5/2` and `k_money=1/1.5/2`, with no prayer-owned flat Faith/money;
+- BSS Soul's Repose: q30/60/120; use `k_faith=0.5/1/1.5`, preserve the verified Souls base and current Soul Gratitude input, remove prayer-owned fixed/off-theme outputs;
+- Imagination Silver/Gold: add 3 Silver / 3 Gold Stories through the normal successful-prayer output list.
+
+Exact implementation is owned by the current `RebalancedRuleSet`/static projection source and the canonical roster in `PRAYER_REBALANCE_OPTIONS.md`; this audit must not become a competing value table.
 
 Failed-sermon base donations remain untouched by permanent product policy.
 
