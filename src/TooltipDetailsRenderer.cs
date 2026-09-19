@@ -74,7 +74,7 @@ namespace PrayerClarity
             return new TooltipPresentationSections
             {
                 BaseResult = PresentationText.DependencyMap(tier.UsesSoulGratitude),
-                SuccessBonuses = success.Count == 0 ? null : string.Join("\n\n", success.ToArray())
+                SuccessBonuses = success.Count == 0 ? null : string.Join("\n", success.ToArray())
             };
         }
 
