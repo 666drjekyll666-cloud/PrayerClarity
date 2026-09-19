@@ -9,6 +9,33 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
+## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.9`.
+- Exact build/source SHA: `305c18c7082ccf93f5b31eab264eb73f539902ef`.
+- GitHub Actions run: `35474112411`; result: **success**.
+- Artifact ID: `10594182101`.
+- Artifact: `PrayerClarity-shared-ui-1.0.30-rebalanced-0.2.9-ci-305c18c7082ccf93f5b31eab264eb73f539902ef`.
+- Artifact ZIP digest: `sha256:85b168fb1b99b0a7d5f2e6c7a59c96eb1534a284d49ee4e714a7d6fe2cc8e977`.
+- **PrayerClarity: Rebalanced 0.2.9** handoff DLL SHA-256: `928de524fc5aacce347d2a425926db7343310c1d8aa9acf7d081cd54abb6bc99`.
+- **PrayerClarity: Vanilla 1.0.30** handoff DLL SHA-256: `b7819e6048edab2ce2c0852aa454715b58c472da66d9887917ca570a7c432747`.
+- Candidate changes:
+  - Rebalanced ordinary Repose Gold 100%-success requirement changes from q50 to **q60**; Bronze/Silver remain q20/q40, corpse-quality behavior and 30/42/54-minute durations are unchanged;
+  - single-prayer item tooltips add one native blank separator before **Base result**, matching the existing native gap before **Bonuses on success**; Technology tooltips are unchanged;
+  - crafting descriptions for Prayer for Excellence receive a narrow fallback to the game's own localized `b_star_d` lore only when the Excellence output path omitted it.
+- Lore evidence:
+  - direct decompiled `ItemDefinition.GetItemDescription` falls back from colon-quality IDs to the base `*_d` localization key;
+  - direct decompiled `CraftDefinition.GetDescription` routes multi-quality outputs through `Item.GetMultiqualityItemDescription`, which does not use that same colon fallback;
+  - public extracted localization data contains `b_star_d` but no corresponding quality-specific Excellence description key observed in the user's Desk II path;
+  - the production fallback therefore reuses existing stock localized copy instead of inventing new text or globally intercepting localization.
+- Runtime acceptance requested:
+  - verify Rebalanced Repose now reads q20 / q40 / q60 in Technology and that no other Repose behavior changed;
+  - inspect one prayer item tooltip and confirm the visual rhythm is lore -> gap -> Base result -> gap -> Bonuses on success;
+  - inspect Prayer for Excellence at Writing Desk II and confirm its short stock lore line appears naturally and only once;
+  - spot-check that the accepted 1.0.29 / 0.2.8 Base-result parentheses and Roots active-cap presentation remain unchanged.
+- Numbered binaries are immutable after this handoff.
+
 ## Shared UI candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
 
 - Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
