@@ -110,3 +110,59 @@ The narrow production seams are now:
 All are relevant native UI/data lifecycle boundaries. No independent per-frame polling, global Unity scan, repeated reflection enumeration or duplicate subscription is required.
 
 The Clarity candidate must leave verified prayer mechanics unchanged.
+
+## 2026-09-19 follow-up — tooltip dependency context and top-HUD timer
+
+Status: **static research complete; one narrow 1.407 HUD prefab probe pending. No production change is accepted by this section.**
+
+### Item prayer requirement wording
+
+Current production ownership is already narrow: `ItemTooltipPresentation` patches only `ItemDefinition.GetTooltipData(Item, bool)` for recognized prayer items, and `TooltipDetailsRenderer.BuildSingle` owns the concrete item's requirement row.
+
+Current single-item grammar is structurally:
+
+`Requires: <prayer-quality glyph> <Church Quality amount> (cross)`.
+
+Therefore changing this to a localized contextual template such as “For <quality> quality, requires: <amount> (cross)” is presentation-only. No mechanics lookup, item mapping or new runtime hook is needed.
+
+Technology is deliberately different: its accepted tier-comparison grammar already says “For 100% success, requires <amount> (cross)”. Earlier usability evidence showed that a bare “Requires: 10” was ambiguous. Do not weaken the Technology threshold wording merely for visual symmetry with the concrete item tooltip.
+
+### Base Faith / donation dependency note
+
+The semantic source already exists. `PrayerForecast.TierDetails.UsesSoulGratitude` and `PresentationText.DependencyMap` distinguish:
+- ordinary prayers: Faith from Church Quality; donations from Graveyard Quality;
+- BSS Soul's Repose: Faith from Church Quality **and current Soul Gratitude**; donations from Graveyard Quality.
+
+Both Technology and item tooltip already consume the same `TierDetails` model. Therefore the safest implementation is one shared semantic dependency builder with surface-specific localized wording. The requested tooltip wording can be two intentional semantic lines:
+- Base Faith — from Church Quality;
+- Base donations — from Graveyard Quality.
+
+For Soul's Repose, only the first line gains Soul Gratitude. This should be inserted immediately after the Prayer details heading on Technology and item surfaces. The semantic newline is intentional; normal label wrapping should still remain enabled within each line for long locales.
+
+### Top HUD timer ownership
+
+Project runtime evidence had already proved that `PlayerBuff.end_time - MainGame.game_time` is the correct remaining **in-game-day** interval and remains correct with Longer Days because the normalized day state is preserved.
+
+Current PrayerClarity patches `PlayerBuff.GetTimerText()` and intentionally returns an empty string for prayer buffs while >=1 day remains. That decision came from the rejected 0.1.16 presentation: the stock compact timer font displayed localized day suffixes unreliably, leaving bare numbers. Character -> Temporary Effects therefore puts the strategic N.N-day value into its normal description label and restores vanilla precise timer text inside the final day.
+
+Independent public decompilation of Graveyard Keeper corroborates the UI ownership:
+- `BuffsGUI.Redraw()` creates a `BuffIcon` for each visible PlayerBuff;
+- `BuffIcon.Draw(PlayerBuff)` binds the PlayerBuff and icon;
+- `BuffsGUI.Update()` calls `BuffIcon.Redraw()`;
+- `BuffIcon.Redraw()` reads `linked_buff.GetTimerText()` into `txt_timer`.
+
+Consequently the missing top-HUD timer is explained by PrayerClarity's existing global `GetTimerText` suppression. A new timer state or independent polling loop is unnecessary.
+
+The remaining exact 1.407 question is the live `BuffIcon.txt_timer` font/geometry and the safest localized-label reuse strategy. A read-only probe was prepared on `research/hud-prayer-timer-probe`:
+- source SHA `672f0d5c1816447d9cbdc41635ecd6ed91e1db1b`;
+- CI run `35465475560`;
+- artifact `10591325714`;
+- DLL SHA-256 `f05c820802519b9033ba77e343e2374cb4a8a8221626e96293fbeca2fe18a8a2`;
+- build: 0 warnings / 0 errors.
+
+The probe has no Harmony patch and performs no game-state/UI mutation. It records exact 1.407 `BuffIcon`, `BuffsGUI`, `PlayerBuff.GetTimerText` signatures plus live HUD timer-label/font/geometry and Character-label comparison into `BepInEx/PrayerClarity-hud-timer-0.1.0.txt`.
+
+### Repose terminal wording
+
+Russian player feedback from one participant indicates that “Ещё более качественные тела недоступны.” can imply an unnecessary prior comparison. The requested Russian wording is “Более качественные тела недоступны.” This is localization-only; Repose mechanics and endpoint detection remain unchanged. Treat this as a one-player UX signal, not community consensus.
+
