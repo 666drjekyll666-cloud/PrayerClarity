@@ -9,5 +9,6 @@
   "rebalanced.active.repose.silver": "В половине случаев лучшее тело гарантировано",
   "rebalanced.active.repose.gold": "Осёл гарантированно привозит лучшее тело",
   "rebalanced.active.combat": "Урон +{0:0.##} · Броня +{1:0.##} · Регенерация {2:0.##} ОЗ/с",
-  "rebalanced.active.gratitude": "За исцеление души: +{0:0}% благодарности"
+  "rebalanced.active.gratitude": "За исцеление души: +{0:0}% благодарности",
+  "rebalanced.tech.plant_tier": "Время роста растений: -{0:0}%"
 }

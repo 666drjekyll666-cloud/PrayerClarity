@@ -32,7 +32,12 @@ namespace PrayerClarity
             {
                 case "buff_plant":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.PlantTierParam);
-                    return tier > 0 && RebalancedRuleSet.TryGet("b_plant", out rule) && TryBuildRuleEffect(rule, tier, out text, out semanticKey);
+                    if (tier <= 0 || !RebalancedRuleSet.TryGet("b_plant", out rule)) return false;
+                    text = Localization.F(
+                        "rebalanced.active.plant",
+                        rule.TierValue(rule.GrowthReduction, tier) * 100f,
+                        RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                    return true;
                 case "buff_sins":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.ConfessionTierParam);
                     return tier > 0 && RebalancedRuleSet.TryGet("b_sins", out rule) && TryBuildRuleEffect(rule, tier, out text, out semanticKey);
@@ -65,9 +70,8 @@ namespace PrayerClarity
             {
                 sharedText = Localization.F("rebalanced.tech.plant_intro");
                 tierText = Localization.F(
-                    "rebalanced.active.plant",
-                    rule.TierValue(rule.GrowthReduction, tier) * 100f,
-                    RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                    "rebalanced.tech.plant_tier",
+                    rule.TierValue(rule.GrowthReduction, tier) * 100f);
                 return true;
             }
 
@@ -157,9 +161,8 @@ namespace PrayerClarity
             {
                 float value = rule.TierValue(rule.GrowthReduction, tier);
                 text = Localization.F(
-                    "rebalanced.active.plant",
-                    value * 100f,
-                    RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                    "rebalanced.tech.plant_tier",
+                    value * 100f);
                 semanticKey = "rebalanced:growth=" + Rv(value) +
                               ";cap=" + Rv(RebalancedRoots.MaxCombinedGrowthReduction);
                 return true;

@@ -5,8 +5,8 @@
   "forecast.soul_gratitude": "Wdzięczność dusz: (gratitude_points) {0:0.#}",
   "forecast.guaranteed": "Gwarantowane",
   "forecast.success_bonus": "Przy sukcesie ({0}%)",
-  "forecast.dependency_note": "(faith) Wiara — jakość kościoła\n(slv) Datki — jakość cmentarza",
-  "forecast.dependency_note_souls": "(faith) Wiara — jakość kościoła i (gratitude_points)\n(slv) Datki — jakość cmentarza",
+  "forecast.dependency_note": "(faith) Wiara (jakość kościoła)\n(slv) Datki (jakość cmentarza)",
+  "forecast.dependency_note_souls": "(faith) Wiara (jakość kościoła + (gratitude_points))\n(slv) Datki (jakość cmentarza)",
   "forecast.reward": "Nagroda: {0}",
   "tech.prayer_details": "Szczegóły modlitwy",
   "tech.success_bonus": "Dodawane przy sukcesie",
@@ -24,12 +24,15 @@
   "buff.souls_repose": "(faith) zależy od jakości kościoła i (gratitude_points).",
   "active.sword": "+{0:0.##} obrażeń",
   "active.shield": "+{0:0.##} pancerza",
-  "active.skull": "Osioł może przywieźć ciało o jeden poziom jakości lepsze (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "Osioł może przywieźć ciało o jeden poziom jakości lepsze (up) (skull) (rskull)",
   "active.pen": "Premia do jakości pisania: +{0:0.##}",
   "active.star": "Premia do jakości wytwarzania: +{0:0.##}",
   "active.plant_inactive": "Znany problem: ta modlitwa nie przyspiesza wzrostu roślin",
   "active.sins_unverified": "Znany problem: ta modlitwa nie zwiększa częstotliwości spowiedzi",
   "active.gratitude": "+10% (gratitude_points) z leczenia dusz",
   "active.sin_shard": "Odłamki grzechu ×2 za udane leczenie duszy",
-  "active.timer_days": "{0:0.0} dni"
+  "active.timer_days": "{0:0.0} dni",
+  "tech.base_result": "Wynik bazowy",
+  "tech.percent_of_base": "{0} wartości bazowej",
+  "active.timer_days_compact": "{0:0.0}"
 }

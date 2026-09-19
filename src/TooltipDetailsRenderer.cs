@@ -4,6 +4,17 @@ using System.Globalization;
 
 namespace PrayerClarity
 {
+    internal sealed class TooltipPresentationSections
+    {
+        internal string BaseResult;
+        internal string SuccessBonuses;
+
+        internal bool HasContent
+        {
+            get { return !string.IsNullOrEmpty(BaseResult) || !string.IsNullOrEmpty(SuccessBonuses); }
+        }
+    }
+
     internal static class TooltipDetailsRenderer
     {
         private const float Epsilon = 0.0001f;
@@ -22,6 +33,79 @@ namespace PrayerClarity
             AddSection(sections, BuildDuration(tiers, true));
 
             return sections.Count == 0 ? null : string.Join("\n\n", sections.ToArray());
+        }
+
+        internal static TooltipPresentationSections BuildSingleSections(PrayerForecast.TierDetails tier)
+        {
+            if (tier == null) return null;
+
+            List<PrayerForecast.TierDetails> tiers = new List<PrayerForecast.TierDetails> { tier };
+            List<string> success = new List<string>();
+
+            if (tier.Requirement > 0)
+            {
+                string quality = TierPrefix(tier, false);
+                string threshold = Localization.F("tech.success_threshold", tier.Requirement);
+                string line = string.IsNullOrEmpty(quality)
+                    ? threshold
+                    : quality + NoBreakSpace + threshold;
+                success.Add(line.Replace(" ", NoBreakSpace));
+            }
+
+            AddSingleResourceLines(
+                success,
+                tier,
+                R.VanillaLocalize("faith"),
+                "(faith)",
+                t => t.FaithBonusRate,
+                t => t.FixedFaithBonus);
+
+            AddSingleResourceLines(
+                success,
+                tier,
+                Localization.F("tech.donations"),
+                "(slv)",
+                t => t.MoneyBonusRate,
+                t => t.FixedMoneyBonus);
+
+            AddSection(success, BuildEffect(tiers, false));
+            AddSection(success, BuildDuration(tiers, false));
+
+            return new TooltipPresentationSections
+            {
+                BaseResult = PresentationText.DependencyMap(tier.UsesSoulGratitude),
+                SuccessBonuses = success.Count == 0 ? null : string.Join("\n", success.ToArray())
+            };
+        }
+
+        private static void AddSingleResourceLines(
+            List<string> lines,
+            PrayerForecast.TierDetails tier,
+            string label,
+            string icon,
+            Func<PrayerForecast.TierDetails, float> rate,
+            Func<PrayerForecast.TierDetails, float> fixedValue)
+        {
+            float rateValue = rate(tier);
+            float fixedAmount = fixedValue(tier);
+            bool hasRate = Math.Abs(rateValue) >= Epsilon;
+            bool hasFixed = Math.Abs(fixedAmount) >= Epsilon;
+            if (!hasRate && !hasFixed) return;
+
+            if (hasRate)
+            {
+                lines.Add(
+                    icon + " " + label + ": " +
+                    FormatPercent(rateValue, false));
+            }
+
+            if (hasFixed)
+            {
+                lines.Add(
+                    hasRate
+                        ? icon + " " + FormatSignedNumber(fixedAmount, false)
+                        : icon + " " + label + ": " + FormatSignedNumber(fixedAmount, false));
+            }
         }
 
         internal static string BuildSingle(PrayerForecast.TierDetails tier)
@@ -290,10 +374,10 @@ namespace PrayerClarity
                 if (!string.Equals(rewardId, rewards[i].Id, StringComparison.Ordinal)) return null;
             }
 
+            string rewardName = R.VanillaLocalize(rewardId);
             List<string> lines = new List<string>
             {
-                Localization.F("forecast.effect_header") + ":",
-                R.VanillaLocalize(rewardId)
+                Localization.F("forecast.effect_header") + ":"
             };
 
             bool sameCount = true;
@@ -309,7 +393,9 @@ namespace PrayerClarity
 
             if (!comparative || tiers.Count == 1 || sameCount)
             {
-                lines.Add(Localization.F("tech.quantity") + ": ×" + firstCount.ToString(CultureInfo.InvariantCulture));
+                lines.Add(
+                    rewardName.Replace(" ", NoBreakSpace) + NoBreakSpace +
+                    "×" + firstCount.ToString(CultureInfo.InvariantCulture));
             }
             else
             {
@@ -318,9 +404,10 @@ namespace PrayerClarity
                 {
                     values.Add(
                         TierPrefix(tiers[i], false) + NoBreakSpace +
+                        rewardName.Replace(" ", NoBreakSpace) + NoBreakSpace +
                         "×" + rewards[i].Count.ToString(CultureInfo.InvariantCulture));
                 }
-                lines.Add(Localization.F("tech.quantity") + ":\n" + JoinAtomicSegments(values));
+                lines.Add(JoinAtomicSegments(values));
             }
 
             if (string.Equals(rewardId, "blessing_commerce", StringComparison.Ordinal))

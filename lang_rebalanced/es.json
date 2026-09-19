@@ -9,5 +9,6 @@
   "rebalanced.active.repose.silver": "En la mitad de los casos se garantiza el mejor cuerpo",
   "rebalanced.active.repose.gold": "El burro trae garantizado el mejor cuerpo",
   "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Al sanar un alma: +{0:0} % de gratitud"
+  "rebalanced.active.gratitude": "Al sanar un alma: +{0:0} % de gratitud",
+  "rebalanced.tech.plant_tier": "Tiempo de crecimiento de las plantas: -{0:0}%"
 }

@@ -1,5 +1,35 @@
 # Changelog
 
+## Shared candidate — Vanilla 1.0.31 / Rebalanced 0.2.10
+
+- Replaces the visually ineffective blank-separator spacing attempt from 1.0.30 / 0.2.9 with a controlled leading text line on PrayerClarity-owned **Base result** and **Bonuses on success** title rows in prayer-item tooltips only.
+- Keeps Technology comparison tooltips unchanged and vertically compact.
+- Preserves the accepted 1.0.30 / 0.2.9 Repose q20/q40/q60 requirement, Prayer for Excellence stock lore fallback, compact Base-result grammar, and all previously accepted mechanics/presentation behavior.
+- No prayer mechanics, balance values, durations, stacking rules, payouts, or HUD behavior change in this candidate.
+
+## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
+
+- Adds native blank spacing before **Base result** in single-prayer item tooltips; Technology comparison tooltips remain vertically compact.
+- Restores the stock Prayer for Excellence lore on crafting surfaces when Graveyard Keeper's multi-quality output path omits it, reusing the game's own localized `b_star_d` text rather than adding new copy.
+- Rebalanced Prayer for Repose changes only the Gold guaranteed-success Church Quality requirement from **50 to 60**; Bronze/Silver remain 20/40 and the accepted corpse-quality behavior plus 30/42/54-minute durations are unchanged.
+- Preserves all runtime-accepted 1.0.29 / 0.2.8 Clarity presentation, including compact Base result parentheses and the Roots 95% cap only on the active Temporary Effects surface.
+
+## Shared candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
+
+- Keeps the runtime-accepted 1.0.28 / 0.2.7 tooltip structure and compact reward rows.
+- Shortens Base result dependency wording to parenthetical source labels, e.g. `Faith (Church Quality)` and `Donations (Graveyard Quality)`; Soul's Repose keeps Soul Gratitude in the Faith source.
+- Rebalanced Shoots & Roots prayer-selection surfaces now show only the direct tier effect (-20/-30/-40% growth time); the existing 95% combined safety cap remains mechanically unchanged and stays visible on the active Temporary Effects surface.
+- Leaves the accepted HUD decimal punctuation behavior unchanged; no heavier punctuation-only workaround is added.
+- No prayer balance values, stacking rules, duration rules, or runtime mechanics are changed.
+
+## Shared candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
+
+- Simplifies Faith/donation percentage rows to the resource plus signed percentage, removing the redundant “of base value” suffix.
+- Renders single-item prayer rewards as one atomic `localized name ×N` row instead of a separate Quantity line.
+- Reuses the existing PrayerClarity-owned content-width mechanism for prayer-item success rows so the 100% success threshold stays visually intact.
+- Refreshes the game locale once on the first long-prayer HUD timer render, covering BepInEx initialization before Graveyard Keeper loads GameSettings without adding per-frame language polling.
+- Preserves all prayer mechanics and the accepted Base result / Bonuses on success structure; runtime acceptance is still required.
+
 ## PrayerClarity: Rebalanced 0.2.4
 
 - Increased Repentance duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted 50 / 75 / 100% daily confession probabilities.

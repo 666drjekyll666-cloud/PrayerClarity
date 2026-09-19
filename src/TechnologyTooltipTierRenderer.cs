@@ -8,7 +8,30 @@ namespace PrayerClarity
     {
         private const float Epsilon = 0.0001f;
         private const string NoBreakSpace = "\u00A0";
-        private const string InlineSeparator = " · ";
+
+        internal static TooltipPresentationSections BuildSections(List<PrayerForecast.TierDetails> tiers)
+        {
+            if (tiers == null || tiers.Count == 0) return null;
+
+            tiers.Sort(CompareTiers);
+            if (tiers.Count == 1)
+                return TooltipDetailsRenderer.BuildSingleSections(tiers[0]);
+
+            List<string> success = new List<string>();
+
+            AddSection(success, BuildSuccessIntro(tiers));
+            AddSection(success, BuildSharedEffect(tiers));
+            AddSection(success, BuildSharedDuration(tiers));
+
+            foreach (PrayerForecast.TierDetails tier in tiers)
+                AddSection(success, BuildTierBlock(tier, tiers));
+
+            return new TooltipPresentationSections
+            {
+                BaseResult = PresentationText.DependencyMap(AllUseSoulGratitude(tiers)),
+                SuccessBonuses = success.Count == 0 ? null : string.Join("\n\n", success.ToArray())
+            };
+        }
 
         internal static string Build(List<PrayerForecast.TierDetails> tiers)
         {
@@ -50,28 +73,53 @@ namespace PrayerClarity
             bool anyMoney = AnyContribution(tiers, t => t.MoneyBonusRate, t => t.FixedMoneyBonus);
             if (!anyFaith && !anyMoney) return null;
 
-            List<string> lines = new List<string>
+            List<string> lines = new List<string>();
+
+            AddSharedResourceLines(
+                lines,
+                tiers,
+                R.VanillaLocalize("faith"),
+                "(faith)",
+                t => t.FaithBonusRate,
+                t => t.FixedFaithBonus);
+
+            AddSharedResourceLines(
+                lines,
+                tiers,
+                Localization.F("tech.donations"),
+                "(slv)",
+                t => t.MoneyBonusRate,
+                t => t.FixedMoneyBonus);
+
+            return lines.Count == 0 ? null : string.Join("\n", lines.ToArray());
+        }
+
+        private static void AddSharedResourceLines(
+            List<string> lines,
+            List<PrayerForecast.TierDetails> tiers,
+            string label,
+            string icon,
+            Func<PrayerForecast.TierDetails, float> rate,
+            Func<PrayerForecast.TierDetails, float> fixedValue)
+        {
+            bool sharedRate = IsSharedNonZero(tiers, rate);
+            bool sharedFixed = IsSharedNonZero(tiers, fixedValue);
+            if (!sharedRate && !sharedFixed) return;
+
+            if (sharedRate)
             {
-                Localization.F("tech.success_reward_bonus") + ":"
-            };
+                lines.Add(
+                    icon + " " + label + ": " +
+                    FormatPercent(rate(tiers[0])));
+            }
 
-            List<string> sharedRates = new List<string>();
-            if (anyFaith && IsSharedNonZero(tiers, t => t.FaithBonusRate))
-                sharedRates.Add(R.VanillaLocalize("faith") + " " + FormatPercent(tiers[0].FaithBonusRate));
-            if (anyMoney && IsSharedNonZero(tiers, t => t.MoneyBonusRate))
-                sharedRates.Add(Localization.F("tech.donations") + " " + FormatPercent(tiers[0].MoneyBonusRate));
-            if (sharedRates.Count > 0)
-                lines.Add(string.Join(InlineSeparator, sharedRates.ToArray()));
-
-            List<string> sharedFlat = new List<string>();
-            if (anyFaith && IsSharedNonZero(tiers, t => t.FixedFaithBonus))
-                sharedFlat.Add(FormatSignedNumber(tiers[0].FixedFaithBonus) + " (faith)");
-            if (anyMoney && IsSharedNonZero(tiers, t => t.FixedMoneyBonus))
-                sharedFlat.Add(FormatSignedNumber(tiers[0].FixedMoneyBonus) + " (slv)");
-            if (sharedFlat.Count > 0)
-                lines.Add(string.Join(InlineSeparator, sharedFlat.ToArray()));
-
-            return string.Join("\n", lines.ToArray());
+            if (sharedFixed)
+            {
+                lines.Add(
+                    sharedRate
+                        ? icon + " " + FormatSignedNumber(fixedValue(tiers[0]))
+                        : icon + " " + label + ": " + FormatSignedNumber(fixedValue(tiers[0])));
+            }
         }
 
         private static string BuildSharedEffect(List<PrayerForecast.TierDetails> tiers)
@@ -80,9 +128,6 @@ namespace PrayerClarity
             if (TryGetCommonEditionTechnologyEffect(tiers, out editionShared))
                 return BuildEffectSection(editionShared);
 
-            if (AllUseSoulGratitude(tiers))
-                return Localization.F("tech.souls_base_faith");
-
             TooltipSemanticModel.RewardDetails commonReward;
             if (TryGetCommonReward(tiers, out commonReward))
             {
@@ -90,7 +135,10 @@ namespace PrayerClarity
                 List<string> lines = new List<string>
                 {
                     TechnologyTooltipTextStyle.StructuralLabel(Localization.F("forecast.effect_header")) + ":",
-                    TechnologyTooltipTextStyle.RewardName(commonReward.Id, rewardName)
+                    TechnologyTooltipTextStyle.RewardName(
+                        commonReward.Id,
+                        rewardName.Replace(" ", NoBreakSpace)) + NoBreakSpace +
+                    "×" + commonReward.Count.ToString(CultureInfo.InvariantCulture)
                 };
 
                 return string.Join("\n", lines.ToArray());
@@ -209,17 +257,25 @@ namespace PrayerClarity
             PrayerForecast.TierDetails tier,
             List<PrayerForecast.TierDetails> allTiers)
         {
-            List<string> parts = new List<string>();
+            List<string> lines = new List<string>();
 
             if (Math.Abs(tier.FaithBonusRate) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.FaithBonusRate))
-                parts.Add(R.VanillaLocalize("faith") + " " + FormatPercent(tier.FaithBonusRate));
+            {
+                lines.Add(
+                    "(faith) " + R.VanillaLocalize("faith") + ": " +
+                    FormatPercent(tier.FaithBonusRate));
+            }
 
             if (Math.Abs(tier.MoneyBonusRate) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.MoneyBonusRate))
-                parts.Add(Localization.F("tech.donations") + " " + FormatPercent(tier.MoneyBonusRate));
+            {
+                lines.Add(
+                    "(slv) " + Localization.F("tech.donations") + ": " +
+                    FormatPercent(tier.MoneyBonusRate));
+            }
 
-            return parts.Count == 0 ? null : string.Join(InlineSeparator, parts.ToArray());
+            return lines.Count == 0 ? null : string.Join("\n", lines.ToArray());
         }
 
         private static void AddTierFixedAndRewardLines(
@@ -227,18 +283,29 @@ namespace PrayerClarity
             PrayerForecast.TierDetails tier,
             List<PrayerForecast.TierDetails> allTiers)
         {
-            List<string> fixedParts = new List<string>();
-
             if (Math.Abs(tier.FixedFaithBonus) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.FixedFaithBonus))
-                fixedParts.Add(FormatSignedNumber(tier.FixedFaithBonus) + " (faith)");
+            {
+                bool hasRate = Math.Abs(tier.FaithBonusRate) >= Epsilon ||
+                               IsSharedNonZero(allTiers, t => t.FaithBonusRate);
+                lines.Add(
+                    hasRate
+                        ? "(faith) " + FormatSignedNumber(tier.FixedFaithBonus)
+                        : "(faith) " + R.VanillaLocalize("faith") + ": " +
+                          FormatSignedNumber(tier.FixedFaithBonus));
+            }
 
             if (Math.Abs(tier.FixedMoneyBonus) >= Epsilon &&
                 !IsSharedNonZero(allTiers, t => t.FixedMoneyBonus))
-                fixedParts.Add(FormatSignedNumber(tier.FixedMoneyBonus) + " (slv)");
-
-            if (fixedParts.Count > 0)
-                lines.Add(string.Join(InlineSeparator, fixedParts.ToArray()));
+            {
+                bool hasRate = Math.Abs(tier.MoneyBonusRate) >= Epsilon ||
+                               IsSharedNonZero(allTiers, t => t.MoneyBonusRate);
+                lines.Add(
+                    hasRate
+                        ? "(slv) " + FormatSignedNumber(tier.FixedMoneyBonus)
+                        : "(slv) " + Localization.F("tech.donations") + ": " +
+                          FormatSignedNumber(tier.FixedMoneyBonus));
+            }
 
             TooltipSemanticModel.RewardDetails commonReward;
             bool rewardIsShared = TryGetCommonReward(allTiers, out commonReward);
@@ -247,9 +314,10 @@ namespace PrayerClarity
             {
                 string rewardName = TechnologyTooltipTextStyle.RewardName(
                     reward.Id,
-                    R.VanillaLocalize(reward.Id));
-                lines.Add(TechnologyTooltipTextStyle.Atomic(
-                    rewardName + " ×" + reward.Count.ToString(CultureInfo.InvariantCulture)));
+                    R.VanillaLocalize(reward.Id).Replace(" ", NoBreakSpace));
+                lines.Add(
+                    rewardName + NoBreakSpace + "×" +
+                    reward.Count.ToString(CultureInfo.InvariantCulture));
             }
         }
 

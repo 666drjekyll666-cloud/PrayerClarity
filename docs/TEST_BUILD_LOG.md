@@ -9,6 +9,90 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
+## Shared candidate — Vanilla 1.0.30 / Rebalanced 0.2.9
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.9`.
+- Exact build/source SHA: `305c18c7082ccf93f5b31eab264eb73f539902ef`.
+- GitHub Actions run: `35474112411`; result: **success**.
+- Artifact ID: `10594182101`.
+- Artifact: `PrayerClarity-shared-ui-1.0.30-rebalanced-0.2.9-ci-305c18c7082ccf93f5b31eab264eb73f539902ef`.
+- Artifact ZIP digest: `sha256:85b168fb1b99b0a7d5f2e6c7a59c96eb1534a284d49ee4e714a7d6fe2cc8e977`.
+- **PrayerClarity: Rebalanced 0.2.9** handoff DLL SHA-256: `928de524fc5aacce347d2a425926db7343310c1d8aa9acf7d081cd54abb6bc99`.
+- **PrayerClarity: Vanilla 1.0.30** handoff DLL SHA-256: `b7819e6048edab2ce2c0852aa454715b58c472da66d9887917ca570a7c432747`.
+- Candidate changes:
+  - Rebalanced ordinary Repose Gold 100%-success requirement changes from q50 to **q60**; Bronze/Silver remain q20/q40, corpse-quality behavior and 30/42/54-minute durations are unchanged;
+  - single-prayer item tooltips add one native blank separator before **Base result**, matching the existing native gap before **Bonuses on success**; Technology tooltips are unchanged;
+  - crafting descriptions for Prayer for Excellence receive a narrow fallback to the game's own localized `b_star_d` lore only when the Excellence output path omitted it.
+- Lore evidence:
+  - direct decompiled `ItemDefinition.GetItemDescription` falls back from colon-quality IDs to the base `*_d` localization key;
+  - direct decompiled `CraftDefinition.GetDescription` routes multi-quality outputs through `Item.GetMultiqualityItemDescription`, which does not use that same colon fallback;
+  - public extracted localization data contains `b_star_d` but no corresponding quality-specific Excellence description key observed in the user's Desk II path;
+  - the production fallback therefore reuses existing stock localized copy instead of inventing new text or globally intercepting localization.
+- Runtime acceptance requested:
+  - verify Rebalanced Repose now reads q20 / q40 / q60 in Technology and that no other Repose behavior changed;
+  - inspect one prayer item tooltip and confirm the visual rhythm is lore -> gap -> Base result -> gap -> Bonuses on success;
+  - inspect Prayer for Excellence at Writing Desk II and confirm its short stock lore line appears naturally and only once;
+  - spot-check that the accepted 1.0.29 / 0.2.8 Base-result parentheses and Roots active-cap presentation remain unchanged.
+- Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **0.2.9 partial acceptance**. Rebalanced Repose q20/q40/q60 is confirmed in-game. With Longer Days configured to 675 seconds/day, the unchanged 30/42/54-minute Repose durations correctly present as approximately 2.7/3.7/4.8 game days. Prayer for Excellence now shows the restored stock lore at Writing Desk II.
+- The intended item-tooltip vertical spacing did **not** become visibly larger. Screenshot evidence shows lore -> Base result and Base result -> Bonuses on success remain visually tight. This is not a PrayerClarity runtime error; the session loaded Rebalanced 0.2.9 successfully and no PrayerClarity-specific error was logged.
+- Source follow-up: `BubbleWidgetBlankSeparatorData` has no draw behavior and its visible height comes only from the serialized prefab/widget size. On this item-tooltip surface that prefab spacing is effectively negligible, so inserting another BlankSeparatorData row did not satisfy the UX goal. Do not repeat that mechanism in the next candidate.
+
+
+## Shared UI candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.8`.
+- Exact build/source SHA: `436cda740d826cbbd8964dec3dd6002892efbac4`.
+- GitHub Actions run: `35473008241`; result: **success**.
+- Artifact ID: `10593861146`.
+- Artifact: `PrayerClarity-shared-ui-1.0.29-rebalanced-0.2.8-ci-436cda740d826cbbd8964dec3dd6002892efbac4`.
+- Artifact ZIP digest: `sha256:b63f1f0c03c964ce355eee660af6f686c017c24364bc4871c9d6d0e1eaa4ff28`.
+- **PrayerClarity: Rebalanced 0.2.8** handoff DLL SHA-256: `70a3b7e44bd96a72f15f3b7b4a654607c68d05e0109c92561a7c352fa547f501`.
+- **PrayerClarity: Vanilla 1.0.29** handoff DLL SHA-256: `fb08bf6f7bd3727683b057b5e493375b79ef23bb1eb08dc905c2c40635c446d9`.
+- Candidate changes:
+  - compact Base result dependencies to parenthetical source labels: `Faith (Church Quality)` / `Donations (Graveyard Quality)`; Soul's Repose keeps Soul Gratitude in the Faith source;
+  - Rebalanced Shoots & Roots prayer-selection surfaces show only the direct tier reduction; the accepted 95% combined safety cap remains mechanically unchanged and remains visible in Character -> Temporary Effects;
+  - preserve all accepted 1.0.28 / 0.2.7 compact percentage, item-reward and atomic-success-row behavior;
+  - keep the accepted top-HUD decimal-dot residual behavior; no heavier punctuation-only workaround was added.
+- Runtime acceptance requested:
+  - inspect ordinary prayer Base result in Russian and confirm the parenthetical dependency grammar is immediately understandable and materially narrower;
+  - inspect BSS Soul's Repose if convenient and confirm Faith still clearly shows both Church Quality and Soul Gratitude as inputs;
+  - inspect Rebalanced Shoots & Roots in Technology/prayer-item tooltip/pulpit and confirm the 95% cap text is gone there while Character -> Temporary Effects still shows the cap;
+  - no sermon mechanics, stacking, duration, payout or balance retest is required unless the UI exposes a discrepancy.
+- Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **1.0.29 / 0.2.8 presentation scope passed**. Parenthetical Base result dependencies render correctly in Russian, including Soul's Repose with Soul Gratitude icon; Roots no longer shows the 95% cap on Technology/selection surfaces while Character -> Temporary Effects still shows the cap.
+- New follow-up observations are not regressions in this candidate: Rebalanced ordinary Repose still uses the accepted q20/40/50 ladder; prayer-item spacing may benefit from one additional native blank separator before Base result; Prayer for Excellence appears to lack its lore line at Desk II and requires source-localization investigation before any fix.
+
+
+## Shared UI candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.7`.
+- Exact build/source SHA: `94a8ecf4d5b17e5eed2115ec49c97b3a6aec2fa4`.
+- GitHub Actions run: `35471739528`; result: **success**.
+- Artifact ID: `10593055414`.
+- Artifact: `PrayerClarity-shared-ui-1.0.28-rebalanced-0.2.7-ci-94a8ecf4d5b17e5eed2115ec49c97b3a6aec2fa4`.
+- Artifact ZIP digest: `sha256:d0a3145aa2c201d983a66d7a3f579cc4481a5d44b22a07a81b6a8023b63ad7f6`.
+- **PrayerClarity: Rebalanced 0.2.7** handoff DLL SHA-256: `4e7dedfea65aaee7b4e5cc52ce782053fe1b208327976c0c689d28148e99a0dd`.
+- **PrayerClarity: Vanilla 1.0.28** handoff DLL SHA-256: `69a927a235ea3547a6b6392dab7db2d208f672fa57d4b2ad1736733fddfecbb6`.
+- Candidate changes:
+  - remove the redundant “of base value” phrase from Faith/donation percentage rows;
+  - render single-item prayer rewards as one atomic `localized name ×N` row;
+  - let PrayerClarity-owned prayer-item success rows use the existing content-width seam so the 100% success threshold does not split;
+  - refresh the active game locale once on the first long-prayer HUD timer render, covering plugin initialization before `LoadGameSettings` without per-frame language polling.
+- Runtime acceptance requested:
+  - verify percentage rows, Commercial Blessing / Story reward rows, and the concrete prayer-item success threshold in Russian;
+  - verify the long-prayer HUD timer uses a comma decimal separator on Russian UI; if it still renders a dot, do not add a heavier punctuation-only workaround without a new design decision;
+  - spot-check that the accepted Base result / Bonuses on success hierarchy, Soul's Repose dependency context, Technology durations and Character -> Temporary Effects remain unchanged.
+- The earlier run `35471702289` failed at compile time because `ItemTooltipPresentation.CreateTextData` had not yet exposed its existing native `max_width` constructor argument. No artifact was uploaded from that failed source. The corrected source above builds both sibling DLLs with 0 errors.
+- Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **the intended 1.0.28 / 0.2.7 presentation changes passed**. Percentage rows no longer contain the redundant “of base value” wording; single-item rewards render on one `name ×N` row; the concrete prayer-item 100%-success threshold remains intact; Technology and Character -> Temporary Effects remained readable, including the controller/gamepad presentation.
+- Russian long-prayer HUD punctuation did **not** change: the compact HUD timer still uses a dot rather than a comma. The user explicitly accepted leaving this alone rather than adding a heavier punctuation-only workaround. This is not a blocker for the candidate.
+- The supplied session loaded **PrayerClarity: Rebalanced 0.2.7** and exercised synthetic Gold Repose and Gold Shoots & Roots through the existing research console; no PrayerClarity-specific runtime error was reported in the supplied log.
+- Follow-up UX/design discussion remains open and therefore belongs to a later numbered candidate: whether to shorten/split the base-donation dependency line, and whether to move the Roots 95% aggregate-cap explanation out of prayer-selection tooltips while retaining it on the active-effect surface.
+
 ## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
 
 - User acceptance: **2026-09-18**. After separate runtime passes, the user explicitly approved both candidates for promotion to `main` and stable GitHub publication.

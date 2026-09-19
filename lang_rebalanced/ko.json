@@ -9,5 +9,6 @@
   "rebalanced.active.repose.silver": "절반의 경우 최고 품질의 시체가 보장됩니다",
   "rebalanced.active.repose.gold": "당나귀가 최고 품질의 시체를 반드시 가져옵니다",
   "rebalanced.active.combat": "피해 +{0:0.##} · 방어 +{1:0.##} · HP 재생 {2:0.##}/초",
-  "rebalanced.active.gratitude": "영혼 치유: 감사도 +{0:0}%"
+  "rebalanced.active.gratitude": "영혼 치유: 감사도 +{0:0}%",
+  "rebalanced.tech.plant_tier": "식물 성장 시간: -{0:0}%"
 }

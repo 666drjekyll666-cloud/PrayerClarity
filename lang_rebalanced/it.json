@@ -9,5 +9,6 @@
   "rebalanced.active.repose.silver": "Nella metà dei casi è garantito il corpo migliore",
   "rebalanced.active.repose.gold": "L’asino porta sicuramente il corpo migliore",
   "rebalanced.active.combat": "Danni +{0:0.##} · Armatura +{1:0.##} · Rigenerazione {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Cura dell’anima: +{0:0}% Gratitudine"
+  "rebalanced.active.gratitude": "Cura dell’anima: +{0:0}% Gratitudine",
+  "rebalanced.tech.plant_tier": "Tempo di crescita delle piante: -{0:0}%"
 }
