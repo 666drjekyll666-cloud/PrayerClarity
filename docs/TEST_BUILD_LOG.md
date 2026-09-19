@@ -9,6 +9,29 @@ This file records handed executable artifacts once PrayerClarity research reache
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
+## Shared UI candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.8`.
+- Exact build/source SHA: `436cda740d826cbbd8964dec3dd6002892efbac4`.
+- GitHub Actions run: `35473008241`; result: **success**.
+- Artifact ID: `10593861146`.
+- Artifact: `PrayerClarity-shared-ui-1.0.29-rebalanced-0.2.8-ci-436cda740d826cbbd8964dec3dd6002892efbac4`.
+- Artifact ZIP digest: `sha256:b63f1f0c03c964ce355eee660af6f686c017c24364bc4871c9d6d0e1eaa4ff28`.
+- **PrayerClarity: Rebalanced 0.2.8** handoff DLL SHA-256: `70a3b7e44bd96a72f15f3b7b4a654607c68d05e0109c92561a7c352fa547f501`.
+- **PrayerClarity: Vanilla 1.0.29** handoff DLL SHA-256: `fb08bf6f7bd3727683b057b5e493375b79ef23bb1eb08dc905c2c40635c446d9`.
+- Candidate changes:
+  - compact Base result dependencies to parenthetical source labels: `Faith (Church Quality)` / `Donations (Graveyard Quality)`; Soul's Repose keeps Soul Gratitude in the Faith source;
+  - Rebalanced Shoots & Roots prayer-selection surfaces show only the direct tier reduction; the accepted 95% combined safety cap remains mechanically unchanged and remains visible in Character -> Temporary Effects;
+  - preserve all accepted 1.0.28 / 0.2.7 compact percentage, item-reward and atomic-success-row behavior;
+  - keep the accepted top-HUD decimal-dot residual behavior; no heavier punctuation-only workaround was added.
+- Runtime acceptance requested:
+  - inspect ordinary prayer Base result in Russian and confirm the parenthetical dependency grammar is immediately understandable and materially narrower;
+  - inspect BSS Soul's Repose if convenient and confirm Faith still clearly shows both Church Quality and Soul Gratitude as inputs;
+  - inspect Rebalanced Shoots & Roots in Technology/prayer-item tooltip/pulpit and confirm the 95% cap text is gone there while Character -> Temporary Effects still shows the cap;
+  - no sermon mechanics, stacking, duration, payout or balance retest is required unless the UI exposes a discrepancy.
+- Numbered binaries are immutable after this handoff.
+
 ## Shared UI candidate — Vanilla 1.0.28 / Rebalanced 0.2.7
 
 - Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
