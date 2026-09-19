@@ -35,6 +35,10 @@ This file records handed executable artifacts once PrayerClarity research reache
   - inspect Prayer for Excellence at Writing Desk II and confirm its short stock lore line appears naturally and only once;
   - spot-check that the accepted 1.0.29 / 0.2.8 Base-result parentheses and Roots active-cap presentation remain unchanged.
 - Numbered binaries are immutable after this handoff.
+- User runtime/visual result, 2026-09-20: **0.2.9 partial acceptance**. Rebalanced Repose q20/q40/q60 is confirmed in-game. With Longer Days configured to 675 seconds/day, the unchanged 30/42/54-minute Repose durations correctly present as approximately 2.7/3.7/4.8 game days. Prayer for Excellence now shows the restored stock lore at Writing Desk II.
+- The intended item-tooltip vertical spacing did **not** become visibly larger. Screenshot evidence shows lore -> Base result and Base result -> Bonuses on success remain visually tight. This is not a PrayerClarity runtime error; the session loaded Rebalanced 0.2.9 successfully and no PrayerClarity-specific error was logged.
+- Source follow-up: `BubbleWidgetBlankSeparatorData` has no draw behavior and its visible height comes only from the serialized prefab/widget size. On this item-tooltip surface that prefab spacing is effectively negligible, so inserting another BlankSeparatorData row did not satisfy the UX goal. Do not repeat that mechanism in the next candidate.
+
 
 ## Shared UI candidate — Vanilla 1.0.29 / Rebalanced 0.2.8
 
