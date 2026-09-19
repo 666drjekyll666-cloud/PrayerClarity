@@ -19,17 +19,20 @@
   "tech.quantity": "Menge",
   "tech.effect.imagination_intro": "Verbessert die Schreibqualität.",
   "tech.effect.excellence_intro": "Verbessert die Herstellungsqualität.",
-  "tech.souls_base_faith": "Glaube hängt von Kirchenqualität und Seelendankbarkeit ab.",  "repose.endpoint": "Keine Leichen höherer Qualität sind verfügbar.",
-
+  "tech.souls_base_faith": "Glaube hängt von Kirchenqualität und Seelendankbarkeit ab.",
+  "repose.endpoint": "Keine Leichen höherer Qualität sind verfügbar.",
   "buff.souls_repose": "(faith) hängt von Kirchenqualität und (gratitude_points) ab.",
   "active.sword": "+{0:0.##} Schaden",
   "active.shield": "+{0:0.##} Rüstung",
-  "active.skull": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen (up)\u00A0(skull)\u00A0(rskull)",
+  "active.skull": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen (up) (skull) (rskull)",
   "active.pen": "Bonus auf Schreibqualität: +{0:0.##}",
   "active.star": "Bonus auf Herstellungsqualität: +{0:0.##}",
   "active.plant_inactive": "Bekanntes Problem: Dieses Gebet beschleunigt das Pflanzenwachstum nicht",
   "active.sins_unverified": "Bekanntes Problem: Dieses Gebet macht Beichten nicht häufiger",
   "active.gratitude": "+10 % (gratitude_points) durch Seelenheilung",
   "active.sin_shard": "Sündensplitter ×2 bei erfolgreicher Seelenheilung",
-  "active.timer_days": "{0:0.0} Tage"
+  "active.timer_days": "{0:0.0} Tage",
+  "tech.base_result": "Basisergebnis",
+  "tech.percent_of_base": "{0} des Basiswerts",
+  "active.timer_days_compact": "{0:0.0}"
 }
