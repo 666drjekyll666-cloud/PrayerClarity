@@ -1,6 +1,6 @@
 # Changelog
 
-## PrayerClarity: Rebalanced 0.2.4 (candidate)
+## PrayerClarity: Rebalanced 0.2.4
 
 - Increased Repentance duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted 50 / 75 / 100% daily confession probabilities.
 - Increased Repose duration from 18 / 36 / 54 to **30 / 42 / 54 minutes** while keeping the accepted Bronze/Silver/Gold corpse-quality behavior unchanged.
