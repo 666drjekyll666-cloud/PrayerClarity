@@ -275,3 +275,22 @@ The user also accepted the Roots presentation split:
 - the 95% runtime cap itself, buff duration, repeated-buff native duration extension, tier strength and fertilizer interaction remain unchanged.
 
 Candidate 1.0.29 / 0.2.8 implements only these presentation decisions plus the already accepted 1.0.28 / 0.2.7 Clarity polish. The Russian top-HUD decimal dot remains an explicitly accepted residual presentation behavior.
+
+
+### 2026-09-20 runtime result — 1.0.29 / 0.2.8
+
+Accepted visual result:
+- Base result dependencies use the compact parenthetical grammar successfully in Russian;
+- BSS Soul's Repose keeps Church Quality plus Soul Gratitude legible without widening back to the old sentence form;
+- Rebalanced Roots selection surfaces omit the 95% aggregate-cap explanation while Character -> Temporary Effects retains it;
+- no Technology spacing expansion is requested because three-tier tooltips remain vertically constrained.
+
+Follow-up UX finding for prayer-item tooltips:
+- single-quality item tooltips have more vertical budget than Technology comparison tooltips;
+- the existing item-tooltip path already inserts native `BubbleWidgetBlankSeparatorData` between Base result and Bonuses on success;
+- a later candidate may insert the same native separator immediately before Base result, creating a lore -> gap -> Base result -> gap -> Bonuses rhythm without custom pixel spacing or Technology changes.
+
+Follow-up research finding for Prayer for Excellence:
+- the observed Desk II recipe presentation lacks the short lore line shown on other prayers;
+- PrayerClarity's item-tooltip replacement preserves rows before the vanilla mechanics header and does not intentionally delete lore;
+- external localization evidence contains the stock key `b_star_d` (“True words about the blessedness of hard work.”), while the absence/presence of quality-suffixed Excellence description keys in current 1.407 still needs direct game-resource confirmation before a production fallback is accepted.
