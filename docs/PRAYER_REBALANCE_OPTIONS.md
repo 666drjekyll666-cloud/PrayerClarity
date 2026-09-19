@@ -6,8 +6,8 @@ Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYE
 
 Current stable runtime identity:
 
-- Rebalanced version: **0.2.4**
-- frozen accepted ref: `accepted/rebalanced-0.2.4`
+- Rebalanced version: **0.2.10**
+- frozen accepted ref: `accepted/rebalanced-0.2.10`
 - exact accepted runtime source SHA: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
 - accepted/released DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
@@ -162,7 +162,7 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-The current stable edition is **PrayerClarity: Rebalanced 0.2.4**.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.10**.
 
 The 0.2.4 duration revision changes only Repentance and Repose from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged.
 
