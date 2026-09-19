@@ -1,6 +1,6 @@
 # Pulpit reward-reveal UX decision
 
-Status: **implemented and runtime-accepted** in the stable PrayerClarity sibling presentation layer. Original design decision approved 2026-09-15; current stable baselines are Vanilla 1.0.24 and Rebalanced 0.1.5.
+Status: **implemented and runtime-accepted** in the stable PrayerClarity sibling presentation layer. Original design decision approved 2026-09-15; current stable baselines are Vanilla 1.0.25 and Rebalanced 0.2.3.
 
 This decision was made after reviewing the current pulpit prototype that exposes exact pre-sermon Faith and donation totals.
 

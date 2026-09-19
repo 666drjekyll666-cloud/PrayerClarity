@@ -2,6 +2,12 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## Current stable baselines — 2026-09-19
+
+- **PrayerClarity: Vanilla 1.0.25** — `accepted/vanilla-1.0.25`, source `ebe069b4ad202ae786af9c63ded0ffb00502cff7`, release `v1.0.25`, DLL SHA-256 `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
+- **PrayerClarity: Rebalanced 0.2.3** — `accepted/rebalanced-0.2.3`, source `ab1eb67cbf2465a912c392120395011503b720c3`, release `rebalanced-v0.2.3`, DLL SHA-256 `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`.
+- Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
+
 
 ## Stable sibling releases — Vanilla 1.0.25 / Rebalanced 0.2.0
 

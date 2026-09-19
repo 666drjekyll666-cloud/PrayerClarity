@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-18 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.24 and PrayerClarity: Rebalanced 0.1.5.
+Status: product/architecture source of truth, reconciled 2026-09-19 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.25 and PrayerClarity: Rebalanced 0.2.3.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -36,12 +36,12 @@ Internal evidence/design layers remain distinct:
 
 ## Accepted baseline
 
-Current accepted stable runtime/source for both sibling editions is `3b7cea7986138f57d7ace6998b9cc6bca952af1e`.
+Current accepted stable runtime identities are edition-specific:
 
-- **PrayerClarity: Vanilla 1.0.24** — accepted ref `accepted/vanilla-1.0.24`, release `v1.0.24`, DLL SHA-256 `ab53816f120ee9318944459a976a74bfe48125fabf872b6f9666920c779b4879`.
-- **PrayerClarity: Rebalanced 0.1.5** — accepted ref `accepted/rebalanced-0.1.5`, release `rebalanced-v0.1.5`, DLL SHA-256 `aa34c5fc62aa7ad02d32099264389554e2df05c212374ec5be7701fa95c428cf`.
+- **PrayerClarity: Vanilla 1.0.25** — accepted ref `accepted/vanilla-1.0.25`, exact source `ebe069b4ad202ae786af9c63ded0ffb00502cff7`, release `v1.0.25`, DLL SHA-256 `72b2237607734d8b50d666cef56e18d458b88c6a456211d496e2410ac646e3a9`.
+- **PrayerClarity: Rebalanced 0.2.3** — accepted ref `accepted/rebalanced-0.2.3`, exact runtime source `ab1eb67cbf2465a912c392120395011503b720c3`, release `rebalanced-v0.2.3`, DLL SHA-256 `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`.
 
-The two binaries share the same accepted source state and were published from the already tested CI artifact without rebuilding. Later `main` commits may document or clean the repository without changing these frozen runtime identities.
+Both stable releases were published from their exact accepted CI artifacts without rebuilding. Later `main` documentation/repository-hygiene commits do not redefine those frozen runtime identities.
 
 ## Permanent gameplay/product policies
 
@@ -196,6 +196,6 @@ No new balance round is required unless implementation evidence contradicts an a
 
 ## Current engineering state
 
-The implementation-target audit and first integrated Rebalanced line are complete. Rebalanced 0.1.5 runtime acceptance proved the effective-model/mechanics integration required for the locked roster, including the repaired/tier-aware prayer behaviors and synchronized presentation surfaces.
+The current stable implementation line is Rebalanced 0.2.3. Its focused runtime acceptance verified the accepted Repentance and Combat native seams, while 0.2.2 closed the Roots runtime-safety regression. `POST_AUDIT_VERDICT.md` subsequently closed the remaining architecture/save-lifecycle review at **A — no architecture action**.
 
 There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.

@@ -1,16 +1,22 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset for PrayerClarity: Rebalanced 0.2.0**.
+Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.3**. The roster values were first accepted in 0.2.0; 0.2.2/0.2.3 repaired runtime safety/ownership without changing the nominal balance table below.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
-Stable runtime identity:
+Current stable runtime identity:
 
-- Rebalanced version: **0.2.0**
-- frozen accepted ref: `accepted/rebalanced-0.2.0`
-- exact accepted source SHA: `26048581c3fe6e0d8ef4ae930a0c29474f68bbcf`
+- Rebalanced version: **0.2.3**
+- frozen accepted ref: `accepted/rebalanced-0.2.3`
+- exact accepted runtime source SHA: `ab1eb67cbf2465a912c392120395011503b720c3`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
-- accepted DLL SHA-256: `84cf07be553e137d4663d24267ab18257facfbe44c0a833d87579876742b6de1`
+- accepted/released DLL SHA-256: `03a4a8b43c8a5ffef8ec62eac58370d3f6bced347bc2fb4f49a2ef81a23cb1ca`
+
+Version history relevant to this spec:
+
+- **0.2.0** accepted the roster and values below.
+- **0.2.2** repaired Shoots & Roots runtime behavior while retaining the nominal `-20/-30/-40%` ladder and adding the accepted **95% combined growth-time-reduction safety cap**.
+- **0.2.3** retained the roster and moved Repentance plus Combat damage/armor onto the accepted narrower host-native seams documented in `REBALANCED_NATIVE_SEAM_AUDIT.md`.
 
 The sibling Vanilla release remains mechanically stock and is documented separately.
 
@@ -26,7 +32,7 @@ The sibling Vanilla release remains mechanically stock and is documented separat
 
 ## Accepted roster
 
-| Family | 100% Church Quality | PrayerClarity: Rebalanced 0.2.0 behavior |
+| Family | 100% Church Quality | Current stable Rebalanced behavior |
 | --- | ---: | --- |
 | Ordinary `b_empty` | **10** | Stock starter baseline. |
 | Faith `b_faith` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +10 / +20 Faith**. No prayer-owned donation bonus. |
@@ -155,21 +161,19 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-PrayerClarity: Rebalanced 0.2.0 was user-tested and accepted for stable promotion on 2026-09-18.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.3**.
 
-Runtime-accepted in the tested candidate:
+The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent accepted releases kept those nominal values while repairing implementation details:
 
-- revised Faith / Donations / Combo semantics and CQ requirements;
-- Soul's Repose q30/60/120 and current Soul Gratitude pulpit metric;
-- representative RU/EN/DE/JA rendering of the new pulpit context;
-- synchronized pulpit / Technology / active-effect presentation for representative timed prayers;
-- Test Harness + Rebalanced Compatibility operation with the candidate;
-- representative stock-duration native buff activation;
-- no PrayerClarity-specific exception/error in the supplied runtime log.
+- 0.2.2 closed the instant-growth regression and the 100%-stack edge for Shoots & Roots, retaining the nominal 20/30/40% reduction ladder with a 95% combined safety cap;
+- 0.2.3 runtime-verified Repentance at 50/75/100% and Combat at +5/+10/+15 damage, +4 armor and 1/2/4 HP/s through the narrower accepted native seams;
+- current architecture/save-lifecycle status is **A — no architecture action**, per `POST_AUDIT_VERDICT.md`.
 
-Deferred, non-blocking verification:
+The original 0.2.0 acceptance also covered the revised Faith / Donations / Combo semantics and requirements, Soul's Repose q30/60/120 plus current Soul Gratitude context, representative localization, synchronized presentation surfaces, and absence of PrayerClarity-specific runtime exceptions in the supplied acceptance logs.
 
-- terminal Repose wording/behavior still needs a save that has reached terminal Donkey corpse progression;
-- physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been observed in the user's runtime, although it uses the already verified native non-Faith/non-money sermon-drop path.
+Deferred, non-blocking verification remains:
 
-These are recorded in `TEST_BUILD_LOG.md`. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.0 bytes.
+- terminal Repose wording/presentation on a save that has reached terminal Donkey corpse progression;
+- physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been visually observed in the user's runtime, although it uses the verified native non-Faith/non-money sermon-drop path.
+
+These are evidence gaps, not blockers for 0.2.3. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.3 bytes.
