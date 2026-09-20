@@ -9,6 +9,7 @@
   "rebalanced.active.repose.silver": "Dans la moitié des cas, le meilleur corps est garanti",
   "rebalanced.active.repose.gold": "L’âne apporte à coup sûr le meilleur corps",
   "rebalanced.active.combat": "Dégâts +{0:0.##} · Armure +{1:0.##} · Régénération {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Soin d’une âme : +{0:0} % de gratitude",
-  "rebalanced.tech.plant_tier": "Temps de croissance des plantes : -{0:0} %"
+  "rebalanced.active.gratitude": "Soin d’une âme : +{0:0} % (gratitude_points)",
+  "rebalanced.tech.plant_tier": "Temps de croissance des plantes : -{0:0} %",
+  "rebalanced.tech.souls_intro": "Plus de (gratitude_points) augmente le bonus de Foi."
 }
