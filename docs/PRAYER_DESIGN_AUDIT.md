@@ -292,3 +292,17 @@ One small wording defect remains in Russian Soul Contentment:
 BSS Soul's Repose also produced a useful clarity observation. Its tier bonus (+50/+100/+150% Faith) applies to the Souls-specific Faith base:
 `(Church Quality + current Soul Gratitude) * 0.1 * EloquenceFactor`.
 Therefore its smaller-looking percentage can beat Combo on Faith once Soul Gratitude is material. The Base result already exposes the enlarged base; if further clarification is desired, prefer replacing the currently redundant shared effect sentence with a one-line explanation that the tier Faith bonus is calculated from that base. Do not repeat the full formula or add another tooltip block.
+
+
+## 2026-09-20 Soul wording refinement — 0.2.13
+
+Accepted wording direction after the 0.2.12 visual pass:
+
+- **Soul Contentment**: keep the correct +20% mechanic, but render the affected resource with the native `(gratitude_points)` icon instead of the ambiguous generic noun “gratitude”.
+- **BSS Soul's Repose**: do not use the generic wording “the Faith bonus is calculated from this base”. That statement is formally true but does not explain what is special about this prayer.
+
+Preferred concise explanation:
+
+`Чем больше (gratitude_points), тем больше бонус веры.`
+
+This directly explains the player-relevant consequence of the verified formula: Soul Gratitude enlarges the Faith baseline, so the absolute value of the +50/+100/+150% tier bonus rises with current Soul Gratitude. The full formula remains documented in mechanics docs and is not repeated in the tooltip.
