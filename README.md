@@ -4,13 +4,13 @@ PrayerClarity is a pair of alternative BepInEx mods for **Graveyard Keeper 1.407
 
 ## Editions
 
-### PrayerClarity: Vanilla — 1.0.31
+### PrayerClarity: Vanilla — 1.0.32
 
 *Understand what your prayers actually do — without changing how they work.*
 
 Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improving prayer descriptions, quality comparisons, success requirements, pulpit information, item tooltips, and Character -> Temporary Effects.
 
-[Download PrayerClarity: Vanilla 1.0.31](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.31)
+[Download PrayerClarity: Vanilla 1.0.32](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.32)
 
 ### PrayerClarity: Rebalanced — 0.2.13
 
@@ -22,7 +22,7 @@ Uses the same Clarity presentation layer, but intentionally rebalances and repai
 
 ## Current stable differences
 
-- **Vanilla 1.0.31:** keeps stock 1.407 prayer mechanics/balance while carrying the accepted compact Clarity hierarchy, parenthetical Base-result dependencies, cleaner item rewards and prayer-item spacing, plus the stock Prayer for Excellence lore fallback on the multi-quality crafting surface.
+- **Vanilla 1.0.32:** keeps stock 1.407 prayer mechanics/balance while carrying the accepted compact Clarity hierarchy, parenthetical Base-result dependencies, cleaner item rewards and prayer-item spacing, the stock Prayer for Excellence lore fallback, and the clearer Technology success-condition hierarchy using **On success:** / **При успехе:**.
 - **Rebalanced 0.2.13:** includes the same Clarity layer plus the accepted full-roster rebalance; specialist prayers now keep only their own success role instead of generic Faith/donation garnish, Donations pays +5/+15/+30 silver, Combo scales Faith +100/+150/+200% and donations +100/+200/+300%, ordinary Repose uses q20/q40/q60 with 30/42/54-minute durations, and Roots keeps the 95% combined growth-time safety cap.
 
 ## Shared clarity features

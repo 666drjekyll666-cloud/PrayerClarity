@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-20 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.31 and PrayerClarity: Rebalanced 0.2.13.
+Status: product/architecture source of truth, reconciled 2026-09-20 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.32 and PrayerClarity: Rebalanced 0.2.13.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -38,7 +38,7 @@ Internal evidence/design layers remain distinct:
 
 Current accepted stable runtime identities are edition-specific:
 
-- **PrayerClarity: Vanilla 1.0.31** — accepted ref `accepted/vanilla-1.0.31`, exact source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- **PrayerClarity: Vanilla 1.0.32** — accepted ref `accepted/vanilla-1.0.32`, exact source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
 - **PrayerClarity: Rebalanced 0.2.13** — accepted ref `accepted/rebalanced-0.2.13`, exact runtime source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`, DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
 
 Both stable releases were published from their exact accepted CI artifacts without rebuilding. Later `main` documentation/repository-hygiene commits do not redefine those frozen runtime identities.

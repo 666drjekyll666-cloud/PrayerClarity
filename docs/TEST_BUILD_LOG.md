@@ -93,9 +93,29 @@ This file records handed executable artifacts once PrayerClarity research reache
   - Rebalanced Soul Contentment also retained the stale stock +10% description despite the effective +20% mechanic.
 - **0.2.11 is superseded by 0.2.12 for presentation repair; its handed bytes/source remain immutable evidence.**
 
+## PrayerClarity: Vanilla 1.0.32 — accepted stable
+
+- User runtime acceptance: **2026-09-20**.
+- Frozen accepted ref: `accepted/vanilla-1.0.32`.
+- Exact tested/build source SHA: `aaabd3cf154faa019e36b2112439ec9990fdc1bd`.
+- Candidate CI run: `35502879595`; result: **success**.
+- Artifact ID: `10602579329`.
+- Artifact: `PrayerClarity-1.0.32-ci-aaabd3cf154faa019e36b2112439ec9990fdc1bd`.
+- Artifact ZIP digest: `sha256:774f041e451bcac296cb20aca0a1c9c2a6a1cdca2e8b72e4e557e0524b049e85`.
+- Accepted/release DLL SHA-256: `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
+- Stable promotion PR: **#23**, squash-merged to `main` as `71457fe9bcf0f068687ea23f7ebf548582f13efa`.
+- Accepted behavior:
+  - Vanilla Technology uses **При успехе:** / **On success:** as the condition-style success header;
+  - a shared stock Faith/donation rider and a shared named effect are rendered as one continuous success-only block;
+  - spacing before Bronze/Silver/Gold tier blocks remains;
+  - prayer-item tooltips remain unchanged and keep the existing **Бонусы при успехе** hierarchy;
+  - stock Graveyard Keeper 1.407 prayer mechanics, requirements, rewards and balance remain unchanged.
+- Runtime evidence explicitly confirmed that the new Technology wording reads naturally across prayers and that prayer-item tooltips did not change.
+- Status: **accepted and promoted to main; publication must reuse the exact handed DLL bytes without rebuilding**.
+
 ## Current stable baselines — 2026-09-20
 
-- **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- **PrayerClarity: Vanilla 1.0.32** — `accepted/vanilla-1.0.32`, source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
 - **PrayerClarity: Rebalanced 0.2.13** — `accepted/rebalanced-0.2.13`, source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`, DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 

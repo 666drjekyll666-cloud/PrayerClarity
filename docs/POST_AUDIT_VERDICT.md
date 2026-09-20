@@ -11,10 +11,10 @@ This document is a **closure record**, not a new redesign proposal. It records w
 ### PrayerClarity: Vanilla
 
 - accepted/released version: **1.0.31**
-- accepted ref: `accepted/vanilla-1.0.31`
+- accepted ref: `accepted/vanilla-1.0.32`
 - exact source: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`
 - DLL SHA-256: `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`
-- release: `v1.0.31`
+- release: `v1.0.32`
 
 ### PrayerClarity: Rebalanced
 
@@ -185,7 +185,7 @@ The only known unresolved Repose item is the **terminal Donkey-progression endpo
 
 ## Vanilla verdict
 
-Vanilla 1.0.31 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
+Vanilla 1.0.32 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
 
 The same terminal Repose endpoint presentation case remains optional/non-blocking.
 
@@ -231,3 +231,13 @@ Rebalanced 0.2.13 changes the projected prayer definitions and presentation, not
 - no new per-frame polling, save-owned state, persistent timers, broad scans, or new gameplay lifecycle owner were introduced.
 
 The existing **A — no architecture action** verdict therefore carries forward.
+
+
+### 2026-09-20 Vanilla 1.0.32 addendum
+
+Vanilla 1.0.32 changes only Technology presentation hierarchy:
+- the success heading is rendered as a condition;
+- shared stock success resource text and the named prayer effect are grouped visually;
+- prayer-item presentation and stock prayer mechanics are unchanged.
+
+No new runtime ownership, per-frame polling, save-owned state, broad scans, persistent timers, or gameplay hooks were introduced. The existing **A — no architecture action** verdict carries forward.

@@ -1,0 +1,58 @@
+name: Publish accepted Vanilla 1.0.32
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-vanilla-1.0.32.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      ACCEPTED_SHA: aaabd3cf154faa019e36b2112439ec9990fdc1bd
+      VANILLA_SHA256: c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download exact accepted artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: 666drjekyll666-cloud/PrayerClarity
+          run-id: 35502879595
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-1.0.32-ci-aaabd3cf154faa019e36b2112439ec9990fdc1bd
+          path: accepted
+
+      - name: Verify accepted bytes and stage canonical asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          handed='accepted/PrayerClarity-1.0.32-ci.dll'
+          test -f "$handed"
+          actual=$(sha256sum "$handed" | awk '{print $1}')
+          test "$actual" = "$VANILLA_SHA256"
+
+          mkdir -p release
+          cp "$handed" release/PrayerClarity.dll
+          test "$(sha256sum release/PrayerClarity.dll | awk '{print $1}')" = "$VANILLA_SHA256"
+
+      - name: Publish Vanilla 1.0.32 without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.32 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'v1.0.32 already exists; leaving it unchanged.'
+          else
+            gh release create v1.0.32 release/PrayerClarity.dll \
+              --repo 666drjekyll666-cloud/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Vanilla 1.0.32' \
+              --latest=false \
+              --notes "Accepted PrayerClarity: Vanilla release for Graveyard Keeper 1.407. Technology now uses the clearer condition-style On success / При успехе heading, and shared stock resource bonuses stay visually grouped with the prayer's named effect so the full block reads as success-only. Prayer-item tooltips remain unchanged. Vanilla prayer mechanics, requirements, rewards and balance remain stock. Exact accepted runtime source: aaabd3cf154faa019e36b2112439ec9990fdc1bd. Exact DLL SHA-256: c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb."
+          fi

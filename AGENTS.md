@@ -30,7 +30,7 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 
 ### Current accepted stable baselines
 
-- **PrayerClarity: Vanilla 1.0.31** — tag/release `v1.0.31`, accepted ref `accepted/vanilla-1.0.31`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, accepted DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
+- **PrayerClarity: Vanilla 1.0.32** — tag/release `v1.0.32`, accepted ref `accepted/vanilla-1.0.32`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, accepted DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
 - **PrayerClarity: Rebalanced 0.2.13** — tag/release `rebalanced-v0.2.13`, accepted ref `accepted/rebalanced-0.2.13`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, accepted DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
 - Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
