@@ -27,6 +27,14 @@ This file records handed executable artifacts once PrayerClarity research reache
   5. if convenient, inspect one Better Save Soul utility prayer and confirm only its named specialist effect remains.
 - A full sermon payout retest is not required unless the projected tooltip values disagree with runtime behavior or a PrayerClarity error appears, because the accepted stock payout path consumes these same projected craft fields/output rows.
 - Numbered binaries are immutable after this handoff.
+- User runtime result, 2026-09-20: **balance/specialist cleanup passed, Technology presentation failed; candidate not accepted**.
+  - Donations +5/+15/+30 silver confirmed.
+  - Combo Faith +100/+150/+200% and donations +100/+200/+300% confirmed.
+  - specialist generic Faith/donation garnish removal confirmed.
+  - prayer-item tooltips, HUD, Temporary Effects and other checked surfaces remained correct.
+  - Technology tooltips regressed for cleaned specialists because vanilla omitted the `preach_params_2` anchor once generic resource contributions became empty; the stock requirement sentence reappeared and the crafting-location footer came before appended Clarity sections.
+  - Rebalanced Soul Contentment also retained the stale stock +10% description despite the effective +20% mechanic.
+- **0.2.11 is superseded by 0.2.12 for presentation repair; its handed bytes/source remain immutable evidence.**
 
 ## Current stable baselines — 2026-09-20
 
