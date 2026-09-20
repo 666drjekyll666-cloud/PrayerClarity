@@ -2,6 +2,26 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.2.13 candidate
+
+- Status: **handed for focused wording acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.13`.
+- Exact build/source SHA: `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`.
+- GitHub Actions run: `35482448986`; result: **success**.
+- Artifact ID: `10596500719`.
+- Artifact: `PrayerClarity-rebalanced-0.2.13-ci-4726160ced2dfd15f08b10cc0499eb8c5490e3eb`.
+- Artifact ZIP digest: `sha256:bc72d63459537e4e52c1a6e71b515d2ca8a9ca19a6d6688be2b8cc26057d7911`.
+- Handoff DLL: `PrayerClarity.Rebalanced-0.2.13-ci.dll`; SHA-256: `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
+- Candidate wording-only changes over accepted-in-testing 0.2.12:
+  - Soul Contentment shows the +20% gain with the native `(gratitude_points)` icon instead of the ambiguous generic noun;
+  - BSS Soul's Repose Technology effect now says that more Soul Gratitude means a larger Faith bonus, explaining why +50/+100/+150% scale from the enlarged Souls Faith base.
+- All 0.2.12 Technology repairs and 0.2.11 specialist/resource-balance changes are preserved unchanged.
+- Focused runtime acceptance requested:
+  1. Soul Contentment Technology: `За исцеление души: +20% [Soul Gratitude icon]`;
+  2. BSS Soul's Repose Technology: shared effect should read naturally as `Чем больше [Soul Gratitude icon], тем больше бонус веры.`;
+  3. no repeat balance/HUD/item-tooltip/full-sermon test unless either text change exposes a new layout issue.
+- Numbered binaries are immutable after this handoff.
+
 ## PrayerClarity: Rebalanced 0.2.12 candidate
 
 - Status: **handed for focused Technology runtime/visual acceptance; not stable; do not merge to main yet**.
