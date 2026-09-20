@@ -1,13 +1,13 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.13**. On 2026-09-19 the user runtime-tested and accepted the Repentance/Repose duration revision to **30 / 42 / 54 min**.
+Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.14**. On 2026-09-19 the user runtime-tested and accepted the Repentance/Repose duration revision to **30 / 42 / 54 min**.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
 Current stable runtime identity:
 
-- Rebalanced version: **0.2.13**
-- frozen accepted ref: `accepted/rebalanced-0.2.10`
+- Rebalanced version: **0.2.14**
+- frozen accepted ref: `accepted/rebalanced-0.2.14`
 - exact accepted runtime source SHA: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
 - accepted/released DLL SHA-256: `ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`
@@ -162,7 +162,7 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-The current stable edition is **PrayerClarity: Rebalanced 0.2.13**.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.14**.
 
 The 0.2.4 duration revision changes only Repentance and Repose from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged.
 
@@ -173,6 +173,7 @@ The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent a
 - 0.2.4 runtime-verified the revised Repentance/Repose duration presentation at approximately 2.7 / 3.7 / 4.8 in-game days under Longer Days +50%, corresponding to 30 / 42 / 54 real-time minutes;
 - 0.2.10 kept those durations and the accepted Repose corpse-quality semantics while raising ordinary Repose Gold's guaranteed-success requirement from q50 to q60;
 - 0.2.13 keeps the accepted specialist mechanics but removes unrelated generic Faith/donation success garnish from utility specialists, changes Donations to +5/+15/+30 silver, changes Combo donations to +100/+200/+300% while Faith remains +100/+150/+200%, and carries the accepted Technology/Soul wording cleanup;
+- 0.2.14 keeps all 0.2.13 gameplay values unchanged and aligns the Technology success heading with Vanilla 1.0.32: **On success:** / **При успехе:**;
 - current architecture/save-lifecycle status is **A — no architecture action**, per `POST_AUDIT_VERDICT.md`.
 
 The original 0.2.0 acceptance also covered the revised Faith / Donations / Combo semantics and requirements, Soul's Repose q30/60/120 plus current Soul Gratitude context, representative localization, synchronized presentation surfaces, and absence of PrayerClarity-specific runtime exceptions in the supplied acceptance logs.
@@ -182,4 +183,4 @@ Deferred, non-blocking verification remains:
 - terminal Repose wording/presentation on a save that has reached terminal Donkey corpse progression;
 - physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been visually observed in the user's runtime, although it uses the verified native non-Faith/non-money sermon-drop path.
 
-These are evidence gaps, not blockers for 0.2.13. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.13 bytes.
+These are evidence gaps, not blockers for 0.2.14. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.14 bytes.
