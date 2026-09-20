@@ -1,13 +1,13 @@
 # Prayer Design Audit — Graveyard Keeper 1.407
 
-Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-20 with PrayerClarity: Vanilla 1.0.31 and stable PrayerClarity: Rebalanced 0.2.10.
+Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-20 with PrayerClarity: Vanilla 1.0.31 and stable PrayerClarity: Rebalanced 0.2.13.
 
 Stock mechanics remain canonical in `PRAYER_MECHANICS.md`. Exact current Rebalanced values are canonical in `PRAYER_REBALANCE_OPTIONS.md`. Historical alternatives and earlier coefficient experiments are retained in `PRAYER_POWER_BUDGET.md` and Git history as analysis only.
 
 ## Current accepted baselines
 
 - **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, exact source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`.
-- **PrayerClarity: Rebalanced 0.2.10** — `accepted/rebalanced-0.2.10`, exact runtime source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `rebalanced-v0.2.10`.
+- **PrayerClarity: Rebalanced 0.2.13** — `accepted/rebalanced-0.2.13`, exact runtime source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`.
 
 The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3 changed runtime safety/ownership, 0.2.4 made the accepted Repentance/Repose duration adjustment to 30/42/54 minutes, and 0.2.10 raises ordinary Repose Gold's guaranteed-success gate from q50 to q60 while preserving its accepted effect. The accepted Roots aggregate safety cap remains in force.
 
@@ -72,7 +72,7 @@ The accepted q30/60/120 ladder gates a +50/+100/+150% prayer-owned Faith bonus. 
 
 The accepted design repairs an otherwise disconnected stock prayer by reusing the game's daily confession scheduler and two-confessional loop.
 
-Current probability ladder is 50% / 75% / 100%. Stable 0.2.10 duration is **30/42/54 minutes**.
+Current probability ladder is 50% / 75% / 100%. Stable 0.2.13 duration is **30/42/54 minutes**.
 
 Because the effect acts only on once-per-game-day confession rolls, duration must be judged by how many future daily rolls actually occur while the buff is live, not just by the probability itself. The accepted 0.2.4 revision raises Bronze enough to cover about four stock-day opportunities, moves Silver to a distinct intermediate window, and leaves Gold unchanged.
 
@@ -110,7 +110,7 @@ A prayer should be reopened when new evidence shows that this role is not actual
 
 ## Current architecture consequence
 
-Current stable 0.2.10 keeps Graveyard Keeper authoritative where practical:
+Current stable 0.2.13 keeps Graveyard Keeper authoritative where practical:
 
 - Roots leaves stock growth formulas intact and projects only the native input, with the accepted 95% aggregate cap;
 - Repentance leaves the stock daily reset/RNG/loop intact and projects only the effective `confession_probability` read while the native buff is live;
@@ -123,7 +123,7 @@ Current stable 0.2.10 keeps Graveyard Keeper authoritative where practical:
 
 ## Current status
 
-The stable balance/architecture baseline is **Rebalanced 0.2.10**. There is no blanket rebalance or architecture task pending.
+The stable balance/architecture baseline is **Rebalanced 0.2.13**. The specialist-purity/resource retune and its Technology presentation follow-ups are accepted; there is no blanket rebalance or architecture task pending.
 
 Known non-blocking evidence gaps remain:
 
@@ -139,7 +139,7 @@ Status: **design hypothesis; no production change yet**.
 
 ### Direct current-state fact
 
-Stock 1.407 generic success coefficients retained by Rebalanced 0.2.10 unless a rule explicitly overrides them:
+Historical 0.2.10 state before the accepted 0.2.13 specialist-purity cleanup:
 
 | Family | Stock/inherited Faith rider | Stock/inherited donation rider | Current specialist role |
 | --- | ---: | ---: | --- |

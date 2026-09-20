@@ -1,0 +1,58 @@
+name: Publish accepted Rebalanced 0.2.13
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-rebalanced-0.2.13.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      ACCEPTED_SHA: 4726160ced2dfd15f08b10cc0499eb8c5490e3eb
+      REBALANCED_SHA256: da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download exact accepted artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: 666drjekyll666-cloud/PrayerClarity
+          run-id: 35482448986
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-rebalanced-0.2.13-ci-4726160ced2dfd15f08b10cc0499eb8c5490e3eb
+          path: accepted
+
+      - name: Verify accepted bytes and stage canonical asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          handed='accepted/PrayerClarity.Rebalanced-0.2.13-ci.dll'
+          test -f "$handed"
+          actual=$(sha256sum "$handed" | awk '{print $1}')
+          test "$actual" = "$REBALANCED_SHA256"
+
+          mkdir -p release
+          cp "$handed" release/PrayerClarity.Rebalanced.dll
+          test "$(sha256sum release/PrayerClarity.Rebalanced.dll | awk '{print $1}')" = "$REBALANCED_SHA256"
+
+      - name: Publish Rebalanced 0.2.13 without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view rebalanced-v0.2.13 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'rebalanced-v0.2.13 already exists; leaving it unchanged.'
+          else
+            gh release create rebalanced-v0.2.13 release/PrayerClarity.Rebalanced.dll \
+              --repo 666drjekyll666-cloud/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Rebalanced 0.2.13' \
+              --latest=false \
+              --notes "Accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Specialist prayers now keep their own success role without unrelated Faith/donation garnish; Prayer for Donations pays +5/+15/+30 silver; Combo Prayer keeps Faith +100/+150/+200% and uses donations +100/+200/+300%; ordinary Repose remains q20/q40/q60 with 30/42/54-minute durations; Technology tooltips preserve the Clarity hierarchy after specialist cleanup; Soul Contentment shows +20% Soul Gratitude with the native icon; and Soul's Repose explains that more Soul Gratitude produces a larger Faith bonus. Exact accepted runtime source: 4726160ced2dfd15f08b10cc0499eb8c5490e3eb. Exact DLL SHA-256: da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd."
+          fi

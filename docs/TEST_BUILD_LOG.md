@@ -73,9 +73,22 @@ This file records handed executable artifacts once PrayerClarity research reache
 ## Current stable baselines — 2026-09-20
 
 - **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
-- **PrayerClarity: Rebalanced 0.2.10** — `accepted/rebalanced-0.2.10`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `rebalanced-v0.2.10`, DLL SHA-256 `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`.
+- **PrayerClarity: Rebalanced 0.2.13** — `accepted/rebalanced-0.2.13`, source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`, DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
+
+### Vanilla direct-runtime coverage note — 2026-09-20
+
+- Last explicit user session that definitely loaded and tested **PrayerClarity: Vanilla** itself was **Vanilla 1.0.25** on 2026-09-18.
+- The later shared presentation changes that became Vanilla 1.0.28 / 1.0.29 / 1.0.30 / 1.0.31 were runtime-tested through the sibling **Rebalanced** DLL built from the same shared presentation source. They were promoted to Vanilla because the affected presentation code is shared and both sibling projects built successfully, but there is no later repository evidence of the user explicitly loading Vanilla 1.0.28–1.0.31.
+- Therefore Vanilla 1.0.31 remains the published stable Clarity-only build, but a focused direct Vanilla spot-check is still useful evidence rather than a mechanics regression requirement.
+- Focused direct Vanilla checklist:
+  1. Technology: ordinary prayer Base result uses compact parenthetical dependencies; stock success values remain stock.
+  2. Technology: Prosperity keeps Commercial Blessing x1/x2/x3; Prayer for Excellence shows its stock lore once at Writing Desk II.
+  3. Prayer item: visible spacing between lore -> Base result -> Bonuses on success; 100%-success threshold stays on one line.
+  4. Reward rows: item rewards render as one `name ×N` line and percentage rows omit the old “of base value” suffix.
+  5. Soul's Repose: Base result still names both Church Quality and Soul Gratitude inputs, while all prayer mechanics/requirements remain vanilla.
+  6. Character -> Temporary Effects / HUD: only a visual spot-check is needed; no Rebalanced-only semantics should appear.
 
 ## Shared candidate — Vanilla 1.0.31 / Rebalanced 0.2.10
 

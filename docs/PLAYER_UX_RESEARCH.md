@@ -351,7 +351,7 @@ The mechanics re-checks that previously blocked a complete prayer-by-prayer whit
 - Shoots and Roots end-to-end wiring: closed as a stock parameter-scope mismatch;
 - Prayer of Repentance: no gameplay consumer found, externally corroborated as apparently inert.
 
-The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been carried forward and runtime-accepted through PrayerClarity: Vanilla 1.0.31 and the shared presentation in Rebalanced 0.2.10.
+The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been carried forward and runtime-accepted through PrayerClarity: Vanilla 1.0.31 and the shared presentation in Rebalanced 0.2.13.
 
 There is currently no open UX-research gate in this document. New research should be driven by fresh player feedback or a concrete presentation problem observed in the stable siblings rather than by the historical pre-prototype checklist.
 
@@ -359,7 +359,7 @@ There is currently no open UX-research gate in this document. New research shoul
 
 ### Community signal — success header was read too narrowly
 
-A fresh player review of the accepted Rebalanced 0.2.10 tooltip exposed a specific interpretation failure on Prayer for Repose.
+A fresh player review of the then-stable Rebalanced 0.2.10 tooltip exposed a specific interpretation failure on Prayer for Repose.
 
 The tooltip hierarchy was:
 
@@ -371,7 +371,7 @@ This is one player report, not community consensus. It is nevertheless a strong 
 
 ### Broader design signal
 
-Stock 1.407 gives many utility/specialist prayers generic Faith/donation riders in addition to their named effect. Current Rebalanced 0.2.10 intentionally strengthened or repaired the named specialist roles, but still inherits most of those stock resource riders.
+Stock 1.407 gives many utility/specialist prayers generic Faith/donation riders in addition to their named effect. Rebalanced 0.2.10 intentionally strengthened or repaired the named specialist roles, but still inherited most of those stock resource riders. Rebalanced 0.2.13 removes that generic success garnish from utility specialists.
 
 External player discussions repeatedly describe:
 - Combo as the default broad sermon once available;

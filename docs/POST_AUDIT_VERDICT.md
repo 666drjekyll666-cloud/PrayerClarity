@@ -18,12 +18,12 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Rebalanced
 
-- accepted/released version: **0.2.10**
-- accepted ref: `accepted/rebalanced-0.2.10`
-- exact runtime source: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`
-- DLL SHA-256: `1f7131bda66554bb18396bed28a5997a531c2a0b9a44df1a61071d2c7e9b78e1`
-- release: `rebalanced-v0.2.10`
-- stable promotion merge: `1d4e196f51f067b8d0127aafa8505cfc4ee88d40`
+- accepted/released version: **0.2.13**
+- accepted ref: `accepted/rebalanced-0.2.13`
+- exact runtime source: `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`
+- DLL SHA-256: `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`
+- release: `rebalanced-v0.2.13`
+- stable promotion merge: `b8888d32648a6f7c16f473792636872bc8212344`
 
 The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
@@ -220,3 +220,14 @@ A later balance decision changed Repentance and Repose duration from 18/36/54 to
 The accepted shared source `30b036f16dc6a7964f7ef72e2e3ececa5951c812` carries the closed gameplay/save-lifecycle architecture forward. Rebalanced ordinary Repose Gold now uses q60 through the existing static definition projection. Shared presentation additions (compact Base-result wording, item-tooltip hierarchy/spacing, Excellence stock-lore fallback, and active-effect/Technology text refinements) run only on the relevant UI/crafting-description paths and add no save-owned state or per-frame polling. The exact accepted binaries were published as `v1.0.31` and `rebalanced-v0.2.10` without rebuilding.
 
 Future PrayerClarity architecture audits should start from this verdict rather than re-litigating the closed mechanisms above without new evidence.
+
+
+### 2026-09-20 Rebalanced 0.2.13 addendum
+
+Rebalanced 0.2.13 changes the projected prayer definitions and presentation, not the underlying ownership/lifecycle architecture:
+- specialist-purity and Donations/Combo retuning reuse the accepted once-per-load CraftDefinition projection;
+- fixed Faith/money cleanup removes only prayer-owned output rows at the same static projection seam;
+- the 0.2.12 Technology repair and 0.2.13 Soul wording changes are UI/crafting-description presentation only;
+- no new per-frame polling, save-owned state, persistent timers, broad scans, or new gameplay lifecycle owner were introduced.
+
+The existing **A — no architecture action** verdict therefore carries forward.
