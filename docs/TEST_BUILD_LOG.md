@@ -2,6 +2,32 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.2.11 candidate
+
+- Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.11`.
+- Exact build/source SHA: `71bf43a3e622bfc44cd58b991df390389a5debb5`.
+- GitHub Actions run: `35480090700`; result: **success**.
+- Artifact ID: `10595801273`.
+- Artifact: `PrayerClarity-rebalanced-0.2.11-ci-71bf43a3e622bfc44cd58b991df390389a5debb5`.
+- Artifact ZIP digest: `sha256:753fba0c8aebfda7d29d132038dddff7d21a73a8ff7d14c5a0362b05e90816e5`.
+- Handoff DLL: `PrayerClarity.Rebalanced-0.2.11-ci.dll`; SHA-256: `2768796539631904962f9b89f36a29ee9649c4012eae000ee73933c857c9ad6b`.
+- Vanilla sibling was rebuilt only as a compile/regression check at unchanged version 1.0.31; this candidate changes Rebalanced behavior only.
+- Candidate behavior:
+  - Молитва о пожертвованиях: success-only flat reward **+5 / +15 / +30 silver**;
+  - Комбо-молитва: Faith **+100 / +150 / +200%**, donations **+100 / +200 / +300%**;
+  - utility/specialist prayers explicitly remove unrelated prayer-owned Faith/donation percentages and fixed Faith/money outputs;
+  - named specialist effects, durations, Repose logic, Roots cap, Commercial Blessings and Imagination Story rewards remain unchanged;
+  - Молитва за упокой душ remains the deliberate Faith-scaling specialist and keeps +50 / +100 / +150% Faith.
+- Requested runtime/visual acceptance:
+  1. inspect Молитва об упокоении (or another ordinary specialist): under **Бонусы при успехе** the named effect should appear without generic Faith/donation rows;
+  2. inspect Молитва о процветании: Commercial Blessing x1/x2/x3 must remain, while generic Faith/money rows are gone;
+  3. inspect Молитва о пожертвованиях: +5/+15/+30 silver;
+  4. inspect Комбо-молитва: Faith +100/+150/+200%, donations +100/+200/+300%;
+  5. if convenient, inspect one Better Save Soul utility prayer and confirm only its named specialist effect remains.
+- A full sermon payout retest is not required unless the projected tooltip values disagree with runtime behavior or a PrayerClarity error appears, because the accepted stock payout path consumes these same projected craft fields/output rows.
+- Numbered binaries are immutable after this handoff.
+
 ## Current stable baselines — 2026-09-20
 
 - **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
