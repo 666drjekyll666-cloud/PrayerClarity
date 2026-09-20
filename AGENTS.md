@@ -246,6 +246,21 @@ A diagnostic probe must answer one narrow question and be removable.
 
 When several closely related runtime questions require the user's installed game, prefer a research-only Test Console/harness that turns them into explicit buttons/actions and one returned log. Use native game APIs for the behavior under test, keep synthetic setup narrow/reversible, log the effective inputs/results, warn about any save-persistent test state, and never ship the harness in production. Follow the global DevRules user-operated runtime harness contract.
 
+## User-facing communication
+
+The user is technically literate but is not working as the project's implementation engineer.
+
+When reporting plans, findings, trade-offs, or next steps to the user:
+
+- prefer clear Russian game/design language over implementation shorthand;
+- use Russian prayer names by default in discussion; add internal IDs only when they materially disambiguate evidence;
+- translate avoidable English engineering jargon into ordinary Russian, while preserving exact technical terms when precision requires them;
+- when a technical term is necessary, explain its practical meaning in the same sentence instead of assuming the user knows the local codebase vocabulary;
+- describe actions concretely (for example, “проверю в данных игры, какие фиксированные Faith/деньги реально выдаёт каждая молитва”) rather than with compressed phrases such as “direct verification fixed outputs”;
+- do not oversimplify formulas, mechanics, evidence status, version identity, or engineering risk merely to sound less technical.
+
+This is a communication rule only; it must not weaken evidence standards or technical precision.
+
 ## Repository policy
 
 Long-lived findings belong primarily in:
