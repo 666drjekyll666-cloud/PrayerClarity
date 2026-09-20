@@ -9,6 +9,7 @@
   "rebalanced.active.repose.silver": "Em metade dos casos, o melhor corpo é garantido",
   "rebalanced.active.repose.gold": "O burro traz garantidamente o melhor corpo",
   "rebalanced.active.combat": "Dano +{0:0.##} · Armadura +{1:0.##} · Regeneração {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Ao curar uma alma: +{0:0}% de gratidão",
-  "rebalanced.tech.plant_tier": "Tempo de crescimento das plantas: -{0:0}%"
+  "rebalanced.active.gratitude": "Ao curar uma alma: +{0:0}% (gratitude_points)",
+  "rebalanced.tech.plant_tier": "Tempo de crescimento das plantas: -{0:0}%",
+  "rebalanced.tech.souls_intro": "Mais (gratitude_points) aumenta o bônus de Fé."
 }
