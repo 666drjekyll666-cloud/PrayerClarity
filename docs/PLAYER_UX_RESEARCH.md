@@ -354,3 +354,52 @@ The mechanics re-checks that previously blocked a complete prayer-by-prayer whit
 The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been carried forward and runtime-accepted through PrayerClarity: Vanilla 1.0.31 and the shared presentation in Rebalanced 0.2.10.
 
 There is currently no open UX-research gate in this document. New research should be driven by fresh player feedback or a concrete presentation problem observed in the stable siblings rather than by the historical pre-prototype checklist.
+
+## 2026-09-20 specialist success-scope follow-up
+
+### Community signal — success header was read too narrowly
+
+A fresh player review of the accepted Rebalanced 0.2.10 tooltip exposed a specific interpretation failure on Prayer for Repose.
+
+The tooltip hierarchy was:
+
+`Bonuses on success -> Faith +10% -> Effect -> tier-specific Repose/donation/Faith details`.
+
+The reviewer interpreted **Faith +10%** as the complete meaning of “Bonuses on success”, then read the following Repose effect as unconditional. They consequently questioned why the corpse-quality effect sat under a success section and how the later tier-specific rows related to it.
+
+This is one player report, not community consensus. It is nevertheless a strong **UX finding** because the misunderstanding follows directly from the visual/content hierarchy: a small generic resource rider appears first and looks like a self-contained answer to the section heading before the prayer's actual identity appears.
+
+### Broader design signal
+
+Stock 1.407 gives many utility/specialist prayers generic Faith/donation riders in addition to their named effect. Current Rebalanced 0.2.10 intentionally strengthened or repaired the named specialist roles, but still inherits most of those stock resource riders.
+
+External player discussions repeatedly describe:
+- Combo as the default broad sermon once available;
+- sermon money as increasingly negligible after mid-game money systems come online;
+- utility prayers as choices made for their special effect rather than for the small generic Faith/money rider.
+
+Useful community examples:
+- Reddit, 2025-02-06, “What's the best prayer to use?” — multiple replies describe Combo as the default and money from sermons as negligible after mid-game: https://www.reddit.com/r/GraveyardKeeper/comments/1ij5rxj/
+- Reddit, 2025-04-20, Gold Combo vs Gold Donation — replies note the two stock prayers pay the same money and Combo adds Faith: https://www.reddit.com/r/GraveyardKeeper/comments/1k3y63m/
+
+These are **community signals**, not mechanics evidence. Direct project evidence remains authoritative for the actual coefficients.
+
+### UX/design hypothesis
+
+For Rebalanced only, consider a **specialist purity rule**:
+
+> A non-resource specialist prayer should keep the universal sermon Base result, but its success-only contribution should describe/pay only its actual specialization.
+
+That means removing inherited generic prayer-owned Faith/donation percentages and small fixed Faith/money outputs from utility specialists rather than merely hiding them in presentation.
+
+Expected information hierarchy:
+
+`Base result -> Bonuses on success -> named effect / specialist reward -> tier requirement/duration`.
+
+Resource specialists remain explicit exceptions:
+- Prayer for Faith;
+- Prayer for Donations;
+- Combo Prayer;
+- BSS Prayer for Soul's Repose, whose Faith scaling is itself the specialization.
+
+Casual Prayer remains the stock starter baseline.
