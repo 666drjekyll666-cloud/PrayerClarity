@@ -215,3 +215,35 @@ Accepted Combo follow-up for the next Rebalanced candidate:
 - successful Gold Combo pays **4x base donations** in total. Against Gold Donations (`base + 30s`), the pure-money crossover is base donations = 10s: about Graveyard Quality 250 with Cardinal or 333 without Cardinal.
 
 This keeps Gold Combo a late scaling generalist without making Gold Donations obsolete as soon as q80 becomes available.
+
+
+## Rebalanced 0.2.11 candidate specification
+
+Status: **implemented on development branch; runtime acceptance still required**.
+
+Candidate resource family:
+- Молитва веры: unchanged, +5 / +10 / +20 Faith;
+- Молитва о пожертвованиях: **+5 / +15 / +30 silver**;
+- Комбо-молитва Faith: **+100 / +150 / +200%**;
+- Комбо-молитва donations: **+100 / +200 / +300%**;
+- Молитва за упокой душ: unchanged +50 / +100 / +150% Faith on the Souls baseline.
+
+Candidate specialist-purity rule:
+- Покаяние, Корни и побеги, Упокоение, Combat, Воображение, Совершенство, Процветание, Довольство душ и Тщательное очищение explicitly set prayer-owned Faith/donation percentage bonuses to zero;
+- those families also remove prayer-owned fixed Faith/money outputs if present;
+- physical specialist rewards remain untouched (for example Commercial Blessings and Imagination's Story rewards);
+- the retired Protection alias is cleaned the same way as canonical Combat so old/legacy prayer items cannot retain the removed generic resource garnish.
+
+Implementation uses the already accepted load-time CraftDefinition projection:
+- `k_faith` / `k_money` are set directly on the prayer craft data;
+- only output rows whose item IDs are exactly `faith` or `money` are removed;
+- specialist item drops and buff/effect data are not rewritten.
+
+Runtime acceptance should verify presentation/state rather than repeat the whole sermon-mechanics audit:
+1. one ordinary specialist (preferably Упокоение) shows its named effect immediately under “Бонусы при успехе”, with no generic Faith/donation row;
+2. Процветание still shows 1/2/3 Commercial Blessings but no unrelated Faith/money reward;
+3. Пожертвования shows +5/+15/+30 silver;
+4. Комбо shows Faith +100/+150/+200% and donations +100/+200/+300%;
+5. if convenient, one BSS utility prayer shows only its named specialist effect.
+
+A real sermon payout retest is required only if those projected values disagree with the UI or a runtime error appears, because the accepted stock payout path consumes these same CraftDefinition fields/output rows directly.
