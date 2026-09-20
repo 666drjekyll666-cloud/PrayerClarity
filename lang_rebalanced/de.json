@@ -9,6 +9,7 @@
   "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste Körper garantiert",
   "rebalanced.active.repose.gold": "Der Esel bringt garantiert den besten Körper",
   "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
-  "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% Dankbarkeit",
-  "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%"
+  "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% (gratitude_points)",
+  "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%",
+  "rebalanced.tech.souls_intro": "Mehr (gratitude_points) erhöht den Glaubensbonus."
 }

@@ -221,9 +221,27 @@ namespace PrayerClarity
                 TooltipPresentationSections sections = BuildTechnologySections(crafts);
                 if (sections == null || !sections.HasContent) return;
 
-                string vanillaLore = ResolveVanillaPrayerLore(crafts);
-                if (!TryReplaceVanillaPrayerMechanics(__0, sections, TechnologyTooltipMaxWidth, vanillaLore))
-                    AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
+                bool suppressVanillaLore = ShouldSuppressVanillaPrayerLore(crafts);
+                string vanillaLore = suppressVanillaLore ? null : ResolveVanillaPrayerLore(crafts);
+                if (!TryReplaceVanillaPrayerMechanics(
+                        __0,
+                        sections,
+                        TechnologyTooltipMaxWidth,
+                        vanillaLore,
+                        suppressVanillaLore))
+                {
+                    bool editionFallbackHandled =
+                        PrayerEditionSemantics.HasTechnologyProvider &&
+                        TryInsertSectionsAfterVanillaPrayerLore(
+                            __0,
+                            sections,
+                            TechnologyTooltipMaxWidth,
+                            vanillaLore,
+                            suppressVanillaLore);
+
+                    if (!editionFallbackHandled)
+                        AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
+                }
 
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
@@ -235,7 +253,12 @@ namespace PrayerClarity
             }
         }
 
-        private static bool TryReplaceVanillaPrayerMechanics(object tooltip, TooltipPresentationSections sections, int maxWidth, string vanillaLore)
+        private static bool TryReplaceVanillaPrayerMechanics(
+            object tooltip,
+            TooltipPresentationSections sections,
+            int maxWidth,
+            string vanillaLore,
+            bool suppressVanillaLore)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -277,7 +300,7 @@ namespace PrayerClarity
 
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
 
-            if (headerIndex > 0 && !string.IsNullOrEmpty(vanillaLore))
+            if (headerIndex > 0)
             {
                 object previous = list[headerIndex - 1];
                 if (previous != null && _bubbleTextType.IsInstanceOfType(previous))
@@ -285,10 +308,93 @@ namespace PrayerClarity
                     string text = R.Get(previous, "text") as string;
                     if (!string.IsNullOrEmpty(text) &&
                         text.IndexOf("(cross)", StringComparison.Ordinal) >= 0)
-                        R.Set(previous, "text", vanillaLore);
+                    {
+                        if (suppressVanillaLore)
+                        {
+                            list.RemoveAt(headerIndex - 1);
+                        }
+                        else
+                        {
+                            string replacement = !string.IsNullOrEmpty(vanillaLore)
+                                ? vanillaLore
+                                : StripStockRequirementLine(text);
+                            if (!string.IsNullOrEmpty(replacement))
+                                R.Set(previous, "text", replacement);
+                        }
+                    }
                 }
             }
 
+            return true;
+        }
+
+        private static bool TryInsertSectionsAfterVanillaPrayerLore(
+            object tooltip,
+            TooltipPresentationSections sections,
+            int maxWidth,
+            string vanillaLore,
+            bool suppressVanillaLore)
+        {
+            object data = R.Get(tooltip, "data");
+            IList list = data == null ? null : R.Get(data, "data_list") as IList;
+            if (list == null || list.Count == 0) return false;
+
+            if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
+            if (_bubbleTextType == null) return false;
+
+            int loreIndex = -1;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                object row = list[i];
+                if (row == null || !_bubbleTextType.IsInstanceOfType(row)) continue;
+
+                string text = R.Get(row, "text") as string;
+                if (string.IsNullOrEmpty(text) ||
+                    text.IndexOf("(cross)", StringComparison.Ordinal) < 0)
+                    continue;
+
+                string stripped = StripStockRequirementLine(text);
+                if (string.Equals(stripped, text, StringComparison.Ordinal)) continue;
+
+                loreIndex = i;
+                break;
+            }
+
+            if (loreIndex < 0) return false;
+
+            int insertIndex;
+            if (suppressVanillaLore)
+            {
+                list.RemoveAt(loreIndex);
+                insertIndex = loreIndex;
+            }
+            else
+            {
+                object loreRow = list[loreIndex];
+                string current = R.Get(loreRow, "text") as string;
+                string replacement = !string.IsNullOrEmpty(vanillaLore)
+                    ? vanillaLore
+                    : StripStockRequirementLine(current);
+                if (!string.IsNullOrEmpty(replacement))
+                    R.Set(loreRow, "text", replacement);
+                insertIndex = loreIndex + 1;
+            }
+
+            if (!string.IsNullOrEmpty(sections.BaseResult))
+            {
+                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.base_result"), 3));
+                list.Insert(insertIndex++, CreateTextData(sections.BaseResult, 4, maxWidth));
+            }
+
+            if (!string.IsNullOrEmpty(sections.SuccessBonuses))
+            {
+                object separator = CreateBlankSeparator();
+                if (separator != null) list.Insert(insertIndex++, separator);
+                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
+            }
+
+            TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
             return true;
         }
 
@@ -325,6 +431,71 @@ namespace PrayerClarity
                 AddTooltipData(tooltip, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
                 AddTooltipData(tooltip, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
+        }
+
+        private static bool ShouldSuppressVanillaPrayerLore(List<object> crafts)
+        {
+            if (crafts == null || crafts.Count == 0) return false;
+
+            foreach (object craft in crafts)
+            {
+                string key = ResolveBaseLoreKey(R.Id(craft));
+                if (!string.Equals(key, "b_grat_points_incr_d", StringComparison.Ordinal))
+                    return false;
+
+                string sharedText;
+                string tierText;
+                if (!PrayerEditionSemantics.TryBuildTechnologyEffect(
+                        R.Id(craft),
+                        out sharedText,
+                        out tierText))
+                    return false;
+            }
+
+            // Stock Soul Contentment embeds the vanilla +10% magnitude directly in
+            // b_grat_points_incr_d. Rebalanced owns a different effective magnitude,
+            // already rendered below from live projected prayer data, so keeping that
+            // stock sentence would deliberately show two conflicting mechanics.
+            return true;
+        }
+
+        private static string StripStockRequirementLine(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            string normalized = text.Replace("\r\n", "\n");
+
+            int newline = normalized.IndexOf('\n');
+            if (newline > 0)
+            {
+                string firstLine = normalized.Substring(0, newline);
+                if (firstLine.IndexOf("(cross)", StringComparison.Ordinal) >= 0)
+                    return normalized.Substring(newline + 1).TrimStart();
+            }
+
+            int cross = normalized.IndexOf("(cross)", StringComparison.Ordinal);
+            if (cross < 0 || cross > 64) return text;
+
+            int end = FindSentenceTerminator(normalized, cross);
+            if (end < 0 || end + 1 >= normalized.Length) return text;
+            return normalized.Substring(end + 1).TrimStart();
+        }
+
+        private static int FindSentenceTerminator(string text, int start)
+        {
+            for (int i = Math.Max(0, start); i < text.Length; i++)
+            {
+                switch (text[i])
+                {
+                    case '.':
+                    case '!':
+                    case '?':
+                    case '。':
+                    case '！':
+                    case '？':
+                        return i;
+                }
+            }
+            return -1;
         }
 
         private static string ResolveVanillaPrayerLore(List<object> crafts)

@@ -464,3 +464,21 @@ This preserves the Rebalanced late-game reliability benefit without inventing ti
 Historical Rebalanced 0.1.5 set `tier_min = tier_max` directly. At the terminal raw `2..4` state that could request `4..4`, for which stock `GenerateBody` has no definition and returns null. This was a **latent late-game edge-case in 0.1.5**, not an accepted behavior target.
 
 The current stable Rebalanced 0.2.10 resolves the highest actually existing eligible ordinary BodyDefinition before narrowing, so the old `4..4` failure mode is no longer the production design. Only the terminal endpoint wording/presentation remains a deferred non-blocking user-runtime observation.
+
+
+### Directly inspected fixed success outputs relevant to specialist cleanup
+
+For the next Rebalanced specialist-cleanup pass, fixed sermon outputs were cross-checked against an extracted Graveyard Keeper craft dataset and the project's existing runtime semantics.
+
+Directly observed base-game prayer craft rows:
+- Repentance: Faith x1 / x2 / x3;
+- Shoots & Roots: Faith x1 / x2 / x3;
+- Repose: Faith x1 / x2 / x3;
+- Retribution/Combat source family: Faith x1 / x2 / x3;
+- Imagination: Faith x1 / x2 / x3;
+- Prosperity: Faith x1 / x2 / x3 plus 1 / 2 / 3 silver, in addition to Commercial Blessings;
+- Faith / Donations / Combo stock rows also contain Faith x1/x2/x3 and 1/2/3 silver, but Rebalanced already replaces/removes those as part of the accepted resource-specialist rules.
+
+The current PrayerClarity forecast reads fixed prayer outputs directly from each craft's output list, and Rebalanced already has a narrow static mechanism to remove prayer-owned Faith/money outputs without touching physical specialist rewards.
+
+Excellence and Better Save Soul fixed-output rows are not declared present merely by symmetry. The 0.2.11 cleanup therefore does not depend on assuming that they exist: it applies a narrow postcondition to those specialist craft rows, removing only outputs whose IDs are exactly `faith` or `money` if such rows are present, while leaving all other outputs untouched. Runtime acceptance should confirm the resulting specialist-only presentation on at least one BSS utility surface when convenient.

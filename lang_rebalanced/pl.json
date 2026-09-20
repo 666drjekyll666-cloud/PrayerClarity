@@ -9,6 +9,7 @@
   "rebalanced.active.repose.silver": "W połowie przypadków najlepsze ciało jest gwarantowane",
   "rebalanced.active.repose.gold": "Osioł gwarantowanie przywozi najlepsze ciało",
   "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
-  "rebalanced.active.gratitude": "Leczenie duszy: +{0:0}% Wdzięczności",
-  "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%"
+  "rebalanced.active.gratitude": "Leczenie duszy: +{0:0}% (gratitude_points)",
+  "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%",
+  "rebalanced.tech.souls_intro": "Im więcej (gratitude_points), tym większa premia do Wiary."
 }

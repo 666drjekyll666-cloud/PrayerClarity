@@ -1,5 +1,28 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.13 candidate
+
+- Preserves the accepted 0.2.12 Technology repair and all 0.2.11 specialist/resource-balance changes.
+- Soul Contentment now shows its +20% gain with the native Soul Gratitude icon instead of the ambiguous generic word “gratitude”.
+- BSS Soul's Repose replaces the redundant shared Technology sentence with a direct scaling hint: more Soul Gratitude means a larger Faith bonus.
+- No prayer mechanics, requirements, payouts, durations, stacking, HUD behavior, or shared Vanilla presentation change.
+
+## PrayerClarity: Rebalanced 0.2.12 candidate
+
+- Preserves all 0.2.11 specialist-purity and resource-balance changes.
+- Fixes the Technology tooltip regression exposed when a specialist has no generic Faith/money success contribution: PrayerClarity now replaces the stock requirement/lore row directly and inserts **Base result** / **Bonuses on success** before the crafting-location footer even when vanilla omits its `preach_params_2` block.
+- Removes the stale stock **+10%** Soul Contentment Technology sentence in Rebalanced, where the effective prayer is **+20%**; the current effect is shown only from Rebalanced mechanics data.
+- Prayer-item tooltips, pulpit/HUD, Temporary Effects, balance values, durations and specialist mechanics are unchanged from 0.2.11.
+
+## PrayerClarity: Rebalanced 0.2.11 candidate
+
+- Purifies specialist prayers: non-resource utility prayers no longer carry unrelated prayer-owned Faith/donation percentage riders.
+- Removes unrelated fixed Faith/money success outputs from those specialist prayers while preserving their named effects and physical specialist rewards.
+- Retunes Prayer for Donations to flat success rewards of **+5 / +15 / +30 silver** at Bronze/Silver/Gold.
+- Retunes Combo Prayer donations to **+100 / +200 / +300%** while keeping Combo Faith at **+100 / +150 / +200%**.
+- Keeps Prayer for Faith, Prayer for Donations, Combo Prayer, BSS Prayer for Soul's Repose, and Casual Prayer as explicit resource/starter exceptions.
+- No changes to accepted specialist effect magnitudes, durations, stacking rules, Repose corpse-quality behavior, Roots cap, or shared Vanilla presentation.
+
 ## PrayerClarity: Vanilla 1.0.31 / Rebalanced 0.2.10
 
 - Accepted shared release: replaces the visually ineffective blank-separator spacing attempt from 1.0.30 / 0.2.9 with a controlled leading text line on PrayerClarity-owned **Base result** and **Bonuses on success** title rows in prayer-item tooltips only.

@@ -36,6 +36,11 @@ namespace PrayerClarity
             return _activeEffect != null && _activeEffect(buffId, out text);
         }
 
+        internal static bool HasTechnologyProvider
+        {
+            get { return _technologyEffect != null; }
+        }
+
         internal static bool TryBuildTechnologyEffect(string craftId, out string sharedText, out string tierText)
         {
             sharedText = null;
