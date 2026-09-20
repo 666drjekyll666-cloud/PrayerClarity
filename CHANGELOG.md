@@ -1,5 +1,13 @@
 # Changelog
 
+## PrayerClarity: Vanilla 1.0.32 candidate
+
+- Refines Technology prayer hierarchy without changing stock Graveyard Keeper 1.407 mechanics.
+- Vanilla Technology uses the condition-style header **On success:** / **При успехе:** instead of **Bonuses on success**, making the heading apply naturally to the whole success-only block.
+- When a stock prayer has both a shared Faith/donation rider and a shared named effect, those two lines are kept together without a blank gap; tier blocks remain separated below.
+- Prayer-item tooltips keep their existing **Bonuses on success** heading and accepted spacing.
+- Rebalanced presentation is behaviorally unchanged: its Technology provider keeps the existing Rebalanced heading/grouping.
+
 ## PrayerClarity: Rebalanced 0.2.13
 
 - Accepted stable release preserving the 0.2.12 Technology repair and all 0.2.11 specialist/resource-balance changes.
