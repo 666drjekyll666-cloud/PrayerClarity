@@ -18,12 +18,12 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Rebalanced
 
-- accepted/released version: **0.2.13**
-- accepted ref: `accepted/rebalanced-0.2.13`
-- exact runtime source: `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`
-- DLL SHA-256: `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`
-- release: `rebalanced-v0.2.13`
-- stable promotion merge: `b8888d32648a6f7c16f473792636872bc8212344`
+- accepted/released version: **0.2.14**
+- accepted ref: `accepted/rebalanced-0.2.14`
+- exact runtime source: `11fa4648fe57995938a2a17093ac4ed4f5e314cd`
+- DLL SHA-256: `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`
+- release: `rebalanced-v0.2.14`
+- stable promotion merge: `8a2e9634538dd0a789fc0636a5a427fa484bdcaf`
 
 The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
@@ -241,3 +241,14 @@ Vanilla 1.0.32 changes only Technology presentation hierarchy:
 - prayer-item presentation and stock prayer mechanics are unchanged.
 
 No new runtime ownership, per-frame polling, save-owned state, broad scans, persistent timers, or gameplay hooks were introduced. The existing **A — no architecture action** verdict carries forward.
+
+
+### 2026-09-20 Rebalanced 0.2.14 addendum
+
+Rebalanced 0.2.14 is presentation-only:
+- it reuses the accepted shared Technology success-heading path;
+- Technology now says **On success:** / **При успехе:**;
+- prayer-item tooltips keep their accepted **Bonuses on success** / **Бонусы при успехе** wording;
+- no gameplay definition, runtime owner, polling path, save state, timer, or lifecycle seam changed.
+
+The existing **A — no architecture action** verdict therefore carries forward unchanged.
