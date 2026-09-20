@@ -19,6 +19,9 @@ This file records handed executable artifacts once PrayerClarity research reache
   - all accepted 0.2.13 mechanics, balance, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged.
 - Runtime evidence explicitly confirmed both requested conditions: Technology shows **При успехе:** and prayer-item tooltips still show **Бонусы при успехе**.
 - Status: **accepted and promoted to main; publication must reuse the exact handed DLL bytes without rebuilding**.
+- Stable publication workflow: `35504153407`; result: **success**. It downloaded artifact `10603401146`, re-verified DLL SHA-256 `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`, and published the exact accepted bytes without rebuilding.
+- Published release: `rebalanced-v0.2.14` -> target `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, asset `PrayerClarity.Rebalanced.dll`.
+- Final status: **accepted, merged to main, frozen by accepted ref, and published as stable Rebalanced release**.
 
 ## PrayerClarity: Rebalanced 0.2.13 — accepted stable
 
