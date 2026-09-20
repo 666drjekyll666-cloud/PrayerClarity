@@ -102,9 +102,10 @@ This file records handed executable artifacts once PrayerClarity research reache
 
 ### Vanilla direct-runtime coverage note — 2026-09-20
 
-- Last explicit user session that definitely loaded and tested **PrayerClarity: Vanilla** itself was **Vanilla 1.0.25** on 2026-09-18.
-- The later shared presentation changes that became Vanilla 1.0.28 / 1.0.29 / 1.0.30 / 1.0.31 were runtime-tested through the sibling **Rebalanced** DLL built from the same shared presentation source. They were promoted to Vanilla because the affected presentation code is shared and both sibling projects built successfully, but there is no later repository evidence of the user explicitly loading Vanilla 1.0.28–1.0.31.
-- Therefore Vanilla 1.0.31 remains the published stable Clarity-only build, but a focused direct Vanilla spot-check is still useful evidence rather than a mechanics regression requirement.
+- The user has now explicitly loaded **PrayerClarity: Vanilla 1.0.31** and supplied direct in-game Technology screenshot evidence.
+- The screenshot confirms the accumulated shared Clarity presentation is active on Vanilla itself, but also exposes one remaining Vanilla-specific UX gap: `Bonuses on success -> Faith +10% -> blank gap -> Effect` reads as if the named effect were outside the success condition.
+- This is a presentation/hierarchy issue only; no stock prayer mechanic discrepancy is indicated.
+- A focused Vanilla 1.0.32 candidate should test only the new success-scope hierarchy plus a small regression spot-check of the already accepted shared surfaces.
 - Focused direct Vanilla checklist:
   1. Technology: ordinary prayer Base result uses compact parenthetical dependencies; stock success values remain stock.
   2. Technology: Prosperity keeps Commercial Blessing x1/x2/x3; Prayer for Excellence shows its stock lore once at Writing Desk II.
