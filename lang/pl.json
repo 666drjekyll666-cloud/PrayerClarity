@@ -34,5 +34,6 @@
   "active.timer_days": "{0:0.0} dni",
   "tech.base_result": "Wynik bazowy",
   "tech.percent_of_base": "{0} wartości bazowej",
-  "active.timer_days_compact": "{0:0.0}"
+  "active.timer_days_compact": "{0:0.0}",
+  "tech.on_success_header": "Przy sukcesie:"
 }

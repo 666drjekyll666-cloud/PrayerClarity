@@ -403,3 +403,28 @@ Resource specialists remain explicit exceptions:
 - BSS Prayer for Soul's Repose, whose Faith scaling is itself the specialization.
 
 Casual Prayer remains the stock starter baseline.
+
+
+## 2026-09-20 Vanilla Technology success-scope hierarchy
+
+Direct user runtime evidence on **PrayerClarity: Vanilla 1.0.31** exposed a remaining Technology-tooltip interpretation problem.
+
+Representative stock Repose structure:
+
+`Bonuses on success -> Faith +10% -> blank gap -> Effect -> tier blocks`.
+
+The player interpretation risk is concrete:
+- the heading **Bonuses on success** is visually read as if it labels only the immediately following Faith +10% line;
+- the blank gap before **Effect** makes the prayer's named effect look like a separate unconditional section;
+- this recreates the same success-scope ambiguity previously observed in Rebalanced before generic resource garnish was removed.
+
+Vanilla cannot solve this by deleting the stock Faith/donation riders because PrayerClarity: Vanilla promises stock mechanics and rewards.
+
+Accepted design hypothesis for the next Vanilla candidate:
+- Technology only: replace the heading with the condition-style **On success:** / **При успехе:**;
+- keep a shared generic resource rider and the shared named effect in one visually continuous block;
+- preserve a larger gap before Bronze/Silver/Gold tier blocks;
+- keep prayer-item tooltips unchanged, because their accepted single-tier hierarchy has different vertical constraints;
+- keep Rebalanced behavior unchanged, because specialist-purity already made its success hierarchy unambiguous.
+
+This is a Clarity-only presentation change.

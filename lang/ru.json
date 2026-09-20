@@ -34,5 +34,6 @@
   "active.timer_days": "{0:0.0} дн.",
   "tech.base_result": "Базовый результат",
   "tech.percent_of_base": "{0} от базового значения",
-  "active.timer_days_compact": "{0:0.0}"
+  "active.timer_days_compact": "{0:0.0}",
+  "tech.on_success_header": "При успехе:"
 }

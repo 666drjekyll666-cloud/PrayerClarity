@@ -294,7 +294,7 @@ namespace PrayerClarity
             {
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Insert(insertIndex++, separator);
-                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(TechnologySuccessHeader(), 3));
                 list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
 
@@ -390,7 +390,7 @@ namespace PrayerClarity
             {
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Insert(insertIndex++, separator);
-                list.Insert(insertIndex++, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                list.Insert(insertIndex++, CreateTextData(TechnologySuccessHeader(), 3));
                 list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
 
@@ -428,7 +428,7 @@ namespace PrayerClarity
             {
                 object separator = CreateBlankSeparator();
                 if (separator != null) AddTooltipData(tooltip, separator);
-                AddTooltipData(tooltip, CreateTextData(Localization.F("tech.success_reward_bonus"), 3));
+                AddTooltipData(tooltip, CreateTextData(TechnologySuccessHeader(), 3));
                 AddTooltipData(tooltip, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
         }
@@ -606,6 +606,14 @@ namespace PrayerClarity
             if (table == null) return;
             MethodInfo reposition = R.Method(table.GetType(), "Reposition", false, 0);
             reposition?.Invoke(table, null);
+        }
+
+        private static string TechnologySuccessHeader()
+        {
+            return Localization.F(
+                PrayerEditionSemantics.HasTechnologyProvider
+                    ? "tech.success_reward_bonus"
+                    : "tech.on_success_header");
         }
 
         private static object CreateBlankSeparator()

@@ -19,8 +19,24 @@ namespace PrayerClarity
 
             List<string> success = new List<string>();
 
-            AddSection(success, BuildSuccessIntro(tiers));
-            AddSection(success, BuildSharedEffect(tiers));
+            string successIntro = BuildSuccessIntro(tiers);
+            string sharedEffect = BuildSharedEffect(tiers);
+
+            if (!PrayerEditionSemantics.HasTechnologyProvider &&
+                !string.IsNullOrEmpty(successIntro) &&
+                !string.IsNullOrEmpty(sharedEffect))
+            {
+                // Vanilla keeps stock mixed success rewards. Present the shared resource
+                // rider and the prayer's named effect as one success group so the effect
+                // is not visually read as unconditional.
+                AddSection(success, successIntro + "\n" + sharedEffect);
+            }
+            else
+            {
+                AddSection(success, successIntro);
+                AddSection(success, sharedEffect);
+            }
+
             AddSection(success, BuildSharedDuration(tiers));
 
             foreach (PrayerForecast.TierDetails tier in tiers)
