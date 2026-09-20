@@ -10,13 +10,13 @@ PrayerClarity is a pair of alternative BepInEx mods for **Graveyard Keeper 1.407
 
 Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improving prayer descriptions, quality comparisons, success requirements, pulpit information, item tooltips, and Character -> Temporary Effects.
 
-[Download PrayerClarity: Vanilla 1.0.32](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/v1.0.32)
+[Download PrayerClarity: Vanilla 1.0.32](https://github.com/NikichMods/PrayerClarity/releases/tag/v1.0.32)
 
 ### PrayerClarity: Rebalanced — 0.2.14
 
 Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices. Runtime-sensitive prayer effects are implemented through narrow Graveyard Keeper-native seams where verified.
 
-[Download PrayerClarity: Rebalanced 0.2.14](https://github.com/666drjekyll666-cloud/PrayerClarity/releases/tag/rebalanced-v0.2.14)
+[Download PrayerClarity: Rebalanced 0.2.14](https://github.com/NikichMods/PrayerClarity/releases/tag/rebalanced-v0.2.14)
 
 **Install one edition, not both.**
 

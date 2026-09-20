@@ -1,6 +1,6 @@
 # PrayerClarity Project Contract
 
-PrayerClarity inherits the global development contract from `666drjekyll666-cloud/DevRules`.
+PrayerClarity inherits the global development contract from `NikichMods/DevRules`.
 
 Before substantive work, read:
 
