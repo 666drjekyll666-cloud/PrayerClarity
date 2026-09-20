@@ -25,6 +25,16 @@ This file records handed executable artifacts once PrayerClarity research reache
   4. Spot-check Donations +5/+15/+30 silver and Combo Faith +100/+150/+200%, donations +100/+200/+300% remain intact.
 - No repeat HUD, Temporary Effects, prayer-item-tooltip or full-sermon test is requested unless this candidate exposes a new discrepancy; those surfaces passed in 0.2.11 and 0.2.12 changes only Technology presentation.
 - Numbered binaries are immutable after this handoff.
+- User runtime result, 2026-09-20: **0.2.12 Technology repair passed**.
+  - cleaned specialist Technology tooltips no longer show the stale stock requirement sentence;
+  - Base result / Bonuses on success / tier effect rows are back in the intended order;
+  - crafting location is back at the bottom;
+  - Prosperity keeps Commercial Blessing x1/x2/x3;
+  - Donations +5/+15/+30 silver and Combo Faith +100/+150/+200%, donations +100/+200/+300% remain correct;
+  - prayer-item tooltip, HUD and Temporary Effects remained correct.
+- One wording issue remains before stable acceptance: Russian Soul Contentment currently says `За исцеление души: +20% благодарности`; the mechanic is correct, but the named resource **Soul Gratitude** is not explicit. Prefer the existing `(gratitude_points)` game icon/token rather than another long noun phrase.
+- New non-blocking UX observation: BSS Soul's Repose is mathematically stronger than its +50/+100/+150% tier numbers look because those percentages apply to the enlarged Souls Faith base `Church Quality + current Soul Gratitude`. The current Base result already shows that dependency, but a shared effect line could explain that the tier bonus is calculated from that base without adding more rows.
+
 
 ## PrayerClarity: Rebalanced 0.2.11 candidate
 
