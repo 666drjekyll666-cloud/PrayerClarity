@@ -4,16 +4,24 @@ This file records handed executable artifacts once PrayerClarity research reache
 
 ## PrayerClarity: Rebalanced 0.2.14 candidate
 
-- Status: **planned for a focused Technology wording check; not stable**.
+- Status: **handed for focused Technology wording acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.14`.
+- Exact build/source SHA: `11fa4648fe57995938a2a17093ac4ed4f5e314cd`.
+- GitHub Actions run: `35503599956`; result: **success**.
+- Artifact ID: `10603401146`.
+- Artifact: `PrayerClarity-rebalanced-0.2.14-ci-11fa4648fe57995938a2a17093ac4ed4f5e314cd`.
+- Artifact ZIP digest: `sha256:5e170c82b46dc42d8e4e3799bf91fddf2e651c7aafc409b7dd65328c18d799cc`.
+- Handoff DLL: `PrayerClarity.Rebalanced-0.2.14-ci.dll`; SHA-256: `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
 - Candidate change only:
   - Rebalanced Technology uses **При успехе:** / **On success:** instead of **Бонусы при успехе** / **Bonuses on success**;
   - prayer-item tooltips remain unchanged and keep the existing **Бонусы при успехе** hierarchy;
   - all 0.2.13 mechanics, balance, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged.
-- Implementation note: the shared 1.0.32 Technology heading is already present on current `main`; Rebalanced 0.2.14 simply packages that accepted shared presentation for the Rebalanced sibling with a new immutable version number.
+- Implementation note: the shared 1.0.32 Technology heading was already present on current `main`; 0.2.14 packages that accepted shared presentation for the Rebalanced sibling under a new immutable version.
 - Focused runtime acceptance:
   1. open any Rebalanced prayer in Technology and confirm the heading is **При успехе:**;
   2. spot-check one prayer item and confirm it still says **Бонусы при успехе**;
   3. no balance/mechanics retest is required.
+- Numbered binaries are immutable after this handoff.
 
 ## PrayerClarity: Rebalanced 0.2.13 — accepted stable
 
