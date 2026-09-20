@@ -131,3 +131,64 @@ Known non-blocking evidence gaps remain:
 - the physical 3 Silver / 3 Gold Story drop from a real successful premium Imagination sermon has not yet been visually observed, although it uses the verified native sermon-drop path.
 
 Future changes should start from a concrete gameplay/UX finding and create a new explicit proposal rather than reviving superseded historical values.
+
+
+## 2026-09-20 specialist-purity audit
+
+Status: **design hypothesis; no production change yet**.
+
+### Direct current-state fact
+
+Stock 1.407 generic success coefficients retained by Rebalanced 0.2.10 unless a rule explicitly overrides them:
+
+| Family | Stock/inherited Faith rider | Stock/inherited donation rider | Current specialist role |
+| --- | ---: | ---: | --- |
+| Repentance `b_sins` | +25 / +50 / +75% | +10% | confession probability 50 / 75 / 100%, 30 / 42 / 54 min |
+| Shoots & Roots `b_plant` | +25% | +25% | growth time -20 / -30 / -40%, 36 / 72 / 108 min |
+| Repose `b_skull` | +10% | +25 / +50 / +75% | corpse-tier reliability, 30 / 42 / 54 min |
+| Combat `b_sword` | +25% | +25% | damage + armor + regeneration, 36 / 72 / 108 min |
+| Imagination `b_pen` | +25 / +50 / +75% | +10% | +0.7 writing quality; premium tiers add 3 Stories |
+| Excellence `b_star` | +25 / +50 / +75% | +10% | linked-craft quality +0.2 / +0.5 / +1.0 |
+| Prosperity `b_village` | +25% | +25% | 1 / 2 / 3 Commercial Blessings |
+| Soul Contentment `b_grat_points_incr` | +25% | +25% | +20% Soul Gratitude, 36 / 72 / 108 min |
+| Thorough Cleansing `b_sin_shard` | +25% | +25% | x2 Sin Shards, 36 / 72 / 108 min |
+
+This mapping is direct project evidence from the verified stock mechanics catalogue. Rebalanced static projection changes `k_faith` / `k_money` only when the corresponding rule provides an override; the nine families above currently do not.
+
+Stock sermon data also carries small fixed success outputs, most visibly `Faith x1/x2/x3` on utility prayers; Prosperity additionally carries 1/2/3 silver. Before production removal, exact fixed-output rows should be re-verified family-by-family from current 1.407 data, but they are the same semantic cleanup target rather than a separate role.
+
+### Proposed classification
+
+| Family | Generic rider action | New compensation? | Reason |
+| --- | --- | --- | --- |
+| Repose | **remove** off-role Faith/donation riders and fixed Faith | **none** | accepted reliability rework + q60 Gold + 30/42/54 min already define the value proposition |
+| Repentance | **remove** | **none** | the specialist effect itself creates future confession Faith/Stories; generic sermon Faith is redundant |
+| Shoots & Roots | **remove** | **none** | accepted -20/-30/-40% scaling and 36/72/108 min are already the quality proposition |
+| Combat | **remove** | **none** | accepted merged damage/armor/regen package is deliberately strong in its niche |
+| Imagination | **remove** | **none** | +0.7 quality plus the accepted Silver/Gold 3-Story premium already replaced generic power with specialist power |
+| Excellence | **remove** | **none** | accepted +0.2/+0.5/+1.0 magnitude ladder is the premium |
+| Prosperity | **remove** | **none** | Blessings permanently advance vendor tiers; natural obsolescence after that job is complete is accepted |
+| Soul Contentment | **remove** | **none initially** | Rebalanced already doubled the stock Gratitude magnitude to +20%; duration is the quality axis |
+| Thorough Cleansing | **remove** | **none** | x2 Sin Shards is already a strong narrow effect |
+
+### Explicit exceptions
+
+Do **not** apply specialist-purity cleanup to:
+- Faith — resource output is the role;
+- Donations — resource output is the role;
+- Combo — resource output is the role;
+- BSS Soul's Repose — its +50/+100/+150% Faith is the role;
+- Casual Prayer — stock starter baseline.
+
+### Design consequence
+
+If accepted, successful utility sermons still provide the universal Base result. Success remains important because it gates the named buff/reward. What disappears is only the unrelated prayer-owned resource garnish.
+
+This is expected to:
+- make “Bonuses on success” semantically immediate;
+- reduce tooltip lines;
+- strengthen prayer identity;
+- reduce incidental power creep introduced by keeping stock generic riders after strengthening the specialist effects;
+- make Faith/Donations/Combo visibly own the resource-generation roles.
+
+No production implementation should begin until this rule and the fixed-output cleanup scope are accepted.
