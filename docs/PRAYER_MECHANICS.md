@@ -481,4 +481,4 @@ Directly observed base-game prayer craft rows:
 
 The current PrayerClarity forecast reads fixed prayer outputs directly from each craft's output list, and Rebalanced already has a narrow static mechanism to remove prayer-owned Faith/money outputs without touching physical specialist rewards.
 
-Excellence and Better Save Soul fixed-output rows are not declared closed by this external dataset alone. Before production removal on those families, use current 1.407 project/runtime data rather than assuming symmetry.
+Excellence and Better Save Soul fixed-output rows are not declared present merely by symmetry. The 0.2.11 cleanup therefore does not depend on assuming that they exist: it applies a narrow postcondition to those specialist craft rows, removing only outputs whose IDs are exactly `faith` or `money` if such rows are present, while leaving all other outputs untouched. Runtime acceptance should confirm the resulting specialist-only presentation on at least one BSS utility surface when convenient.
