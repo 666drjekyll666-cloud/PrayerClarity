@@ -1,5 +1,14 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.11 candidate
+
+- Purifies specialist prayers: non-resource utility prayers no longer carry unrelated prayer-owned Faith/donation percentage riders.
+- Removes unrelated fixed Faith/money success outputs from those specialist prayers while preserving their named effects and physical specialist rewards.
+- Retunes Prayer for Donations to flat success rewards of **+5 / +15 / +30 silver** at Bronze/Silver/Gold.
+- Retunes Combo Prayer donations to **+100 / +200 / +300%** while keeping Combo Faith at **+100 / +150 / +200%**.
+- Keeps Prayer for Faith, Prayer for Donations, Combo Prayer, BSS Prayer for Soul's Repose, and Casual Prayer as explicit resource/starter exceptions.
+- No changes to accepted specialist effect magnitudes, durations, stacking rules, Repose corpse-quality behavior, Roots cap, or shared Vanilla presentation.
+
 ## PrayerClarity: Vanilla 1.0.31 / Rebalanced 0.2.10
 
 - Accepted shared release: replaces the visually ineffective blank-separator spacing attempt from 1.0.30 / 0.2.9 with a controlled leading text line on PrayerClarity-owned **Base result** and **Bonuses on success** title rows in prayer-item tooltips only.
