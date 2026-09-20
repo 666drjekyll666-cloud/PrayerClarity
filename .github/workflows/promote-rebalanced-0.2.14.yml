@@ -1,0 +1,58 @@
+name: Publish accepted Rebalanced 0.2.14
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-rebalanced-0.2.14.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      ACCEPTED_SHA: 11fa4648fe57995938a2a17093ac4ed4f5e314cd
+      REBALANCED_SHA256: 1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download exact accepted artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: 666drjekyll666-cloud/PrayerClarity
+          run-id: 35503599956
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-rebalanced-0.2.14-ci-11fa4648fe57995938a2a17093ac4ed4f5e314cd
+          path: accepted
+
+      - name: Verify accepted bytes and stage canonical asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          handed='accepted/PrayerClarity.Rebalanced-0.2.14-ci.dll'
+          test -f "$handed"
+          actual=$(sha256sum "$handed" | awk '{print $1}')
+          test "$actual" = "$REBALANCED_SHA256"
+
+          mkdir -p release
+          cp "$handed" release/PrayerClarity.Rebalanced.dll
+          test "$(sha256sum release/PrayerClarity.Rebalanced.dll | awk '{print $1}')" = "$REBALANCED_SHA256"
+
+      - name: Publish Rebalanced 0.2.14 without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view rebalanced-v0.2.14 --repo 666drjekyll666-cloud/PrayerClarity >/dev/null 2>&1; then
+            echo 'rebalanced-v0.2.14 already exists; leaving it unchanged.'
+          else
+            gh release create rebalanced-v0.2.14 release/PrayerClarity.Rebalanced.dll \
+              --repo 666drjekyll666-cloud/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Rebalanced 0.2.14' \
+              --latest=false \
+              --notes "Accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Technology now uses the concise condition-style On success / При успехе heading already accepted in Vanilla 1.0.32. Prayer-item tooltips retain Bonuses on success / Бонусы при успехе. All 0.2.13 gameplay mechanics, balance values, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged. Exact accepted runtime source: 11fa4648fe57995938a2a17093ac4ed4f5e314cd. Exact DLL SHA-256: 1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8."
+          fi

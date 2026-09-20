@@ -2,18 +2,23 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
-## PrayerClarity: Rebalanced 0.2.14 candidate
+## PrayerClarity: Rebalanced 0.2.14 — accepted stable
 
-- Status: **planned for a focused Technology wording check; not stable**.
-- Candidate change only:
+- User runtime acceptance: **2026-09-20**.
+- Frozen accepted ref: `accepted/rebalanced-0.2.14`.
+- Exact tested/build source SHA: `11fa4648fe57995938a2a17093ac4ed4f5e314cd`.
+- Candidate CI run: `35503599956`; result: **success**.
+- Artifact ID: `10603401146`.
+- Artifact: `PrayerClarity-rebalanced-0.2.14-ci-11fa4648fe57995938a2a17093ac4ed4f5e314cd`.
+- Artifact ZIP digest: `sha256:5e170c82b46dc42d8e4e3799bf91fddf2e651c7aafc409b7dd65328c18d799cc`.
+- Accepted/release DLL SHA-256: `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
+- Stable promotion PR: **#26**, squash-merged to `main` as `8a2e9634538dd0a789fc0636a5a427fa484bdcaf`.
+- Accepted behavior:
   - Rebalanced Technology uses **При успехе:** / **On success:** instead of **Бонусы при успехе** / **Bonuses on success**;
   - prayer-item tooltips remain unchanged and keep the existing **Бонусы при успехе** hierarchy;
-  - all 0.2.13 mechanics, balance, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged.
-- Implementation note: the shared 1.0.32 Technology heading is already present on current `main`; Rebalanced 0.2.14 simply packages that accepted shared presentation for the Rebalanced sibling with a new immutable version number.
-- Focused runtime acceptance:
-  1. open any Rebalanced prayer in Technology and confirm the heading is **При успехе:**;
-  2. spot-check one prayer item and confirm it still says **Бонусы при успехе**;
-  3. no balance/mechanics retest is required.
+  - all accepted 0.2.13 mechanics, balance, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged.
+- Runtime evidence explicitly confirmed both requested conditions: Technology shows **При успехе:** and prayer-item tooltips still show **Бонусы при успехе**.
+- Status: **accepted and promoted to main; publication must reuse the exact handed DLL bytes without rebuilding**.
 
 ## PrayerClarity: Rebalanced 0.2.13 — accepted stable
 
@@ -132,7 +137,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 ## Current stable baselines — 2026-09-20
 
 - **PrayerClarity: Vanilla 1.0.32** — `accepted/vanilla-1.0.32`, source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
-- **PrayerClarity: Rebalanced 0.2.13** — `accepted/rebalanced-0.2.13`, source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`, DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
+- **PrayerClarity: Rebalanced 0.2.14** — `accepted/rebalanced-0.2.14`, source `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, release `rebalanced-v0.2.14`, DLL SHA-256 `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 

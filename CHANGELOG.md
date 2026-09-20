@@ -1,8 +1,8 @@
 # Changelog
 
-## PrayerClarity: Rebalanced 0.2.14 candidate
+## PrayerClarity: Rebalanced 0.2.14
 
-- Technology uses the same condition-style **On success:** / **При успехе:** heading already accepted in Vanilla 1.0.32.
+- Accepted stable release using the same condition-style **On success:** / **При успехе:** heading already accepted in Vanilla 1.0.32.
 - This shortens the heading and makes success scope consistent across the two sibling editions.
 - Prayer-item tooltips intentionally remain unchanged and keep **Bonuses on success** / **Бонусы при успехе**.
 - No prayer mechanics, balance values, requirements, payouts, durations, stacking, HUD behavior, or other Rebalanced presentation change.

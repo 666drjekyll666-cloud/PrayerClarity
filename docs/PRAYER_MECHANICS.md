@@ -389,7 +389,7 @@ Two stock-1.407 anomalies remain important boundaries:
 - Prayer of Repentance: timed buff exists, no gameplay consumer was found;
 - Prayer for Shoots and Roots: the `-20%` growth formula exists, but the stock prayer buff and formula read/write different parameter owners.
 
-**PrayerClarity: Vanilla 1.0.32** preserves these stock mechanics and presents them truthfully. **PrayerClarity: Rebalanced 0.2.13** intentionally repairs/reworks the affected behavior according to the separate accepted ruleset in `PRAYER_REBALANCE_OPTIONS.md`. Do not rewrite this stock evidence to match Rebalanced behavior.
+**PrayerClarity: Vanilla 1.0.32** preserves these stock mechanics and presents them truthfully. **PrayerClarity: Rebalanced 0.2.14** intentionally repairs/reworks the affected behavior according to the separate accepted ruleset in `PRAYER_REBALANCE_OPTIONS.md`. Do not rewrite this stock evidence to match Rebalanced behavior.
 
 ## Repose terminal corpse progression — direct closure
 
@@ -463,7 +463,7 @@ This preserves the Rebalanced late-game reliability benefit without inventing ti
 
 Historical Rebalanced 0.1.5 set `tier_min = tier_max` directly. At the terminal raw `2..4` state that could request `4..4`, for which stock `GenerateBody` has no definition and returns null. This was a **latent late-game edge-case in 0.1.5**, not an accepted behavior target.
 
-The current stable Rebalanced 0.2.13 resolves the highest actually existing eligible ordinary BodyDefinition before narrowing, so the old `4..4` failure mode is no longer the production design. Only the terminal endpoint wording/presentation remains a deferred non-blocking user-runtime observation.
+The current stable Rebalanced 0.2.14 resolves the highest actually existing eligible ordinary BodyDefinition before narrowing, so the old `4..4` failure mode is no longer the production design. Only the terminal endpoint wording/presentation remains a deferred non-blocking user-runtime observation.
 
 
 ### Directly inspected fixed success outputs relevant to specialist cleanup

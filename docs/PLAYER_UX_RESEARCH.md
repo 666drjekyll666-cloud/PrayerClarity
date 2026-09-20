@@ -351,7 +351,7 @@ The mechanics re-checks that previously blocked a complete prayer-by-prayer whit
 - Shoots and Roots end-to-end wiring: closed as a stock parameter-scope mismatch;
 - Prayer of Repentance: no gameplay consumer found, externally corroborated as apparently inert.
 
-The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been carried forward and runtime-accepted through PrayerClarity: Vanilla 1.0.32 and the shared presentation in Rebalanced 0.2.13.
+The mechanics evidence was sufficient to build the Clarity layer, and the resulting presentation has since been carried forward and runtime-accepted through PrayerClarity: Vanilla 1.0.32 and the shared presentation in Rebalanced 0.2.14.
 
 There is currently no open UX-research gate in this document. New research should be driven by fresh player feedback or a concrete presentation problem observed in the stable siblings rather than by the historical pre-prototype checklist.
 
@@ -371,7 +371,7 @@ This is one player report, not community consensus. It is nevertheless a strong 
 
 ### Broader design signal
 
-Stock 1.407 gives many utility/specialist prayers generic Faith/donation riders in addition to their named effect. Rebalanced 0.2.10 intentionally strengthened or repaired the named specialist roles, but still inherited most of those stock resource riders. Rebalanced 0.2.13 removes that generic success garnish from utility specialists.
+Stock 1.407 gives many utility/specialist prayers generic Faith/donation riders in addition to their named effect. Rebalanced 0.2.10 intentionally strengthened or repaired the named specialist roles, but still inherited most of those stock resource riders. Rebalanced 0.2.13 removed that generic success garnish from utility specialists; Rebalanced 0.2.14 then aligned the Technology success heading with the accepted Vanilla 1.0.32 wording.
 
 External player discussions repeatedly describe:
 - Combo as the default broad sermon once available;
@@ -439,3 +439,15 @@ The direct Vanilla 1.0.31 success-scope ambiguity is closed in 1.0.32:
 - the user confirmed the hierarchy reads naturally and prayer-item tooltips remain unchanged.
 
 This is a presentation-only acceptance; Vanilla prayer mechanics remain stock 1.407.
+
+
+### Accepted result: Rebalanced 0.2.14
+
+The concise condition-style Technology heading first accepted in Vanilla 1.0.32 is also accepted in Rebalanced 0.2.14:
+
+- Technology uses **При успехе:** / **On success:**;
+- prayer-item tooltips intentionally keep **Бонусы при успехе** / **Bonuses on success**;
+- the user confirmed both surfaces in runtime;
+- no mechanics or balance changed.
+
+This closes the sibling-consistency follow-up without adding new tooltip content.

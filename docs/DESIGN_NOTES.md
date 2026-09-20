@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-20 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.32 and PrayerClarity: Rebalanced 0.2.13.
+Status: product/architecture source of truth, reconciled 2026-09-20 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.32 and PrayerClarity: Rebalanced 0.2.14.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -39,7 +39,7 @@ Internal evidence/design layers remain distinct:
 Current accepted stable runtime identities are edition-specific:
 
 - **PrayerClarity: Vanilla 1.0.32** — accepted ref `accepted/vanilla-1.0.32`, exact source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
-- **PrayerClarity: Rebalanced 0.2.13** — accepted ref `accepted/rebalanced-0.2.13`, exact runtime source `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, release `rebalanced-v0.2.13`, DLL SHA-256 `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
+- **PrayerClarity: Rebalanced 0.2.14** — accepted ref `accepted/rebalanced-0.2.14`, exact runtime source `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, release `rebalanced-v0.2.14`, DLL SHA-256 `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
 
 Both stable releases were published from their exact accepted CI artifacts without rebuilding. Later `main` documentation/repository-hygiene commits do not redefine those frozen runtime identities.
 
@@ -196,6 +196,6 @@ No new balance round is required unless implementation evidence contradicts an a
 
 ## Current engineering state
 
-The current stable implementation line is Rebalanced 0.2.13. It retains the accepted 0.2.3 Repentance/Combat native seams, the 0.2.2 Roots safety repair, the 0.2.4 Repentance/Repose 30/42/54-minute duration projection, and ordinary Gold Repose q60. The 0.2.13 line additionally adopts specialist-purity cleanup, Donations +5/+15/+30 silver, Combo donations +100/+200/+300% with Faith +100/+150/+200%, and the accepted Technology/Soul presentation repair. `POST_AUDIT_VERDICT.md` remains the gameplay/save-lifecycle closure at **A — no architecture action**.
+The current stable implementation line is Rebalanced 0.2.14. It retains the accepted 0.2.3 Repentance/Combat native seams, the 0.2.2 Roots safety repair, the 0.2.4 Repentance/Repose 30/42/54-minute duration projection, ordinary Gold Repose q60, the 0.2.13 specialist-purity/resource/Soul presentation work, and now uses the same concise Technology **On success:** / **При успехе:** heading as Vanilla 1.0.32. `POST_AUDIT_VERDICT.md` remains the gameplay/save-lifecycle closure at **A — no architecture action**.
 
 There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.
