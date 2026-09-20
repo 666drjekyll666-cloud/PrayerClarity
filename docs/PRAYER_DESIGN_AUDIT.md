@@ -277,3 +277,18 @@ Use the always-present stock prayer requirement/lore row as the fallback Technol
 - for Rebalanced Soul Contentment only, suppress the obsolete stock +10% lore/mechanics row and let the effective +20% Rebalanced effect be the single mechanics statement.
 
 This is presentation-only. It must not change 0.2.11 prayer rules, payout fields, specialist effects, timers, stacking or other accepted surfaces.
+
+
+## 2026-09-20 0.2.12 runtime result — presentation repaired
+
+The focused Technology retest passed. The 0.2.11 layout regression is closed: cleaned specialist prayers again show the intended Clarity hierarchy, the stock requirement sentence stays removed, and the crafting-location footer stays last.
+
+One small wording defect remains in Russian Soul Contentment:
+- effective mechanic is correct at +20% Soul Gratitude;
+- current Rebalanced Russian text says only `+20% благодарности`;
+- the project already uses the game's `(gratitude_points)` icon token on nearby Soul Gratitude surfaces;
+- preferred next wording is the compact icon form, e.g. `За исцеление души: +20% (gratitude_points)`.
+
+BSS Soul's Repose also produced a useful clarity observation. Its tier bonus (+50/+100/+150% Faith) applies to the Souls-specific Faith base:
+`(Church Quality + current Soul Gratitude) * 0.1 * EloquenceFactor`.
+Therefore its smaller-looking percentage can beat Combo on Faith once Soul Gratitude is material. The Base result already exposes the enlarged base; if further clarification is desired, prefer replacing the currently redundant shared effect sentence with a one-line explanation that the tier Faith bonus is calculated from that base. Do not repeat the full formula or add another tooltip block.
