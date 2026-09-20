@@ -288,6 +288,11 @@ With Cardinal active, base donations = `0.04 * Graveyard Quality`.
 
 Without Cardinal the same crossovers are GQ 500 / 333 / 250.
 
-Current preference: **Gold Combo donations +300%, Gold Combo Faith +200%**. This intentionally makes Gold Combo asymmetric at the top tier, because its late-game generalist value is supposed to scale harder with the mature church economy while Faith already remains valuable at +200%.
+Accepted follow-up for the next Rebalanced candidate:
 
-Bronze/Silver Combo remain unchanged at +100/+150% Faith and donations.
+- Combo Faith: **+100 / +150 / +200%**;
+- Combo donations: **+100 / +200 / +300%**.
+
+The donation side therefore uses a clean 100/200/300 ladder, while the Faith side keeps the accepted 100/150/200 ladder. Gold still reaches the preferred +300% donation point; Silver is deliberately raised from +150% to +200% so the money scaling progresses evenly by tier.
+
+With Cardinal active and the accepted Gold Donations +30 silver, the Gold pure-money crossover remains at roughly Graveyard Quality 250.
