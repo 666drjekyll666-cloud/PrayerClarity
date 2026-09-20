@@ -112,6 +112,9 @@ This file records handed executable artifacts once PrayerClarity research reache
   - stock Graveyard Keeper 1.407 prayer mechanics, requirements, rewards and balance remain unchanged.
 - Runtime evidence explicitly confirmed that the new Technology wording reads naturally across prayers and that prayer-item tooltips did not change.
 - Status: **accepted and promoted to main; publication must reuse the exact handed DLL bytes without rebuilding**.
+- Stable publication workflow: `35503356665`; result: **success**. It downloaded artifact `10602579329`, re-verified DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`, and published the exact accepted bytes without rebuilding.
+- Published release: `v1.0.32` -> target `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, asset `PrayerClarity.dll`.
+- Final status: **accepted, merged to main, frozen by accepted ref, and published as stable Vanilla release**.
 
 ## Current stable baselines — 2026-09-20
 
