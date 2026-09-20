@@ -247,3 +247,33 @@ Runtime acceptance should verify presentation/state rather than repeat the whole
 5. if convenient, one BSS utility prayer shows only its named specialist effect.
 
 A real sermon payout retest is required only if those projected values disagree with the UI or a runtime error appears, because the accepted stock payout path consumes these same CraftDefinition fields/output rows directly.
+
+
+## 2026-09-20 0.2.11 runtime result — Technology regression
+
+Status: **0.2.11 mechanics/balance changes passed the requested visual-value checks, but the candidate is not accepted because its Technology prayer presentation regressed.**
+
+User runtime evidence confirmed:
+- Donations shows the accepted +5 / +15 / +30 silver ladder;
+- Combo shows Faith +100 / +150 / +200% and donations +100 / +200 / +300%;
+- generic Faith/donation garnish disappeared from specialist prayers as intended;
+- prayer-item tooltips, pulpit/HUD and Character -> Temporary Effects remained correct.
+
+New Technology-only regression:
+- after specialist cleanup, stock Technology no longer emits the vanilla `preach_params_2` success-bonus header/body for prayers whose `k_faith`, `k_money` and fixed Faith/money outputs are all zero/absent;
+- the existing Clarity replacement seam used that header as its anchor, so it fell back to appending Clarity sections at the end;
+- the stock `preach_params` requirement sentence therefore reappeared before prayer lore, while the stock crafting-location footer remained before the appended Clarity sections;
+- this is why the UI showed e.g. the old “20–60 required to guarantee success” sentence and moved “Crafted at” above Base result.
+
+The stock `TechUnlock.GetTooltip` construction order independently matches the runtime symptom: the requirement+lore row is always built for a multi-quality prayer, while the `preach_params_2` block is conditional on there being a non-empty generic Faith/money contribution.
+
+Soul Contentment exposed a second stale-stock-text boundary: its stock description embeds **+10%** directly, while Rebalanced's accepted effective value is **+20%**. Rebalanced Technology must not retain that stock numeric sentence alongside the current effect.
+
+### 0.2.12 fix rule
+
+Use the always-present stock prayer requirement/lore row as the fallback Technology anchor when `preach_params_2` is absent:
+- strip the stock requirement sentence;
+- insert PrayerClarity Base result / Bonuses on success immediately after the lore row, which naturally keeps the stock crafting-location footer last;
+- for Rebalanced Soul Contentment only, suppress the obsolete stock +10% lore/mechanics row and let the effective +20% Rebalanced effect be the single mechanics statement.
+
+This is presentation-only. It must not change 0.2.11 prayer rules, payout fields, specialist effects, timers, stacking or other accepted surfaces.
