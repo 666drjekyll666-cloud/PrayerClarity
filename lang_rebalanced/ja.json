@@ -9,6 +9,7 @@
   "rebalanced.active.repose.silver": "半分の場合で最高品質の死体が保証される",
   "rebalanced.active.repose.gold": "ロバは最高品質の死体を必ず運んでくる",
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
-  "rebalanced.active.gratitude": "魂の治療：感謝度 +{0:0}%",
-  "rebalanced.tech.plant_tier": "植物の成長時間：-{0:0}%"
+  "rebalanced.active.gratitude": "魂の治療：(gratitude_points) +{0:0}%",
+  "rebalanced.tech.plant_tier": "植物の成長時間：-{0:0}%",
+  "rebalanced.tech.souls_intro": "(gratitude_points)が多いほど、信仰ボーナスが増えます。"
 }
