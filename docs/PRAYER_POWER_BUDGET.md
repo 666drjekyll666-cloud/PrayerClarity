@@ -270,3 +270,24 @@ Reasons:
 - removing generic resource garnish from utility prayers further clarifies why a player would spend the weekly slot on a dedicated money sermon.
 
 Faith remains +5/+10/+20 and Combo remains +100/+150/+200% to both resources; neither needs reopening from the present evidence.
+
+
+### 2026-09-20 user-selected Donations ladder and Combo follow-up
+
+The user selected **+5 / +15 / +30 silver** for Bronze/Silver/Gold Donations. This replaces the earlier 5/10/30 design hypothesis before implementation.
+
+Gold Combo money is now explicitly reopened because the user does not want the dedicated Donations prayer to remain the better pure-money sermon too deep into the late game.
+
+With Cardinal active, base donations = `0.04 * Graveyard Quality`.
+
+| Gold Combo donation bonus | Total Gold Combo money | Gold Donations = base +30s ties at | Reading |
+| ---: | ---: | ---: | --- |
+| +200% (current) | 3x base | GQ 375 | specialist remains pure-money leader too long |
+| **+300% candidate** | **4x base** | **GQ 250** | clean late crossover; Combo still pays q80 and also gives +200% Faith |
+| +400% candidate | 5x base | GQ 187.5 | aggressive; risks making the q60 money specialist obsolete too quickly |
+
+Without Cardinal the same crossovers are GQ 500 / 333 / 250.
+
+Current preference: **Gold Combo donations +300%, Gold Combo Faith +200%**. This intentionally makes Gold Combo asymmetric at the top tier, because its late-game generalist value is supposed to scale harder with the mature church economy while Faith already remains valuable at +200%.
+
+Bronze/Silver Combo remain unchanged at +100/+150% Faith and donations.
