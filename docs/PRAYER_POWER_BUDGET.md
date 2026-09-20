@@ -204,3 +204,69 @@ These show that a niche prayer can be highly desirable without becoming the univ
 This historical gate was completed during the early Rebalanced line. The roster was revised further and the current stable result is PrayerClarity: Rebalanced 0.2.10. This file remains useful for the underlying unlock/craft/quality/opportunity-cost evidence, but it is **not** the source of truth for current Rebalanced numbers.
 
 Any future rebalance should reuse this full-cost framework and create a new explicit proposal rather than resurrecting the superseded candidate values above.
+
+## 2026-09-20 Donations specialist re-open
+
+Status: **quantitative design hypothesis; no production value change yet**.
+
+### Why the accepted +5 / +10 / +15 silver ladder was reopened
+
+Direct current formula:
+
+`Base donations = Graveyard Quality * (0.03 + 0.01 * Cardinal)`
+
+Rebalanced Donations adds a fixed success reward:
+- Bronze +5 silver;
+- Silver +10 silver;
+- Gold +15 silver.
+
+Gold Combo instead adds +200% of the base, so successful Gold Combo pays `3 * Base donations` in total.
+
+With Cardinal active:
+
+| Graveyard Quality | Base | Current Gold Donations (base +15s) | Gold Combo (3x base) |
+| ---: | ---: | ---: | ---: |
+| 50 | 2s | 17s | 6s |
+| 100 | 4s | 19s | 12s |
+| 150 | 6s | 21s | 18s |
+| 200 | 8s | 23s | 24s |
+| 300 | 12s | 27s | 36s |
+
+Therefore the current Gold specialist stops being the better **money** prayer at roughly **GQ 188 with Cardinal** (GQ 250 without Cardinal). This is mathematically consistent with the accepted flat-specialist/scaling-generalist design, but the crossover arrives early enough that a q60 Gold specialist can feel underwhelming exactly when the player expects its quality investment to matter.
+
+### External economy context
+
+Current community/wiki data reports:
+- goods crate: 15 silver;
+- gold produce crate: 16.5 silver;
+- up to 10 crate pallets, i.e. about 165 silver/week at ten gold crates.
+
+So the current Gold Donations premium of +15 silver is approximately **one goods crate**, while spending the one weekly sermon slot and meeting q60. This supports the user's runtime impression that Gold lacks a satisfying premium once broader money systems are online.
+
+Community discussions independently describe sermon money as negligible in mid/late game and vanilla Combo as collapsing the Donations specialist because it pays the same money plus Faith. These are balance/UX signals, not mechanics evidence.
+
+### Candidate ladders
+
+Keep Bronze and Silver stable unless evidence says otherwise; the fresh complaint is specifically Gold.
+
+| Candidate | Bronze | Silver | Gold | Gold specialist beats Gold Combo until (Cardinal) | Reading |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Current | 5s | 10s | 15s | GQ ~188 | Gold too close to one crate |
+| Conservative | 5s | 10s | 25s | GQ ~313 | noticeable, still restrained |
+| **Preferred** | **5s** | **10s** | **30s** | **GQ ~375** | two goods-crate equivalents; clear Gold jump |
+| Broader buff | 5s | 15s | 30s | GQ ~375 | also reopens Silver without a current need |
+
+Without Cardinal, the corresponding Gold crossover for +30 silver is GQ 500.
+
+### Preferred design hypothesis
+
+**Donations = +5 / +10 / +30 silver.**
+
+Reasons:
+- changes only the tier that produced the new power-budget complaint;
+- Gold q60 becomes visibly aspirational rather than “Silver +5s”;
+- +30s is roughly two goods crates, meaningful but far below a mature 10-crate weekly business;
+- the flat reward remains strongest before very high Graveyard Quality, while Combo can still overtake at extreme scaling;
+- removing generic resource garnish from utility prayers further clarifies why a player would spend the weekly slot on a dedicated money sermon.
+
+Faith remains +5/+10/+20 and Combo remains +100/+150/+200% to both resources; neither needs reopening from the present evidence.
