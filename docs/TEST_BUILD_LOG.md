@@ -2,6 +2,29 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.2.13 — accepted stable
+
+- User runtime acceptance: **2026-09-20**.
+- Frozen accepted ref: `accepted/rebalanced-0.2.13`.
+- Exact tested/build source SHA: `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`.
+- Candidate CI run: `35482448986`; result: **success**.
+- Artifact ID: `10596500719`.
+- Artifact: `PrayerClarity-rebalanced-0.2.13-ci-4726160ced2dfd15f08b10cc0499eb8c5490e3eb`.
+- Artifact ZIP digest: `sha256:bc72d63459537e4e52c1a6e71b515d2ca8a9ca19a6d6688be2b8cc26057d7911`.
+- Accepted/released DLL SHA-256: `da8633b622ad755ca9bac76bbf737e37d6a0f5fb24dab8862efa297c2b1874bd`.
+- Stable promotion PR: **#20**, squash-merged to `main` as `b8888d32648a6f7c16f473792636872bc8212344`.
+- Accepted behavior:
+  - specialist prayers no longer carry unrelated prayer-owned Faith/donation percentage bonuses or fixed Faith/money outputs;
+  - Prayer for Donations pays **+5 / +15 / +30 silver**;
+  - Combo Prayer Faith remains **+100 / +150 / +200%** and donations are **+100 / +200 / +300%**;
+  - 0.2.12 Technology layout repair is accepted: cleaned specialists no longer revive the stock requirement sentence, and crafting-location text stays at the bottom;
+  - Soul Contentment shows the effective **+20% Soul Gratitude** with the native Soul Gratitude icon;
+  - BSS Soul's Repose uses the approved concise scaling explanation that more Soul Gratitude means a larger Faith bonus.
+- Runtime screenshots/user feedback explicitly accepted the final Soul Contentment and Soul's Repose wording; earlier 0.2.11/0.2.12 checks had already confirmed the resource values, specialist cleanup, Technology ordering, prayer-item tooltip, HUD and Temporary Effects behavior.
+- Stable publication workflow: `35482867100`; result: **success**. It downloaded artifact `10596500719`, re-verified the accepted DLL hash, and published the exact accepted bytes without rebuilding.
+- Published release: `rebalanced-v0.2.13` -> target `4726160ced2dfd15f08b10cc0499eb8c5490e3eb`, asset `PrayerClarity.Rebalanced.dll`.
+- Final status: **accepted, merged to main, frozen by accepted ref, and published as stable Rebalanced release**.
+
 ## PrayerClarity: Rebalanced 0.2.12 candidate
 
 - Status: **handed for focused Technology runtime/visual acceptance; not stable; do not merge to main yet**.
