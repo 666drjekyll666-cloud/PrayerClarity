@@ -103,6 +103,12 @@ namespace PrayerClarity
                 }
             }
 
+            if (string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal))
+            {
+                sharedText = Localization.F("rebalanced.tech.souls_intro");
+                return true;
+            }
+
             if (rule.CombatDamage != null && rule.CombatArmor != null && rule.CombatRegenPerSecond != null)
             {
                 sharedText = Localization.F("rebalanced.tech.combat_intro");
