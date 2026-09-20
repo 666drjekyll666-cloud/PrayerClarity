@@ -34,5 +34,6 @@
   "active.timer_days": "{0:0.0}日",
   "tech.base_result": "基本結果",
   "tech.percent_of_base": "基本値の{0}",
-  "active.timer_days_compact": "{0:0.0}"
+  "active.timer_days_compact": "{0:0.0}",
+  "tech.on_success_header": "成功時："
 }
