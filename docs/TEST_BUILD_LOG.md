@@ -93,6 +93,30 @@ This file records handed executable artifacts once PrayerClarity research reache
   - Rebalanced Soul Contentment also retained the stale stock +10% description despite the effective +20% mechanic.
 - **0.2.11 is superseded by 0.2.12 for presentation repair; its handed bytes/source remain immutable evidence.**
 
+## PrayerClarity: Vanilla 1.0.32 candidate
+
+- Status: **handed for focused Technology UX acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/vanilla-1.0.32`.
+- Exact build/source SHA: `aaabd3cf154faa019e36b2112439ec9990fdc1bd`.
+- GitHub Actions run: `35502879595`; result: **success**.
+- Artifact ID: `10602579329`.
+- Artifact: `PrayerClarity-1.0.32-ci-aaabd3cf154faa019e36b2112439ec9990fdc1bd`.
+- Artifact ZIP digest: `sha256:774f041e451bcac296cb20aca0a1c9c2a6a1cdca2e8b72e4e557e0524b049e85`.
+- Handoff DLL: `PrayerClarity-1.0.32-ci.dll`; SHA-256: `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
+- Candidate change:
+  - Vanilla Technology uses **При успехе:** / **On success:** as a condition-style header for the whole success-only block;
+  - when a stock prayer has both a shared Faith/donation success rider and a shared named effect, those are rendered as one continuous block with no blank line between them;
+  - the visual gap before Bronze/Silver/Gold tier blocks remains;
+  - prayer-item tooltips keep their existing accepted **Бонусы при успехе** hierarchy;
+  - Rebalanced runtime behavior remains conditional on its installed Technology provider and keeps its existing Rebalanced header/grouping.
+- A sibling Rebalanced compile regression check also completed successfully on the same runtime-code state before workflow-only candidate cleanup (run `35502842903`).
+- Focused runtime acceptance requested:
+  1. Technology -> ordinary stock specialist such as **Молитва об упокоении**: heading reads **При успехе:**; `Вера +10%` and **Эффект:** are visually continuous; a gap remains before the first quality tier.
+  2. Technology -> a resource prayer such as **Комбо-молитва** or **Молитва о пожертвованиях**: **При успехе:** still reads naturally when there is no named shared effect.
+  3. Spot-check one prayer item tooltip: it should still use the existing **Бонусы при успехе** wording/spacing, proving the change is Technology-only.
+- No sermon payout/mechanics retest is required; Vanilla mechanics and reward data are unchanged.
+- Numbered binaries are immutable after this handoff.
+
 ## Current stable baselines — 2026-09-20
 
 - **PrayerClarity: Vanilla 1.0.31** — `accepted/vanilla-1.0.31`, source `30b036f16dc6a7964f7ef72e2e3ececa5951c812`, release `v1.0.31`, DLL SHA-256 `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`.
