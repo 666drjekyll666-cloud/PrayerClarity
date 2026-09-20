@@ -228,14 +228,20 @@ namespace PrayerClarity
                         sections,
                         TechnologyTooltipMaxWidth,
                         vanillaLore,
-                        suppressVanillaLore) &&
-                    !TryInsertSectionsAfterVanillaPrayerLore(
-                        __0,
-                        sections,
-                        TechnologyTooltipMaxWidth,
-                        vanillaLore,
                         suppressVanillaLore))
-                    AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
+                {
+                    bool editionFallbackHandled =
+                        PrayerEditionSemantics.HasTechnologyProvider &&
+                        TryInsertSectionsAfterVanillaPrayerLore(
+                            __0,
+                            sections,
+                            TechnologyTooltipMaxWidth,
+                            vanillaLore,
+                            suppressVanillaLore);
+
+                    if (!editionFallbackHandled)
+                        AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
+                }
 
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
