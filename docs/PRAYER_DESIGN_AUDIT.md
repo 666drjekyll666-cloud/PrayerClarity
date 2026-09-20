@@ -192,3 +192,24 @@ This is expected to:
 - make Faith/Donations/Combo visibly own the resource-generation roles.
 
 No production implementation should begin until this rule and the fixed-output cleanup scope are accepted.
+
+
+### 2026-09-20 accepted follow-up — specialist purity
+
+User decision:
+- accept the specialist-purity direction for Rebalanced;
+- utility/specialist prayers should lose unrelated prayer-owned Faith/donation percentage riders;
+- unrelated fixed Faith/money success outputs should also be removed where present;
+- do this **without compensating buffs** unless a prayer later proves weak in its own specialization;
+- resource specialists remain exceptions because resource generation is their actual job.
+
+Accepted Donations ladder for the next Rebalanced candidate:
+- Bronze: **+5 silver**;
+- Silver: **+15 silver**;
+- Gold: **+30 silver**.
+
+Open design question:
+- Gold Combo should receive a stronger money component so Donations does not remain the better pure-money result too far into late scaling.
+- The cleanest current candidate is to keep Gold Combo Faith at **+200%** and raise only Gold Combo donations to **+300%**. Bronze/Silver would remain +100/+150% to both resources.
+- This would make Gold Combo's total donations equal **4x base donations** on success. Against Gold Donations (`base + 30s`), the pure-money crossover is base donations = 10s: about Graveyard Quality 250 with Cardinal or 333 without Cardinal.
+- This is not yet accepted; compare against a more aggressive +400% Gold money option before implementation.
