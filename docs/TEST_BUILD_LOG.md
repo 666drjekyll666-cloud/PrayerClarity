@@ -2,6 +2,30 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.2.12 candidate
+
+- Status: **handed for focused Technology runtime/visual acceptance; not stable; do not merge to main yet**.
+- Candidate branch: `candidate/rebalanced-0.2.12`.
+- Exact build/source SHA: `2ac84b31dce30ccb35648a3706e58f40dda6429d`.
+- GitHub Actions run: `35481230526`; result: **success**.
+- Artifact ID: `10595647907`.
+- Artifact: `PrayerClarity-rebalanced-0.2.12-ci-2ac84b31dce30ccb35648a3706e58f40dda6429d`.
+- Artifact ZIP digest: `sha256:9a96958fe6c7f37c92715783487880e4deedc8f1c8b338a0c8c331de070abb2c`.
+- Handoff DLL: `PrayerClarity.Rebalanced-0.2.12-ci.dll`; SHA-256: `2b8b9246781749be4a33988d99c0fbccffd85979803032a862fdc8a027f79a28`.
+- 0.2.12 preserves the accepted-in-testing 0.2.11 balance/specialist-cleanup values unchanged.
+- Technology presentation repair:
+  - when specialist cleanup leaves no generic Faith/money success contribution, PrayerClarity no longer depends on vanilla emitting the optional `preach_params_2` block;
+  - it uses the always-present prayer requirement/lore row as the Rebalanced fallback anchor, removes the stale stock requirement sentence, and inserts Base result / Bonuses on success before the stock crafting-location footer;
+  - Rebalanced Soul Contentment suppresses its obsolete stock +10% Technology sentence so the effective +20% effect is the only numeric mechanic shown.
+- Vanilla 1.0.31 is still the accepted stable sibling. The workflow rebuilt Vanilla only as a compile/regression check; no new Vanilla artifact is handed out or accepted here.
+- Requested focused runtime acceptance:
+  1. Technology -> **Молитва об упокоении** (or another cleaned specialist): no stock “20–60 required...” sentence; lore -> Base result -> Bonuses on success -> crafting location at the bottom; q20/q40/q60 tier data unchanged.
+  2. Technology -> **Молитва о процветании**: Commercial Blessing x1/x2/x3 remains; no generic Faith/money garnish; crafting location is again at the bottom.
+  3. Technology -> **Молитва о довольствии душ**: obsolete vanilla +10% sentence is absent; effective Rebalanced +20% is shown.
+  4. Spot-check Donations +5/+15/+30 silver and Combo Faith +100/+150/+200%, donations +100/+200/+300% remain intact.
+- No repeat HUD, Temporary Effects, prayer-item-tooltip or full-sermon test is requested unless this candidate exposes a new discrepancy; those surfaces passed in 0.2.11 and 0.2.12 changes only Technology presentation.
+- Numbered binaries are immutable after this handoff.
+
 ## PrayerClarity: Rebalanced 0.2.11 candidate
 
 - Status: **handed for runtime/visual acceptance; not stable; do not merge to main yet**.
