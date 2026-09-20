@@ -1,5 +1,12 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.12 candidate
+
+- Preserves all 0.2.11 specialist-purity and resource-balance changes.
+- Fixes the Technology tooltip regression exposed when a specialist has no generic Faith/money success contribution: PrayerClarity now replaces the stock requirement/lore row directly and inserts **Base result** / **Bonuses on success** before the crafting-location footer even when vanilla omits its `preach_params_2` block.
+- Removes the stale stock **+10%** Soul Contentment Technology sentence in Rebalanced, where the effective prayer is **+20%**; the current effect is shown only from Rebalanced mechanics data.
+- Prayer-item tooltips, pulpit/HUD, Temporary Effects, balance values, durations and specialist mechanics are unchanged from 0.2.11.
+
 ## PrayerClarity: Rebalanced 0.2.11 candidate
 
 - Purifies specialist prayers: non-resource utility prayers no longer carry unrelated prayer-owned Faith/donation percentage riders.
