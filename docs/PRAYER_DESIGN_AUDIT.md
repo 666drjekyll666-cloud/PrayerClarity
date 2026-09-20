@@ -208,8 +208,10 @@ Accepted Donations ladder for the next Rebalanced candidate:
 - Silver: **+15 silver**;
 - Gold: **+30 silver**.
 
-Open design question:
-- Gold Combo should receive a stronger money component so Donations does not remain the better pure-money result too far into late scaling.
-- The cleanest current candidate is to keep Gold Combo Faith at **+200%** and raise only Gold Combo donations to **+300%**. Bronze/Silver would remain +100/+150% to both resources.
-- This would make Gold Combo's total donations equal **4x base donations** on success. Against Gold Donations (`base + 30s`), the pure-money crossover is base donations = 10s: about Graveyard Quality 250 with Cardinal or 333 without Cardinal.
-- This is not yet accepted; compare against a more aggressive +400% Gold money option before implementation.
+Accepted Combo follow-up for the next Rebalanced candidate:
+- Faith bonus remains **+100 / +150 / +200%**;
+- donation bonus becomes **+100 / +200 / +300%**;
+- Bronze therefore stays unchanged, Silver donation scaling rises from +150% to +200%, and Gold rises from +200% to +300%;
+- successful Gold Combo pays **4x base donations** in total. Against Gold Donations (`base + 30s`), the pure-money crossover is base donations = 10s: about Graveyard Quality 250 with Cardinal or 333 without Cardinal.
+
+This keeps Gold Combo a late scaling generalist without making Gold Donations obsolete as soon as q80 becomes available.
