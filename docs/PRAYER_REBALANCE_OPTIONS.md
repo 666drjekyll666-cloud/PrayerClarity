@@ -1,12 +1,12 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.10**. On 2026-09-19 the user runtime-tested and accepted the Repentance/Repose duration revision to **30 / 42 / 54 min**.
+Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.13**. On 2026-09-19 the user runtime-tested and accepted the Repentance/Repose duration revision to **30 / 42 / 54 min**.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
 Current stable runtime identity:
 
-- Rebalanced version: **0.2.10**
+- Rebalanced version: **0.2.13**
 - frozen accepted ref: `accepted/rebalanced-0.2.10`
 - exact accepted runtime source SHA: `4d5d3021c0b9eef16d09402c5f25851ff7a66981`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
@@ -37,9 +37,9 @@ The sibling Vanilla release remains mechanically stock and is documented separat
 | --- | ---: | --- |
 | Ordinary `b_empty` | **10** | Stock starter baseline. |
 | Faith `b_faith` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +10 / +20 Faith**. No prayer-owned donation bonus. |
-| Donations `b_money` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +10 / +15 silver**. No prayer-owned Faith bonus. |
-| Combo `b_faith_money` | **40 / 60 / 80** | Success bonus is percentage only: **+100 / +150 / +200% Faith and donations**. No prayer-owned flat Faith/money. |
-| Prosperity `b_village` | **10 / 20 / 30** | Keep stock 1 / 2 / 3 Commercial Blessings and stock sermon outputs. |
+| Donations `b_money` | **20 / 40 / 60** | Success bonus is flat only: **+5 / +15 / +30 silver**. No prayer-owned Faith bonus. |
+| Combo `b_faith_money` | **40 / 60 / 80** | Success bonus is percentage only: Faith **+100 / +150 / +200%**, donations **+100 / +200 / +300%**. No prayer-owned flat Faith/money. |
+| Prosperity `b_village` | **10 / 20 / 30** | Keep 1 / 2 / 3 Commercial Blessings; remove unrelated prayer-owned Faith/money success outputs. |
 | Shoots & Roots `b_plant` | **10 / 30 / 50** | Repair stock scope; growth time **-20 / -30 / -40%**. Duration **36 / 72 / 108 min**. |
 | Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. Duration **30 / 42 / 54 min**. |
 | Repose `b_skull` | **20 / 40 / 60** | Bronze stock-style expanded pool; Silver halfway from stock best-tier probability to certainty; Gold guarantees the best **actually existing eligible ordinary corpse tier**. Duration **30 / 42 / 54 min**. |
@@ -162,7 +162,7 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-The current stable edition is **PrayerClarity: Rebalanced 0.2.10**.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.13**.
 
 The 0.2.4 duration revision changes only Repentance and Repose from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged.
 
@@ -171,7 +171,8 @@ The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent a
 - 0.2.2 closed the instant-growth regression and the 100%-stack edge for Shoots & Roots, retaining the nominal 20/30/40% reduction ladder with a 95% combined safety cap;
 - 0.2.3 runtime-verified Repentance at 50/75/100% and Combat at +5/+10/+15 damage, +4 armor and 1/2/4 HP/s through the narrower accepted native seams;
 - 0.2.4 runtime-verified the revised Repentance/Repose duration presentation at approximately 2.7 / 3.7 / 4.8 in-game days under Longer Days +50%, corresponding to 30 / 42 / 54 real-time minutes;
-- 0.2.10 keeps those durations and the accepted Repose corpse-quality semantics, while raising ordinary Repose Gold's guaranteed-success requirement from q50 to q60; it also carries the accepted shared Clarity UX refinements through the stable sibling line;
+- 0.2.10 kept those durations and the accepted Repose corpse-quality semantics while raising ordinary Repose Gold's guaranteed-success requirement from q50 to q60;
+- 0.2.13 keeps the accepted specialist mechanics but removes unrelated generic Faith/donation success garnish from utility specialists, changes Donations to +5/+15/+30 silver, changes Combo donations to +100/+200/+300% while Faith remains +100/+150/+200%, and carries the accepted Technology/Soul wording cleanup;
 - current architecture/save-lifecycle status is **A — no architecture action**, per `POST_AUDIT_VERDICT.md`.
 
 The original 0.2.0 acceptance also covered the revised Faith / Donations / Combo semantics and requirements, Soul's Repose q30/60/120 plus current Soul Gratitude context, representative localization, synchronized presentation surfaces, and absence of PrayerClarity-specific runtime exceptions in the supplied acceptance logs.
@@ -181,4 +182,4 @@ Deferred, non-blocking verification remains:
 - terminal Repose wording/presentation on a save that has reached terminal Donkey corpse progression;
 - physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been visually observed in the user's runtime, although it uses the verified native non-Faith/non-money sermon-drop path.
 
-These are evidence gaps, not blockers for 0.2.10. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.10 bytes.
+These are evidence gaps, not blockers for 0.2.13. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.13 bytes.
