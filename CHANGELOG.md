@@ -1,8 +1,8 @@
 # Changelog
 
-## PrayerClarity: Rebalanced 0.2.13 candidate
+## PrayerClarity: Rebalanced 0.2.13
 
-- Preserves the accepted 0.2.12 Technology repair and all 0.2.11 specialist/resource-balance changes.
+- Accepted stable release preserving the 0.2.12 Technology repair and all 0.2.11 specialist/resource-balance changes.
 - Soul Contentment now shows its +20% gain with the native Soul Gratitude icon instead of the ambiguous generic word “gratitude”.
 - BSS Soul's Repose replaces the redundant shared Technology sentence with a direct scaling hint: more Soul Gratitude means a larger Faith bonus.
 - No prayer mechanics, requirements, payouts, durations, stacking, HUD behavior, or shared Vanilla presentation change.
