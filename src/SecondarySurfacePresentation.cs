@@ -610,10 +610,10 @@ namespace PrayerClarity
 
         private static string TechnologySuccessHeader()
         {
-            return Localization.F(
-                PrayerEditionSemantics.HasTechnologyProvider
-                    ? "tech.success_reward_bonus"
-                    : "tech.on_success_header");
+            // Both public editions now use the same condition-style Technology heading.
+            // Prayer-item tooltips intentionally keep the separate "Bonuses on success"
+            // label because their single-quality hierarchy is already accepted.
+            return Localization.F("tech.on_success_header");
         }
 
         private static object CreateBlankSeparator()

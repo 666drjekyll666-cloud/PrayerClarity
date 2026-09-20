@@ -2,6 +2,19 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+## PrayerClarity: Rebalanced 0.2.14 candidate
+
+- Status: **planned for a focused Technology wording check; not stable**.
+- Candidate change only:
+  - Rebalanced Technology uses **При успехе:** / **On success:** instead of **Бонусы при успехе** / **Bonuses on success**;
+  - prayer-item tooltips remain unchanged and keep the existing **Бонусы при успехе** hierarchy;
+  - all 0.2.13 mechanics, balance, requirements, payouts, durations, Soul wording, HUD and Temporary Effects behavior remain unchanged.
+- Implementation note: the shared 1.0.32 Technology heading is already present on current `main`; Rebalanced 0.2.14 simply packages that accepted shared presentation for the Rebalanced sibling with a new immutable version number.
+- Focused runtime acceptance:
+  1. open any Rebalanced prayer in Technology and confirm the heading is **При успехе:**;
+  2. spot-check one prayer item and confirm it still says **Бонусы при успехе**;
+  3. no balance/mechanics retest is required.
+
 ## PrayerClarity: Rebalanced 0.2.13 — accepted stable
 
 - User runtime acceptance: **2026-09-20**.
