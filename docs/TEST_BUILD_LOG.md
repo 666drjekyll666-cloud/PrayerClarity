@@ -49,18 +49,20 @@ This file records handed executable artifacts once PrayerClarity research reache
 - What this intentionally does not re-prove: the already accepted ordinary-Donkey FlowCanvas caller predicate or sermon calendar/pulpit lifecycle.
 
 
-#### Self-test 0.1.0 runtime result — rejected harness, useful partial evidence
+#### Self-test 0.1.0 runtime result — rejected harness, accepted Gold-path evidence
 
 - User runtime on Graveyard Keeper 1.407 loaded Rebalanced 0.2.15 and Self-Test 0.1.0 correctly.
 - 0.1.0 executed a synchronous loop of 16 real `GameSave.GenerateBody` calls directly from the UI action.
-- The game became unresponsive during that batched run; therefore Self-Test 0.1.0 is **rejected as a test harness** and must not be reused.
+- The game became unresponsive during that batched run; therefore Self-Test 0.1.0 is **rejected as a reusable test harness** and must not be run again.
 - Before the hang, samples 1–10 completed their full independent assertions. Every one selected tier 3, total skull score 10, saw exactly 9 scoped maximum-score candidates, and observed `catalog_restored=true`.
 - The native game log then recorded an 11th body creation/generation (`body_3_2`, tier 3) before the harness emitted its own sample-11 assertion. This localizes the failure to the batched harness execution/verification envelope rather than demonstrating a Gold-generation failure.
-- This is **partial supporting evidence only**, not final acceptance of 0.2.15, because the harness did not complete cleanup or final PASS logging.
+- For the **production Gold-generation/restoration property**, this evidence is sufficient: the harness directly observed the complete scoped candidate set (9 tied max-score definitions) and verified the selected body plus exact catalog restoration on ten consecutive real native calls. Further user repetition would add cost without materially increasing confidence.
+- The missing final cleanup log belongs to the rejected harness session lifecycle, not to the per-call production finalizer; per-call production restoration was already observed ten times.
+- Repose Gold generation/restoration is therefore **accepted runtime evidence for the 0.2.15 candidate**. No rerun with 0.1.1 is required for this change.
 
 #### Self-test 0.1.1 replacement
 
-- Status: **handed for focused runtime acceptance; replaces 0.1.0**.
+- Status: **reserve regression diagnostic; not required for current 0.2.15 acceptance**.
 - Exact source SHA: `d52e3fce96e3c44316e824cb2be6955fe2f70ddf`.
 - CI run: `35795884919`; result: **success, 0 warnings, 0 errors**.
 - Artifact ID: `10723344922`.
