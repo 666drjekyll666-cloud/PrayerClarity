@@ -30,6 +30,24 @@
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
+
+### Repose Gold one-button runtime companion
+
+- Research-only companion: `PrayerClarity.ReposeGoldSelfTest 0.1.0`.
+- Exact self-test source SHA: `2f878bbee45bc7621e0f67bb9af864d7a2f94d26`.
+- CI run: `35792990408`; result: **success, 0 warnings, 0 errors**.
+- Artifact ID: `10722798343`.
+- Artifact ZIP digest: `sha256:beeabab41441aeec06e9fa5a685d65ba66f881858140c0bb6cab4d56f0baa092`.
+- Self-test DLL SHA-256: `382061c506177d65e0116dd677e94f10f505e534b143907be635fc23f837865d`.
+- Target production bytes remain the exact 0.2.15 candidate DLL SHA-256 `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f` from source `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
+- The companion does not replace production mechanics. It opens an F1 research window with one button.
+- The button refuses to run if a real `buff_skull` is already active; otherwise it activates `buff_skull` through native `BuffsLogics.AddBuff`, injects the already-accepted post-Donkey Gold pending state, and performs 16 real `GameSave.GenerateBody(2,4,-1,-1)` calls.
+- It independently inspects the live 1.407 body catalogue, expects the canonical fixture of 33 ordinary definitions across tiers 2..3, best tier 3, maximum total skull score 10, and 9 tied maximum-score definitions.
+- During every generation it verifies that production installed a narrowed scoped body catalogue containing only maximum-score candidates, that the actually selected `BodyDefinition` has the expected best tier/score, and that the exact original `GameBalance.bodies_data` reference is restored after the call.
+- Cleanup removes the synthetic buff. If production catalogue restoration fails, the harness records FAIL first and then performs an emergency restore of the exact pre-test catalogue reference.
+- What this proves: the new 0.2.15 Gold filtering/generation/restoration path under the real game runtime.
+- What this intentionally does not re-prove: the already accepted ordinary-Donkey FlowCanvas caller predicate or sermon calendar/pulpit lifecycle.
+
 ## PrayerClarity: Rebalanced 0.2.14 — accepted stable
 
 - User runtime acceptance: **2026-09-20**.
