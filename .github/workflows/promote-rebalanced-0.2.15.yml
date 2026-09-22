@@ -1,0 +1,58 @@
+name: Publish accepted Rebalanced 0.2.15
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/promote-rebalanced-0.2.15.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      ACCEPTED_SHA: ac953fe25ef17dbaf63340a7b9309dadec7e207e
+      REBALANCED_SHA256: a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download exact accepted artifact
+        uses: actions/download-artifact@v4
+        with:
+          repository: NikichMods/PrayerClarity
+          run-id: 35791783893
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: PrayerClarity-rebalanced-0.2.14-ci-ac953fe25ef17dbaf63340a7b9309dadec7e207e
+          path: accepted
+
+      - name: Verify accepted bytes and stage canonical asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          canonical='accepted/PrayerClarity.Rebalanced.dll'
+          test -f "$canonical"
+          actual=$(sha256sum "$canonical" | awk '{print $1}')
+          test "$actual" = "$REBALANCED_SHA256"
+
+          mkdir -p release
+          cp "$canonical" release/PrayerClarity.Rebalanced.dll
+          test "$(sha256sum release/PrayerClarity.Rebalanced.dll | awk '{print $1}')" = "$REBALANCED_SHA256"
+
+      - name: Publish Rebalanced 0.2.15 without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view rebalanced-v0.2.15 --repo NikichMods/PrayerClarity >/dev/null 2>&1; then
+            echo 'rebalanced-v0.2.15 already exists; leaving it unchanged.'
+          else
+            gh release create rebalanced-v0.2.15 release/PrayerClarity.Rebalanced.dll \
+              --repo NikichMods/PrayerClarity \
+              --target "$ACCEPTED_SHA" \
+              --title 'PrayerClarity: Rebalanced 0.2.15' \
+              --latest=false \
+              --notes "Accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Prayer for Repose keeps Bronze stock-style and Silver's accepted mixed reliability, raises Gold's 100% success requirement to 90 Church Quality, and makes Gold guarantee the maximum total skull count inside the best actually available ordinary corpse tier. The rule is derived from live game data rather than hard-coded tier/body IDs. Exact accepted runtime source: ac953fe25ef17dbaf63340a7b9309dadec7e207e. Exact DLL SHA-256: a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f."
+          fi
