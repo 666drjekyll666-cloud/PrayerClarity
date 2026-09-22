@@ -10,10 +10,10 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Vanilla
 
-- accepted/released version: **1.0.31**
+- accepted/released version: **1.0.32**
 - accepted ref: `accepted/vanilla-1.0.32`
-- exact source: `30b036f16dc6a7964f7ef72e2e3ececa5951c812`
-- DLL SHA-256: `140a2b3bc21eaa0b9e95f344a8a9ab5f47d5b9aa37572a0b159d905c79351ba3`
+- exact source: `aaabd3cf154faa019e36b2112439ec9990fdc1bd`
+- DLL SHA-256: `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`
 - release: `v1.0.32`
 
 ### PrayerClarity: Rebalanced
@@ -22,8 +22,8 @@ This document is a **closure record**, not a new redesign proposal. It records w
 - accepted ref: `accepted/rebalanced-0.2.15`
 - exact runtime source: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`
 - DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`
-- release target: `rebalanced-v0.2.15`
-- stable promotion merge: pending promotion bookkeeping
+- release: `rebalanced-v0.2.15`
+- stable promotion merge: `c9dede71131dbab4322e37409ca0bdf41994fcb9`
 
 The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
@@ -47,7 +47,7 @@ The previous Rebalanced **B — runtime evidence gap only** status is closed. Th
 | Combat armor | `HPActionComponent.DecHP` | scoped nonserialized `totem_effect["add_armor"]` +4 | tier token only | player incoming damage while buff live | keep |
 | Combat regeneration | `PlayerBuff.CustomUpdate` / `BuffDefinition.se_tick` | native tick expression reads persisted regen scalar | regen scalar in player params | native buff tick while buff live | keep |
 | Shoots & Roots | stock plant `craft_time` SmartExpression | scoped WGO `totem_effect["buff_plant"]` input | tier/reduction player params | verified plant DoAction while stock buff active | keep |
-| Repose | ordinary Donkey Flow_DropBody -> native `GenerateBody` | narrow pending event context / tier_min narrowing | tier token; pending mode is transient only | ordinary Donkey body generation | keep |
+| Repose | ordinary Donkey Flow_DropBody -> native `GenerateBody` | narrow pending event context; best-tier narrowing; Gold-only scoped maximum-skull `bodies_data` projection restored in finalizer | tier token; pending mode/catalog projection are transient only | ordinary Donkey body generation | keep |
 | Excellence | native multiquality `GetBuffValue` consumer | exact `buff_star` effective value override | tier token only | linked-buff quality calculation | keep |
 | Soul Contentment | live `soul_portal` FlowCanvas graph | exact-topology, idempotent 0.1 -> 0.2 coefficient projection | no tier state | attached-script lifecycle only | keep |
 
