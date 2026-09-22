@@ -16,11 +16,11 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.reposegoldselftest";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity Repose Gold Self-Test";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         private const int FixtureTierMin = 2;
         private const int FixtureTierMax = 4;
-        private const int Samples = 16;
+        private const int Samples = 4;
 
         private static readonly BindingFlags AnyStatic =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -52,6 +52,26 @@ namespace PrayerClarityResearch
             internal int MaxScoreCount;
         }
 
+        private sealed class TestSession
+        {
+            internal object Player;
+            internal object Save;
+            internal object Balance;
+            internal object OriginalCatalog;
+            internal CatalogStats Fixture;
+            internal bool CanonicalFixture;
+            internal float BodyMinBefore;
+            internal float BodyMaxBefore;
+            internal float AddMinBefore;
+            internal float AddMaxBefore;
+            internal readonly Dictionary<string, int> SelectedIds =
+                new Dictionary<string, int>(StringComparer.Ordinal);
+            internal int CompletedSamples;
+            internal float NextSampleAt;
+        }
+
+        private TestSession _session;
+
         private void Awake()
         {
             _log = Logger;
@@ -72,6 +92,23 @@ namespace PrayerClarityResearch
 
             if (_visible && Input.GetKeyDown(KeyCode.Escape))
                 _visible = false;
+
+            TestSession session = _session;
+            if (session == null || Time.realtimeSinceStartup < session.NextSampleAt)
+                return;
+
+            RunNextSample(session);
+        }
+
+        private void OnDestroy()
+        {
+            TestSession session = _session;
+            if (session == null) return;
+
+            _log?.LogWarning(
+                "REPOSE_GOLD_SELFTEST interrupted by plugin destruction; running cleanup.");
+            CleanupSession(session, "INTERRUPTED");
+            _session = null;
         }
 
         private void OnGUI()
@@ -82,7 +119,7 @@ namespace PrayerClarityResearch
                 736219,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Repose Gold Self-Test 0.1.0");
+                "PrayerClarity: Repose Gold Self-Test 0.1.1");
         }
 
         private void DrawWindow(int id)
@@ -95,8 +132,17 @@ namespace PrayerClarityResearch
 
             GUILayout.Space(10f);
 
-            if (GUILayout.Button("Run Gold Repose self-test (16 real GenerateBody calls)", GUILayout.Height(34f)))
-                RunGoldSelfTest();
+            if (_session == null)
+            {
+                if (GUILayout.Button("Run Gold Repose self-test (4 paced GenerateBody calls)", GUILayout.Height(34f)))
+                    StartGoldSelfTest();
+            }
+            else
+            {
+                GUILayout.Label(
+                    "Running: " + _session.CompletedSamples + "/" + Samples +
+                    " completed. One native generation is executed per paced step.");
+            }
 
             GUILayout.Space(10f);
             GUILayout.Label("Status: " + _status);
@@ -104,8 +150,14 @@ namespace PrayerClarityResearch
             GUI.DragWindow(new Rect(0f, 0f, 10000f, 24f));
         }
 
-        private void RunGoldSelfTest()
+        private void StartGoldSelfTest()
         {
+            if (_session != null)
+            {
+                _status = "REFUSED: a self-test is already running.";
+                return;
+            }
+
             if (IsActive("buff_skull"))
             {
                 _status =
@@ -126,13 +178,6 @@ namespace PrayerClarityResearch
                 return;
             }
 
-            float bodyMinBefore = GetPlayerParam(player, "body_min", 0f);
-            float bodyMaxBefore = GetPlayerParam(player, "body_max", 0f);
-            float addMinBefore = GetPlayerParam(player, "add_body_min", 0f);
-            float addMaxBefore = GetPlayerParam(player, "add_body_max", 0f);
-
-            bool running = false;
-
             try
             {
                 CatalogStats fixture = AnalyzeCatalog(
@@ -141,13 +186,38 @@ namespace PrayerClarityResearch
                     FixtureTierMax);
 
                 if (fixture.Count <= 0 || fixture.BestTier == int.MinValue)
-                    throw new InvalidOperationException("Control range contains no ordinary body definitions.");
+                    throw new InvalidOperationException(
+                        "Control range contains no ordinary body definitions.");
 
-                bool canonicalFixture =
-                    fixture.Count == 33 &&
-                    fixture.BestTier == 3 &&
-                    fixture.MaxScore == 10 &&
-                    fixture.MaxScoreCount == 9;
+                TestSession session = new TestSession
+                {
+                    Player = player,
+                    Save = save,
+                    Balance = balance,
+                    OriginalCatalog = originalCatalog,
+                    Fixture = fixture,
+                    CanonicalFixture =
+                        fixture.Count == 33 &&
+                        fixture.BestTier == 3 &&
+                        fixture.MaxScore == 10 &&
+                        fixture.MaxScoreCount == 9,
+                    BodyMinBefore = GetPlayerParam(player, "body_min", 0f),
+                    BodyMaxBefore = GetPlayerParam(player, "body_max", 0f),
+                    AddMinBefore = GetPlayerParam(player, "add_body_min", 0f),
+                    AddMaxBefore = GetPlayerParam(player, "add_body_max", 0f),
+                    CompletedSamples = 0,
+                    NextSampleAt = Time.realtimeSinceStartup + 0.25f
+                };
+
+                _addBuff("buff_skull", 54f);
+                if (!IsActive("buff_skull"))
+                    throw new InvalidOperationException(
+                        "Native BuffsLogics.AddBuff did not activate buff_skull.");
+
+                _session = session;
+                _status =
+                    "RUNNING: 0/" + Samples +
+                    ". Test is paced across frames; do not press the button again.";
 
                 _log?.LogInfo(
                     "REPOSE_GOLD_SELFTEST_BEGIN" +
@@ -157,217 +227,272 @@ namespace PrayerClarityResearch
                     " min_score=" + fixture.MinScore +
                     " max_score=" + fixture.MaxScore +
                     " max_score_candidates=" + fixture.MaxScoreCount +
-                    " canonical_1407_fixture=" + canonicalFixture +
-                    " samples=" + Samples);
-
-                // Native host activation. We deliberately do not run the pulpit or alter
-                // the calendar; the already accepted Donkey callback predicate is outside
-                // this 0.2.15 regression target.
-                _addBuff("buff_skull", 54f);
-
-                if (!IsActive("buff_skull"))
-                    throw new InvalidOperationException("Native BuffsLogics.AddBuff did not activate buff_skull.");
-
-                Dictionary<string, int> selectedIds =
-                    new Dictionary<string, int>(StringComparer.Ordinal);
-
-                running = true;
-                for (int i = 1; i <= Samples; i++)
-                {
-                    ArmProductionGoldPendingMode();
-
-                    _lastBodyDefinition = null;
-                    _catalogSeenDuringGeneration = null;
-                    _captureGeneration = true;
-
-                    object generated;
-                    try
-                    {
-                        generated = _generateBody.Invoke(
-                            save,
-                            new object[] { FixtureTierMin, FixtureTierMax, -1, -1 });
-                    }
-                    finally
-                    {
-                        _captureGeneration = false;
-                    }
-
-                    if (generated == null)
-                        throw new InvalidOperationException("GameSave.GenerateBody returned null at sample " + i + ".");
-
-                    if (_lastBodyDefinition == null)
-                        throw new InvalidOperationException(
-                            "BodyDefinition.GenerateBodyItem was not observed at sample " + i + ".");
-
-                    if (_catalogSeenDuringGeneration == null)
-                        throw new InvalidOperationException(
-                            "Could not capture bodies_data during native generation at sample " + i + ".");
-
-                    CatalogStats projected = AnalyzeCatalog(
-                        _catalogSeenDuringGeneration,
-                        fixture.BestTier,
-                        FixtureTierMax);
-
-                    if (ReferenceEquals(_catalogSeenDuringGeneration, originalCatalog))
-                        throw new InvalidOperationException(
-                            "Gold did not install a scoped body catalog at sample " + i + ".");
-
-                    if (projected.Count != fixture.MaxScoreCount ||
-                        projected.BestTier != fixture.BestTier ||
-                        projected.MinScore != fixture.MaxScore ||
-                        projected.MaxScore != fixture.MaxScore)
-                    {
-                        throw new InvalidOperationException(
-                            "Scoped Gold catalog mismatch at sample " + i +
-                            ": count=" + projected.Count +
-                            ", tier=" + projected.BestTier +
-                            ", scores=" + projected.MinScore + ".." + projected.MaxScore +
-                            "; expected count=" + fixture.MaxScoreCount +
-                            ", tier=" + fixture.BestTier +
-                            ", score=" + fixture.MaxScore + ".");
-                    }
-
-                    int selectedTier = ToInt(Get(_lastBodyDefinition, "tier"));
-                    string linkedItemId = Convert.ToString(
-                        Get(_lastBodyDefinition, "linked_item_id"));
-                    int selectedScore = GetBodySkullScore(_lastBodyDefinition);
-                    string selectedId = GetId(_lastBodyDefinition) ?? "<unknown>";
-
-                    if (!string.Equals(linkedItemId, "body", StringComparison.Ordinal) ||
-                        selectedTier != fixture.BestTier ||
-                        selectedScore != fixture.MaxScore)
-                    {
-                        throw new InvalidOperationException(
-                            "Selected body mismatch at sample " + i +
-                            ": id=" + selectedId +
-                            ", linked_item_id=" + linkedItemId +
-                            ", tier=" + selectedTier +
-                            ", score=" + selectedScore +
-                            "; expected tier=" + fixture.BestTier +
-                            ", score=" + fixture.MaxScore + ".");
-                    }
-
-                    object currentCatalog = Get(balance, "bodies_data");
-                    if (!ReferenceEquals(currentCatalog, originalCatalog))
-                        throw new InvalidOperationException(
-                            "GameBalance.bodies_data was not restored after sample " + i + ".");
-
-                    int seen;
-                    selectedIds.TryGetValue(selectedId, out seen);
-                    selectedIds[selectedId] = seen + 1;
-
-                    _log?.LogInfo(
-                        "REPOSE_GOLD_SELFTEST_SAMPLE" +
-                        " index=" + i +
-                        " body=" + selectedId +
-                        " tier=" + selectedTier +
-                        " skull_score=" + selectedScore +
-                        " scoped_candidates=" + projected.Count +
-                        " catalog_restored=true");
-                }
-
-                running = false;
-
-                string distribution = string.Join(
-                    ",",
-                    selectedIds
-                        .OrderBy(pair => pair.Key, StringComparer.Ordinal)
-                        .Select(pair => pair.Key + "x" + pair.Value)
-                        .ToArray());
-
-                string verdict = canonicalFixture ? "PASS" : "PASS_NONCANONICAL_DATA";
-                _status =
-                    verdict +
-                    ": " + Samples + "/" + Samples +
-                    " generated bodies used tier " + fixture.BestTier +
-                    " and max score " + fixture.MaxScore +
-                    "; scoped catalog restored every time. Distinct selected bodies: " +
-                    selectedIds.Count + ".";
-
-                _log?.LogInfo(
-                    "REPOSE_GOLD_SELFTEST_" + verdict +
+                    " canonical_1407_fixture=" + session.CanonicalFixture +
                     " samples=" + Samples +
-                    " best_tier=" + fixture.BestTier +
-                    " max_score=" + fixture.MaxScore +
-                    " expected_candidates=" + fixture.MaxScoreCount +
-                    " distinct_selected=" + selectedIds.Count +
-                    " distribution=" + distribution);
-            }
-            catch (TargetInvocationException ex)
-            {
-                running = false;
-                Exception actual = ex.InnerException ?? ex;
-                _status = "FAIL: " + actual.GetType().Name + " - " + actual.Message;
-                _log?.LogError("REPOSE_GOLD_SELFTEST_FAIL " + actual);
+                    " pacing=one_sample_per_step interval_seconds=0.25");
             }
             catch (Exception ex)
             {
-                running = false;
-                _status = "FAIL: " + ex.GetType().Name + " - " + ex.Message;
-                _log?.LogError("REPOSE_GOLD_SELFTEST_FAIL " + ex);
-            }
-            finally
-            {
-                _captureGeneration = false;
-                if (running)
-                    _log?.LogWarning("REPOSE_GOLD_SELFTEST cleanup entered while run flag was still set.");
-
                 try
                 {
-                    // The precondition guarantees there was no real Repose buff before
-                    // the test, so any live buff_skull here belongs to this harness.
                     if (IsActive("buff_skull"))
                         _removeBuff("buff_skull");
                 }
-                catch (Exception ex)
+                catch (Exception cleanupEx)
                 {
-                    _log?.LogError("REPOSE_GOLD_SELFTEST_CLEANUP buff removal failed. " + ex);
+                    _log?.LogError(
+                        "REPOSE_GOLD_SELFTEST_CLEANUP buff removal failed after start failure. " +
+                        cleanupEx);
                 }
 
+                _status = "FAIL: " + ex.GetType().Name + " - " + ex.Message;
+                _log?.LogError("REPOSE_GOLD_SELFTEST_FAIL " + ex);
+            }
+        }
+
+        private void RunNextSample(TestSession session)
+        {
+            if (!ReferenceEquals(_session, session))
+                return;
+
+            int sampleIndex = session.CompletedSamples + 1;
+
+            try
+            {
+                ArmProductionGoldPendingMode();
+
+                _lastBodyDefinition = null;
+                _catalogSeenDuringGeneration = null;
+                _captureGeneration = true;
+
+                object generated;
                 try
                 {
-                    object currentCatalog = Get(balance, "bodies_data");
-                    if (!ReferenceEquals(currentCatalog, originalCatalog))
-                    {
-                        _status += " CLEANUP FAIL: bodies_data reference changed.";
-                        _log?.LogError(
-                            "REPOSE_GOLD_SELFTEST_CLEANUP_FAIL bodies_data reference was not restored by production.");
-
-                        // Preserve the failure as evidence, then recover the exact
-                        // pre-test object reference so a failed diagnostic cannot leave
-                        // the live game catalog projected.
-                        Set(balance, "bodies_data", originalCatalog);
-                        _log?.LogWarning(
-                            "REPOSE_GOLD_SELFTEST_EMERGENCY_RESTORE bodies_data original reference restored by harness.");
-                    }
-
-                    float bodyMinAfter = GetPlayerParam(player, "body_min", 0f);
-                    float bodyMaxAfter = GetPlayerParam(player, "body_max", 0f);
-                    float addMinAfter = GetPlayerParam(player, "add_body_min", 0f);
-                    float addMaxAfter = GetPlayerParam(player, "add_body_max", 0f);
-
-                    bool tierInputsRestored =
-                        Nearly(bodyMinBefore, bodyMinAfter) &&
-                        Nearly(bodyMaxBefore, bodyMaxAfter) &&
-                        Nearly(addMinBefore, addMinAfter) &&
-                        Nearly(addMaxBefore, addMaxAfter);
-
-                    _log?.LogInfo(
-                        "REPOSE_GOLD_SELFTEST_CLEANUP" +
-                        " buff_active_after=" + IsActive("buff_skull") +
-                        " tier_inputs_restored=" + tierInputsRestored +
-                        " body_min=" + bodyMinAfter.ToString("0.###") +
-                        " body_max=" + bodyMaxAfter.ToString("0.###") +
-                        " add_body_min=" + addMinAfter.ToString("0.###") +
-                        " add_body_max=" + addMaxAfter.ToString("0.###"));
-
-                    if (!tierInputsRestored)
-                        _status += " CLEANUP WARNING: corpse tier player params changed.";
+                    generated = _generateBody.Invoke(
+                        session.Save,
+                        new object[] { FixtureTierMin, FixtureTierMax, -1, -1 });
                 }
-                catch (Exception ex)
+                finally
                 {
-                    _log?.LogError("REPOSE_GOLD_SELFTEST_CLEANUP verification failed. " + ex);
+                    _captureGeneration = false;
                 }
+
+                if (generated == null)
+                    throw new InvalidOperationException(
+                        "GameSave.GenerateBody returned null at sample " + sampleIndex + ".");
+
+                if (_lastBodyDefinition == null)
+                    throw new InvalidOperationException(
+                        "BodyDefinition.GenerateBodyItem was not observed at sample " +
+                        sampleIndex + ".");
+
+                if (_catalogSeenDuringGeneration == null)
+                    throw new InvalidOperationException(
+                        "Could not capture bodies_data during native generation at sample " +
+                        sampleIndex + ".");
+
+                CatalogStats projected = AnalyzeCatalog(
+                    _catalogSeenDuringGeneration,
+                    session.Fixture.BestTier,
+                    FixtureTierMax);
+
+                if (ReferenceEquals(
+                    _catalogSeenDuringGeneration,
+                    session.OriginalCatalog))
+                {
+                    throw new InvalidOperationException(
+                        "Gold did not install a scoped body catalog at sample " +
+                        sampleIndex + ".");
+                }
+
+                if (projected.Count != session.Fixture.MaxScoreCount ||
+                    projected.BestTier != session.Fixture.BestTier ||
+                    projected.MinScore != session.Fixture.MaxScore ||
+                    projected.MaxScore != session.Fixture.MaxScore)
+                {
+                    throw new InvalidOperationException(
+                        "Scoped Gold catalog mismatch at sample " + sampleIndex +
+                        ": count=" + projected.Count +
+                        ", tier=" + projected.BestTier +
+                        ", scores=" + projected.MinScore + ".." + projected.MaxScore +
+                        "; expected count=" + session.Fixture.MaxScoreCount +
+                        ", tier=" + session.Fixture.BestTier +
+                        ", score=" + session.Fixture.MaxScore + ".");
+                }
+
+                int selectedTier = ToInt(Get(_lastBodyDefinition, "tier"));
+                string linkedItemId = Convert.ToString(
+                    Get(_lastBodyDefinition, "linked_item_id"));
+                int selectedScore = GetBodySkullScore(_lastBodyDefinition);
+                string selectedId = GetId(_lastBodyDefinition) ?? "<unknown>";
+
+                if (!string.Equals(linkedItemId, "body", StringComparison.Ordinal) ||
+                    selectedTier != session.Fixture.BestTier ||
+                    selectedScore != session.Fixture.MaxScore)
+                {
+                    throw new InvalidOperationException(
+                        "Selected body mismatch at sample " + sampleIndex +
+                        ": id=" + selectedId +
+                        ", linked_item_id=" + linkedItemId +
+                        ", tier=" + selectedTier +
+                        ", score=" + selectedScore +
+                        "; expected tier=" + session.Fixture.BestTier +
+                        ", score=" + session.Fixture.MaxScore + ".");
+                }
+
+                object currentCatalog = Get(session.Balance, "bodies_data");
+                if (!ReferenceEquals(currentCatalog, session.OriginalCatalog))
+                {
+                    throw new InvalidOperationException(
+                        "GameBalance.bodies_data was not restored after sample " +
+                        sampleIndex + ".");
+                }
+
+                int seen;
+                session.SelectedIds.TryGetValue(selectedId, out seen);
+                session.SelectedIds[selectedId] = seen + 1;
+                session.CompletedSamples++;
+
+                _status =
+                    "RUNNING: " + session.CompletedSamples + "/" + Samples +
+                    " passed; last=" + selectedId +
+                    ", tier=" + selectedTier +
+                    ", skull score=" + selectedScore + ".";
+
+                _log?.LogInfo(
+                    "REPOSE_GOLD_SELFTEST_SAMPLE" +
+                    " index=" + sampleIndex +
+                    " body=" + selectedId +
+                    " tier=" + selectedTier +
+                    " skull_score=" + selectedScore +
+                    " scoped_candidates=" + projected.Count +
+                    " catalog_restored=true");
+
+                if (session.CompletedSamples >= Samples)
+                {
+                    FinishSession(session);
+                    return;
+                }
+
+                session.NextSampleAt = Time.realtimeSinceStartup + 0.25f;
+            }
+            catch (TargetInvocationException ex)
+            {
+                Exception actual = ex.InnerException ?? ex;
+                FailSession(session, actual);
+            }
+            catch (Exception ex)
+            {
+                FailSession(session, ex);
+            }
+        }
+
+        private void FinishSession(TestSession session)
+        {
+            string distribution = string.Join(
+                ",",
+                session.SelectedIds
+                    .OrderBy(pair => pair.Key, StringComparer.Ordinal)
+                    .Select(pair => pair.Key + "x" + pair.Value)
+                    .ToArray());
+
+            string verdict =
+                session.CanonicalFixture ? "PASS" : "PASS_NONCANONICAL_DATA";
+
+            _status =
+                verdict +
+                ": " + Samples + "/" + Samples +
+                " generated bodies used tier " + session.Fixture.BestTier +
+                " and max score " + session.Fixture.MaxScore +
+                "; scoped catalog restored every time.";
+
+            _log?.LogInfo(
+                "REPOSE_GOLD_SELFTEST_" + verdict +
+                " samples=" + Samples +
+                " best_tier=" + session.Fixture.BestTier +
+                " max_score=" + session.Fixture.MaxScore +
+                " expected_candidates=" + session.Fixture.MaxScoreCount +
+                " distinct_selected=" + session.SelectedIds.Count +
+                " distribution=" + distribution);
+
+            CleanupSession(session, verdict);
+            _session = null;
+        }
+
+        private void FailSession(TestSession session, Exception ex)
+        {
+            _status = "FAIL: " + ex.GetType().Name + " - " + ex.Message;
+            _log?.LogError("REPOSE_GOLD_SELFTEST_FAIL " + ex);
+            CleanupSession(session, "FAIL");
+            _session = null;
+        }
+
+        private void CleanupSession(TestSession session, string reason)
+        {
+            _captureGeneration = false;
+
+            try
+            {
+                // Start precondition guarantees that there was no pre-existing
+                // buff_skull, so any live one here belongs to this harness.
+                if (IsActive("buff_skull"))
+                    _removeBuff("buff_skull");
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError(
+                    "REPOSE_GOLD_SELFTEST_CLEANUP buff removal failed. " + ex);
+            }
+
+            try
+            {
+                object currentCatalog = Get(session.Balance, "bodies_data");
+                if (!ReferenceEquals(currentCatalog, session.OriginalCatalog))
+                {
+                    _status += " CLEANUP FAIL: bodies_data reference changed.";
+                    _log?.LogError(
+                        "REPOSE_GOLD_SELFTEST_CLEANUP_FAIL bodies_data reference was not restored by production.");
+
+                    Set(
+                        session.Balance,
+                        "bodies_data",
+                        session.OriginalCatalog);
+                    _log?.LogWarning(
+                        "REPOSE_GOLD_SELFTEST_EMERGENCY_RESTORE bodies_data original reference restored by harness.");
+                }
+
+                float bodyMinAfter =
+                    GetPlayerParam(session.Player, "body_min", 0f);
+                float bodyMaxAfter =
+                    GetPlayerParam(session.Player, "body_max", 0f);
+                float addMinAfter =
+                    GetPlayerParam(session.Player, "add_body_min", 0f);
+                float addMaxAfter =
+                    GetPlayerParam(session.Player, "add_body_max", 0f);
+
+                bool tierInputsRestored =
+                    Nearly(session.BodyMinBefore, bodyMinAfter) &&
+                    Nearly(session.BodyMaxBefore, bodyMaxAfter) &&
+                    Nearly(session.AddMinBefore, addMinAfter) &&
+                    Nearly(session.AddMaxBefore, addMaxAfter);
+
+                _log?.LogInfo(
+                    "REPOSE_GOLD_SELFTEST_CLEANUP" +
+                    " reason=" + reason +
+                    " buff_active_after=" + IsActive("buff_skull") +
+                    " tier_inputs_restored=" + tierInputsRestored +
+                    " body_min=" + bodyMinAfter.ToString("0.###") +
+                    " body_max=" + bodyMaxAfter.ToString("0.###") +
+                    " add_body_min=" + addMinAfter.ToString("0.###") +
+                    " add_body_max=" + addMaxAfter.ToString("0.###"));
+
+                if (!tierInputsRestored)
+                    _status += " CLEANUP WARNING: corpse tier player params changed.";
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError(
+                    "REPOSE_GOLD_SELFTEST_CLEANUP verification failed. " + ex);
             }
         }
 
