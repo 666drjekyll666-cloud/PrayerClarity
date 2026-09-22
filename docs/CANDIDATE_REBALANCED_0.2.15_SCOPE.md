@@ -1,6 +1,6 @@
-# PrayerClarity: Rebalanced 0.2.15 candidate scope
+# PrayerClarity: Rebalanced 0.2.15 scope and acceptance
 
-Status: **source candidate; runtime acceptance pending**.
+Status: **accepted runtime design and implementation; stable promotion authorized 2026-09-23**.
 
 ## Accepted design direction
 
@@ -22,7 +22,7 @@ Ordinary tier 3 contains bodies with 7, 8, 9 and 10 total skulls, so the accepte
 
 The candidate derives corpse score from each `BodyDefinition.parts_ids`. Each part resolves to its live `ItemDefinition`; total visible skull score is derived from `q_minus + q_plus`. Conditional item replacement is resolved with the same player-flag condition used by the game's item replacement path.
 
-## Candidate runtime seam
+## Accepted runtime seam
 
 The verified ordinary-Donkey callback predicate is unchanged.
 
@@ -44,10 +44,10 @@ If maximum-score derivation or projection fails, the temporary catalog is restor
 
 If another owner unexpectedly replaces `bodies_data` during the scoped call, PrayerClarity does not overwrite that newer reference during cleanup.
 
-## Acceptance target
+## Runtime acceptance result
 
-Late-game Gold must produce only 10-total-skull ordinary Donkey bodies for the full effect while preserving variety among tied best definitions.
+Graveyard Keeper 1.407 runtime evidence observed the canonical terminal fixture: 33 ordinary candidates across tiers 2..3, best tier 3, maximum total skull score 10, and 9 tied maximum-score tier-3 definitions.
 
-Silver must retain its accepted mixed behavior.
+Ten consecutive real `GameSave.GenerateBody(2,4,-1,-1)` calls exercised the production 0.2.15 Gold seam. Every completed assertion selected tier 3 with total skull score 10, saw the 9-candidate maximum-score scoped pool, and confirmed restoration of the exact original body catalog after the call. An 11th native tier-3 body generation began before the research harness itself stalled from batching too many heavyweight calls in one UI callback; that harness failure is not a production Gold failure.
 
-Earlier-progression testing is optional if a suitable save is available because the implementation derives the available tier from the live game range instead of assuming terminal progression.
+This evidence is sufficient for the changed Gold-generation/restoration property. The previously accepted ordinary-Donkey caller predicate and Silver 0.2.14 behavior were not reopened because 0.2.15 does not change those paths. Earlier-progression testing is not required for acceptance because the implementation derives the available tier and maximum score dynamically from the live Repose-expanded range.
