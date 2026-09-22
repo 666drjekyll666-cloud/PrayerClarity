@@ -1,6 +1,6 @@
 # PrayerClarity: Rebalanced 0.2.15 scope and acceptance
 
-Status: **accepted runtime design and implementation; stable promotion authorized 2026-09-23**.
+Status: **accepted and published stable Rebalanced 0.2.15 on 2026-09-23**.
 
 ## Accepted design direction
 
@@ -51,3 +51,15 @@ Graveyard Keeper 1.407 runtime evidence observed the canonical terminal fixture:
 Ten consecutive real `GameSave.GenerateBody(2,4,-1,-1)` calls exercised the production 0.2.15 Gold seam. Every completed assertion selected tier 3 with total skull score 10, saw the 9-candidate maximum-score scoped pool, and confirmed restoration of the exact original body catalog after the call. An 11th native tier-3 body generation began before the research harness itself stalled from batching too many heavyweight calls in one UI callback; that harness failure is not a production Gold failure.
 
 This evidence is sufficient for the changed Gold-generation/restoration property. The previously accepted ordinary-Donkey caller predicate and Silver 0.2.14 behavior were not reopened because 0.2.15 does not change those paths. Earlier-progression testing is not required for acceptance because the implementation derives the available tier and maximum score dynamically from the live Repose-expanded range.
+
+
+## Stable identity
+
+- accepted ref: `accepted/rebalanced-0.2.15`
+- exact accepted runtime source: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`
+- stable promotion PR: **#29**
+- stable promotion merge: `c9dede71131dbab4322e37409ca0bdf41994fcb9`
+- release: `rebalanced-v0.2.15`
+- release asset: `PrayerClarity.Rebalanced.dll`
+- DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`
+- publication workflow: `35798813653`
