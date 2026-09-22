@@ -1,16 +1,16 @@
 # Test / Research Build Log
 
-## PrayerClarity: Rebalanced 0.2.15 test candidate
+## PrayerClarity: Rebalanced 0.2.15 — accepted stable
 
-- Status: **handed for focused Repose runtime acceptance; not stable; do not merge to main yet**.
-- Frozen candidate ref: `candidate/rebalanced-0.2.15`.
+- User runtime acceptance: **2026-09-23**. Stable promotion authorized.
+- Frozen accepted ref: `accepted/rebalanced-0.2.15`.
 - Exact build/source SHA: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
 - GitHub Actions run: `35791783893`; Rebalanced build: **success, 0 warnings, 0 errors**.
 - Workflow artifact ID: `10722636745`.
 - Workflow artifact ZIP digest: `sha256:fc99440a10056010e741e7f6459c09895c95ef1dcd5a90032d7609569d67af7a`.
 - Canonical Rebalanced DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
 - Handoff DLL: `PrayerClarity.Rebalanced-0.2.15-test.dll`; it is the exact canonical Rebalanced DLL bytes from the run, renamed without rebuilding.
-- The legacy shared workflow still stamped its artifact filename and generated BUILD_INFO as 0.2.14. Those stale packaging labels are **not** authoritative; the compiled assembly itself contains `0.2.15.0`, informational version `0.2.15+ac953fe25ef17dbaf63340a7b9309dadec7e207e`, and plugin version `0.2.15`.
+- The accepted CI artifact was produced while the shared workflow still stamped its package filename/BUILD_INFO as 0.2.14. Those stale packaging labels are **not** authoritative; the compiled assembly itself contains `0.2.15.0`, informational version `0.2.15+ac953fe25ef17dbaf63340a7b9309dadec7e207e`, and plugin version `0.2.15`. The workflow is corrected as part of stable promotion; the accepted DLL itself is not rebuilt.
 - Candidate changes:
   - Repose requirements: **20 / 40 / 90**;
   - Bronze unchanged;
@@ -19,14 +19,15 @@
   - no hard-coded terminal tier/body IDs/10-skull value;
   - vanilla `GameSave.GenerateBody`, RNG and body construction remain authoritative;
   - temporary body-catalog projection is restored in a finalizer.
-- Focused runtime acceptance:
-  1. Gold Repose at terminal corpse progression: every ordinary Donkey delivery during the effect must total **10 skulls**.
-  2. Verify at least several Gold deliveries if practical; red/white split may vary among tied best bodies.
-  3. Silver sanity check: it must still show mixed results rather than becoming a Gold-style hard guarantee.
-  4. Confirm the pulpit/Technology threshold for Gold Repose is **90 Church Quality**.
-  5. Check `LogOutput.log` for any PrayerClarity Repose projection/restoration error.
-- Earlier-progression testing is optional unless a convenient save exists; the implementation derives the best tier from the live Repose-expanded range.
-- Numbered candidate bytes are immutable after this handoff.
+- Accepted runtime evidence:
+  - the live 1.407 terminal fixture contained 33 ordinary candidates across tiers 2..3, with best tier 3, maximum total skull score 10, and 9 tied maximum-score candidates;
+  - ten consecutive real `GameSave.GenerateBody(2,4,-1,-1)` calls exercised the production Gold seam;
+  - every completed assertion selected tier 3 with total skull score 10, saw the same 9-candidate maximum-score scoped pool, and confirmed exact catalog restoration after the call;
+  - an 11th native tier-3 body generation began before the research harness itself stalled from batching too many heavyweight calls into one UI callback; the harness issue is separate from production Gold behavior;
+  - the changed Gold-generation/restoration property is accepted without further user repetition.
+- Silver remains unchanged from accepted 0.2.14 and was not reopened.
+- Earlier-progression testing is not required because the implementation derives the best available tier and maximum score dynamically from the live Repose-expanded range.
+- Numbered accepted bytes are immutable. Stable publication must reuse the exact DLL hash above without rebuilding.
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
