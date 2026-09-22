@@ -1,6 +1,77 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.15 — accepted stable
+
+- User runtime acceptance: **2026-09-23**. Stable promotion authorized.
+- Frozen accepted ref: `accepted/rebalanced-0.2.15`.
+- Exact build/source SHA: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
+- GitHub Actions run: `35791783893`; Rebalanced build: **success, 0 warnings, 0 errors**.
+- Workflow artifact ID: `10722636745`.
+- Workflow artifact ZIP digest: `sha256:fc99440a10056010e741e7f6459c09895c95ef1dcd5a90032d7609569d67af7a`.
+- Canonical Rebalanced DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
+- Handoff DLL: `PrayerClarity.Rebalanced-0.2.15-test.dll`; it is the exact canonical Rebalanced DLL bytes from the run, renamed without rebuilding.
+- The accepted CI artifact was produced while the shared workflow still stamped its package filename/BUILD_INFO as 0.2.14. Those stale packaging labels are **not** authoritative; the compiled assembly itself contains `0.2.15.0`, informational version `0.2.15+ac953fe25ef17dbaf63340a7b9309dadec7e207e`, and plugin version `0.2.15`. The workflow is corrected as part of stable promotion; the accepted DLL itself is not rebuilt.
+- Candidate changes:
+  - Repose requirements: **20 / 40 / 90**;
+  - Bronze unchanged;
+  - Silver unchanged from accepted 0.2.14;
+  - Gold keeps best-available-tier narrowing and additionally limits that tier to the game-derived maximum total skull score;
+  - no hard-coded terminal tier/body IDs/10-skull value;
+  - vanilla `GameSave.GenerateBody`, RNG and body construction remain authoritative;
+  - temporary body-catalog projection is restored in a finalizer.
+- Accepted runtime evidence:
+  - the live 1.407 terminal fixture contained 33 ordinary candidates across tiers 2..3, with best tier 3, maximum total skull score 10, and 9 tied maximum-score candidates;
+  - ten consecutive real `GameSave.GenerateBody(2,4,-1,-1)` calls exercised the production Gold seam;
+  - every completed assertion selected tier 3 with total skull score 10, saw the same 9-candidate maximum-score scoped pool, and confirmed exact catalog restoration after the call;
+  - an 11th native tier-3 body generation began before the research harness itself stalled from batching too many heavyweight calls into one UI callback; the harness issue is separate from production Gold behavior;
+  - the changed Gold-generation/restoration property is accepted without further user repetition.
+- Silver remains unchanged from accepted 0.2.14 and was not reopened.
+- Earlier-progression testing is not required because the implementation derives the best available tier and maximum score dynamically from the live Repose-expanded range.
+- Numbered accepted bytes are immutable. Stable publication must reuse the exact DLL hash above without rebuilding.
+
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
+
+
+### Repose Gold one-button runtime companion
+
+- Research-only companion: `PrayerClarity.ReposeGoldSelfTest 0.1.0`.
+- Exact self-test source SHA: `2f878bbee45bc7621e0f67bb9af864d7a2f94d26`.
+- CI run: `35792990408`; result: **success, 0 warnings, 0 errors**.
+- Artifact ID: `10722798343`.
+- Artifact ZIP digest: `sha256:beeabab41441aeec06e9fa5a685d65ba66f881858140c0bb6cab4d56f0baa092`.
+- Self-test DLL SHA-256: `382061c506177d65e0116dd677e94f10f505e534b143907be635fc23f837865d`.
+- Target production bytes remain the exact 0.2.15 candidate DLL SHA-256 `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f` from source `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
+- The companion does not replace production mechanics. It opens an F1 research window with one button.
+- The button refuses to run if a real `buff_skull` is already active; otherwise it activates `buff_skull` through native `BuffsLogics.AddBuff`, injects the already-accepted post-Donkey Gold pending state, and performs 16 real `GameSave.GenerateBody(2,4,-1,-1)` calls.
+- It independently inspects the live 1.407 body catalogue, expects the canonical fixture of 33 ordinary definitions across tiers 2..3, best tier 3, maximum total skull score 10, and 9 tied maximum-score definitions.
+- During every generation it verifies that production installed a narrowed scoped body catalogue containing only maximum-score candidates, that the actually selected `BodyDefinition` has the expected best tier/score, and that the exact original `GameBalance.bodies_data` reference is restored after the call.
+- Cleanup removes the synthetic buff. If production catalogue restoration fails, the harness records FAIL first and then performs an emergency restore of the exact pre-test catalogue reference.
+- What this proves: the new 0.2.15 Gold filtering/generation/restoration path under the real game runtime.
+- What this intentionally does not re-prove: the already accepted ordinary-Donkey FlowCanvas caller predicate or sermon calendar/pulpit lifecycle.
+
+
+#### Self-test 0.1.0 runtime result — rejected harness, accepted Gold-path evidence
+
+- User runtime on Graveyard Keeper 1.407 loaded Rebalanced 0.2.15 and Self-Test 0.1.0 correctly.
+- 0.1.0 executed a synchronous loop of 16 real `GameSave.GenerateBody` calls directly from the UI action.
+- The game became unresponsive during that batched run; therefore Self-Test 0.1.0 is **rejected as a reusable test harness** and must not be run again.
+- Before the hang, samples 1–10 completed their full independent assertions. Every one selected tier 3, total skull score 10, saw exactly 9 scoped maximum-score candidates, and observed `catalog_restored=true`.
+- The native game log then recorded an 11th body creation/generation (`body_3_2`, tier 3) before the harness emitted its own sample-11 assertion. This localizes the failure to the batched harness execution/verification envelope rather than demonstrating a Gold-generation failure.
+- For the **production Gold-generation/restoration property**, this evidence is sufficient: the harness directly observed the complete scoped candidate set (9 tied max-score definitions) and verified the selected body plus exact catalog restoration on ten consecutive real native calls. Further user repetition would add cost without materially increasing confidence.
+- The missing final cleanup log belongs to the rejected harness session lifecycle, not to the per-call production finalizer; per-call production restoration was already observed ten times.
+- Repose Gold generation/restoration is therefore **accepted runtime evidence for the 0.2.15 candidate**. No rerun with 0.1.1 is required for this change.
+
+#### Self-test 0.1.1 replacement
+
+- Status: **reserve regression diagnostic; not required for current 0.2.15 acceptance**.
+- Exact source SHA: `d52e3fce96e3c44316e824cb2be6955fe2f70ddf`.
+- CI run: `35795884919`; result: **success, 0 warnings, 0 errors**.
+- Artifact ID: `10723344922`.
+- Artifact ZIP digest: `sha256:206c2739b1a50f7af9cc7ed0a62c5012c2138e7b2569714e1bae692fb2b17519`.
+- Self-test DLL SHA-256: `e7b2685f95c5b0ca4e0c82cb0641252ba8e3bec8697adac18fbe31017eff2274`.
+- Production candidate remains unchanged: Rebalanced 0.2.15 source `ac953fe25ef17dbaf63340a7b9309dadec7e207e`, DLL SHA-256 `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
+- 0.1.1 removes the synchronous 16-call UI loop. It performs **4 real GenerateBody calls**, one paced step at a time with 0.25 s between steps, while keeping the same production-path, scoped-catalog, selected-body and restoration assertions.
+- Four samples are sufficient because the core Gold assertion is deterministic: the harness independently verifies that the live scoped candidate set contains all 9 tied maximum-score definitions; repeated generation is retained only as a small runtime/restoration sanity sample, not as statistical proof.
 
 ## PrayerClarity: Rebalanced 0.2.14 — accepted stable
 

@@ -1,6 +1,6 @@
 # Prayer Power Budget — Graveyard Keeper 1.407
 
-Status: **historical quantitative design-analysis input**, 2026-09-14, retained as rationale for the accepted Rebalanced roster. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; current accepted Rebalanced values are canonical only in `PRAYER_REBALANCE_OPTIONS.md`. Candidate coefficient examples below are historical and must not override the current stable Rebalanced 0.2.14 ruleset.
+Status: **historical quantitative design-analysis input**, 2026-09-14, retained as rationale for the accepted Rebalanced roster. Stock mechanics remain canonical in `PRAYER_MECHANICS.md`; current accepted Rebalanced values are canonical only in `PRAYER_REBALANCE_OPTIONS.md`. Candidate coefficient examples below are historical and must not override the current stable Rebalanced 0.2.15 ruleset.
 
 The technology and recipe values below were recovered from direct 1.407 `GameBalance`/craft-registry runtime dumps rather than inferred from the wiki. Where a technology is hidden/quest-gated, its internal `price` field is not automatically treated as a player-paid cost.
 
@@ -83,7 +83,7 @@ Do not nerf Combo first. Test a **specialist premium**:
 - Donations becomes the best money-producing ordinary sermon;
 - silver/gold specialist progression should increasingly reward committing to the specialty.
 
-Illustrative coefficient families such as `.75 / 1.5 / 2.25` were **historical design hypotheses only**. They were superseded by later accepted roster revisions; the current stable specialist/generalist grammar is documented only in `PRAYER_REBALANCE_OPTIONS.md` for Rebalanced 0.2.14.
+Illustrative coefficient families such as `.75 / 1.5 / 2.25` were **historical design hypotheses only**. They were superseded by later accepted roster revisions; the current stable specialist/generalist grammar is documented only in `PRAYER_REBALANCE_OPTIONS.md` for Rebalanced 0.2.15.
 
 ## Combo gate — candidate levers
 
@@ -201,7 +201,7 @@ These show that a niche prayer can be highly desirable without becoming the univ
 
 ## Design gate result
 
-This historical gate was completed during the early Rebalanced line. The roster was revised further and the current stable result is PrayerClarity: Rebalanced 0.2.14. This file remains useful for the underlying unlock/craft/quality/opportunity-cost evidence, but it is **not** the source of truth for current Rebalanced numbers.
+This historical gate was completed during the early Rebalanced line. The roster was revised further and the current stable result is PrayerClarity: Rebalanced 0.2.15. This file remains useful for the underlying unlock/craft/quality/opportunity-cost evidence, but it is **not** the source of truth for current Rebalanced numbers.
 
 Any future rebalance should reuse this full-cost framework and create a new explicit proposal rather than resurrecting the superseded candidate values above.
 

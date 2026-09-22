@@ -16,6 +16,13 @@ namespace PrayerClarity
             Best
         }
 
+        private sealed class ScopedBodyCatalogState
+        {
+            internal object Balance;
+            internal object OriginalCatalog;
+            internal object ProjectedCatalog;
+        }
+
         private static ManualLogSource _log;
         private static PendingMode _pendingMode;
         private static MethodInfo _findBuffById;
@@ -59,11 +66,13 @@ namespace PrayerClarity
                 nameof(DropBodyCallbackPrefix),
                 nameof(DropBodyCallbackPostfix),
                 nameof(DropBodyCallbackFinalizer));
-            R.PatchPrefix(
+            R.PatchHooks(
                 harmonyId + ".repose.generate",
                 typeof(RebalancedRepose),
                 generateBody,
-                nameof(GenerateBodyPrefix));
+                nameof(GenerateBodyPrefix),
+                null,
+                nameof(GenerateBodyFinalizer));
         }
 
         private static void DropBodyCallbackPrefix(object __instance)
@@ -89,8 +98,13 @@ namespace PrayerClarity
             }
         }
 
-        private static void GenerateBodyPrefix(ref int tier_min, ref int tier_max)
+        private static void GenerateBodyPrefix(
+            ref int tier_min,
+            ref int tier_max,
+            ref ScopedBodyCatalogState __state)
         {
+            __state = null;
+
             PendingMode mode = _pendingMode;
             _pendingMode = PendingMode.None;
             if (mode == PendingMode.None) return;
@@ -105,12 +119,130 @@ namespace PrayerClarity
                 if (!forceBest) return;
 
                 int bestExistingTier;
-                if (CorpseTierSemantics.TryGetHighestExistingOrdinaryTier(tier_min, tier_max, out bestExistingTier))
-                    tier_min = bestExistingTier;
+                if (!CorpseTierSemantics.TryGetHighestExistingOrdinaryTier(tier_min, tier_max, out bestExistingTier))
+                    return;
+
+                // Preserve the accepted 0.2.14 reliability behavior first.
+                // The incoming range already includes the stock Repose +1 tier.
+                tier_min = bestExistingTier;
+
+                // Gold promises the best visible body, not merely the best hidden tier.
+                // Scope the host catalog to tied maximum-skull candidates only for
+                // this one native GenerateBody call; vanilla RNG and body creation remain authoritative.
+                if (mode == PendingMode.Best)
+                    ProjectGoldBodyCatalog(bestExistingTier, tier_max, ref __state);
             }
             catch (Exception ex)
             {
-                LogRuntimeError("Repose tier narrowing failed closed", ex);
+                RestoreBodyCatalog(__state);
+                __state = null;
+                LogRuntimeError(
+                    "Repose Gold maximum-body projection failed closed; accepted best-tier behavior remains active for this delivery",
+                    ex);
+            }
+        }
+
+        private static Exception GenerateBodyFinalizer(
+            Exception __exception,
+            ScopedBodyCatalogState __state)
+        {
+            RestoreBodyCatalog(__state);
+            return __exception;
+        }
+
+        private static void ProjectGoldBodyCatalog(
+            int bestTier,
+            int tierMax,
+            ref ScopedBodyCatalogState state)
+        {
+            int maxScore;
+            if (!CorpseTierSemantics.TryGetMaximumSkullScoreAtTier(bestTier, out maxScore))
+                throw new InvalidOperationException(
+                    "Could not derive maximum corpse skull score for tier " + bestTier + ".");
+
+            object balance = R.GetStatic(R.GameType("GameBalance"), "me");
+            if (balance == null)
+                throw new InvalidOperationException("GameBalance.me unavailable during Repose Gold projection.");
+
+            object originalCatalog = R.Get(balance, "bodies_data");
+            IList source = originalCatalog as IList;
+            if (source == null)
+                throw new InvalidOperationException("GameBalance.bodies_data is not an IList.");
+
+            IList projected = Activator.CreateInstance(originalCatalog.GetType()) as IList;
+            if (projected == null)
+                throw new InvalidOperationException("Could not create a scoped bodies_data projection.");
+
+            int retainedCandidates = 0;
+            foreach (object body in source)
+            {
+                if (body == null)
+                {
+                    projected.Add(body);
+                    continue;
+                }
+
+                int tier = R.Int(R.Get(body, "tier"));
+                if (tier < bestTier || tier > tierMax)
+                {
+                    projected.Add(body);
+                    continue;
+                }
+
+                string linkedItemId = R.Get(body, "linked_item_id") as string;
+                if (tier != bestTier ||
+                    !string.Equals(linkedItemId, "body", StringComparison.Ordinal))
+                    continue;
+
+                int score;
+                if (!CorpseTierSemantics.TryGetBodySkullScore(body, out score))
+                    throw new InvalidOperationException(
+                        "Could not derive corpse skull score for " + (R.Id(body) ?? "<unknown>") + ".");
+
+                if (score != maxScore) continue;
+
+                projected.Add(body);
+                retainedCandidates++;
+            }
+
+            if (retainedCandidates <= 0)
+                throw new InvalidOperationException(
+                    "Repose Gold projection produced no maximum-skull candidates for tier " + bestTier + ".");
+
+            state = new ScopedBodyCatalogState
+            {
+                Balance = balance,
+                OriginalCatalog = originalCatalog,
+                ProjectedCatalog = projected
+            };
+
+            R.Set(balance, "bodies_data", projected);
+        }
+
+        private static void RestoreBodyCatalog(ScopedBodyCatalogState state)
+        {
+            if (state == null || state.Balance == null || state.OriginalCatalog == null)
+                return;
+
+            try
+            {
+                object current = R.Get(state.Balance, "bodies_data");
+                if (ReferenceEquals(current, state.OriginalCatalog))
+                    return;
+
+                if (!ReferenceEquals(current, state.ProjectedCatalog))
+                {
+                    LogRuntimeError(
+                        "Repose Gold bodies_data changed during its scoped projection; PrayerClarity will not overwrite the newer catalog",
+                        new InvalidOperationException("Unexpected bodies_data owner change."));
+                    return;
+                }
+
+                R.Set(state.Balance, "bodies_data", state.OriginalCatalog);
+            }
+            catch (Exception ex)
+            {
+                LogRuntimeError("Repose Gold bodies_data restoration failed", ex);
             }
         }
 
