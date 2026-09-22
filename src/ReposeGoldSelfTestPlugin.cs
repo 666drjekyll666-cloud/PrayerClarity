@@ -131,7 +131,6 @@ namespace PrayerClarityResearch
             float addMinBefore = GetPlayerParam(player, "add_body_min", 0f);
             float addMaxBefore = GetPlayerParam(player, "add_body_max", 0f);
 
-            bool syntheticBuffAdded = false;
             bool running = false;
 
             try
@@ -165,7 +164,6 @@ namespace PrayerClarityResearch
                 // the calendar; the already accepted Donkey callback predicate is outside
                 // this 0.2.15 regression target.
                 _addBuff("buff_skull", 54f);
-                syntheticBuffAdded = true;
 
                 if (!IsActive("buff_skull"))
                     throw new InvalidOperationException("Native BuffsLogics.AddBuff did not activate buff_skull.");
@@ -316,7 +314,9 @@ namespace PrayerClarityResearch
 
                 try
                 {
-                    if (syntheticBuffAdded && IsActive("buff_skull"))
+                    // The precondition guarantees there was no real Repose buff before
+                    // the test, so any live buff_skull here belongs to this harness.
+                    if (IsActive("buff_skull"))
                         _removeBuff("buff_skull");
                 }
                 catch (Exception ex)
@@ -331,7 +331,14 @@ namespace PrayerClarityResearch
                     {
                         _status += " CLEANUP FAIL: bodies_data reference changed.";
                         _log?.LogError(
-                            "REPOSE_GOLD_SELFTEST_CLEANUP_FAIL bodies_data reference was not restored.");
+                            "REPOSE_GOLD_SELFTEST_CLEANUP_FAIL bodies_data reference was not restored by production.");
+
+                        // Preserve the failure as evidence, then recover the exact
+                        // pre-test object reference so a failed diagnostic cannot leave
+                        // the live game catalog projected.
+                        Set(balance, "bodies_data", originalCatalog);
+                        _log?.LogWarning(
+                            "REPOSE_GOLD_SELFTEST_EMERGENCY_RESTORE bodies_data original reference restored by harness.");
                     }
 
                     float bodyMinAfter = GetPlayerParam(player, "body_min", 0f);
@@ -710,6 +717,43 @@ namespace PrayerClarityResearch
             }
 
             return null;
+        }
+
+        private static void Set(object instance, string name, object value)
+        {
+            if (instance == null || string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("instance/name");
+
+            for (Type type = instance.GetType(); type != null; type = type.BaseType)
+            {
+                FieldInfo field = type.GetField(
+                    name,
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance |
+                    BindingFlags.DeclaredOnly);
+                if (field != null)
+                {
+                    field.SetValue(instance, value);
+                    return;
+                }
+
+                PropertyInfo property = type.GetProperty(
+                    name,
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance |
+                    BindingFlags.DeclaredOnly);
+                if (property != null &&
+                    property.GetIndexParameters().Length == 0 &&
+                    property.CanWrite)
+                {
+                    property.SetValue(instance, value, null);
+                    return;
+                }
+            }
+
+            throw new MissingMemberException(instance.GetType().FullName + "." + name);
         }
 
         private static object GetStatic(Type type, string name)
