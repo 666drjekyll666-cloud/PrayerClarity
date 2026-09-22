@@ -1,5 +1,14 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.15
+
+- Repose Bronze remains stock-style and Silver keeps the accepted 0.2.14 50/50 reliability behavior.
+- Repose Gold now guarantees the **maximum total skull count inside the best actually available ordinary corpse tier**, rather than guaranteeing only that hidden tier.
+- The Gold rule is dynamic: it derives the current eligible tier and corpse-part skull values from live game data; it does not hard-code tier 3, body IDs, or 10 skulls.
+- Repose requirements change from **20 / 40 / 60** to **20 / 40 / 90**. Durations remain **30 / 42 / 54 minutes**.
+- Stock `GameSave.GenerateBody`, RNG, body creation and downstream behavior remain authoritative; the mod scopes the eligible body-definition catalog only for the Gold generation call and restores the exact original reference afterward.
+- Runtime evidence on Graveyard Keeper 1.407 directly observed the complete 9-body maximum-score Gold candidate set and ten consecutive real generation calls selecting tier-3, 10-total-skull bodies with catalog restoration after every call.
+
 ## PrayerClarity: Rebalanced 0.2.14
 
 - Accepted stable release using the same condition-style **On success:** / **При успехе:** heading already accepted in Vanilla 1.0.32.
