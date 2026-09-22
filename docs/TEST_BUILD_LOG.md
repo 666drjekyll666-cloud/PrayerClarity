@@ -48,6 +48,28 @@ This file records handed executable artifacts once PrayerClarity research reache
 - What this proves: the new 0.2.15 Gold filtering/generation/restoration path under the real game runtime.
 - What this intentionally does not re-prove: the already accepted ordinary-Donkey FlowCanvas caller predicate or sermon calendar/pulpit lifecycle.
 
+
+#### Self-test 0.1.0 runtime result — rejected harness, useful partial evidence
+
+- User runtime on Graveyard Keeper 1.407 loaded Rebalanced 0.2.15 and Self-Test 0.1.0 correctly.
+- 0.1.0 executed a synchronous loop of 16 real `GameSave.GenerateBody` calls directly from the UI action.
+- The game became unresponsive during that batched run; therefore Self-Test 0.1.0 is **rejected as a test harness** and must not be reused.
+- Before the hang, samples 1–10 completed their full independent assertions. Every one selected tier 3, total skull score 10, saw exactly 9 scoped maximum-score candidates, and observed `catalog_restored=true`.
+- The native game log then recorded an 11th body creation/generation (`body_3_2`, tier 3) before the harness emitted its own sample-11 assertion. This localizes the failure to the batched harness execution/verification envelope rather than demonstrating a Gold-generation failure.
+- This is **partial supporting evidence only**, not final acceptance of 0.2.15, because the harness did not complete cleanup or final PASS logging.
+
+#### Self-test 0.1.1 replacement
+
+- Status: **handed for focused runtime acceptance; replaces 0.1.0**.
+- Exact source SHA: `d52e3fce96e3c44316e824cb2be6955fe2f70ddf`.
+- CI run: `35795884919`; result: **success, 0 warnings, 0 errors**.
+- Artifact ID: `10723344922`.
+- Artifact ZIP digest: `sha256:206c2739b1a50f7af9cc7ed0a62c5012c2138e7b2569714e1bae692fb2b17519`.
+- Self-test DLL SHA-256: `e7b2685f95c5b0ca4e0c82cb0641252ba8e3bec8697adac18fbe31017eff2274`.
+- Production candidate remains unchanged: Rebalanced 0.2.15 source `ac953fe25ef17dbaf63340a7b9309dadec7e207e`, DLL SHA-256 `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
+- 0.1.1 removes the synchronous 16-call UI loop. It performs **4 real GenerateBody calls**, one paced step at a time with 0.25 s between steps, while keeping the same production-path, scoped-catalog, selected-body and restoration assertions.
+- Four samples are sufficient because the core Gold assertion is deterministic: the harness independently verifies that the live scoped candidate set contains all 9 tied maximum-score definitions; repeated generation is retained only as a small runtime/restoration sanity sample, not as statistical proof.
+
 ## PrayerClarity: Rebalanced 0.2.14 — accepted stable
 
 - User runtime acceptance: **2026-09-20**.
