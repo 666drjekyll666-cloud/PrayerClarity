@@ -2,7 +2,7 @@
 
 ## PrayerClarity: Rebalanced 0.2.15 — accepted stable
 
-- User runtime acceptance: **2026-09-23**. Stable promotion authorized.
+- User runtime acceptance: **2026-09-23**.
 - Frozen accepted ref: `accepted/rebalanced-0.2.15`.
 - Exact build/source SHA: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
 - GitHub Actions run: `35791783893`; Rebalanced build: **success, 0 warnings, 0 errors**.
@@ -27,7 +27,13 @@
   - the changed Gold-generation/restoration property is accepted without further user repetition.
 - Silver remains unchanged from accepted 0.2.14 and was not reopened.
 - Earlier-progression testing is not required because the implementation derives the best available tier and maximum score dynamically from the live Repose-expanded range.
-- Numbered accepted bytes are immutable. Stable publication must reuse the exact DLL hash above without rebuilding.
+- Stable promotion PR: **#29**, squash-merged to `main` as `c9dede71131dbab4322e37409ca0bdf41994fcb9`.
+- Stable publication workflow: `35798813653`; result: **success**.
+- Published release: `rebalanced-v0.2.15` -> target `ac953fe25ef17dbaf63340a7b9309dadec7e207e`.
+- Release asset ID: `582493849`, canonical filename `PrayerClarity.Rebalanced.dll`, asset digest `sha256:a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
+- Publication reused and hash-verified the exact accepted CI DLL; **no rebuild occurred**.
+- Final status: **accepted, merged to main, frozen by accepted ref, and published as stable Rebalanced release**.
+- Numbered accepted bytes are immutable.
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
 
@@ -211,7 +217,7 @@ This file records handed executable artifacts once PrayerClarity research reache
 ## Current stable baselines — 2026-09-20
 
 - **PrayerClarity: Vanilla 1.0.32** — `accepted/vanilla-1.0.32`, source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
-- **PrayerClarity: Rebalanced 0.2.14** — `accepted/rebalanced-0.2.14`, source `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, release `rebalanced-v0.2.14`, DLL SHA-256 `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
+- **PrayerClarity: Rebalanced 0.2.15** — `accepted/rebalanced-0.2.15`, source `ac953fe25ef17dbaf63340a7b9309dadec7e207e`, release `rebalanced-v0.2.15`, DLL SHA-256 `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`.
 - Entries below are immutable historical build/test evidence. A section naming an older release records what was stable **at that point in the history**; it does not override this current-baseline header.
 
 
