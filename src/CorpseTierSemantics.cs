@@ -31,6 +31,89 @@ namespace PrayerClarity
             return bestTier != int.MinValue;
         }
 
+        internal static bool TryGetMaximumSkullScoreAtTier(int tier, out int maxScore)
+        {
+            maxScore = int.MinValue;
+            bool found = false;
+
+            IEnumerable bodies = GetBodies();
+            if (bodies == null) return false;
+
+            foreach (object body in bodies)
+            {
+                if (body == null) continue;
+                string linkedItemId = R.Get(body, "linked_item_id") as string;
+                if (!string.Equals(linkedItemId, "body", StringComparison.Ordinal)) continue;
+                if (R.Int(R.Get(body, "tier")) != tier) continue;
+
+                int score;
+                if (!TryGetBodySkullScore(body, out score))
+                    return false;
+
+                if (!found || score > maxScore)
+                    maxScore = score;
+                found = true;
+            }
+
+            return found;
+        }
+
+        internal static bool TryGetBodySkullScore(object bodyDefinition, out int score)
+        {
+            score = 0;
+            if (bodyDefinition == null) return false;
+
+            IEnumerable parts = R.Get(bodyDefinition, "parts_ids") as IEnumerable;
+            if (parts == null) return false;
+
+            bool foundPart = false;
+            foreach (object value in parts)
+            {
+                string partId = value as string ?? Convert.ToString(value);
+                if (string.IsNullOrEmpty(partId)) return false;
+
+                object itemDefinition = R.BalanceData(partId, "ItemDefinition", true);
+                if (itemDefinition == null) return false;
+
+                object effectiveDefinition;
+                if (!TryResolveEffectiveItemDefinition(itemDefinition, out effectiveDefinition))
+                    return false;
+
+                score += R.Int(R.Get(effectiveDefinition, "q_minus"));
+                score += R.Int(R.Get(effectiveDefinition, "q_plus"));
+                foundPart = true;
+            }
+
+            return foundPart;
+        }
+
+        private static bool TryResolveEffectiveItemDefinition(
+            object itemDefinition,
+            out object effectiveDefinition)
+        {
+            effectiveDefinition = itemDefinition;
+            if (itemDefinition == null) return false;
+
+            object replacement = R.Get(itemDefinition, "item_replace");
+            if (replacement == null) return true;
+
+            string playerFlag = Convert.ToString(R.Get(replacement, "player_flag"));
+            string replacementId = Convert.ToString(R.Get(replacement, "replace_id"));
+            if (string.IsNullOrEmpty(playerFlag) || string.IsNullOrEmpty(replacementId))
+                return true;
+
+            // Item.ReplaceItemIfNeeded uses the same player-flag > 0 condition.
+            if (R.PlayerParam(playerFlag, 0f) <= 0f)
+                return true;
+
+            object replacementDefinition = R.BalanceData(replacementId, "ItemDefinition", true);
+            if (replacementDefinition == null)
+                return false;
+
+            effectiveDefinition = replacementDefinition;
+            return true;
+        }
+
         internal static int CountExistingOrdinaryTiers(int tierMin, int tierMax)
         {
             if (tierMax < tierMin) return 0;
