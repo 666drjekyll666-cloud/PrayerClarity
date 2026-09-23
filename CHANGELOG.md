@@ -1,5 +1,14 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.18 candidate
+
+- Fixes the live Soul's Repose sermon/pulpit path exposed by 0.2.17 runtime testing: the selected prayer now projects its tier's ordinary `default_1/2/3` event directly into the native `PrayLogics.CalculatePray` call, so stale runtime PrayCraft copies cannot fall back to the old Soul-Gratitude base formula.
+- The pulpit forecast resolves the same edition-owned effective event and again shows the live success transaction `(gratitude_points) -X -> (faith) +X`.
+- Soul's Repose Technology tier rows use a shorter localized “sermon limit” label and keep only the amount + Soul Gratitude icon as an unbreakable unit, preserving normal wrapping for long locales.
+- Thorough Cleansing uses tier-neutral explanatory prose; its `×2 / ×3 / ×4` value is highlighted with the existing Technology accent color while the localized label remains wrappable.
+- Keeps the 0.2.17 balance values and runtime architecture otherwise unchanged.
+- 0.2.17 remains an immutable rejected candidate: its direct conversion probe and Gold Thorough Cleansing path passed, but the natural Soul's Repose pulpit path exposed the stale-event presentation/runtime gap and the Contentment research probe itself had a reflection lookup failure.
+
 ## PrayerClarity: Rebalanced 0.2.17 candidate
 
 - Prayer for Donations keeps q20 / q40 / q60 and changes its success-only flat payout to **+20 / +50 / +100 silver**.
