@@ -163,6 +163,10 @@ namespace PrayerClarity
             string eventId = R.Get(craft, "linked_sub_id") as string;
             if (string.IsNullOrEmpty(eventId)) return null;
 
+            string effectiveEventId;
+            if (PrayerEditionSemantics.TryGetEffectivePrayEvent(craftId, eventId, out effectiveEventId))
+                eventId = effectiveEventId;
+
             Localization.UseCurrentGameLanguage();
 
             int fixedFaith = 0;
