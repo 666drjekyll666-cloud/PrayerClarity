@@ -22,8 +22,8 @@ This document is a **closure record**, not a new redesign proposal. It records w
 - accepted ref: `accepted/rebalanced-0.2.16`
 - exact runtime source: `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`
 - DLL SHA-256: `2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`
-- release target: `rebalanced-v0.2.16`
-- stable promotion merge: `c9dede71131dbab4322e37409ca0bdf41994fcb9`
+- release: `rebalanced-v0.2.16`
+- stable promotion merge: `7c90691f84bfba8be500ed3d60a53432bbe65e40`
 
 The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
 
