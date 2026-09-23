@@ -258,6 +258,7 @@ Long-lived findings belong primarily in:
 - `docs/DESIGN_NOTES.md` — product/UI architecture and accepted design direction;
 - `docs/PULPIT_REVEAL_UX.md` — accepted pre-sermon reward-reveal boundary;
 - `docs/TEST_BUILD_LOG.md` — only when distributable/testable production candidates exist.
+- `docs/CHATGPT_PROJECT_INSTRUCTIONS.md` — canonical thin bootstrap for the ChatGPT Project settings field; keep mutable development state out of it.
 
 Create additional design-analysis files only when they become durable sources of truth rather than temporary scratch work.
 
