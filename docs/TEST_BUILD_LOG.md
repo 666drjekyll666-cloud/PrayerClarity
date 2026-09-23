@@ -1,3 +1,23 @@
+## PrayerClarity: Rebalanced Test Console 0.1.5 — focused 0.2.17 acceptance helper
+
+- Type: research-only helper for PrayerClarity: Rebalanced 0.2.17; never part of the production package.
+- Exact source SHA: `233ea9d6680b27ebf8dd536779442872dec05b1e`.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.5`.
+- GitHub Actions run: `35865042815`; job: `107194393484`.
+- Build result: **success, 0 warnings / 0 errors**.
+- Artifact ID: `10752486487`.
+- Artifact name: `PrayerClarity-RebalancedTestConsole-0.1.5-ci-233ea9d6680b27ebf8dd536779442872dec05b1e`.
+- Artifact ZIP digest: `sha256:292df95402f886706bb6318c217e7d5c97089b5bf2b83fa2de1bbb100b7b372d`.
+- DLL SHA-256: `6d769070a73e5427d88f2d72e49f4ede687eda5b4e7b8199d1fbfeb0e5399608`.
+- Target production candidate: Rebalanced 0.2.17 source `fbffbb4957adc186ef42d4874241ca80047e597e`, DLL SHA-256 `68d19f495d44413e4f29a4b24a062b684be62bb1d1834020bbc0c2d57fcf42f2`.
+- New focused probes:
+  - Soul's Repose: invokes the real `PrayLogics.CalculatePray` with temporary controlled UI/SG state; checks below-cap 73->73, above-cap 136->90, zero SG, and deterministic failure/no-spend, then restores state. No weekly sermon is consumed and no payout items are dropped.
+  - Soul Contentment: creates temporary in-memory Item instances only; proves passive `Item.UpdateDurability` decay stops for both `Soul` and `SoulBodyPart` while ordinary `Body` decay remains unchanged; synthetic buff is removed afterward.
+  - Thorough Cleansing: after activating a synthetic Bronze/Silver/Gold native buff, one real soul-heal action records base shards, expected x2/x3/x4, actual craft output and pass/fail.
+- Contentment synthetic activation uses the candidate 45/90/135-minute ladder; Cleansing synthetic activation writes the exact production tier token before native `BuffsLogics.AddBuff`.
+- Required human work is intentionally reduced to the properties that benefit from real gameplay/UI observation: one real Thorough Cleansing heal and one pulpit readability check for Soul's Repose.
+- Status: **compiled research helper; ready for focused 0.2.17 runtime acceptance**.
+
 # Test / Research Build Log
 
 This file records handed executable artifacts once PrayerClarity research reaches a point where the user's installed Graveyard Keeper 1.407 runtime must provide evidence.
