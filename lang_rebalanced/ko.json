@@ -12,10 +12,10 @@
   "rebalanced.active.gratitude": "영혼의 상태는 시간이 지나도 악화되지 않습니다. 시체 안에 있거나 추출된 뒤에도 적용됩니다. 영혼을 해방하면 (gratitude_points)을 +{0:0}% 더 얻습니다.",
   "rebalanced.tech.plant_tier": "식물 성장 시간: -{0:0}%",
   "rebalanced.tech.souls_intro": "성공 시 사용한 (gratitude_points) 1마다 (faith) 1을 얻습니다.",
-  "rebalanced.tech.souls_tier": "설교 한 번에 최대 {0} (gratitude_points)을 사용할 수 있습니다.",
+  "rebalanced.tech.souls_tier": "설교당 한도: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "성공 시 사용한 (gratitude_points) 1마다 (faith) 1을 얻습니다. 설교 한 번에 최대 {0} (gratitude_points)을 사용할 수 있습니다.",
   "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
   "rebalanced.pulpit.souls_conversion_empty": "변환할 (gratitude_points)이 없습니다",
-  "rebalanced.tech.sin_shard_intro": "영혼을 치유하면 죄의 조각을 더 많이 얻습니다.",
+  "rebalanced.tech.sin_shard_intro": "영혼 치유로 얻는 죄의 조각 수가 증가합니다.",
   "rebalanced.active.sin_shard": "영혼 치유로 얻는 죄의 조각: ×{0:0.#}"
 }
