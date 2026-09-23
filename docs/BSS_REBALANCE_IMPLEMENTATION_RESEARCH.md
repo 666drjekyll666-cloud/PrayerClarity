@@ -1,6 +1,6 @@
 # BSS / Donations Rebalance — Implementation Feasibility Research
 
-Status: **technical feasibility established; design candidate only; no production implementation yet**.
+Status: **technical feasibility established; implemented on `dev/rebalanced-0.2.17`; runtime acceptance pending**.
 
 Target: Graveyard Keeper 1.407.
 
@@ -158,11 +158,7 @@ For the new candidate:
 
 Technically, arbitrary float `dur_parameter` values are supported and already pass through the stock prayer-buff duration path.
 
-The design value is still open. If the desired axis is roughly 1 / 2 / 3 stock weeks:
-- exact stock-week equivalents are approximately 52.5 / 105 / 157.5 minutes;
-- a cleaner rounded ladder can be chosen separately if preferred.
-
-This is a design choice, not an implementation limitation.
+Accepted duration axis: **1 / 2 / 3 vanilla six-day weeks = 45 / 90 / 135 real-time minutes**. Graveyard Keeper's vanilla day is 7.5 real-time minutes, so one six-day week is 45 minutes.
 
 ### Runtime gate
 
@@ -311,10 +307,10 @@ The preservation hook is the only hot-path addition. It should be implemented wi
 
 No fundamental mechanic question remains.
 
-Still to decide:
-1. exact Soul Contentment duration ladder;
-2. whether the Contentment active wording should say “souls do not lose condition” or a more in-world equivalent after seeing the actual UI;
-3. exact compact localization layout in all supported languages.
+Accepted design decisions:
+1. Soul Contentment duration = **45 / 90 / 135 minutes** (1 / 2 / 3 vanilla weeks);
+2. RU preservation wording: **«Состояние душ не ухудшается со временем - ни в теле, ни после извлечения.»**;
+3. compact Soul's Repose pulpit transaction is shown under the success row.
 
 Implementation should then proceed on a `dev/*` candidate branch.
 
