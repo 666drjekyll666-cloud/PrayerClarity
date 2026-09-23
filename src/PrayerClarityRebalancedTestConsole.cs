@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.3";
+        public const string PluginVersion = "0.1.5";
 
         private sealed class TimedEffect
         {
@@ -58,6 +58,7 @@ namespace PrayerClarityResearch
             PatchRootsDiagnostic();
             PatchBoostIISimulation();
             PatchCombatRegenDiagnostic();
+            PatchThoroughCleansingDiagnostic();
 
             _effects.Add(new TimedEffect(
                 "Shoots & Roots",
@@ -103,8 +104,12 @@ namespace PrayerClarityResearch
                 18f,
                 tier => SetPlayerParam("prayerclarity_rebalanced_excellence_tier", tier)));
 
-            _effects.Add(new TimedEffect("Soul Contentment (BSS)", "buff_gp_increase", 36f));
-            _effects.Add(new TimedEffect("Thorough Cleansing (BSS)", "buff_sin_shard", 36f));
+            _effects.Add(new TimedEffect("Soul Contentment (BSS)", "buff_gp_increase", 45f));
+            _effects.Add(new TimedEffect(
+                "Thorough Cleansing (BSS)",
+                "buff_sin_shard",
+                36f,
+                tier => SetPlayerParam("prayerclarity_rebalanced_sin_shard_tier", tier)));
 
             Logger.LogInfo(
                 PluginName + " " + PluginVersion +
@@ -128,7 +133,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.3");
+                "PrayerClarity: Rebalanced Test Console 0.1.5");
         }
 
         private void DrawWindow(int id)
@@ -164,7 +169,19 @@ namespace PrayerClarityResearch
                 RemoveAll();
 
             GUILayout.Space(8f);
-            GUILayout.Label("Native-seam probes (0.2.3):");
+            GUILayout.Label("Native-seam probes:");
+
+            if (GUILayout.Button("Probe 0.2.17 Soul's Repose conversion (no sermon spent)"))
+                ProbeSoulsReposeConversion();
+
+            if (GUILayout.Button("Probe 0.2.17 Soul Contentment decay (temporary items only)"))
+                ProbeSoulContentmentPreservation();
+
+            GUILayout.Label("Thorough Cleansing 0.2.17: activate a tier, then heal one real soul; the console logs base/actual/expected Sin Shards automatically.");
+
+            GUILayout.Space(6f);
+
+            GUILayout.Label("Earlier accepted seam probes:");
 
             if (GUILayout.Button("Probe Repentance probability"))
                 ProbeRepentanceProbability();
@@ -449,6 +466,388 @@ namespace PrayerClarityResearch
             {
                 _status = "Combat regen probe failed: " + ex.GetType().Name;
                 _log?.LogError("PrayerClarity Rebalanced Test Console Combat regen probe failed. " + ex);
+            }
+        }
+
+
+        private void ProbeSoulsReposeConversion()
+        {
+            object player = GetPlayer();
+            if (player == null)
+            {
+                _status = "Soul's Repose probe failed: player unavailable.";
+                return;
+            }
+
+            try
+            {
+                object craft = FindBalanceObjectById("craft_data", "pray:b_souls:3");
+                if (craft == null) throw new MissingMemberException("CraftDefinition pray:b_souls:3");
+
+                string eventId = Convert.ToString(Get(craft, "linked_sub_id"));
+                float requirement = Convert.ToSingle(Get(craft, "needs_quality"));
+                float kFaith = Convert.ToSingle(Get(craft, "k_faith"));
+                if (!string.Equals(eventId, "default_3", StringComparison.Ordinal) ||
+                    Math.Abs(requirement - 90f) > 0.0001f ||
+                    Math.Abs(kFaith) > 0.0001f)
+                    throw new InvalidOperationException(
+                        "Soul's Repose Gold projection is not the expected 0.2.17 shape: event=" +
+                        eventId + ", requirement=" + requirement + ", k_faith=" + kFaith + ".");
+
+                Type guiElementsType = FindType("GUIElements");
+                object guiElements = GetStatic(guiElementsType, "me");
+                object prayGui = Get(guiElements, "pray_craft");
+                if (prayGui == null) throw new InvalidOperationException("GUIElements.me.pray_craft unavailable.");
+
+                Type prayLogics = FindType("PrayLogics");
+                MethodInfo calculate = prayLogics?.GetMethod(
+                    "CalculatePray",
+                    AnyStatic,
+                    null,
+                    new[] { typeof(string) },
+                    null);
+                if (calculate == null) throw new MissingMethodException("PrayLogics.CalculatePray(string)");
+
+                object originalCraft = Get(prayGui, "pray_craft");
+                object originalQuality = Get(prayGui, "_cur_quality");
+                float originalGratitude = Convert.ToSingle(Get(player, "gratitude_points"));
+                object originalLastResult = GetStatic(prayLogics, "last_pray_result");
+                object originalDrops = GetStatic(prayLogics, "_sermon_drops");
+
+                var diagnostics = new List<string>();
+                try
+                {
+                    Set(prayGui, "pray_craft", craft);
+
+                    RunSoulsReposeCase(
+                        calculate, prayGui, player, eventId,
+                        73f, 999f, true, 73, 0f, "below_cap", diagnostics);
+                    RunSoulsReposeCase(
+                        calculate, prayGui, player, eventId,
+                        136f, 999f, true, 90, 46f, "above_cap", diagnostics);
+                    RunSoulsReposeCase(
+                        calculate, prayGui, player, eventId,
+                        0f, 999f, true, 0, 0f, "zero_sg", diagnostics);
+                    RunSoulsReposeCase(
+                        calculate, prayGui, player, eventId,
+                        73f, 0f, false, 0, 73f, "failure", diagnostics);
+                }
+                finally
+                {
+                    Set(player, "gratitude_points", originalGratitude);
+                    Set(prayGui, "pray_craft", originalCraft);
+                    Set(prayGui, "_cur_quality", originalQuality);
+                    SetStatic(prayLogics, "last_pray_result", originalLastResult);
+                    SetStatic(prayLogics, "_sermon_drops", originalDrops);
+                }
+
+                _status = "Soul's Repose probe passed: 73->73, 136->90, zero, and deterministic failure/no-spend.";
+                _log?.LogInfo("SOULS_REPOSE_PROBE PASS " + string.Join(" | ", diagnostics.ToArray()));
+            }
+            catch (Exception ex)
+            {
+                _status = "Soul's Repose probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Soul's Repose probe failed. " + ex);
+            }
+        }
+
+        private static void RunSoulsReposeCase(
+            MethodInfo calculate,
+            object prayGui,
+            object player,
+            string eventId,
+            float startGratitude,
+            float churchQuality,
+            bool expectedSuccess,
+            int expectedBonusFaith,
+            float expectedRemainingGratitude,
+            string label,
+            List<string> diagnostics)
+        {
+            Set(player, "gratitude_points", startGratitude);
+            Set(prayGui, "_cur_quality", churchQuality);
+
+            object result = calculate.Invoke(null, new object[] { eventId });
+            bool success = Convert.ToBoolean(Get(result, "success"));
+            int faithBonus = Convert.ToInt32(Get(result, "faith_bonus"));
+            int baseFaith = Convert.ToInt32(Get(result, "faith"));
+            float remaining = Convert.ToSingle(Get(player, "gratitude_points"));
+
+            bool pass =
+                success == expectedSuccess &&
+                faithBonus == expectedBonusFaith &&
+                Math.Abs(remaining - expectedRemainingGratitude) <= 0.0001f;
+
+            string diagnostic =
+                label +
+                ": success=" + success +
+                ", base_faith=" + baseFaith +
+                ", faith_bonus=" + faithBonus +
+                ", SG=" + startGratitude.ToString("0.###") + "->" + remaining.ToString("0.###") +
+                ", expected_bonus=" + expectedBonusFaith +
+                ", pass=" + pass;
+            diagnostics.Add(diagnostic);
+            _log?.LogInfo("SOULS_REPOSE_DIAGNOSTIC " + diagnostic);
+
+            if (!pass)
+                throw new InvalidOperationException("Soul's Repose case failed: " + diagnostic);
+        }
+
+        private void ProbeSoulContentmentPreservation()
+        {
+            if (IsActive("buff_gp_increase"))
+            {
+                _status = "Contentment decay probe requires buff_gp_increase to be inactive first; use Remove on Soul Contentment.";
+                return;
+            }
+
+            try
+            {
+                object soulDefinition = FindDecayItemDefinition("Soul");
+                object soulBodyPartDefinition = FindDecayItemDefinition("SoulBodyPart");
+                object bodyDefinition = FindDecayItemDefinition("Body");
+                if (soulDefinition == null || soulBodyPartDefinition == null || bodyDefinition == null)
+                    throw new InvalidOperationException("Could not find decaying Soul, SoulBodyPart and Body definitions in GameBalance.items_data.");
+
+                Type itemType = FindType("Item");
+                ConstructorInfo ctor = itemType?.GetConstructor(new[] { typeof(string), typeof(int) });
+                MethodInfo updateDurability = itemType?.GetMethod(
+                    "UpdateDurability",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(float), typeof(float) },
+                    null);
+                if (ctor == null || updateDurability == null)
+                    throw new MissingMethodException("Item(string,int) / Item.UpdateDurability(float,float)");
+
+                string[] labels = { "Soul", "SoulBodyPart", "Body" };
+                object[] definitions = { soulDefinition, soulBodyPartDefinition, bodyDefinition };
+                float[] baseline = new float[3];
+                float[] protectedValues = new float[3];
+
+                for (int i = 0; i < definitions.Length; i++)
+                    baseline[i] = RunTemporaryDurabilityTick(ctor, updateDurability, definitions[i]);
+
+                try
+                {
+                    _addBuff("buff_gp_increase", 1f);
+                    if (!IsActive("buff_gp_increase"))
+                        throw new InvalidOperationException("Native buff_gp_increase activation failed.");
+
+                    for (int i = 0; i < definitions.Length; i++)
+                        protectedValues[i] = RunTemporaryDurabilityTick(ctor, updateDurability, definitions[i]);
+                }
+                finally
+                {
+                    if (IsActive("buff_gp_increase"))
+                        _removeBuff("buff_gp_increase");
+                }
+
+                bool soulPass = baseline[0] < 0.9999f && protectedValues[0] >= 0.9999f;
+                bool bodyPartPass = baseline[1] < 0.9999f && protectedValues[1] >= 0.9999f;
+                bool bodyStillDecays =
+                    baseline[2] < 0.9999f &&
+                    Math.Abs(protectedValues[2] - baseline[2]) <= 0.0001f;
+
+                string diagnostic =
+                    labels[0] + "=" + baseline[0].ToString("0.###") + "->" + protectedValues[0].ToString("0.###") +
+                    " " + labels[1] + "=" + baseline[1].ToString("0.###") + "->" + protectedValues[1].ToString("0.###") +
+                    " " + labels[2] + "=" + baseline[2].ToString("0.###") + "->" + protectedValues[2].ToString("0.###") +
+                    " soul_pass=" + soulPass +
+                    " bodypart_pass=" + bodyPartPass +
+                    " body_still_decays=" + bodyStillDecays;
+
+                _log?.LogInfo("SOUL_CONTENTMENT_DECAY_DIAGNOSTIC " + diagnostic);
+
+                if (!soulPass || !bodyPartPass || !bodyStillDecays)
+                    throw new InvalidOperationException("Soul Contentment decay invariant failed: " + diagnostic);
+
+                _status = "Soul Contentment decay probe passed: extracted + in-body souls preserved; ordinary body decay unchanged.";
+            }
+            catch (Exception ex)
+            {
+                _status = "Soul Contentment decay probe failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console Soul Contentment decay probe failed. " + ex);
+            }
+        }
+
+        private static float RunTemporaryDurabilityTick(
+            ConstructorInfo ctor,
+            MethodInfo updateDurability,
+            object definition)
+        {
+            string id = GetId(definition);
+            object item = ctor.Invoke(new object[] { id, 1 });
+            Set(item, "durability", 1f);
+            updateDurability.Invoke(item, new object[] { 60f, 1f });
+            return Convert.ToSingle(Get(item, "durability"));
+        }
+
+        private static object FindDecayItemDefinition(string itemTypeName)
+        {
+            Type gameBalanceType = FindType("GameBalance");
+            object gameBalance = GetStatic(gameBalanceType, "me");
+            System.Collections.IEnumerable items = Get(gameBalance, "items_data") as System.Collections.IEnumerable;
+            if (items == null) return null;
+
+            foreach (object definition in items)
+            {
+                if (definition == null) continue;
+                string type = Convert.ToString(Get(definition, "type"));
+                float decrease = Convert.ToSingle(Get(definition, "durability_decrease") ?? 0f);
+                if (string.Equals(type, itemTypeName, StringComparison.Ordinal) && decrease > 0.000001f)
+                    return definition;
+            }
+            return null;
+        }
+
+        private static object FindBalanceObjectById(string collectionMember, string id)
+        {
+            Type gameBalanceType = FindType("GameBalance");
+            object gameBalance = GetStatic(gameBalanceType, "me");
+            System.Collections.IEnumerable values = Get(gameBalance, collectionMember) as System.Collections.IEnumerable;
+            if (values == null) return null;
+
+            foreach (object value in values)
+                if (string.Equals(GetId(value), id, StringComparison.Ordinal))
+                    return value;
+            return null;
+        }
+
+        private sealed class ThoroughCleansingProbeState
+        {
+            internal string CraftId;
+            internal int BaseShards;
+            internal int Tier;
+            internal bool Active;
+        }
+
+        private static void PatchThoroughCleansingDiagnostic()
+        {
+            Type widget = FindType("SoulHealingWidget");
+            MethodInfo heal = widget?.GetMethod(
+                "OnStartHealButtonPressed",
+                AnyInstance,
+                null,
+                Type.EmptyTypes,
+                null);
+            if (heal == null) throw new MissingMethodException("SoulHealingWidget.OnStartHealButtonPressed()");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.cleansingdiag" });
+
+            MethodInfo prefixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(ThoroughHealingPrefix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(ThoroughHealingPostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object prefix = CreateHarmonyMethod(harmonyMethodType, prefixMethod);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = heal;
+            args[1] = prefix;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void ThoroughHealingPrefix(object __instance, ref ThoroughCleansingProbeState __state)
+        {
+            __state = null;
+            try
+            {
+                object inserted = Get(__instance, "inserted_item");
+                object wgo = Get(__instance, "_wgo");
+                if (inserted == null || wgo == null) return;
+
+                MethodInfo getParamInt = inserted.GetType().GetMethod(
+                    "GetParamInt",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(string) },
+                    null);
+                if (getParamInt == null) return;
+
+                int sins = Convert.ToInt32(getParamInt.Invoke(inserted, new object[] { "sins_count" }));
+                float durability = Convert.ToSingle(Get(inserted, "durability"));
+                float healRate = Convert.ToSingle(Get(__instance, "sins_heal_rate"));
+                float resultingDurability =
+                    durability - (Math.Abs(healRate + 1f) <= 0.0001f ? 0f : 0.5f * (1f - healRate));
+                int baseShards = resultingDurability > 0f ? sins : 0;
+
+                object player = GetPlayer();
+                int tier = (int)Math.Round(
+                    GetPlayerParam(player, "prayerclarity_rebalanced_sin_shard_tier", 0f));
+
+                __state = new ThoroughCleansingProbeState
+                {
+                    CraftId = GetId(wgo) + ":" + GetId(inserted),
+                    BaseShards = baseShards,
+                    Tier = tier,
+                    Active = IsActive("buff_sin_shard")
+                };
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("THOROUGH_CLEANSING_DIAGNOSTIC prefix failed. " + ex);
+            }
+        }
+
+        private static void ThoroughHealingPostfix(ThoroughCleansingProbeState __state)
+        {
+            if (__state == null) return;
+            try
+            {
+                object craft = FindBalanceObjectById("craft_data", __state.CraftId);
+                System.Collections.IEnumerable output =
+                    craft == null ? null : Get(craft, "output") as System.Collections.IEnumerable;
+
+                int shards = -1;
+                if (output != null)
+                {
+                    foreach (object item in output)
+                    {
+                        if (!string.Equals(GetId(item), "sin_shard", StringComparison.Ordinal)) continue;
+                        shards = Convert.ToInt32(Get(item, "value"));
+                        break;
+                    }
+                }
+
+                int multiplier = __state.Tier == 1 ? 2 : __state.Tier == 2 ? 3 : __state.Tier == 3 ? 4 : 1;
+                int expected = __state.Active ? __state.BaseShards * multiplier : __state.BaseShards;
+                bool pass = shards == expected;
+
+                _log?.LogInfo(
+                    "THOROUGH_CLEANSING_DIAGNOSTIC active=" + __state.Active +
+                    " tier=" + __state.Tier +
+                    " base_shards=" + __state.BaseShards +
+                    " expected_multiplier=x" + multiplier +
+                    " actual_shards=" + shards +
+                    " expected_shards=" + expected +
+                    " pass=" + pass);
+
+                if (!pass)
+                    _log?.LogError("THOROUGH_CLEANSING_DIAGNOSTIC mismatch.");
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("THOROUGH_CLEANSING_DIAGNOSTIC postfix failed. " + ex);
             }
         }
 
@@ -993,6 +1392,62 @@ namespace PrayerClarityResearch
             if (setParam == null) throw new MissingMethodException("WorldGameObject.SetParam(string,float)");
 
             setParam.Invoke(player, new object[] { name, value });
+        }
+
+
+        private static void Set(object instance, string name, object value)
+        {
+            if (instance == null || string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(instance == null ? nameof(instance) : nameof(name));
+
+            for (Type type = instance.GetType(); type != null; type = type.BaseType)
+            {
+                FieldInfo field = type.GetField(
+                    name,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (field != null)
+                {
+                    field.SetValue(instance, value);
+                    return;
+                }
+
+                PropertyInfo property = type.GetProperty(
+                    name,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (property != null && property.CanWrite && property.GetIndexParameters().Length == 0)
+                {
+                    property.SetValue(instance, value, null);
+                    return;
+                }
+            }
+
+            throw new MissingMemberException(instance.GetType().FullName, name);
+        }
+
+        private static void SetStatic(Type type, string name, object value)
+        {
+            for (Type current = type; current != null; current = current.BaseType)
+            {
+                FieldInfo field = current.GetField(
+                    name,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly);
+                if (field != null)
+                {
+                    field.SetValue(null, value);
+                    return;
+                }
+
+                PropertyInfo property = current.GetProperty(
+                    name,
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly);
+                if (property != null && property.CanWrite && property.GetIndexParameters().Length == 0)
+                {
+                    property.SetValue(null, value, null);
+                    return;
+                }
+            }
+
+            throw new MissingMemberException(type == null ? "<null>" : type.FullName, name);
         }
 
         private static object Get(object instance, string name)
