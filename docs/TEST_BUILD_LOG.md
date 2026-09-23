@@ -1,5 +1,30 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.18 — runtime candidate
+
+- Candidate source SHA: `449748ceb9f50c873e15dede485315912ca9935c`.
+- Candidate ref: `candidate/rebalanced-0.2.18`.
+- GitHub Actions run: `35871569228`; job: `107216690190`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10754947841`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.18-ci-449748ceb9f50c873e15dede485315912ca9935c`.
+- Artifact ZIP digest: `sha256:acc7044b3deece710607c210ee511d23d1f93a499bf6c9ab9f835e5887d7e9ed`.
+- Rebalanced DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`.
+- Scope relative to 0.2.17: live Soul's Repose event-argument projection + matching forecast event semantics; compact/wrap-safe BSS Technology tier values; red Thorough Cleansing x2/x3/x4 values; tier-neutral Thorough Cleansing description. Balance values and already-passed Thorough Cleansing runtime seam are unchanged.
+- Status: **compiled candidate; focused runtime acceptance pending; not merged or published**.
+
+Research helper for the remaining gate:
+- Rebalanced Test Console **0.1.6**.
+- Candidate source: `e61481a754c38f2b362b7486d15148bec96fe8df`.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.6`.
+- GitHub Actions run: `35871876168`; job: `107217747611`.
+- Build result: **success**, 0 warnings / 0 errors.
+- Artifact ID: `10755627030`.
+- Artifact name: `PrayerClarity-RebalancedTestConsole-0.1.6-ci-e61481a754c38f2b362b7486d15148bec96fe8df`.
+- Artifact ZIP digest: `sha256:a5e8c5311682cf62d2dddc426f6017880b4bffef8d37ac28f7fc0f78e4acb99b`.
+- DLL SHA-256: `3e30ba6cc68256e14aa600cac36f528cacd2baafbfdee94226e1b798b60e8fd6`.
+- 0.1.6 fixes the Contentment probe's game-type/method lookup and strengthens the Soul's Repose probe by deliberately feeding the old `pray_for_souls_3` event into the real patched call, requiring 0.2.18 to normalize it while base Faith remains independent of SG.
+
 ## 2026-09-23 — Rebalanced 0.2.17 runtime result: rejected candidate
 
 Tested immutable production candidate:
