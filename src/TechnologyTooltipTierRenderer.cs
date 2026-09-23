@@ -317,10 +317,12 @@ namespace PrayerClarity
                 bool hasRate = Math.Abs(tier.MoneyBonusRate) >= Epsilon ||
                                IsSharedNonZero(allTiers, t => t.MoneyBonusRate);
                 lines.Add(
-                    hasRate
-                        ? "(slv) " + FormatSignedNumber(tier.FixedMoneyBonus)
-                        : "(slv) " + Localization.F("tech.donations") + ": " +
-                          FormatSignedNumber(tier.FixedMoneyBonus));
+                    !hasRate && tier.Highlight == PrayerForecast.BonusHighlight.Money
+                        ? R.FormatSignedMoney(tier.FixedMoneyBonus)
+                        : hasRate
+                            ? "(slv) " + FormatSignedNumber(tier.FixedMoneyBonus)
+                            : "(slv) " + Localization.F("tech.donations") + ": " +
+                              FormatSignedNumber(tier.FixedMoneyBonus));
             }
 
             TooltipSemanticModel.RewardDetails commonReward;
