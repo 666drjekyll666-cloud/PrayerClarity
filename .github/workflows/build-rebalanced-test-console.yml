@@ -34,22 +34,22 @@ jobs:
           dll='bin/RebalancedTestConsole/PrayerClarity.RebalancedTestConsole.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.RebalancedTestConsole-0.1.3-ci.dll'
+          handoff='PrayerClarity.RebalancedTestConsole-0.1.5-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.3"
+            echo "Version: 0.1.5"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
-            echo "Target: PrayerClarity: Rebalanced 0.2.3 / Graveyard Keeper 1.407"
+            echo "Target: PrayerClarity: Rebalanced 0.2.17 / Graveyard Keeper 1.407"
             echo "Purpose: research-only F1 console for native BuffsLogics AddBuff/RemoveBuff activation of timed prayer effects without using the pulpit."
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
       - name: Upload research candidate
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-RebalancedTestConsole-0.1.3-ci-${{ github.sha }}
+          name: PrayerClarity-RebalancedTestConsole-0.1.5-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
