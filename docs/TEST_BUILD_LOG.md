@@ -11,7 +11,7 @@
 - Artifact ZIP digest: `sha256:acc7044b3deece710607c210ee511d23d1f93a499bf6c9ab9f835e5887d7e9ed`.
 - Rebalanced DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`.
 - Scope relative to 0.2.17: live Soul's Repose event-argument projection + matching forecast event semantics; compact/wrap-safe BSS Technology tier values; red Thorough Cleansing x2/x3/x4 values; tier-neutral Thorough Cleansing description. Balance values and already-passed Thorough Cleansing runtime seam are unchanged.
-- Status: **compiled candidate; focused runtime acceptance pending; not merged or published**.
+- Status: **runtime-tested and rejected; not merged or published**. Mechanics probes passed, but the natural pulpit identity/presentation path and Technology viewport presentation remain unresolved.
 
 Research helper for the remaining gate:
 - Rebalanced Test Console **0.1.6**.
@@ -24,6 +24,45 @@ Research helper for the remaining gate:
 - Artifact ZIP digest: `sha256:a5e8c5311682cf62d2dddc426f6017880b4bffef8d37ac28f7fc0f78e4acb99b`.
 - DLL SHA-256: `3e30ba6cc68256e14aa600cac36f528cacd2baafbfdee94226e1b798b60e8fd6`.
 - 0.1.6 fixes the Contentment probe's game-type/method lookup and strengthens the Soul's Repose probe by deliberately feeding the old `pray_for_souls_3` event into the real patched call, requiring 0.2.18 to normalize it while base Faith remains independent of SG.
+
+## 2026-09-23 — Rebalanced 0.2.18 runtime result: rejected candidate
+
+Tested immutable production candidate:
+- source: `449748ceb9f50c873e15dede485315912ca9935c`;
+- ref: `candidate/rebalanced-0.2.18`;
+- DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`;
+- research helper used for this pass: Rebalanced Test Console 0.1.6, source `e61481a754c38f2b362b7486d15148bec96fe8df`.
+
+Accepted/reusable runtime evidence:
+- The strengthened Soul's Repose probe deliberately passed stock `pray_for_souls_3` into the real patched `PrayLogics.CalculatePray` path. All four controlled cases passed with a single SG-independent base Faith value of 19: 73 SG -> +73 Faith / 0 SG; 136 SG -> +90 Faith / 46 SG; 0 SG -> +0; deterministic failure -> +0 and no SG spend.
+- The corrected Soul Contentment decay probe passed: ordinary extracted Soul and in-corpse SoulBodyPart decayed without Contentment, both remained protected with `buff_gp_increase`, and ordinary Body decay continued.
+- Thorough Cleansing's real Gold x4 healing evidence from 0.2.17 remains valid because the production seam did not change in 0.2.18; no repeat heal is required.
+- Keyboard/mouse per-prayer BSS Technology tooltips are structurally correct: Soul's Repose shows q30/q60/q90 and 30/60/90 SG caps; Contentment shows +50% SG and the projected durations; Thorough Cleansing shows q30/q60/q120 and red x2/x3/x4 values.
+
+Rejected/unclosed runtime evidence:
+- The natural Gold Soul's Repose pulpit with 115 SG still did **not** show the required live `SG -90 -> Faith +90` transaction. It showed the old Soul-Gratitude-dependent effect wording instead.
+- Because production Soul's Repose conversion currently identifies the selected prayer through the same live pulpit craft object, the automated probe does not by itself prove that a naturally selected sermon would receive the conversion. Do not spend a weekly sermon to test this until the live craft identity mismatch is understood.
+- The combined BSS Technology tooltip under gamepad placement is physically taller than the viewport by roughly an additional prayer block. Position clamping cannot solve an object that is itself taller than the available screen height.
+- Thorough Cleansing still exposes stale vanilla lore ending in `(x2)`; Rebalanced tier mechanics are x2/x3/x4, so the shared lore must become tier-neutral on every supported locale.
+- The Soul's Repose item tooltip appears semantically correct in the supplied screenshot; no separate item-tooltip blocker was found.
+
+Assessment:
+- **0.2.18 is rejected and must not be rebuilt under the same version.**
+- Reuse the passed conversion arithmetic, Contentment decay, and Thorough Cleansing runtime evidence.
+- Before production 0.2.19, resolve the natural pulpit craft identity with a read-only probe, then make the production resolver authoritative for both pulpit forecast and sermon conversion.
+- Technology overflow design direction accepted by the user: normal tooltip unchanged when it fits; otherwise widen/reflow first, remove group-level duplicate information only if still needed, and consider columns only if the viewport still cannot contain the content. Do not shrink text into an unreadable fallback.
+
+Research helper prepared for the identity gap:
+- Rebalanced Test Console **0.1.7**.
+- Exact source: `fefe877347b68c51e108d9b4824b43549f182921`.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.7`.
+- GitHub Actions run: `35898012483`; job: `107306705139`; build **success**.
+- Artifact ID: `10767965435`.
+- Artifact name: `PrayerClarity-RebalancedTestConsole-0.1.7-ci-fefe877347b68c51e108d9b4824b43549f182921`.
+- Artifact ZIP digest: `sha256:25dd564f33b5d46612b3553693ee6a2a3b46805926754f34160a5524c475b578`.
+- DLL SHA-256: `abbb8df8c3b842ceb9215431e9ded1134c22a3114d1070eec24aaea9ba717e82`.
+- New action: **Capture live pulpit Soul's Repose identity (no sermon)**. With the pulpit open and Gold Soul's Repose selected naturally, it logs the exact live craft type/ID/event/requirement/modifiers/output, relevant GUI/craft identity members, reference equality against canonical `pray:b_souls:3`, and the production `PrayerForecast.BuildTierDetails` interpretation. It is read-only and spends no sermon/resource.
+- Required user action: replace Test Console 0.1.6 with 0.1.7, open the pulpit, naturally select Gold Soul's Repose, press F1 and the identity-capture button once, then return `LogOutput.log`. No other mechanic test should be repeated in this pass.
 
 ## 2026-09-23 — Rebalanced 0.2.17 runtime result: rejected candidate
 
