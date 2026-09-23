@@ -629,7 +629,7 @@ Preferred candidate shape for further mechanics/seam research:
 - retain a modest **+50% Soul Gratitude gain at all qualities** so the prayer still carries its stock identity;
 - add **no Soul-condition decay while active** as the meaningful primary utility;
 - quality mainly scales duration;
-- candidate duration target: approximately **1 / 2 / 3 stock sermon weeks**, rather than an extremely long 2/3/4-week ladder, because global no-decay is materially stronger than the old +Gratitude effect;
+- candidate duration target: **1 / 2 / 3 vanilla six-day weeks (45 / 90 / 135 minutes)**, because global no-decay is materially stronger than the old +Gratitude effect;
 - permanent Soul Container III remains valuable because it solves storage without spending a sermon slot.
 
 Open implementation question:
