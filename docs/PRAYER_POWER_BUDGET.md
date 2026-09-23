@@ -296,3 +296,115 @@ Accepted follow-up for the next Rebalanced candidate:
 The donation side therefore uses a clean 100/200/300 ladder, while the Faith side keeps the accepted 100/150/200 ladder. Gold still reaches the preferred +300% donation point; Silver is deliberately raised from +150% to +200% so the money scaling progresses evenly by tier.
 
 With Cardinal active and the accepted Gold Donations +30 silver, the Gold pure-money crossover remains at roughly Graveyard Quality 250.
+
+
+## 2026-09-23 Premium Gold q95 success-gate research
+
+Status: **research finding + design hypothesis; no production value change**.
+
+### Question
+
+Would moving selected premium Gold prayers from q90 to q95 create a satisfying late-game capstone by making 100% sermon success require deliberate preparation, without turning candles/incense into an irritating recurring tax?
+
+### Direct project mechanic
+
+The verified stock success calculation is:
+
+`success_percent = RoundToInt(current_church_quality / needs_quality * 100)`.
+
+Therefore a q95 prayer gives:
+- CQ90 -> 95%;
+- CQ92 -> 97%;
+- CQ94 -> 99%;
+- CQ95+ -> guaranteed success.
+
+This is not merely a last-point change for lower-quality churches: compared with q90 it also lowers Gold success by several percentage points before the late-game church is complete.
+
+### Church-quality context
+
+Community layout evidence, cross-checked against current wiki workstation values, documents a practical late-game **passive CQ94** cathedral using:
+- 6 Soft Church Benches;
+- 2 Confessional II;
+- 3 Stone Church Shrines;
+- 4 Incense Burner II;
+- 4 Wall Candelabra III;
+- 2 Candelabra III;
+- 1 Stained Glass Window;
+- the church base rating.
+
+A documented min-max alternative reaches **at least passive CQ96** by replacing the two Confessional II (+7 each) with Stone Church Shrines (+8 each). This is enough to disprove a universal rule that q95 requires a consumable. Absolute passive maximum for 1.407 is not claimed here because the placement graph was not exhaustively proved from game data.
+
+Relevant sources:
+- Steam 2022 practical passive CQ94 layout: https://steamcommunity.com/app/599140/discussions/5/3196992771951465239/
+- Steam 2020 passive CQ94 and shrine-for-confessional CQ96 variant: https://steamcommunity.com/app/599140/discussions/0/1736589519998595071/
+- Steam 2024 passive-vs-active layout discussion: https://steamcommunity.com/app/599140/discussions/0/4351113819081639981/
+- current Official Wiki Church/workstation values: https://graveyardkeeper.fandom.com/wiki/Church
+
+### Minimum last-mile preparation from CQ94
+
+A standard passive CQ94 layout already contains Incense Burner II. One ordinary Incense gives +2 Church Quality for 4.5 minutes, so one use moves 94 -> 96 and crosses q95.
+
+One Freshener crafts into 2 Incense. Freshener itself costs 1 Oil + 1 Order solution at Alchemy Workbench I. Thus one Freshener supplies two weekly q95 top-ups if the player uses one Incense per sermon.
+
+This is materially lighter than using a Candelabra III for the same purpose: a tier-III candelabrum requires three matching candles to activate its temporary bonus.
+
+Relevant sources:
+- Incense: https://graveyardkeeper.fandom.com/wiki/Incense
+- Freshener: https://graveyardkeeper.fandom.com/wiki/Freshener
+- Incense Burner II: https://graveyardkeeper.fandom.com/wiki/Incense_burner_II
+- Candle: https://graveyardkeeper.fandom.com/wiki/Candle
+- Candelabra III: https://graveyardkeeper.fandom.com/wiki/Candelabra_III
+
+### Player-experience signals
+
+Community evidence does **not** support mandatory high-volume candle upkeep as a desirable default:
+- players explicitly ask for strong passive layouts to avoid “endless candles”;
+- the 2024 layout discussion distinguishes a mostly-passive standard church from a consumable-heavy active church and notes that an all-candelabra active setup may consume roughly 60 tier-III candles per week;
+- older and newer player reports describe disposable candles / beeswax upkeep as hassle or grind.
+
+These are community signals, not mechanics proof.
+
+Representative sources:
+- https://steamcommunity.com/app/599140/discussions/5/3196992771951465239/
+- https://steamcommunity.com/app/599140/discussions/0/4351113819081639981/
+- https://www.reddit.com/r/GraveyardKeeper/comments/dou07e/
+- https://www.reddit.com/r/GraveyardKeeper/comments/12fyw6p/
+
+### Game-design interpretation
+
+The useful design target is **not** “charge a consumable tax for power”. It is an informed optional trade-off:
+
+`accept a small residual failure risk / spend one cheap temporary resource / redesign the passive church for the last point(s) of certainty`.
+
+This matches the general “interesting decisions” principle: the choice is situational, informed, and carries an opportunity cost rather than having one mandatory answer. A consumable gate is healthier when the resource is cheap/plentiful enough to be used instead of hoarded; expensive or scarce consumables tend to create hoarding or busywork.
+
+References:
+- Sid Meier, GDC 2012, Interesting Decisions: https://www.gamedeveloper.com/design/gdc-2012-sid-meier-on-how-to-see-games-as-sets-of-interesting-decisions
+- GDC Vault session: https://gdcvault.com/play/1016165/Interesting
+- Josh Bycer, Avoiding the Hoarder Trap: https://www.gamedeveloper.com/design/avoiding-the-hoarder-trap-in-game-design
+
+### Prayer-by-prayer implication
+
+Do **not** establish “all Gold prayers use q95” as a symmetry rule. Church Quality requirements remain tied to the whole proposition.
+
+Strong q95 candidates:
+- **Repose Gold** — now guarantees the maximum visible corpse quality inside the best available tier; q95 makes the deterministic premium result require either accepting a tiny residual risk at CQ94 or deliberately preparing the service.
+- **Excellence Gold** — the Gold jump to +1.0 linked-craft quality is a genuine premium production window and fits the same capstone logic.
+
+Weaker/conditional q95 candidate:
+- **Thorough Cleansing Gold** — x2 Sin Shards is the same magnitude at all qualities; Gold primarily extends duration to 108 minutes. q95 can still be defensible as a late BSS ritual, but the rationale is weaker because Gold does not introduce a unique magnitude spike. Do not raise it solely for visual consistency.
+
+BSS Soul's Repose q120 already occupies a separate aspirational tier and should not be normalized to this q95 grammar.
+
+### Current design hypothesis
+
+**q95 is a good soft-capstone threshold, not a consumable-only gate.**
+
+The strongest version is:
+- normal practical passive church around CQ94 -> premium Gold at 99%;
+- one ordinary Incense -> guaranteed;
+- specialized passive CQ96 -> guaranteed without consumables, but at the opportunity cost of replacing useful confessionals.
+
+This gives the player three legitimate strategies rather than one forced weekly chore.
+
+No production change is accepted by this research alone.
