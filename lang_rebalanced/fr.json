@@ -12,10 +12,10 @@
   "rebalanced.active.gratitude": "L'état des âmes ne se dégrade pas avec le temps, ni dans le corps ni après extraction. Libérer des âmes accorde +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Temps de croissance des plantes : -{0:0} %",
   "rebalanced.tech.souls_intro": "En cas de réussite, chaque (gratitude_points) dépensé accorde 1 (faith).",
-  "rebalanced.tech.souls_tier": "Jusqu'à {0} (gratitude_points) peuvent être dépensés par sermon.",
+  "rebalanced.tech.souls_tier": "Limite par sermon : {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "En cas de réussite, chaque (gratitude_points) dépensé accorde 1 (faith). Jusqu'à {0} (gratitude_points) peuvent être dépensés par sermon.",
   "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
   "rebalanced.pulpit.souls_conversion_empty": "aucun (gratitude_points) à convertir",
-  "rebalanced.tech.sin_shard_intro": "Soigner les âmes rapporte davantage d'Éclats de péché.",
+  "rebalanced.tech.sin_shard_intro": "Augmente le nombre d’Éclats de péché obtenus en soignant les âmes.",
   "rebalanced.active.sin_shard": "Éclats de péché obtenus en soignant les âmes : ×{0:0.#}"
 }
