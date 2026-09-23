@@ -51,7 +51,9 @@ namespace PrayerClarity
             ConfigureResult(_resultLabel);
             R.Set(_resultLabel, "text", BuildResult(forecast));
 
-            SetEffect(forecast.SpecialText, forecast.SpecialIconName);
+            SetEffect(
+                forecast.SoulGratitudeFaithCap > 0 ? null : forecast.SpecialText,
+                forecast.SpecialIconName);
 
             ConfigureNote(_noteLabel);
             string noteKey = forecast.UsesSoulGratitude
@@ -159,7 +161,7 @@ namespace PrayerClarity
             }
 
             lines.Add("  " + Localization.F("forecast.graveyard_quality", forecast.GraveyardQuality));
-            if (forecast.UsesSoulGratitude)
+            if (forecast.UsesSoulGratitude || forecast.SoulGratitudeFaithCap > 0)
                 lines.Add("  " + Localization.F("forecast.soul_gratitude", forecast.SoulGratitude));
             return string.Join("\n", lines.ToArray());
         }
@@ -170,8 +172,21 @@ namespace PrayerClarity
             lines.Add(Localization.F("forecast.result_header"));
             lines.Add("  " + Localization.F("forecast.guaranteed") + ": " +
                       FormatResources(forecast.BaseFaith, forecast.BaseMoney, PrayerForecast.BonusHighlight.None));
-            lines.Add("  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " +
-                      FormatResources(forecast.BonusFaith, forecast.BonusMoney, forecast.Highlight));
+            if (forecast.SoulGratitudeFaithCap > 0)
+            {
+                string conversion = forecast.SoulGratitudeConversion > 0
+                    ? Localization.F(
+                        "rebalanced.pulpit.souls_conversion",
+                        forecast.SoulGratitudeConversion,
+                        forecast.SoulGratitudeConversion)
+                    : Localization.F("rebalanced.pulpit.souls_conversion_empty");
+                lines.Add("  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " + conversion);
+            }
+            else
+            {
+                lines.Add("  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ": " +
+                          FormatResources(forecast.BonusFaith, forecast.BonusMoney, forecast.Highlight));
+            }
             return string.Join("\n", lines.ToArray());
         }
 
