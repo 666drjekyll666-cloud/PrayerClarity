@@ -300,7 +300,7 @@ With Cardinal active and the accepted Gold Donations +30 silver, the Gold pure-m
 
 ## 2026-09-23 Premium Gold q95 success-gate research
 
-Status: **research finding + design hypothesis; no production value change**.
+Status: **accepted design for Rebalanced 0.2.16**.
 
 ### Question
 
@@ -396,9 +396,9 @@ Weaker/conditional q95 candidate:
 
 BSS Soul's Repose q120 already occupies a separate aspirational tier and should not be normalized to this q95 grammar.
 
-### Current design hypothesis
+### Accepted design
 
-**q95 is a good soft-capstone threshold, not a consumable-only gate.**
+**q95 is the accepted soft-capstone threshold for Repose Gold and Excellence Gold in Rebalanced 0.2.16; it is not a consumable-only gate.**
 
 The strongest version is:
 - normal practical passive church around CQ94 -> premium Gold at 99%;
@@ -407,4 +407,4 @@ The strongest version is:
 
 This gives the player three legitimate strategies rather than one forced weekly chore.
 
-No production change is accepted by this research alone.
+Accepted implementation scope: Repose **20/40/95** and Excellence **20/60/95**. Thorough Cleansing remains **30/60/90** and BSS Soul's Repose remains **30/60/120**. No blanket Gold normalization.
