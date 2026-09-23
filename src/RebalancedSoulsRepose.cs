@@ -50,7 +50,12 @@ namespace PrayerClarity
         internal static int GetConversionAmount(RebalancedPrayerRule rule, int tier)
         {
             if (rule == null || rule.SoulGratitudeFaithCaps == null) return 0;
-            int cap = Math.Max(0, rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0));
+            return GetConversionAmountForCap(rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0));
+        }
+
+        internal static int GetConversionAmountForCap(int cap)
+        {
+            cap = Math.Max(0, cap);
             if (cap <= 0) return 0;
 
             int available = (int)Math.Floor(Math.Max(0f, R.PlayerParam("gratitude_points")));
