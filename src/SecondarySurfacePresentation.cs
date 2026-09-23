@@ -221,7 +221,6 @@ namespace PrayerClarity
                 TooltipPresentationSections sections = BuildTechnologySections(crafts);
                 if (sections == null || !sections.HasContent) return;
 
-                bool preferWideLayout = HasMultiplePrayerFamilies(crafts);
                 bool suppressVanillaLore = ShouldSuppressVanillaPrayerLore(crafts);
                 string vanillaLore = suppressVanillaLore ? null : ResolveVanillaPrayerLore(crafts);
                 if (!TryReplaceVanillaPrayerMechanics(
@@ -229,8 +228,7 @@ namespace PrayerClarity
                         sections,
                         TechnologyTooltipMaxWidth,
                         vanillaLore,
-                        suppressVanillaLore,
-                        preferWideLayout))
+                        suppressVanillaLore))
                 {
                     bool editionFallbackHandled =
                         PrayerEditionSemantics.HasTechnologyProvider &&
@@ -239,11 +237,10 @@ namespace PrayerClarity
                             sections,
                             TechnologyTooltipMaxWidth,
                             vanillaLore,
-                            suppressVanillaLore,
-                            preferWideLayout);
+                            suppressVanillaLore);
 
                     if (!editionFallbackHandled)
-                        AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth, preferWideLayout);
+                        AppendTechnologySections(__0, sections, TechnologyTooltipMaxWidth);
                 }
 
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
@@ -261,8 +258,7 @@ namespace PrayerClarity
             TooltipPresentationSections sections,
             int maxWidth,
             string vanillaLore,
-            bool suppressVanillaLore,
-            bool preferWideLayout)
+            bool suppressVanillaLore)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -299,7 +295,7 @@ namespace PrayerClarity
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Insert(insertIndex++, separator);
                 list.Insert(insertIndex++, CreateTextData(TechnologySuccessHeader(), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth, preferWideLayout));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
 
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
@@ -337,8 +333,7 @@ namespace PrayerClarity
             TooltipPresentationSections sections,
             int maxWidth,
             string vanillaLore,
-            bool suppressVanillaLore,
-            bool preferWideLayout)
+            bool suppressVanillaLore)
         {
             object data = R.Get(tooltip, "data");
             IList list = data == null ? null : R.Get(data, "data_list") as IList;
@@ -396,7 +391,7 @@ namespace PrayerClarity
                 object separator = CreateBlankSeparator();
                 if (separator != null) list.Insert(insertIndex++, separator);
                 list.Insert(insertIndex++, CreateTextData(TechnologySuccessHeader(), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth, preferWideLayout));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
 
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
@@ -418,11 +413,7 @@ namespace PrayerClarity
             return TechnologyTooltipTierRenderer.BuildSections(tiers);
         }
 
-        private static void AppendTechnologySections(
-            object tooltip,
-            TooltipPresentationSections sections,
-            int maxWidth,
-            bool preferWideLayout)
+        private static void AppendTechnologySections(object tooltip, TooltipPresentationSections sections, int maxWidth)
         {
             object blank = CreateBlankSeparator();
             if (blank != null) AddTooltipData(tooltip, blank);
@@ -438,76 +429,34 @@ namespace PrayerClarity
                 object separator = CreateBlankSeparator();
                 if (separator != null) AddTooltipData(tooltip, separator);
                 AddTooltipData(tooltip, CreateTextData(TechnologySuccessHeader(), 3));
-                AddTooltipData(tooltip, CreateTextData(sections.SuccessBonuses, 4, maxWidth, preferWideLayout));
+                AddTooltipData(tooltip, CreateTextData(sections.SuccessBonuses, 4, maxWidth));
             }
         }
 
         private static bool ShouldSuppressVanillaPrayerLore(List<object> crafts)
         {
-            if (crafts == null || crafts.Count == 0 || !PrayerEditionSemantics.HasTechnologyProvider)
-                return false;
+            if (crafts == null || crafts.Count == 0) return false;
 
-            bool found = false;
             foreach (object craft in crafts)
             {
-                string craftId = R.Id(craft);
-                string family = PrayerFamilyFromCraftId(craftId);
-                if (!IsRebalancedBssFamily(family))
+                string key = ResolveBaseLoreKey(R.Id(craft));
+                if (!string.Equals(key, "b_grat_points_incr_d", StringComparison.Ordinal))
                     return false;
 
                 string sharedText;
                 string tierText;
                 if (!PrayerEditionSemantics.TryBuildTechnologyEffect(
-                        craftId,
+                        R.Id(craft),
                         out sharedText,
                         out tierText))
                     return false;
-
-                found = true;
             }
 
-            // All three BSS prayer families are mechanically reworked in Rebalanced:
-            // stock b_souls describes SG as part of Faith scaling, stock Contentment
-            // hard-codes +10%, and stock Thorough Cleansing hard-codes x2. The generated
-            // family blocks below own the effective semantics, so retaining stock lore
-            // would duplicate or contradict the live rules (notably Silver/Gold x3/x4).
-            return found;
-        }
-
-        private static bool IsRebalancedBssFamily(string family)
-        {
-            return string.Equals(family, "b_souls", StringComparison.Ordinal) ||
-                   string.Equals(family, "b_grat_points_incr", StringComparison.Ordinal) ||
-                   string.Equals(family, "b_sin_shard", StringComparison.Ordinal);
-        }
-
-        private static bool HasMultiplePrayerFamilies(List<object> crafts)
-        {
-            if (crafts == null || crafts.Count < 2) return false;
-
-            string first = null;
-            foreach (object craft in crafts)
-            {
-                string family = PrayerFamilyFromCraftId(R.Id(craft));
-                if (string.IsNullOrEmpty(family)) continue;
-                if (first == null) first = family;
-                else if (!string.Equals(first, family, StringComparison.Ordinal)) return true;
-            }
-
-            return false;
-        }
-
-        private static string PrayerFamilyFromCraftId(string craftId)
-        {
-            const string prefix = "pray:";
-            if (string.IsNullOrEmpty(craftId) || !craftId.StartsWith(prefix, StringComparison.Ordinal))
-                return null;
-
-            int tierSeparator = craftId.LastIndexOf(':');
-            if (tierSeparator <= prefix.Length || tierSeparator + 1 >= craftId.Length)
-                return null;
-
-            return craftId.Substring(prefix.Length, tierSeparator - prefix.Length);
+            // Stock Soul Contentment embeds the vanilla +10% magnitude directly in
+            // b_grat_points_incr_d. Rebalanced owns a different effective magnitude,
+            // already rendered below from live projected prayer data, so keeping that
+            // stock sentence would deliberately show two conflicting mechanics.
+            return true;
         }
 
         private static string StripStockRequirementLine(string text)
@@ -580,8 +529,15 @@ namespace PrayerClarity
 
         private static string ResolveBaseLoreKey(string craftId)
         {
-            string family = PrayerFamilyFromCraftId(craftId);
-            return string.IsNullOrEmpty(family) ? null : family + "_d";
+            const string prefix = "pray:";
+            if (string.IsNullOrEmpty(craftId) || !craftId.StartsWith(prefix, StringComparison.Ordinal)) return null;
+
+            string itemId = craftId.Substring(prefix.Length);
+            int tierSeparator = itemId.LastIndexOf(':');
+            if (tierSeparator <= 0 || tierSeparator + 1 >= itemId.Length) return null;
+
+            string family = itemId.Substring(0, tierSeparator);
+            return family.Length == 0 ? null : family + "_d";
         }
 
         private static List<object> ResolvePrayerCrafts(object techUnlock)
@@ -667,11 +623,7 @@ namespace PrayerClarity
             return _blankSeparatorType == null ? null : Activator.CreateInstance(_blankSeparatorType);
         }
 
-        private static object CreateTextData(
-            string text,
-            int styleValue,
-            int maxWidth = -1,
-            bool preferWideLayout = false)
+        private static object CreateTextData(string text, int styleValue, int maxWidth = -1)
         {
             if (_bubbleTextConstructor == null)
             {
@@ -693,10 +645,7 @@ namespace PrayerClarity
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
             object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
-            object data = _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, maxWidth });
-            if (preferWideLayout && maxWidth == TechnologyTooltipMaxWidth)
-                TechnologyTooltipContentWidth.PreferWideLayout(data);
-            return data;
+            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, maxWidth });
         }
 
         private static void AddTooltipData(object tooltip, object data)
