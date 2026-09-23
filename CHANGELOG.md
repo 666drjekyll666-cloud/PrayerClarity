@@ -1,5 +1,13 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.20 candidate
+
+- Reverts the unaccepted 0.2.19 mixed-BSS grouping/lore-suppression experiment and returns Technology presentation structure to the 0.2.18 baseline.
+- Fixes the final Soul's Repose pulpit writer: the last `PulpitPolish` pass now renders the live success-only Soul Gratitude -> Faith transaction and hides the otherwise empty separate Effect row.
+- Preserves BSS prayer lore instead of deleting it. Rebalanced normalizes only stale mechanic fragments: Soul Contentment keeps the stock localized prose while its obsolete stock percentage is replaced from the current edition-owned effect value; Thorough Cleansing keeps its sentence while the stock fixed `(x2)` suffix is removed.
+- Reuses the historically runtime-verified Technology width lifecycle from PrayerClarity 1.0.13: `UILabel.overflowWidth` controls the native `ResizeFreely` label, then `WidgetsBubbleGUI.UpdateSize()` grows the enclosing parchment. For the combined BSS tooltip, the retained real lore rows and PrayerClarity mechanics row use a finite 520-unit expansion ceiling; ordinary single-prayer Technology tooltips retain the existing content-driven width policy.
+- Prayer mechanics, BSS balance values and already-passed 0.2.18 runtime mechanics are unchanged. Acceptance is visual/presentation-only.
+
 ## PrayerClarity: Rebalanced 0.2.19 candidate
 
 - Fixes the Gold Soul's Repose pulpit presentation after runtime identity evidence proved the naturally selected prayer is the exact canonical `pray:b_souls:3` object: the live layout now preserves the success-only Soul Gratitude -> Faith transaction instead of overwriting it with the generic resource row or restoring the old stock effect sentence.
