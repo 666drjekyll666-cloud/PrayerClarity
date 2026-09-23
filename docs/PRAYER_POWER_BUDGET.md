@@ -408,3 +408,114 @@ The strongest version is:
 This gives the player three legitimate strategies rather than one forced weekly chore.
 
 Accepted implementation scope: Repose **20/40/95** and Excellence **20/60/95**. Thorough Cleansing remains **30/60/90** and BSS Soul's Repose remains **30/60/120**. No blanket Gold normalization.
+
+
+## 2026-09-23 Late-game resource demand and sermon-value audit
+
+Status: **research finding; no production value change**.
+
+### Question
+
+Which resources remain meaningfully scarce in Graveyard Keeper's late game, and does a sermon that pays Faith or money still solve a real player problem by then?
+
+### Faith
+
+Faith is a strong early/mid-game bottleneck:
+- most Study Table research consumes Faith;
+- Zombies cost 10 Faith each;
+- advanced stone/marble work consumes Faith;
+- sermons themselves consume Faith to craft;
+- several quest/crafting interactions consume small amounts.
+
+These sinks are partly finite. Once the technology tree is substantially complete, the zombie workforce is built, and the graveyard/church infrastructure is finished, ordinary Faith demand can collapse sharply.
+
+There are still optional/completionist late-game Faith sinks:
+- one Zombie costs 10 Faith;
+- a carved marble piece costs 5 Faith;
+- a marble sculpture costs another 5 Faith;
+- BSS Story crafting costs 5 Faith;
+- jewelry/gold details and some events consume small amounts.
+
+Community evidence includes late-game players reporting hundreds of stored Faith with little remaining use, while other players still consume substantial Faith when mass-producing zombies or high-end graveyard materials.
+
+Sources:
+- Official Wiki Faith: https://graveyardkeeper.fandom.com/wiki/Faith
+- Official Wiki Study Table: https://graveyardkeeper.fandom.com/wiki/Study_table
+- Reddit 2025 prayer discussion: https://www.reddit.com/r/GraveyardKeeper/comments/1ij5rxj/
+
+**Finding:** Faith remains capable of supporting optional late-game projects, but it is not a universal late-game bottleneck. A q120 endgame prayer should not rely solely on “more Faith” to justify itself unless the Faith gain is exceptionally compelling or bundled with another relevant role.
+
+### Money
+
+Money has a major late-game **one-time** progression sink: Aristocrat status costs 12 gold and is required to obtain the Aristocrat Papers used by several endgame quests.
+
+After the player's production economy is online, the recurring money economy can collapse:
+- the trade office can sell up to roughly 10 crates per merchant week; community/current project evidence uses ~15s for goods crates and ~16.5s for gold produce crates, making a mature 10-crate week roughly 1.5–1.65 gold;
+- Stranger Sins' Talking Skull continuously sells drinks, and player reports commonly describe tavern income of multiple gold over short periods;
+- a current 2026 player report describes having 125+ gold and earning faster than it can be spent once tavern automation is mature.
+
+Sources:
+- Aristocrat Papers / Graveyard: https://graveyardkeeper.fandom.com/wiki/The_Graveyard
+- Talking Skull: https://graveyardkeeper.fandom.com/wiki/Talking_Skull
+- Reddit 2026 Aristocrat grind: https://www.reddit.com/r/GraveyardKeeper/comments/1sz2tu7/
+- Reddit 2026 late-game surplus: https://www.reddit.com/r/GraveyardKeeper/comments/1su5jwj/
+
+**Finding:** money is a real progression bottleneck immediately before/around the 12-gold Aristocrat gate, but after trade-office/tavern automation it commonly becomes a surplus resource. A pure-money sermon is therefore naturally phase-limited unless it supplies a very large burst or another utility.
+
+### Ordinary vendor trading
+
+Vendor wallets are not static. The official vendor documentation states that vendor money changes through:
+- direct Keeper trades;
+- a vendor-specific daily constant profit;
+- daily global-market trading.
+
+Tress is documented with a wallet and daily income and buys basic wood products including wooden sticks. This means simple local selling can provide repeatable small cash injections without spending the weekly sermon slot. The exact realised amount depends on current wallet, stock, deflation/global demand and the player's sold item mix.
+
+Sources:
+- Vendors: https://graveyardkeeper.fandom.com/wiki/Vendors
+- Tress: https://graveyardkeeper.fandom.com/wiki/Tress
+
+**Finding:** even before industrial late-game income, sermon money competes with repeatable day-scale trading. Weekly sermon rewards must therefore be judged against the opportunity cost of the weekly sermon slot, not merely against “free money”.
+
+### Sin Shards
+
+Sin Shards retain a much stronger completionist/endgame sink:
+- body-part enhancement consumes multiple shards per upgrade;
+- each shard stored in a Soul Container can add one Soul Gratitude capacity;
+- current 26-white-skull guides/reporting require dozens of shards per perfected corpse and potentially thousands for a fully perfected graveyard;
+- Prayer for Souls' Thorough Cleansing directly doubles shard generation and is repeatedly recommended by players pursuing perfect corpses.
+
+Sources:
+- Official Wiki Sin Shard: https://graveyardkeeper.fandom.com/wiki/Sin_Shard
+- Official Wiki 26 White Skulls Guide: https://graveyardkeeper.fandom.com/wiki/26_White_Skulls_Guide_%28Need_Better_Save_Souls_DLC%29
+- Reddit 2026 perfect graveyard: https://www.reddit.com/r/GraveyardKeeper/comments/1tbe3cl/finally_the_last_body_with_26_skulls/
+
+**Finding:** Sin Shards have a credible long-tail late-game role because perfect-body/perfect-graveyard progression can consume them at large scale. This is qualitatively healthier endgame demand than money or ordinary Faith.
+
+### Time / waiting / convenience
+
+Recent player discussion identifies late-game waiting itself as a pain point: after production/technology goals are solved, progression can become waiting for NPC weekdays, Merchant cycles, quest turn-ins and other calendar gates. Players describe deliberately exhausting themselves or meditating simply to advance time.
+
+Source:
+- Reddit 2026 endgame slog: https://www.reddit.com/r/GraveyardKeeper/comments/1vpm6fu/
+
+**Finding:** by late game, **time and friction reduction** may be more valuable than another stockpile resource. Endgame prayer concepts can therefore legitimately target scheduling, workflow throughput, corpse/soul handling, or other bounded convenience without needing to pay large amounts of Faith/money.
+
+### Donations prayer implication
+
+Current Rebalanced Donations pays a success-only flat premium of:
+- Bronze +5s;
+- Silver +15s;
+- Gold +30s;
+
+on top of the ordinary graveyard-derived donation baseline.
+
+The existing project audit already established that +30s Gold is only about two ordinary goods-crate equivalents and is far below a mature ~1.5–1.65g trade-office week. Current community evidence further reports that tavern automation can produce multiple gold and make money effectively irrelevant.
+
+Therefore:
+- Bronze +5s may still have an early-game role because money is genuinely scarce and the prayer is cheap/easy;
+- Silver/Gold should be judged primarily in the **pre-Aristocrat / pre-economic-automation window**;
+- the prayer should not be expected to remain an attractive late-game weekly choice merely by increasing a flat silver payout;
+- if the design goal is “money specialist remains tempting into late game”, the role itself probably needs reopening rather than another modest numeric bump.
+
+No balance change is accepted by this research alone.
