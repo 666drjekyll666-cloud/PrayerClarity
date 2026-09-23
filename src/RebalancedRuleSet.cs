@@ -197,6 +197,19 @@ namespace PrayerClarity
             return "pray:" + prayerId + ":" + qualityTier;
         }
 
+        internal static bool TryGetEffectivePrayEventId(string craftId, out string eventId)
+        {
+            eventId = null;
+            RebalancedPrayerRule rule;
+            int qualityTier;
+            if (!TryParseCraftId(craftId, out rule, out qualityTier) ||
+                rule.LinkedPrayEventIds == null)
+                return false;
+
+            eventId = rule.TierValue(rule.LinkedPrayEventIds, qualityTier);
+            return !string.IsNullOrEmpty(eventId);
+        }
+
         private static void RequireThree(string prayerId, string fieldName, Array values)
         {
             if (values != null && values.Length != 3)
