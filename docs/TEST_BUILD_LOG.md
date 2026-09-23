@@ -1,5 +1,29 @@
 # Test / Research Build Log
 
+## 2026-09-23 — Rebalanced 0.2.17 runtime result: rejected candidate
+
+Tested immutable production candidate:
+- source: `fbffbb4957adc186ef42d4874241ca80047e597e`;
+- ref: `candidate/rebalanced-0.2.17`;
+- DLL SHA-256: `68d19f495d44413e4f29a4b24a062b684be62bb1d1834020bbc0c2d57fcf42f2`;
+- research helper: Rebalanced Test Console 0.1.5, source `233ea9d6680b27ebf8dd536779442872dec05b1e`.
+
+Accepted evidence retained from this candidate:
+- Soul's Repose direct native-calculation probe passed all four controlled cases: below cap 73 SG -> +73 Faith / 0 SG, Gold above cap 136 -> +90 Faith / 46 SG, zero SG -> +0, deterministic failure -> +0 and no SG spend.
+- Thorough Cleansing real Gold healing path passed: base 4 Sin Shards, expected x4, actual 16. A no-buff baseline also matched base output.
+- No additional Bronze/Silver Thorough Cleansing runtime repetition is required unless that seam changes.
+
+Unclosed / rejected evidence:
+- Soul Contentment decay probe did not reach the assertion. Test Console 0.1.5 failed its reflection lookup for `Item(string,int) / Item.UpdateDurability(float,float)`; this is a research-harness failure and is not evidence that production preservation failed.
+- The real pulpit with Gold Soul's Repose, Church Quality 94 and Soul Gratitude 115 did not show the required `SG -90 -> Faith +90` success transaction. It instead exposed the old Soul-Gratitude-dependent effect semantics.
+- The BSS Technology tooltip overflowed the viewport under gamepad placement. Soul's Repose tier rows also split the numeric cap from the Soul Gratitude icon.
+- Thorough Cleansing wording was too generic for the tier ladder and its x2/x3/x4 values lacked the established Technology accent.
+
+Assessment:
+- **0.2.17 is not accepted and must not be rebuilt.**
+- The direct conversion and Thorough Cleansing evidence remain reusable.
+- 0.2.18 must close the live Soul's Repose event/pulpit path, compact the BSS Technology presentation, and use a corrected research helper for the Contentment decay assertion.
+
 ## PrayerClarity: Rebalanced 0.2.17 — candidate
 
 - Candidate scope accepted for implementation on **2026-09-23**; runtime acceptance is still pending.
