@@ -1,5 +1,28 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.20 — visual acceptance candidate
+
+- Exact production source SHA: `20781bfab72953694ce32c69ec2b07bcc85496ca`.
+- Candidate ref: `candidate/rebalanced-0.2.20`.
+- GitHub Actions run: `35907572726`; job: `107338980659`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10772181010`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.20-ci-20781bfab72953694ce32c69ec2b07bcc85496ca`.
+- Artifact ZIP digest: `sha256:89a1ff45a6044660e773fc0e05ae320f4f360257ecd41111b0c839ba1dc52207`.
+- Rebalanced DLL SHA-256: `c77322aec1020eb920fd6ea6cb6abea735d8ac0048089cb03ba21053414a69a0`.
+- Vanilla sibling DLL SHA-256 from the same shared-source build: `1d547ac036280f9a9e9ebed9fdb2425cba06e7054f4637c2d4897bb7357fc2bc`.
+- 0.2.20 deliberately removes the unaccepted 0.2.19 mixed-family grouping/lore-suppression experiment and restores the 0.2.18 Technology structure before applying the narrower repairs below.
+- Pulpit repair: the verified final writer `PulpitPolish -> PresentationText.BuildPulpitResultRows` now renders the current Soul's Repose success transaction from `SoulGratitudeConversion`; when that conversion is the prayer's success effect, the otherwise empty separate `Effect: —` row is hidden.
+- Lore repair: BSS lore remains visible. Soul Contentment replaces only the stock percentage token with the percentage produced by the current Rebalanced Technology effect; Thorough Cleansing removes only the stock fixed `(x2)` suffix, leaving the sentence itself intact; Soul's Repose lore is preserved unchanged.
+- Width repair: historical 1.0.12/1.0.13 evidence is treated as canonical. The combined BSS tooltip marks its retained real lore rows plus the PrayerClarity mechanics row for the proven `UILabel.overflowWidth -> ResizeFreely -> WidgetsBubbleGUI.UpdateSize()` lifecycle. Those rows use a finite 520-unit expansion ceiling; ordinary single-prayer Technology tooltips keep the accepted atomic/content-driven width policy.
+- No prayer mechanics, requirements, conversion arithmetic, Contentment decay behavior, Sin Shard scaling, or duration values changed from the already-tested 0.2.18 mechanics.
+- Required user acceptance is presentation-only:
+  1. select Gold Soul's Repose at the pulpit with nonzero SG and confirm the success row shows the live SG -> Faith transaction (115 SG should currently show 90 -> 90) and no `Effect: —` row remains;
+  2. with gamepad placement, open the combined BSS prayer Technology tooltip and confirm the parchment is visibly wider, the complete tooltip fits the viewport, and all three prayers retain readable lore;
+  3. with keyboard/mouse, spot-check the three individual BSS prayer Technology tooltips: Soul's Repose lore remains; Soul Contentment lore remains with the current Rebalanced percentage rather than stock 10%; Thorough Cleansing lore remains but no longer contains the stale parenthetical `(x2)`, while the red tier values remain x2/x3/x4.
+- No sermon, soul healing, decay wait, or Test Console run is required for this candidate.
+- Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+
 ## 2026-09-23 — Rebalanced 0.2.19 runtime visual result: rejected candidate
 
 Tested immutable production candidate:
