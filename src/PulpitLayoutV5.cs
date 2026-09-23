@@ -353,14 +353,29 @@ namespace PrayerClarity
                 PrayerForecast.BonusHighlight baseHighlight = soulsRepose
                     ? PrayerForecast.BonusHighlight.Faith
                     : PrayerForecast.BonusHighlight.None;
-                PrayerForecast.BonusHighlight bonusHighlight = soulsRepose
-                    ? PrayerForecast.BonusHighlight.Faith
-                    : _forecast.Highlight;
 
                 string guaranteed = "  " + Localization.F("forecast.guaranteed") + ": " +
                                     FormatResources(_forecast.BaseFaith, _forecast.BaseMoney, baseHighlight);
-                string success = "  " + Localization.F("forecast.success_bonus", _forecast.ChancePercent) + ": " +
-                                 FormatResources(_forecast.BonusFaith, _forecast.BonusMoney, bonusHighlight);
+                string success;
+                if (_forecast.SoulGratitudeFaithCap > 0)
+                {
+                    string conversion = _forecast.SoulGratitudeConversion > 0
+                        ? Localization.F(
+                            "rebalanced.pulpit.souls_conversion",
+                            _forecast.SoulGratitudeConversion,
+                            _forecast.SoulGratitudeConversion)
+                        : Localization.F("rebalanced.pulpit.souls_conversion_empty");
+                    success = "  " + Localization.F("forecast.success_bonus", _forecast.ChancePercent) + ": " + conversion;
+                }
+                else
+                {
+                    PrayerForecast.BonusHighlight bonusHighlight = soulsRepose
+                        ? PrayerForecast.BonusHighlight.Faith
+                        : _forecast.Highlight;
+                    success = "  " + Localization.F("forecast.success_bonus", _forecast.ChancePercent) + ": " +
+                              FormatResources(_forecast.BonusFaith, _forecast.BonusMoney, bonusHighlight);
+                }
+
                 R.Set(_resultRowsLabel, "text", guaranteed + "\n" + success);
             }
         }
@@ -447,10 +462,14 @@ namespace PrayerClarity
 
             if (craftId.StartsWith("pray:b_souls:", StringComparison.Ordinal))
             {
-                // The stock localization starts with flavor prose ("Let us pray for the
-                // repose of souls..."). In the dedicated Effect row keep only the
-                // verified mechanic: Soul Gratitude increases Faith.
-                forecast.SpecialText = Localization.F("buff.souls_repose");
+                // Rebalanced Soul's Repose owns a success-only SG -> Faith transaction.
+                // Keep that transaction in the success row and do not resurrect the
+                // stock Soul-Gratitude-dependent effect sentence after the first render.
+                if (forecast.SoulGratitudeFaithCap > 0)
+                    forecast.SpecialText = null;
+                else
+                    forecast.SpecialText = Localization.F("buff.souls_repose");
+
                 forecast.SpecialIconName = null;
                 return;
             }
