@@ -62,7 +62,7 @@ namespace PrayerClarity
             return Math.Min(available, cap);
         }
 
-        private static void CalculatePrayPrefix(ref ScopedConversionState __state)
+        private static void CalculatePrayPrefix(ref string __0, ref ScopedConversionState __state)
         {
             __state = null;
             try
@@ -70,8 +70,18 @@ namespace PrayerClarity
                 object craft = GetSelectedPrayerCraft();
                 RebalancedPrayerRule rule;
                 int tier;
-                if (!RebalancedRuleSet.TryParseCraftId(R.Id(craft), out rule, out tier)) return;
+                string craftId = R.Id(craft);
+                if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier)) return;
                 if (!string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal)) return;
+
+                string effectiveEventId;
+                if (!RebalancedRuleSet.TryGetEffectivePrayEventId(craftId, out effectiveEventId))
+                    throw new InvalidOperationException("Soul's Repose effective sermon event is unavailable for " + craftId + ".");
+
+                // The pulpit may hold a runtime PrayCraft copy created before the
+                // once-per-load CraftDefinition projection. Project only this call's
+                // event argument so stock PrayLogics still owns the actual calculation.
+                __0 = effectiveEventId;
 
                 int conversion = GetConversionAmount(rule, tier);
                 __state = new ScopedConversionState { Conversion = conversion };
