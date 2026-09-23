@@ -1,13 +1,13 @@
 # Prayer Design Audit — Graveyard Keeper 1.407
 
-Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-20 with PrayerClarity: Vanilla 1.0.32 and stable PrayerClarity: Rebalanced 0.2.14.
+Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-20 with PrayerClarity: Vanilla 1.0.32 and stable PrayerClarity: Rebalanced 0.2.16.
 
 Stock mechanics remain canonical in `PRAYER_MECHANICS.md`. Exact current Rebalanced values are canonical in `PRAYER_REBALANCE_OPTIONS.md`. Historical alternatives and earlier coefficient experiments are retained in `PRAYER_POWER_BUDGET.md` and Git history as analysis only.
 
 ## Current accepted baselines
 
 - **PrayerClarity: Vanilla 1.0.32** — `accepted/vanilla-1.0.32`, exact source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`.
-- **PrayerClarity: Rebalanced 0.2.14** — `accepted/rebalanced-0.2.14`, exact runtime source `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, release `rebalanced-v0.2.14`.
+- **PrayerClarity: Rebalanced 0.2.16** — `accepted/rebalanced-0.2.16`, exact runtime source `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`, release `rebalanced-v0.2.16`.
 
 The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3 changed runtime safety/ownership, 0.2.4 made the accepted Repentance/Repose duration adjustment to 30/42/54 minutes, and 0.2.10 raises ordinary Repose Gold's guaranteed-success gate from q50 to q60 while preserving its accepted effect. The accepted Roots aggregate safety cap remains in force.
 
@@ -36,10 +36,10 @@ The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3
 | Prosperity | **No balance change** | Stock q10/20/30 and 1/2/3 Commercial Blessings. |
 | Shoots & Roots | **Accepted repair + scaling** | q10/30/50; nominal growth time **-20/-30/-40%**, 36/72/108 min; current runtime also enforces the accepted 95% combined reduction safety cap. |
 | Repentance | **Accepted rework** | q20/40/60; daily confession probability **50/75/100%**; duration **30/42/54 min**. |
-| Repose | **Accepted reliability rework** | q20/40/60; Bronze stock-style pool, Silver moves halfway toward certainty, Gold guarantees the best actually existing eligible ordinary corpse tier; duration **30/42/54 min**. |
+| Repose | **Accepted reliability rework** | q20/40/95; Bronze stock-style pool, Silver remains halfway toward certainty, Gold guarantees the maximum total skull count inside the best actually available ordinary corpse tier; duration **30/42/54 min**. |
 | Combat | **Accepted structural/numeric rework** | q20/40/60; damage **+5/+10/+15**, armor **+4**, regen **1/2/4 HP/s**; 36/72/108 min. |
 | Imagination | **Accepted premium-output rework** | q20/40/60; writing quality **+0.7** all tiers; successful Silver -> 3 Silver Stories, Gold -> 3 Gold Stories; 18/36/54 min. |
-| Excellence | **Accepted magnitude rework** | q20/60/90; linked-craft quality **+0.2/+0.5/+1.0**; 18/36/54 min. |
+| Excellence | **Accepted magnitude rework** | q20/60/95; linked-craft quality **+0.2/+0.5/+1.0**; 18/36/54 min. |
 | BSS Soul's Repose | **Accepted state-scaling Faith specialist** | q30/60/120; **+50/+100/+150% Faith** on the verified Souls base; current Soul Gratitude remains an input. |
 | Soul Contentment | **Accepted rework** | q20/40/60; **+20% Soul Gratitude** all tiers; 36/72/108 min. |
 | Thorough Cleansing | **No magnitude increase** | q30/60/90; **x2 Sin Shards** all tiers; 36/72/108 min. |
@@ -110,7 +110,7 @@ A prayer should be reopened when new evidence shows that this role is not actual
 
 ## Current architecture consequence
 
-Current stable 0.2.14 keeps Graveyard Keeper authoritative where practical:
+Current stable 0.2.16 keeps Graveyard Keeper authoritative where practical:
 
 - Roots leaves stock growth formulas intact and projects only the native input, with the accepted 95% aggregate cap;
 - Repentance leaves the stock daily reset/RNG/loop intact and projects only the effective `confession_probability` read while the native buff is live;
@@ -123,7 +123,7 @@ Current stable 0.2.14 keeps Graveyard Keeper authoritative where practical:
 
 ## Current status
 
-The stable balance/architecture baseline is **Rebalanced 0.2.14**. The specialist-purity/resource retune, Technology/Soul presentation repairs, and the shared concise **При успехе:** success heading are accepted; there is no blanket rebalance or architecture task pending.
+The stable balance/architecture baseline is **Rebalanced 0.2.16**. The specialist-purity/resource retune, Technology/Soul presentation repairs, and the shared concise **При успехе:** success heading are accepted; there is no blanket rebalance or architecture task pending.
 
 Known non-blocking evidence gaps remain:
 

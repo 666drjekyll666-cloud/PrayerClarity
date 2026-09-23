@@ -1,5 +1,25 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.16 — accepted for stable promotion
+
+- User acceptance/design approval: **2026-09-23**.
+- Frozen accepted ref: `accepted/rebalanced-0.2.16`.
+- Exact executable source SHA: `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`.
+- GitHub Actions run: `35801691040`; Rebalanced build: **success, 0 warnings, 0 errors**.
+- Workflow artifact ID: `10726206110`.
+- Workflow artifact ZIP digest: `sha256:7a1502e61d54ecd96176e5cd7d5edb42a631b96366db9812eb12e11979704adb`.
+- Canonical Rebalanced DLL SHA-256: `2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`.
+- Executable delta from 0.2.15:
+  - Repose Gold requirement: **90 -> 95 Church Quality**;
+  - Excellence Gold requirement: **90 -> 95 Church Quality**;
+  - no other prayer requirement or effect changed;
+  - plugin/assembly version advanced to 0.2.16;
+  - shared candidate workflow packaging labels advanced to 0.2.16.
+- Static ownership evidence: `RebalancedStaticProjection` writes `rule.Requirements[tier]` directly into the existing stock `CraftDefinition.needs_quality` field.
+- **No fresh in-game runtime test required.** The changed property is only two scalar inputs to an already accepted projection/native success path; a runtime replay would not prove a new lifecycle, formula, hook, RNG, save, or effect behavior.
+- Acceptance gate for this micro-release is exact source diff + clean compile/package/localization validation + immutable artifact identity.
+- Stable publication must reuse the exact DLL hash above without rebuilding.
+
 ## PrayerClarity: Rebalanced 0.2.15 — accepted stable
 
 - User runtime acceptance: **2026-09-23**.

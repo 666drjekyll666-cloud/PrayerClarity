@@ -18,11 +18,11 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Rebalanced
 
-- accepted version: **0.2.15**
-- accepted ref: `accepted/rebalanced-0.2.15`
-- exact runtime source: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`
-- DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`
-- release: `rebalanced-v0.2.15`
+- accepted version: **0.2.16**
+- accepted ref: `accepted/rebalanced-0.2.16`
+- exact runtime source: `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`
+- DLL SHA-256: `2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`
+- release target: `rebalanced-v0.2.16`
 - stable promotion merge: `c9dede71131dbab4322e37409ca0bdf41994fcb9`
 
 The architecture verdict was established on 0.2.3. Rebalanced 0.2.4 subsequently changed only the Repentance/Repose tier durations through the already accepted once-per-load `CraftDefinition.dur_parameter` projection. Rebalanced 0.2.10 retains those gameplay/save-lifecycle seams; its q60 Gold Repose change is another static `CraftDefinition.needs_quality` projection, while the shared Clarity refinements are event-driven UI/crafting-description hooks with no new persistent state, polling, or gameplay lifecycle owner. Therefore the **A — architecture/save-lifecycle clean** verdict carries forward unchanged.
@@ -267,3 +267,16 @@ Rebalanced 0.2.15 changes the accepted Repose Gold result while preserving the v
 Runtime evidence on Graveyard Keeper 1.407 directly observed the complete 9-definition maximum-score terminal Gold pool and ten consecutive real native generations selecting tier-3, 10-total-skull bodies with `catalog_restored=true` after every call. The separate research harness later stalled because it batched too many heavyweight host calls into one UI callback; the production per-call Gold path had already completed and restored correctly ten times before that harness failure.
 
 The mechanism adds a narrowly scoped synchronous global-data projection, but no persistent owner, save state, polling, timer, background loop, duplicated body-generation algorithm, or permanent mutation. Given the verified scoping/restoration behavior and fail-safe ownership check, the existing **A — architecture/save-lifecycle clean; no production action required** verdict carries forward for 0.2.15.
+
+
+### 2026-09-23 Rebalanced 0.2.16 addendum
+
+0.2.16 is a value-only success-gate adjustment. It changes exactly two canonical Rebalanced requirement inputs:
+- Repose Gold: q90 -> **q95**;
+- Excellence Gold: q90 -> **q95**.
+
+`RebalancedStaticProjection` continues to project the existing `rule.Requirements[tier]` value into the stock `CraftDefinition.needs_quality` field. No Harmony target, native formula, success calculation, presentation ownership, save state, lifecycle, RNG, buff behavior, or effect magnitude changed.
+
+Because the executable delta is limited to these two values and the requirement-projection/native-success path is already accepted, a fresh in-game runtime test would only repeat closed evidence. Clean compilation/package validation plus exact source/diff inspection is sufficient for this release.
+
+The existing **A — architecture/save-lifecycle clean; no production action required** verdict therefore carries forward unchanged.

@@ -1,5 +1,14 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.16
+
+- Repose Gold 100%-success requirement changes from **90** to **95 Church Quality**.
+- Excellence Gold 100%-success requirement changes from **90** to **95 Church Quality**.
+- Bronze/Silver requirements and all prayer effects, durations, payouts, formulas, hooks and runtime behavior are otherwise unchanged.
+- Thorough Cleansing remains **30 / 60 / 90**; Soul's Repose remains **30 / 60 / 120**.
+- The q95 change is an intentional premium-Gold soft capstone: a practical passive CQ94 church reaches 99%, while a small temporary Church Quality boost or a more specialized passive layout can reach 100%.
+- No in-game runtime retest was required because the executable delta is limited to two values in the canonical Rebalanced requirements table, which are projected directly into the already-verified native `CraftDefinition.needs_quality` path.
+
 ## PrayerClarity: Rebalanced 0.2.15
 
 - Repose Bronze remains stock-style and Silver keeps the accepted 0.2.14 50/50 reliability behavior.
