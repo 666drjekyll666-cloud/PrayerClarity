@@ -12,10 +12,10 @@
   "rebalanced.active.gratitude": "La condizione delle anime non peggiora nel tempo, né nel corpo né dopo l'estrazione. Liberare le anime fornisce +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tempo di crescita delle piante: -{0:0}%",
   "rebalanced.tech.souls_intro": "In caso di successo, ogni (gratitude_points) speso fornisce 1 (faith).",
-  "rebalanced.tech.souls_tier": "Si possono spendere fino a {0} (gratitude_points) per sermone.",
+  "rebalanced.tech.souls_tier": "Limite per sermone: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "In caso di successo, ogni (gratitude_points) speso fornisce 1 (faith). Si possono spendere fino a {0} (gratitude_points) per sermone.",
   "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
   "rebalanced.pulpit.souls_conversion_empty": "nessun (gratitude_points) da convertire",
-  "rebalanced.tech.sin_shard_intro": "Curare le anime fornisce più Frammenti del peccato.",
+  "rebalanced.tech.sin_shard_intro": "Aumenta il numero di Frammenti del peccato ottenuti curando le anime.",
   "rebalanced.active.sin_shard": "Frammenti del peccato dalla cura delle anime: ×{0:0.#}"
 }
