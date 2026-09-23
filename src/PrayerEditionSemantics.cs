@@ -4,6 +4,7 @@ namespace PrayerClarity
     internal delegate bool PrayerActiveEffectResolver(string buffId, out string text);
     internal delegate bool PrayerTechnologyEffectResolver(string craftId, out string sharedText, out string tierText);
     internal delegate bool PrayerSoulConversionResolver(string craftId, out int cap, out int conversion);
+    internal delegate bool PrayerEventResolver(string craftId, string currentEventId, out string effectiveEventId);
 
     // Shared presentation seam for sibling editions. Vanilla leaves it unconfigured;
     // Rebalanced installs its provider during plugin initialization. Shared Clarity
@@ -14,17 +15,20 @@ namespace PrayerClarity
         private static PrayerActiveEffectResolver _activeEffect;
         private static PrayerTechnologyEffectResolver _technologyEffect;
         private static PrayerSoulConversionResolver _soulConversion;
+        private static PrayerEventResolver _prayEvent;
 
         internal static void Install(
             PrayerTierEffectResolver tierEffect,
             PrayerActiveEffectResolver activeEffect,
             PrayerTechnologyEffectResolver technologyEffect = null,
-            PrayerSoulConversionResolver soulConversion = null)
+            PrayerSoulConversionResolver soulConversion = null,
+            PrayerEventResolver prayEvent = null)
         {
             _tierEffect = tierEffect;
             _activeEffect = activeEffect;
             _technologyEffect = technologyEffect;
             _soulConversion = soulConversion;
+            _prayEvent = prayEvent;
         }
 
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
@@ -57,6 +61,17 @@ namespace PrayerClarity
             cap = 0;
             conversion = 0;
             return _soulConversion != null && _soulConversion(craftId, out cap, out conversion);
+        }
+
+        internal static bool TryGetEffectivePrayEvent(
+            string craftId,
+            string currentEventId,
+            out string effectiveEventId)
+        {
+            effectiveEventId = currentEventId;
+            return _prayEvent != null &&
+                   _prayEvent(craftId, currentEventId, out effectiveEventId) &&
+                   !string.IsNullOrEmpty(effectiveEventId);
         }
     }
 }
