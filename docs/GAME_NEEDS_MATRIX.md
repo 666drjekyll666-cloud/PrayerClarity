@@ -528,3 +528,77 @@ Do not finalize new Contentment wording/value yet. Research two conservative dir
 2. a closer Remote Craft Control economy effect if raw generation remains cap-limited.
 
 Avoid changing Contentment merely for symmetry.
+
+
+## 2026-09-23 Finalized copy direction + Soul Contentment candidate
+
+Status: **copy direction preferred; Soul Contentment values remain design hypothesis**.
+
+### Soul's Repose copy
+
+Use prose first, icons second; avoid the earlier rebus-like icon-only rule.
+
+Shared rule:
+- **«При успехе Благодарность душ тратится и превращается в Веру: 1 [Soul Gratitude] = 1 [Faith].»**
+
+Tier line:
+- Bronze: **«Максимум за проповедь: 30 [Soul Gratitude] -> +30 [Faith].»**
+- Silver: **«Максимум за проповедь: 60 [Soul Gratitude] -> +60 [Faith].»**
+- Gold: **«Максимум за проповедь: 90 [Soul Gratitude] -> +90 [Faith].»**
+
+Pulpit:
+- place the live transaction under **При успехе**, not under **Эффект молитвы**;
+- example: **«[Soul Gratitude] -73 -> [Faith] +73»**;
+- the success heading already makes an additional “on failure no Gratitude is spent” sentence unnecessary;
+- ordinary base Faith remains in the base-result block.
+
+### Donations copy
+
+Under the existing **При успехе** heading, use only the native money icon/formatter and value:
+- Bronze: **[silver] +20**
+- Silver: **[silver] +50**
+- Gold: **[gold] +1**
+
+Do not add a redundant “Дополнительные пожертвования” label.
+
+### Thorough Cleansing copy
+
+Full effect line:
+- Bronze: **«Осколки греха за исцеление душ: [Sin Shard] x2»**
+- Silver: **«Осколки греха за исцеление душ: [Sin Shard] x3»**
+- Gold: **«Осколки греха за исцеление душ: [Sin Shard] x4»**
+
+Keep normal duration presentation separately.
+
+### Soul Contentment preferred conservative-bold candidate
+
+The cap problem means small increments such as +30% or +40% are unlikely to create temptation parity.
+
+Preferred same-role candidate to test:
+- requirements remain **q20 / q40 / q60**;
+- durations remain **36 / 72 / 108 min**;
+- Gratitude gain becomes **+50% / +100% / +150%**.
+
+For a high-value 40-Gratitude soul this yields:
+- Bronze: 60;
+- Silver: 80;
+- Gold: 100.
+
+This keeps the exact vanilla/Rebalanced role — faster Soul Gratitude generation — but makes prayer quality materially change magnitude as well as duration. Gold becomes a “refill the Gratitude reserve quickly” tool for players actively spending SG through Remote Craft Control and the proposed Soul's Repose exchange.
+
+Preferred copy if this candidate survives quantitative review:
+- Bronze: **«Благодарность душ за исцеление: [Soul Gratitude] +50%»**
+- Silver: **«Благодарность душ за исцеление: [Soul Gratitude] +100%»**
+- Gold: **«Благодарность душ за исцеление: [Soul Gratitude] +150%»**
+
+Rejected as first-line directions:
+- merely increasing +20% slightly: does not solve cap saturation;
+- temporary capacity increase: creates awkward over-cap behavior when the buff expires and risks undermining Soul Container progression;
+- generic discount to all Soul Gratitude spending: thematically possible but changes the prayer's role more substantially and strongly couples it to Remote Craft Control;
+- overflow banking/conversion: too close to a new subsystem/overhaul.
+
+### Implementation evidence note
+
+“Runtime seam” means the narrow game-code event that should own the resource mutation. It does **not** mean a user runtime test is automatically required.
+
+Current Rebalanced already observes successful `PlayerComponent.StartPrayAnimation` through `_pray_buff_success` for tier capture, but a persistent Soul Gratitude deduction must still be placed only after verifying the safest game-owned success point and one-time execution semantics. Prefer static/native inspection or a narrow automated probe first. Ask for a user in-game sermon test only if installed-game runtime evidence is genuinely required to close the remaining uncertainty.
