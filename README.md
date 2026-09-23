@@ -12,18 +12,18 @@ Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improvi
 
 [Download PrayerClarity: Vanilla 1.0.32](https://github.com/NikichMods/PrayerClarity/releases/tag/v1.0.32)
 
-### PrayerClarity: Rebalanced — 0.2.15
+### PrayerClarity: Rebalanced — 0.2.16
 
 Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices. Runtime-sensitive prayer effects are implemented through narrow Graveyard Keeper-native seams where verified.
 
-[Download PrayerClarity: Rebalanced 0.2.15](https://github.com/NikichMods/PrayerClarity/releases/tag/rebalanced-v0.2.15)
+[Download PrayerClarity: Rebalanced 0.2.16](https://github.com/NikichMods/PrayerClarity/releases/tag/rebalanced-v0.2.16)
 
 **Install one edition, not both.**
 
 ## Current stable differences
 
 - **Vanilla 1.0.32:** keeps stock 1.407 prayer mechanics/balance while carrying the accepted compact Clarity hierarchy, parenthetical Base-result dependencies, cleaner item rewards and prayer-item spacing, the stock Prayer for Excellence lore fallback, and the clearer Technology success-condition hierarchy using **On success:** / **При успехе:**.
-- **Rebalanced 0.2.15:** includes the same Clarity layer plus the accepted full-roster rebalance; specialist prayers keep only their own success role instead of generic Faith/donation garnish, Donations pays +5/+15/+30 silver, Combo scales Faith +100/+150/+200% and donations +100/+200/+300%, ordinary Repose uses q20/q40/q90 with 30/42/54-minute durations and Gold guarantees the maximum total skull count inside the best currently available corpse tier, Roots keeps the 95% combined growth-time safety cap, and Technology uses the same concise **On success:** / **При успехе:** hierarchy as Vanilla.
+- **Rebalanced 0.2.16:** includes the same Clarity layer plus the accepted full-roster rebalance; specialist prayers keep only their own success role instead of generic Faith/donation garnish, Donations pays +5/+15/+30 silver, Combo scales Faith +100/+150/+200% and donations +100/+200/+300%, Repose uses q20/q40/q95 with Gold guaranteeing the maximum total skull count inside the best currently available corpse tier, Excellence uses q20/q60/q95, Roots keeps the 95% combined growth-time safety cap, and Technology uses the same concise **On success:** / **При успехе:** hierarchy as Vanilla.
 
 ## Shared clarity features
 
