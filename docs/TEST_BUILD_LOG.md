@@ -1,5 +1,30 @@
 # Test / Research Build Log
 
+## 2026-09-23 — Rebalanced 0.2.19 runtime visual result: rejected candidate
+
+Tested immutable production candidate:
+- source: `b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`;
+- ref: `candidate/rebalanced-0.2.19`;
+- Rebalanced DLL SHA-256: `7b163d31e1f9f61d3db1460ba0794c06d8fba649b653cc870265186c7546203c`.
+
+Runtime/visual evidence:
+- PrayerClarity: Rebalanced 0.2.19 loaded normally on Graveyard Keeper 1.407; no PrayerClarity-specific runtime exception was reported in the supplied session.
+- Gold Soul's Repose at the pulpit still failed the presentation gate: with Church Quality 94 and Soul Gratitude 115, the success row did not show the expected live 90 SG -> 90 Faith transaction and the separate Effect row rendered only a dash.
+- The combined Better Save Soul prayer Technology tooltip still exceeded the viewport under gamepad placement. The attempted 360-wide content preference did not visibly widen the parchment/frame.
+- The 0.2.19 broad BSS lore suppression removed the base lore from the individual keyboard/mouse Technology tooltips for Soul's Repose, Soul Contentment, and Thorough Cleansing. This is an unacceptable regression.
+- User product decision: preserve prayer lore where it exists. Resolve stale Rebalanced mechanic clauses/values narrowly; do not delete the whole lore paragraph as a space-saving or conflict-avoidance shortcut. A genuinely wider final Technology tooltip is preferred over sacrificing lore.
+
+Root-cause assessment:
+- Soul's Repose mechanics and live craft identity remain closed by prior accepted evidence. The 0.2.19 pulpit fix targeted an intermediate writer only. `PulpitPolish.Apply` is the final presentation pass; its `PolishResultRows` rewrites the result text through `PresentationText.BuildPulpitResultRows`, which does not render `SoulGratitudeFaithCap` / `SoulGratitudeConversion`. `PolishEffectRow` then turns the intentionally empty separate effect into a visible dash.
+- Lore loss is deterministic production behavior introduced in 0.2.19: `ShouldSuppressVanillaPrayerLore` was broadened from the previously narrow stale-Contentment case to all three Rebalanced BSS prayer families and therefore affected both the combined unlock and individual prayer Technology surfaces.
+- Tooltip-width ownership is still an evidence gap. `TechnologyTooltipContentWidth` changes the generated label's `overflowWidth`; runtime evidence now proves that this is not sufficient to widen the enclosing parchment/frame. The host owner responsible for the final bubble/frame width must be verified before another production widening attempt.
+
+Assessment:
+- **0.2.19 is rejected and must not be rebuilt, merged, or published.**
+- Reuse the already-passed Soul's Repose conversion arithmetic, Soul Contentment preservation, Thorough Cleansing scaling, and natural pulpit craft-identity evidence.
+- Do not start production 0.2.20 from the unverified 0.2.19 layout assumptions.
+- Next step is research-only: verify the actual Technology tooltip width/frame owner and the exact BSS lore/mechanics composition, then implement the minimum final-renderer fix and width change against those verified owners.
+
 ## PrayerClarity: Rebalanced 0.2.19 — visual acceptance candidate
 
 - Exact production source SHA: `b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`.
