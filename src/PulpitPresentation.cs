@@ -203,7 +203,10 @@ namespace PrayerClarity
             if (Math.Abs(money) >= 0.0001f)
             {
                 string prefix = highlight == PrayerForecast.BonusHighlight.Money ? "(up) " : string.Empty;
-                parts.Add(prefix + R.FormatMoney(money));
+                string value = highlight == PrayerForecast.BonusHighlight.Money
+                    ? R.FormatSignedMoney(money)
+                    : R.FormatMoney(money);
+                parts.Add(prefix + value);
             }
 
             return parts.Count == 0 ? "—" : string.Join(", ", parts.ToArray());
