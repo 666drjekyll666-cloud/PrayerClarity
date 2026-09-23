@@ -7,7 +7,28 @@ namespace PrayerClarity
     {
         internal static void Install()
         {
-            PrayerEditionSemantics.Install(TryBuildTierEffect, TryBuildActiveEffect, TryBuildTechnologyEffect);
+            PrayerEditionSemantics.Install(
+                TryBuildTierEffect,
+                TryBuildActiveEffect,
+                TryBuildTechnologyEffect,
+                TryGetSoulConversion);
+        }
+
+        private static bool TryGetSoulConversion(string craftId, out int cap, out int conversion)
+        {
+            cap = 0;
+            conversion = 0;
+
+            RebalancedPrayerRule rule;
+            int tier;
+            if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier)) return false;
+            if (!string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal) ||
+                rule.SoulGratitudeFaithCaps == null)
+                return false;
+
+            cap = Math.Max(0, rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0));
+            conversion = RebalancedSoulsRepose.GetConversionAmountForCap(cap);
+            return cap > 0;
         }
 
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
