@@ -20,11 +20,11 @@ namespace PrayerClarity
                 List<string> familyBlocks = new List<string>();
                 foreach (List<PrayerForecast.TierDetails> group in groups)
                 {
-                    TooltipPresentationSections family = BuildSingleFamilySections(group);
-                    if (family == null || string.IsNullOrEmpty(family.SuccessBonuses)) continue;
+                    string familyBody = BuildSingleFamily(group, true);
+                    if (string.IsNullOrEmpty(familyBody)) continue;
 
                     string familyName = PrayerFamilyDisplayName(group[0]);
-                    string compactBody = CompactVerticalSections(family.SuccessBonuses);
+                    string compactBody = CompactVerticalSections(familyBody);
                     string block = string.IsNullOrEmpty(familyName)
                         ? compactBody
                         : TechnologyTooltipTextStyle.StructuralLabel(familyName) + "\n" + compactBody;
