@@ -1,5 +1,15 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.17 candidate
+
+- Prayer for Donations keeps q20 / q40 / q60 and changes its success-only flat payout to **+20 / +50 / +100 silver**.
+- Prayer for Soul's Repose changes to q30 / q60 / q90. Its base Faith now uses the ordinary church sermon event; on success it converts current Soul Gratitude to bonus Faith at **1:1**, capped at **30 / 60 / 90** by prayer quality, and spends only the amount converted.
+- Soul's Repose shows the live pending transaction at the pulpit, e.g. `(gratitude_points) -73 -> (faith) +73`.
+- Prayer for Soul Contentment keeps q20 / q40 / q60, gives **+50% Soul Gratitude** at all qualities, lasts **45 / 90 / 135 minutes** (1 / 2 / 3 vanilla six-day weeks), and prevents passive soul-condition decay while active, both in the corpse and after extraction. Soul Extractor damage remains vanilla.
+- Prayer for Thorough Cleansing changes to q30 / q60 / q120 and scales Sin Shard output to **x2 / x3 / x4** through the game's native `increase_sin_shard_drop` calculation.
+- All new player-facing strings are present in the 11 supported locales.
+- Runtime acceptance is still required before promotion to `main`.
+
 ## PrayerClarity: Rebalanced 0.2.16
 
 - Repose Gold 100%-success requirement changes from **90** to **95 Church Quality**.
