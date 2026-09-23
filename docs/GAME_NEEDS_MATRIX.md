@@ -264,3 +264,90 @@ The matrix narrows the next work rather than expanding it.
 2. **Soul's Repose concept audit** — compare 3-5 candidate endgame/BSS roles against the matrix and against role collision with Soul Contentment / Thorough Cleansing.
 3. Only then decide whether a Rebalanced 0.2.17 balance candidate is justified.
 
+
+
+## 2026-09-23 BSS-family and Donations design directions
+
+Status: **design hypotheses; no production change**.
+
+### BSS unlock timing
+
+Direct project evidence: `b_souls`, `b_grat_points_incr`, and `b_sin_shard` are all unlocked by `soul_church_additions`. The visible paid route through `soul_sins_2 -> soul_church_additions` is approximately **35R + 65G + 10 Soul Gratitude** before prayer crafting cost.
+
+Therefore these are not opening-game prayers, but their Bronze tiers still appear as soon as the shared BSS prayer technology is reached. Raising every Thorough Cleansing tier to q90+ would create a poor unlock/readiness mismatch.
+
+### Thorough Cleansing: preserve the role, deepen quality progression
+
+Preferred direction to research:
+- Bronze: preserve the recognizable stock/Rebalanced core at **x2 Sin Shards**;
+- Silver: **x3**;
+- Gold: **x4**;
+- candidate requirements: **q30 / q60 / q120**;
+- preserve existing durations initially: **36 / 72 / 108 min**.
+
+Why this fits the Rebalanced philosophy:
+- no new resource or role is invented;
+- Bronze preserves the familiar BSS behavior instead of making the prayer unusable when first unlocked;
+- higher prayer quality finally improves magnitude instead of duration only;
+- q120 moves the aspirational “miracle” gate from the weak Faith-only Soul's Repose proposition to the BSS prayer whose resource has a legitimate long-tail need;
+- x4 remains a throughput accelerator, not an automatic perfect-corpse generator: a fully healed soul that would naturally yield 4-7 shards would yield 16-28, while perfect-body workflows commonly consume roughly 30-40+ shards per corpse.
+
+Do not jump directly to x3/x4/x5 with q90/q120/q150 unless evidence shows x2/x3/x4 at q30/q60/q120 is still insufficient. q150 in particular risks turning the prayer into candle/incense maintenance rather than an attractive miracle.
+
+### Soul Contentment: progression tool, not endgame pillar
+
+Current role: **+20% Soul Gratitude** at all tiers, with quality increasing duration.
+
+Community signals are mixed:
+- some players actively use Remote Craft Control and therefore continue spending Gratitude;
+- others explicitly say they do not use remote crafting or ask what accumulated Gratitude is for.
+
+This supports treating Soul Contentment as a **BSS progression / remote-crafting specialist** that may naturally become obsolete.
+
+If reopened, prefer same-role magnitude progression rather than a new mechanic. Candidate shape to research:
+- q20 / q40 / q60 unchanged;
+- Bronze +20%;
+- Silver/Gold gain larger Gratitude multipliers while keeping the same core effect;
+- exact values not yet selected.
+
+Do not balance PrayerClarity around external mods that create new Gratitude sinks.
+
+### Soul's Repose: remove false capstone status before inventing a new role
+
+The q120 Faith-only capstone is not supported by the Game Needs Matrix.
+
+Preferred conservative direction if PrayerClarity should remain a rebalance rather than an overhaul:
+- keep the prayer's identity as **Faith strengthened by Soul Gratitude**;
+- remove the q120 aspirational status (candidate Gold gate around q90-q95);
+- investigate replacing the Souls base `(CQ + SG) * 0.1` with the ordinary Faith base plus a positive Soul-Gratitude contribution, so the prayer does not first halve the normal church contribution before adding Soul value;
+- retain the existing +50/+100/+150% tier concept unless the new base still leaves the specialist dominated.
+
+This keeps the same output, same lore and same decision category. Adding Sin-Shard multipliers, Soul-Gratitude payouts or unrelated BSS effects should be considered only if this conservative repair still fails; those changes move toward an overhaul and risk colliding with Soul Contentment / Thorough Cleansing.
+
+### Donations: the role is valid, the current payout is not dense enough
+
+Current +5/+15/+30 silver competes for the weekly sermon slot during the exact phase when Faith is a severe bottleneck.
+
+Recent player evidence shows ordinary early money routes can yield about 10-20 silver in a day-scale selling session (coal/stone/firewood) before vendor liquidity/deflation slows the loop.
+
+Relevant fixed money gates include:
+- Building Permission: 20 silver;
+- Trade License: 50 silver;
+- Aristocrat status later: 12 gold.
+
+Therefore +5 silver once per week is not a credible alternative to an extra +5 Faith for many early players.
+
+Three flat-payout candidate bands:
+- **15 / 40 / 80 silver** — conservative;
+- **20 / 50 / 100 silver** — strong progression specialist;
+- **30 / 60 / 90 silver** — deliberately front-loaded, strongest early alternative.
+
+Current preferred research candidate: **20 / 50 / 100 silver** at q20/q40/q60.
+
+Rationale:
+- Bronze roughly replaces one meaningful early selling excursion rather than several days of economy;
+- Silver can pay a 50-silver progression purchase and feels materially different from Bronze;
+- Gold reaches 1 gold per successful weekly sermon, but remains below mature Trade Office/tavern income and would still require many weeks to pay the 12-gold Aristocrat gate by itself;
+- the ladder deliberately becomes obsolete once business automation solves money scarcity.
+
+The user's 30/60/90 proposal remains plausible, but its Bronze tier risks collapsing the first money gates while Gold has a smaller relative quality jump. Quantitative stage-specific testing should compare these two ladders before implementation.
