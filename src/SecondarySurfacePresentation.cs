@@ -248,7 +248,7 @@ namespace PrayerClarity
                             preferWideLayout);
                 }
 
-                NormalizeRebalancedBssLoreRows(__0, crafts);
+                NormalizeRebalancedBssLoreRows(__0, crafts, preferWideLayout);
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
             catch (Exception ex)
@@ -474,7 +474,10 @@ namespace PrayerClarity
             return craftId.Substring(prefix.Length, tierSeparator - prefix.Length);
         }
 
-        private static void NormalizeRebalancedBssLoreRows(object tooltip, List<object> crafts)
+        private static void NormalizeRebalancedBssLoreRows(
+            object tooltip,
+            List<object> crafts,
+            bool preferWideLayout)
         {
             if (!PrayerEditionSemantics.HasTechnologyProvider ||
                 tooltip == null ||
@@ -496,9 +499,7 @@ namespace PrayerClarity
             {
                 string craftId = R.Id(craft);
                 string family = PrayerFamilyFromCraftId(craftId);
-                if (!string.Equals(family, "b_grat_points_incr", StringComparison.Ordinal) &&
-                    !string.Equals(family, "b_sin_shard", StringComparison.Ordinal))
-                    continue;
+                if (!IsRebalancedBssFamily(family)) continue;
 
                 string key = family + "_d";
                 string vanilla = R.VanillaLocalize(key);
@@ -507,9 +508,9 @@ namespace PrayerClarity
                     continue;
 
                 string normalized = NormalizeRebalancedBssLore(craftId, vanilla);
-                if (!string.IsNullOrEmpty(normalized) &&
-                    !string.Equals(normalized, vanilla, StringComparison.Ordinal))
-                    replacements[vanilla] = normalized;
+                replacements[vanilla] = string.IsNullOrEmpty(normalized)
+                    ? vanilla
+                    : normalized;
             }
 
             if (replacements.Count == 0) return;
@@ -521,12 +522,26 @@ namespace PrayerClarity
                 if (string.IsNullOrEmpty(text)) continue;
 
                 string updated = text;
+                bool matchedLore = false;
                 foreach (KeyValuePair<string, string> pair in replacements)
-                    if (updated.IndexOf(pair.Key, StringComparison.Ordinal) >= 0)
-                        updated = updated.Replace(pair.Key, pair.Value);
+                {
+                    if (updated.IndexOf(pair.Key, StringComparison.Ordinal) < 0) continue;
+                    updated = updated.Replace(pair.Key, pair.Value);
+                    matchedLore = true;
+                }
 
                 if (!string.Equals(updated, text, StringComparison.Ordinal))
                     R.Set(row, "text", updated);
+
+                if (preferWideLayout && matchedLore)
+                {
+                    // Make the retained real lore row itself participate in the same
+                    // verified content-driven width seam as PrayerClarity-owned rows.
+                    // This avoids synthetic spacers: the text the player actually sees
+                    // is what naturally widens the combined parchment.
+                    R.Set(row, "max_width", TechnologyTooltipMaxWidth);
+                    TechnologyTooltipContentWidth.PreferWideLayout(row);
+                }
             }
         }
 
