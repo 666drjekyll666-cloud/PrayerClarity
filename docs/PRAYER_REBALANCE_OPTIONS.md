@@ -1,16 +1,16 @@
 # PrayerClarity: Rebalanced — stable roster specification
 
-Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.15**. Repose Gold now guarantees the maximum visible total skull count inside the best actually available ordinary corpse tier; the accepted Repentance/Repose durations remain **30 / 42 / 54 min**.
+Status: **canonical accepted Rebalanced ruleset for the current stable PrayerClarity: Rebalanced 0.2.16**. Repose Gold now guarantees the maximum visible total skull count inside the best actually available ordinary corpse tier; the accepted Repentance/Repose durations remain **30 / 42 / 54 min**.
 
 Stock Graveyard Keeper 1.407 mechanics remain documented independently in `PRAYER_MECHANICS.md`. Values below are intentional Balance/Rework design unless explicitly identified as a verified repair.
 
 Current stable runtime identity:
 
-- Rebalanced version: **0.2.15**
-- frozen accepted ref: `accepted/rebalanced-0.2.15`
-- exact accepted runtime source SHA: `ac953fe25ef17dbaf63340a7b9309dadec7e207e`
+- Rebalanced version: **0.2.16**
+- frozen accepted ref: `accepted/rebalanced-0.2.16`
+- exact accepted runtime source SHA: `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`
 - canonical DLL: `PrayerClarity.Rebalanced.dll`
-- accepted/released DLL SHA-256: `a980ecfeec4553c208280ca6ca2ca49196d4fb2bab6b6e121c908d0550ce0c4f`
+- accepted/released DLL SHA-256: `2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`
 
 Version history relevant to this spec:
 
@@ -20,7 +20,8 @@ Version history relevant to this spec:
 - **0.2.4** retained those seams and changed only Repentance/Repose duration to **30 / 42 / 54 min** through the existing once-per-load `CraftDefinition.dur_parameter` projection.
 - **0.2.13** accepted specialist-purity cleanup plus Donations **+5 / +15 / +30 silver** and Combo donations **+100 / +200 / +300%** while keeping Combo Faith **+100 / +150 / +200%**.
 - **0.2.14** aligned the Technology success heading with Vanilla 1.0.32 without changing gameplay.
-- **0.2.15** raises Repose Gold's 100%-success requirement to q90 and upgrades Gold from best-tier certainty to the maximum total skull count inside that best available tier.
+- **0.2.15** raised Repose Gold's 100%-success requirement to q90 and upgraded Gold from best-tier certainty to the maximum total skull count inside that best available tier.
+- **0.2.16** raises only premium Gold success gates: Repose Gold **q90 -> q95** and Excellence Gold **q90 -> q95**. All other requirements and mechanics remain unchanged.
 
 The sibling Vanilla release remains mechanically stock and is documented separately.
 
@@ -45,10 +46,10 @@ The sibling Vanilla release remains mechanically stock and is documented separat
 | Prosperity `b_village` | **10 / 20 / 30** | Keep 1 / 2 / 3 Commercial Blessings; remove unrelated prayer-owned Faith/money success outputs. |
 | Shoots & Roots `b_plant` | **10 / 30 / 50** | Repair stock scope; growth time **-20 / -30 / -40%**. Duration **36 / 72 / 108 min**. |
 | Repentance `b_sins` | **20 / 40 / 60** | Daily confession probability **50 / 75 / 100%**. Duration **30 / 42 / 54 min**. |
-| Repose `b_skull` | **20 / 40 / 90** | Bronze stock-style expanded pool; Silver remains 50% stock-style / 50% best available tier; Gold guarantees the **maximum total skull count inside the best actually available ordinary corpse tier**. Duration **30 / 42 / 54 min**. |
+| Repose `b_skull` | **20 / 40 / 95** | Bronze stock-style expanded pool; Silver remains 50% stock-style / 50% best available tier; Gold guarantees the **maximum total skull count inside the best actually available ordinary corpse tier**. Duration **30 / 42 / 54 min**. |
 | Combat `b_sword` (`b_shield` legacy alias) | **20 / 40 / 60** | Damage **+5 / +10 / +15**, armor **+4**, regeneration **1 / 2 / 4 HP/s**. Duration **36 / 72 / 108 min**. |
 | Imagination `b_pen` | **20 / 40 / 60** | Writing quality **+0.7** at all tiers; successful Silver gives **3 Silver Stories**, successful Gold gives **3 Gold Stories**. Duration **18 / 36 / 54 min**. |
-| Excellence `b_star` | **20 / 60 / 90** | Linked-craft quality **+0.2 / +0.5 / +1.0**. Duration **18 / 36 / 54 min**. |
+| Excellence `b_star` | **20 / 60 / 95** | Linked-craft quality **+0.2 / +0.5 / +1.0**. Duration **18 / 36 / 54 min**. |
 | BSS Soul's Repose `b_souls` | **30 / 60 / 120** | **+50 / +100 / +150% Faith** on the verified Souls base. Preserve current Soul Gratitude scaling; remove prayer-owned fixed/off-theme outputs. |
 | BSS Soul Contentment `b_grat_points_incr` | **20 / 40 / 60** | **+20% Soul Gratitude** at all tiers. Duration **36 / 72 / 108 min**. |
 | BSS Thorough Cleansing `b_sin_shard` | **30 / 60 / 90** | **x2 Sin Shards** at all tiers. Duration **36 / 72 / 108 min**. |
@@ -165,7 +166,7 @@ The items are projected into the prayer's existing `CraftDefinition.output`; non
 
 ## Acceptance status
 
-The current stable edition is **PrayerClarity: Rebalanced 0.2.15**.
+The current stable edition is **PrayerClarity: Rebalanced 0.2.16**.
 
 The 0.2.4 duration revision changes only Repentance and Repose from 18/36/54 to **30/42/54 minutes**. The reason is mechanical rather than symmetry: both effects consume discrete roughly once-per-day opportunities, so the old Bronze window exposed too few useful event rolls; after raising Bronze, Silver also needed a distinct duration step. Gold remains unchanged.
 
@@ -177,7 +178,8 @@ The balance roster itself was runtime-tested and accepted in 0.2.0. Subsequent a
 - 0.2.10 kept those durations and the accepted Repose corpse-quality semantics while raising ordinary Repose Gold's guaranteed-success requirement from q50 to q60;
 - 0.2.13 keeps the accepted specialist mechanics but removes unrelated generic Faith/donation success garnish from utility specialists, changes Donations to +5/+15/+30 silver, changes Combo donations to +100/+200/+300% while Faith remains +100/+150/+200%, and carries the accepted Technology/Soul wording cleanup;
 - 0.2.14 kept all 0.2.13 gameplay values unchanged and aligned the Technology success heading with Vanilla 1.0.32: **On success:** / **При успехе:**;
-- 0.2.15 raises ordinary Repose Gold from q60 to **q90** and guarantees the maximum total skull count inside the best actually available ordinary tier. Runtime evidence directly observed the 9 tied maximum-score terminal candidates and ten consecutive real native generations selecting tier-3, 10-total-skull bodies with exact catalog restoration after each call;
+- 0.2.15 raised ordinary Repose Gold from q60 to **q90** and guarantees the maximum total skull count inside the best actually available ordinary tier. Runtime evidence directly observed the 9 tied maximum-score terminal candidates and ten consecutive real native generations selecting tier-3, 10-total-skull bodies with exact catalog restoration after each call;
+- 0.2.16 raises only Repose Gold and Excellence Gold from **q90 to q95** as accepted premium-Gold soft-capstone gates. The implementation changes only two requirement inputs; the native success formula/path and all prayer effects remain unchanged;
 - current architecture/save-lifecycle status is **A — no architecture action**, per `POST_AUDIT_VERDICT.md`.
 
 The original 0.2.0 acceptance also covered the revised Faith / Donations / Combo semantics and requirements, Soul's Repose q30/60/120 plus current Soul Gratitude context, representative localization, synchronized presentation surfaces, and absence of PrayerClarity-specific runtime exceptions in the supplied acceptance logs.
@@ -187,4 +189,4 @@ Deferred, non-blocking verification remains:
 - terminal Repose wording/presentation on a save that has reached terminal Donkey corpse progression;
 - physical 3-Story payout from a real successful Silver/Gold Imagination sermon has not yet been visually observed in the user's runtime, although it uses the verified native non-Faith/non-money sermon-drop path.
 
-These are evidence gaps, not blockers for 0.2.15. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.15 bytes.
+These are evidence gaps, not blockers for 0.2.16. Any behavior change discovered later requires a new version; do not silently replace the accepted 0.2.16 bytes.
