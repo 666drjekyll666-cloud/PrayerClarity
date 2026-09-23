@@ -18,7 +18,13 @@
 - Static ownership evidence: `RebalancedStaticProjection` writes `rule.Requirements[tier]` directly into the existing stock `CraftDefinition.needs_quality` field.
 - **No fresh in-game runtime test required.** The changed property is only two scalar inputs to an already accepted projection/native success path; a runtime replay would not prove a new lifecycle, formula, hook, RNG, save, or effect behavior.
 - Acceptance gate for this micro-release is exact source diff + clean compile/package/localization validation + immutable artifact identity.
-- Stable publication must reuse the exact DLL hash above without rebuilding.
+- Stable promotion PR: **#30**, squash-merged to `main` as `7c90691f84bfba8be500ed3d60a53432bbe65e40`.
+- Stable publication workflow: `35801981914`; result: **success**.
+- Published release: `rebalanced-v0.2.16` -> target `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`.
+- Release asset ID: `582562218`, canonical filename `PrayerClarity.Rebalanced.dll`, asset digest `sha256:2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`.
+- Publication reused and hash-verified the exact accepted CI DLL; **no rebuild occurred**.
+- Final status: **accepted, merged to main, frozen by accepted ref, and published as stable Rebalanced release**.
+- Numbered accepted bytes are immutable.
 
 ## PrayerClarity: Rebalanced 0.2.15 — accepted stable
 
