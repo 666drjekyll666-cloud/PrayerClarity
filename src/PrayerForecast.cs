@@ -114,12 +114,16 @@ namespace PrayerClarity
             int baseFaith = Mathf.Max(0, Mathf.RoundToInt(R.SmartFloat(R.Get(prayEvent, "faith"))));
             float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
 
-            // Preserve the verified exact side-effect-free calculator unchanged, then
-            // add the explicit Rebalanced Soul Gratitude conversion when this prayer
-            // owns that mechanic.
-            int soulConversion = tier.SoulGratitudeFaithCap > 0
-                ? RebalancedSoulsRepose.GetConversionAmountForCap(tier.SoulGratitudeFaithCap)
-                : 0;
+            // Preserve the verified exact side-effect-free calculator unchanged.
+            // Edition-specific mechanics can contribute through the shared provider
+            // without making the Vanilla sibling depend on Rebalanced types.
+            int dynamicCap;
+            int soulConversion;
+            if (!PrayerEditionSemantics.TryGetSoulConversion(tier.CraftId, out dynamicCap, out soulConversion))
+            {
+                dynamicCap = 0;
+                soulConversion = 0;
+            }
             int bonusFaith = tier.FixedFaithBonus + Mathf.RoundToInt(baseFaith * tier.FaithBonusRate) + soulConversion;
             float bonusMoney = tier.FixedMoneyBonus + Mathf.Round(baseMoney * tier.MoneyBonusRate * 100f) / 100f;
 
@@ -141,7 +145,7 @@ namespace PrayerClarity
                     ? R.PlayerParam("gratitude_points")
                     : 0f,
                 UsesSoulGratitude = tier.UsesSoulGratitude,
-                SoulGratitudeFaithCap = tier.SoulGratitudeFaithCap,
+                SoulGratitudeFaithCap = dynamicCap,
                 SoulGratitudeConversion = soulConversion,
                 Highlight = tier.Highlight,
                 SpecialText = tier.SpecialText,
@@ -167,13 +171,10 @@ namespace PrayerClarity
             CollectOutputs(craft, ref fixedFaith, ref fixedMoney, rewards);
 
             int qualityTier = ParseQualityTier(craftId);
-            RebalancedPrayerRule rebalancedRule;
-            int rebalancedTier;
-            int soulGratitudeFaithCap =
-                RebalancedRuleSet.TryParseCraftId(craftId, out rebalancedRule, out rebalancedTier) &&
-                rebalancedRule.SoulGratitudeFaithCaps != null
-                    ? rebalancedRule.TierValue(rebalancedRule.SoulGratitudeFaithCaps, rebalancedTier, 0)
-                    : 0;
+            int soulGratitudeFaithCap;
+            int ignoredConversion;
+            if (!PrayerEditionSemantics.TryGetSoulConversion(craftId, out soulGratitudeFaithCap, out ignoredConversion))
+                soulGratitudeFaithCap = 0;
             SpecialInfo special = BuildSpecial(craft, eventId, rewards, soulGratitudeFaithCap);
             return new TierDetails
             {
