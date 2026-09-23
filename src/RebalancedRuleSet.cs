@@ -101,6 +101,12 @@ namespace PrayerClarity
             return values[qualityTier - 1];
         }
 
+        internal string TierValue(string[] values, int qualityTier, string fallback = null)
+        {
+            if (values == null || qualityTier < 1 || qualityTier > values.Length) return fallback;
+            return values[qualityTier - 1];
+        }
+
         internal ReposeQualityMode TierValue(ReposeQualityMode[] values, int qualityTier, ReposeQualityMode fallback)
         {
             if (values == null || qualityTier < 1 || qualityTier > values.Length) return fallback;
