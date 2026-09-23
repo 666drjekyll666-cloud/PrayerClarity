@@ -276,13 +276,13 @@ Direct project evidence: `b_souls`, `b_grat_points_incr`, and `b_sin_shard` are 
 
 Therefore these are not opening-game prayers, but their Bronze tiers still appear as soon as the shared BSS prayer technology is reached. Raising every Thorough Cleansing tier to q90+ would create a poor unlock/readiness mismatch.
 
-### Thorough Cleansing: preserve the role, deepen quality progression
+### Thorough Cleansing: accepted design direction
 
-Preferred direction to research:
+User accepted the following direction on 2026-09-23:
 - Bronze: preserve the recognizable stock/Rebalanced core at **x2 Sin Shards**;
 - Silver: **x3**;
 - Gold: **x4**;
-- candidate requirements: **q30 / q60 / q120**;
+- requirements: **q30 / q60 / q120**;
 - preserve existing durations initially: **36 / 72 / 108 min**.
 
 Why this fits the Rebalanced philosophy:
@@ -324,7 +324,7 @@ Preferred conservative direction if PrayerClarity should remain a rebalance rath
 
 This keeps the same output, same lore and same decision category. Adding Sin-Shard multipliers, Soul-Gratitude payouts or unrelated BSS effects should be considered only if this conservative repair still fails; those changes move toward an overhaul and risk colliding with Soul Contentment / Thorough Cleansing.
 
-### Donations: the role is valid, the current payout is not dense enough
+### Donations: accepted progression-specialist direction
 
 Current +5/+15/+30 silver competes for the weekly sermon slot during the exact phase when Faith is a severe bottleneck.
 
@@ -342,7 +342,7 @@ Three flat-payout candidate bands:
 - **20 / 50 / 100 silver** — strong progression specialist;
 - **30 / 60 / 90 silver** — deliberately front-loaded, strongest early alternative.
 
-Current preferred research candidate: **20 / 50 / 100 silver** at q20/q40/q60.
+User accepted **20 / 50 / 100 silver** at q20/q40/q60 on 2026-09-23.
 
 Rationale:
 - Bronze roughly replaces one meaningful early selling excursion rather than several days of economy;
@@ -351,3 +351,46 @@ Rationale:
 - the ladder deliberately becomes obsolete once business automation solves money scarcity.
 
 The user's 30/60/90 proposal remains plausible, but its Bronze tier risks collapsing the first money gates while Gold has a smaller relative quality jump. Quantitative stage-specific testing should compare these two ladders before implementation.
+
+
+### Soul's Repose: Soul Gratitude -> Faith exchange hypothesis
+
+The user proposed replacing the opaque current Souls-Faith scaling with a direct resource exchange: Soul Gratitude is spent during the sermon and produces Faith.
+
+This direction has several strong system/UX properties:
+- preserves the prayer's existing thematic input (Soul Gratitude) and output (Faith);
+- removes the hidden two-input `Church Quality + Soul Gratitude` payout arithmetic;
+- creates a real sink for current Soul Gratitude instead of merely rewarding hoarding;
+- creates an explicit opportunity-cost choice against Remote Craft Control, which already spends Soul Gratitude;
+- gives Soul Contentment a stronger ecosystem role because faster Gratitude generation can now replenish a resource the player deliberately spends;
+- keeps the prayer inside Rebalanced territory rather than inventing an unrelated BSS effect.
+
+Direct 1.407 Soul Gratitude generation is:
+`GP_base = 5 * effective_durability + 5 * sins_count`.
+With a fully preserved/healed seven-sin soul this reaches **40 Gratitude**. Current Rebalanced Soul Contentment (+20%) raises that case to **48**.
+
+Preferred concrete candidate:
+- ordinary sermon base Faith remains intact and uses the normal church contribution;
+- successful Soul's Repose adds a **1:1 conversion bonus**: one Soul Gratitude spent -> one additional Faith;
+- conversion is capped by prayer quality to prevent extreme/high-capacity stockpiles from becoming an unbounded Faith exploit;
+- Bronze: convert up to **30 SG -> +30 Faith**;
+- Silver: up to **60 SG -> +60 Faith**;
+- Gold: up to **90 SG -> +90 Faith**;
+- candidate Church Quality requirements: **q30 / q60 / q90**;
+- consume only the amount actually converted; excess Gratitude remains;
+- on sermon failure, **consume no Soul Gratitude** and deliver only the normal base sermon result.
+
+The 30/60/90 cap is intentionally simple: the same tier number can describe both the success gate and the maximum exchange, and the player-facing rule remains “1 Gratitude = 1 Faith”.
+
+At Gold, two perfect souls naturally yield 80 SG and do not fully refill a 90-point exchange. Under the current +20% Soul Contentment effect, two such souls yield 96 SG, which **does** fully refill Gold Soul's Repose. This creates a concrete synergy without changing Soul Contentment first.
+
+UX requirement:
+- before sermon use, show the exact amount that will be spent and the exact prayer-owned Faith conversion, e.g. **“Soul Gratitude: 73 -> +73 Faith”**;
+- make clear that the conversion is success-only and does not reduce Soul Gratitude capacity;
+- never silently consume the player's full stored pool;
+- do not use an uncapped “convert all current Gratitude” rule because legitimate/quirky capacity expansion could produce extreme payouts and because wiping an RCC reserve would be hostile UX.
+
+Stage fit:
+Better Save Soul is not structurally an endgame-only system. The Spiritualism tree can be entered around early church/morgue progression, and the prayer technology sits only a few nodes into that tree. Therefore this prayer can function as a **BSS-to-core-progression bridge** while Faith is still scarce. If a player postpones BSS until the main game is nearly complete, the prayer may naturally have low value; that is acceptable for a progression specialist and is preferable to forcing an artificial endgame role.
+
+This proposal is still a **design hypothesis**, not accepted production behavior.
