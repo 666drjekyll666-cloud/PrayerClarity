@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.6";
+        public const string PluginVersion = "0.1.7";
 
         private sealed class TimedEffect
         {
@@ -47,7 +47,7 @@ namespace PrayerClarityResearch
         private static readonly HashSet<string> RootsDiagnosticLoggedCrafts = new HashSet<string>(StringComparer.Ordinal);
 
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
-        private Rect _windowRect = new Rect(24f, 24f, 620f, 560f);
+        private Rect _windowRect = new Rect(24f, 24f, 620f, 600f);
         private bool _visible;
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
 
@@ -133,7 +133,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.6");
+                "PrayerClarity: Rebalanced Test Console 0.1.7");
         }
 
         private void DrawWindow(int id)
@@ -170,6 +170,9 @@ namespace PrayerClarityResearch
 
             GUILayout.Space(8f);
             GUILayout.Label("Native-seam probes:");
+
+            if (GUILayout.Button("Capture live pulpit Soul's Repose identity (no sermon)"))
+                CaptureLivePulpitSoulReposeIdentity();
 
             if (GUILayout.Button("Probe 0.2.17 Soul's Repose conversion (no sermon spent)"))
                 ProbeSoulsReposeConversion();
@@ -469,6 +472,175 @@ namespace PrayerClarityResearch
             }
         }
 
+
+        private void CaptureLivePulpitSoulReposeIdentity()
+        {
+            try
+            {
+                Type guiElementsType = FindType("GUIElements");
+                object guiElements = GetStatic(guiElementsType, "me");
+                object prayGui = Get(guiElements, "pray_craft");
+                if (prayGui == null)
+                    throw new InvalidOperationException("GUIElements.me.pray_craft unavailable. Open the pulpit and select Gold Soul's Repose first.");
+
+                object liveCraft = Get(prayGui, "pray_craft");
+                if (liveCraft == null)
+                    throw new InvalidOperationException("PrayCraftGUI.pray_craft is null. Select Gold Soul's Repose first.");
+
+                object canonicalGold = FindBalanceObjectById("craft_data", "pray:b_souls:3");
+                object player = GetPlayer();
+
+                string liveId = GetId(liveCraft) ?? "<null>";
+                string linkedEvent = Convert.ToString(Get(liveCraft, "linked_sub_id"));
+                string outputs = DescribeOutputs(liveCraft);
+                string liveMembers = DescribeRelevantMembers(
+                    liveCraft,
+                    "id", "sub", "quality", "faith", "money", "buff", "name", "item", "craft");
+                string guiMembers = DescribeRelevantMembers(
+                    prayGui,
+                    "craft", "quality", "item", "selected", "cur");
+
+                string tierSummary = "<unavailable>";
+                Type forecastType = FindType("PrayerClarity.PrayerForecast");
+                MethodInfo buildTier = forecastType == null
+                    ? null
+                    : forecastType.GetMethods(AnyStatic).FirstOrDefault(m =>
+                    {
+                        if (m.Name != "BuildTierDetails") return false;
+                        ParameterInfo[] p = m.GetParameters();
+                        return p.Length == 1;
+                    });
+                if (buildTier != null)
+                {
+                    object tier = buildTier.Invoke(null, new[] { liveCraft });
+                    tierSummary = tier == null
+                        ? "<null>"
+                        : "CraftId=" + Convert.ToString(Get(tier, "CraftId")) +
+                          ", EventId=" + Convert.ToString(Get(tier, "EventId")) +
+                          ", QualityTier=" + Convert.ToString(Get(tier, "QualityTier")) +
+                          ", UsesSoulGratitude=" + Convert.ToString(Get(tier, "UsesSoulGratitude")) +
+                          ", SoulGratitudeFaithCap=" + Convert.ToString(Get(tier, "SoulGratitudeFaithCap"));
+                }
+
+                float gratitude = player == null
+                    ? float.NaN
+                    : Convert.ToSingle(Get(player, "gratitude_points"));
+
+                bool sameAsCanonicalGold = canonicalGold != null && ReferenceEquals(liveCraft, canonicalGold);
+                string canonicalSummary = canonicalGold == null
+                    ? "<not found>"
+                    : "id=" + (GetId(canonicalGold) ?? "<null>") +
+                      ", linked_sub_id=" + Convert.ToString(Get(canonicalGold, "linked_sub_id")) +
+                      ", needs_quality=" + Convert.ToString(Get(canonicalGold, "needs_quality")) +
+                      ", k_faith=" + Convert.ToString(Get(canonicalGold, "k_faith")) +
+                      ", output=" + DescribeOutputs(canonicalGold);
+
+                string diagnostic =
+                    "live_type=" + liveCraft.GetType().FullName +
+                    ", live_assembly=" + liveCraft.GetType().Assembly.GetName().Name +
+                    ", live_id=" + liveId +
+                    ", linked_sub_id=" + linkedEvent +
+                    ", needs_quality=" + Convert.ToString(Get(liveCraft, "needs_quality")) +
+                    ", k_faith=" + Convert.ToString(Get(liveCraft, "k_faith")) +
+                    ", k_money=" + Convert.ToString(Get(liveCraft, "k_money")) +
+                    ", buff=" + Convert.ToString(Get(liveCraft, "buff")) +
+                    ", output=" + outputs +
+                    ", same_ref_as_canonical_gold=" + sameAsCanonicalGold +
+                    ", gratitude=" + gratitude.ToString("0.###") +
+                    " | production_tier=" + tierSummary +
+                    " | canonical_gold={" + canonicalSummary + "}" +
+                    " | live_members={" + liveMembers + "}" +
+                    " | pray_gui_members={" + guiMembers + "}";
+
+                _status = "Live pulpit identity captured. Send LogOutput.log; no sermon was spent.";
+                _log?.LogInfo("SOULS_REPOSE_LIVE_PULPIT_IDENTITY " + diagnostic);
+            }
+            catch (Exception ex)
+            {
+                _status = "Live pulpit identity capture failed: " + ex.GetType().Name;
+                _log?.LogError("PrayerClarity Rebalanced Test Console live pulpit identity capture failed. " + ex);
+            }
+        }
+
+        private static string DescribeOutputs(object craft)
+        {
+            System.Collections.IEnumerable output = Get(craft, "output") as System.Collections.IEnumerable;
+            if (output == null) return "<null>";
+
+            var parts = new List<string>();
+            foreach (object item in output)
+            {
+                if (item == null)
+                {
+                    parts.Add("<null>");
+                    continue;
+                }
+
+                string id = GetId(item) ?? "<null>";
+                object value = Get(item, "value");
+                object quality = Get(item, "quality");
+                parts.Add(
+                    id +
+                    ":value=" + Convert.ToString(value) +
+                    (quality == null ? string.Empty : ":quality=" + Convert.ToString(quality)));
+            }
+
+            return parts.Count == 0 ? "<empty>" : string.Join(",", parts.ToArray());
+        }
+
+        private static string DescribeRelevantMembers(object instance, params string[] nameFragments)
+        {
+            if (instance == null) return "<null>";
+
+            var parts = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            for (Type type = instance.GetType(); type != null; type = type.BaseType)
+            {
+                foreach (FieldInfo field in type.GetFields(AnyInstance | BindingFlags.DeclaredOnly))
+                {
+                    if (!IsRelevantMemberName(field.Name, nameFragments) || !seen.Add(field.Name)) continue;
+                    try { parts.Add(field.Name + "=" + DescribeValue(field.GetValue(instance))); }
+                    catch { parts.Add(field.Name + "=<error>"); }
+                }
+
+                foreach (PropertyInfo property in type.GetProperties(AnyInstance | BindingFlags.DeclaredOnly))
+                {
+                    if (property.GetIndexParameters().Length != 0 ||
+                        !property.CanRead ||
+                        !IsRelevantMemberName(property.Name, nameFragments) ||
+                        !seen.Add(property.Name))
+                        continue;
+
+                    try { parts.Add(property.Name + "=" + DescribeValue(property.GetValue(instance, null))); }
+                    catch { parts.Add(property.Name + "=<error>"); }
+                }
+            }
+
+            return parts.Count == 0 ? "<none>" : string.Join(", ", parts.ToArray());
+        }
+
+        private static bool IsRelevantMemberName(string name, string[] fragments)
+        {
+            if (string.IsNullOrEmpty(name) || fragments == null) return false;
+            foreach (string fragment in fragments)
+                if (!string.IsNullOrEmpty(fragment) &&
+                    name.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+            return false;
+        }
+
+        private static string DescribeValue(object value)
+        {
+            if (value == null) return "<null>";
+
+            Type type = value.GetType();
+            if (type.IsPrimitive || type.IsEnum || value is string || value is decimal)
+                return Convert.ToString(value);
+
+            string id = GetId(value);
+            return type.FullName + (string.IsNullOrEmpty(id) ? string.Empty : "(id=" + id + ")");
+        }
 
         private void ProbeSoulsReposeConversion()
         {
