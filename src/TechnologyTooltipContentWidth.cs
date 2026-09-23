@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BepInEx.Logging;
 using UnityEngine;
 
@@ -10,24 +9,11 @@ namespace PrayerClarity
     {
         internal const int OwnedMaxWidth = 900;
         private const int MinimumAnchorWidth = 150;
-        private const int WideMinimumAnchorWidth = 360;
         private const string NoBreakSpace = "\u00A0";
         private const int SoftProseWordThreshold = 5;
 
-        private sealed class WideLayoutMarker { }
-
-        private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
-            new ConditionalWeakTable<object, WideLayoutMarker>();
-
         private static ManualLogSource _log;
         private static bool _errorLogged;
-
-        internal static void PreferWideLayout(object data)
-        {
-            if (data == null) return;
-            WideLayoutData.Remove(data);
-            WideLayoutData.Add(data, new WideLayoutMarker());
-        }
 
         internal static void Install(string harmonyId, ManualLogSource log)
         {
@@ -66,11 +52,7 @@ namespace PrayerClarity
                 string fullText = R.Get(label, "text") as string;
                 if (string.IsNullOrEmpty(fullText)) return;
 
-                WideLayoutMarker marker;
-                int minimumWidth = WideLayoutData.TryGetValue(__0, out marker)
-                    ? WideMinimumAnchorWidth
-                    : MinimumAnchorWidth;
-                int anchorWidth = MeasureAtomicAnchor(label, fullText, maxWidth, minimumWidth);
+                int anchorWidth = MeasureAtomicAnchor(label, fullText, maxWidth);
                 if (anchorWidth <= 0) anchorWidth = maxWidth;
 
                 R.Set(label, "text", fullText);
@@ -87,11 +69,7 @@ namespace PrayerClarity
             }
         }
 
-        private static int MeasureAtomicAnchor(
-            object label,
-            string fullText,
-            int measurementCeiling,
-            int minimumWidth)
+        private static int MeasureAtomicAnchor(object label, string fullText, int measurementCeiling)
         {
             string effectHeader = Localization.F("forecast.effect_header") + ":";
             string[] lines = fullText.Replace("\r\n", "\n").Split('\n');
@@ -133,7 +111,7 @@ namespace PrayerClarity
 
             if (widest <= 0f) return measurementCeiling;
             int measured = Mathf.CeilToInt(widest) + 2;
-            return Mathf.Clamp(measured, minimumWidth, measurementCeiling);
+            return Mathf.Clamp(measured, MinimumAnchorWidth, measurementCeiling);
         }
 
         private static bool IsLongProse(string rawLine, string semanticLine)
