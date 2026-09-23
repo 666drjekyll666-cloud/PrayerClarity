@@ -1,5 +1,29 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.19 — visual acceptance candidate
+
+- Exact production source SHA: `b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`.
+- Candidate ref: `candidate/rebalanced-0.2.19`.
+- GitHub Actions run: `35900091899`; job: `107313733159`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10767684729`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.19-ci-b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`.
+- Artifact ZIP digest: `sha256:001b7c42bdee37c57172ff0f516fdf00aa28c458f3e8acc783f4f587b9dd565c`.
+- Rebalanced DLL SHA-256: `7b163d31e1f9f61d3db1460ba0794c06d8fba649b653cc870265186c7546203c`.
+- Scope:
+  - preserve the correct Soul's Repose success transaction through the final pulpit layout pass and suppress the obsolete stock effect sentence there;
+  - keep Soul Gratitude separate from ordinary base-Faith dependency semantics while still showing the current SG context for the conversion;
+  - group mixed Rebalanced Technology prayer tiers by localized prayer family;
+  - compact each mixed-family Bronze/Silver/Gold snapshot to one semantic row;
+  - request a wider content-driven layout only for the mixed success-details body;
+  - suppress conflicting stock BSS lore when Rebalanced owns replacement semantics, including the stale Thorough Cleansing `x2`.
+- Mechanics unchanged from the already-tested 0.2.18 paths. Reuse the accepted Soul's Repose conversion arithmetic, Contentment preservation, and Thorough Cleansing output evidence; **no sermon, soul-healing, or decay replay is required**.
+- Required acceptance is visual/perceptual only:
+  1. at the pulpit, select Gold Soul's Repose with the current SG state and confirm the success row shows the live SG -> Faith transaction while the old stock effect sentence is absent;
+  2. open the combined Better Save Soul prayer Technology tooltip with gamepad placement and confirm it fits the viewport, remains readable, is grouped by prayer, and contains no stale fixed `x2` lore.
+- Test Console 0.1.7 is not required for this pass.
+- Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+
 ## PrayerClarity: Rebalanced 0.2.18 — runtime candidate
 
 - Candidate source SHA: `449748ceb9f50c873e15dede485315912ca9935c`.
