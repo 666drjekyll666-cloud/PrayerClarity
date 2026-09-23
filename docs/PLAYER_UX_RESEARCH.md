@@ -451,3 +451,52 @@ The concise condition-style Technology heading first accepted in Vanilla 1.0.32 
 - no mechanics or balance changed.
 
 This closes the sibling-consistency follow-up without adding new tooltip content.
+
+
+## 2026-09-23 Church-quality consumables as a premium-sermon gate
+
+Status: **community signal + UX/design finding; no production change**.
+
+Research question: if selected premium Gold prayers require q95 instead of q90, does the last step to 100% success feel like deliberate sermon preparation or like repetitive consumable busywork?
+
+### Community signals
+
+Current/recent player discussions show two distinct preferences:
+- a **passive church** preference: maximize permanent Church Quality so the weekly sermon needs little or no preparation;
+- an **active church** preference: accept lower passive quality and use candles/incense to push the sermon higher when desired.
+
+A 2024 Steam discussion explicitly describes the standard church as mostly passive and the extreme active alternative as an all-candelabra setup that can require roughly 60 high-tier candles per week. A 2022 discussion asks for the best passive church specifically to avoid paying for “endless candles”. Older player feedback directly calls disposable candles a hassle. These are recurring signals of friction, not a quantified consensus.
+
+Sources:
+- https://steamcommunity.com/app/599140/discussions/0/4351113819081639981/
+- https://steamcommunity.com/app/599140/discussions/5/3196992771951465239/
+- https://www.reddit.com/r/GraveyardKeeper/comments/dou07e/
+- https://www.reddit.com/r/GraveyardKeeper/comments/12fyw6p/
+
+### UX finding
+
+A **large mandatory candle routine** would be a poor gate for premium prayers: it adds repeated setup to an already weekly interaction and amplifies an existing community pain point.
+
+q95 does not necessarily create that problem.
+
+For the documented practical passive CQ94 cathedral:
+- q95 displays 99% success under the verified prayer formula;
+- one ordinary Incense in an existing Incense Burner II adds +2, crossing the threshold to guaranteed success;
+- alternatively, a passive CQ96 min-max layout is documented by replacing the two Confessional II with Stone Church Shrines, trading confessional utility for permanent certainty.
+
+Therefore q95 can create an understandable three-way decision:
+1. accept 99%;
+2. spend one light temporary consumable for 100%;
+3. redesign the church for passive 100%, sacrificing another useful facility.
+
+That is materially different from forcing the player to maintain a large weekly candle stock.
+
+### Presentation implication
+
+If q95 is adopted, PrayerClarity's existing exact success/requirement presentation is important. The player should be able to see:
+- current success chance;
+- Church Quality needed for 100%;
+- that a small temporary Church Quality boost will cross the threshold.
+
+Do not hide the last-mile requirement or describe it as a mandatory consumable requirement, because a documented passive CQ96 route exists.
+
