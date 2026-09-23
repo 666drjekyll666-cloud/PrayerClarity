@@ -11,9 +11,14 @@ namespace PrayerClarity
     internal static class RebalancedSoulContentment
     {
         private const float StockCoefficient = 0.1f;
-        private const float RebalancedCoefficient = 0.2f;
+        private const float RebalancedCoefficient = 0.5f;
+        private const string ContentmentBuffId = "buff_gp_increase";
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
+        private static bool _preservationErrorLogged;
+        private static MemberInfo _itemDefinitionMember;
+        private static MemberInfo _definitionTypeMember;
+        private static MethodInfo _findBuffById;
 
         internal static void Install(string harmonyId, ManualLogSource log)
         {
@@ -22,6 +27,34 @@ namespace PrayerClarity
             MethodInfo target = R.Method(wgo, "CheckNeededAttachedScript", false, Type.EmptyTypes);
             if (target == null) throw new MissingMethodException("WorldGameObject.CheckNeededAttachedScript()");
             R.Patch(harmonyId + ".soulcontentment", typeof(RebalancedSoulContentment), target, nameof(CheckNeededAttachedScriptPostfix));
+
+            Type item = R.GameType("Item");
+            Type itemDefinition = R.GameType("ItemDefinition");
+            Type buffsLogics = R.GameType("BuffsLogics");
+            if (item == null) throw new MissingMemberException("Item");
+            if (itemDefinition == null) throw new MissingMemberException("ItemDefinition");
+            if (buffsLogics == null) throw new MissingMemberException("BuffsLogics");
+
+            MethodInfo updateDurability = R.Method(
+                item,
+                "UpdateDurability",
+                false,
+                new[] { typeof(float), typeof(float) });
+            if (updateDurability == null)
+                throw new MissingMethodException("Item.UpdateDurability(float,float)");
+
+            _itemDefinitionMember = FindReadableMember(item, "definition");
+            _definitionTypeMember = FindReadableMember(itemDefinition, "type");
+            _findBuffById = R.Method(buffsLogics, "FindBuffByID", true, new[] { typeof(string) });
+            if (_itemDefinitionMember == null) throw new MissingMemberException("Item.definition");
+            if (_definitionTypeMember == null) throw new MissingMemberException("ItemDefinition.type");
+            if (_findBuffById == null) throw new MissingMethodException("BuffsLogics.FindBuffByID(string)");
+
+            R.PatchPrefix(
+                harmonyId + ".soulcontentment.preserve",
+                typeof(RebalancedSoulContentment),
+                updateDurability,
+                nameof(UpdateDurabilityPrefix));
         }
 
         private static void CheckNeededAttachedScriptPostfix(object __instance)
@@ -43,6 +76,52 @@ namespace PrayerClarity
                 _runtimeErrorLogged = true;
                 _log?.LogError("PrayerClarity: Rebalanced Soul Contentment graph projection failed closed; stock +10% behavior remains for the affected portal. " + ex);
             }
+        }
+
+        private static bool UpdateDurabilityPrefix(object __instance)
+        {
+            try
+            {
+                object definition = ReadMember(__instance, _itemDefinitionMember);
+                if (definition == null) return true;
+
+                object type = ReadMember(definition, _definitionTypeMember);
+                string typeName = Convert.ToString(type);
+                if (!string.Equals(typeName, "Soul", StringComparison.Ordinal) &&
+                    !string.Equals(typeName, "SoulBodyPart", StringComparison.Ordinal))
+                    return true;
+
+                // Extraction damage is applied directly by Flow_GenerateSoul and does
+                // not pass through Item.UpdateDurability. Skipping this method therefore
+                // blocks only passive time-based soul decay while the prayer buff lives.
+                object activeBuff = _findBuffById.Invoke(null, new object[] { ContentmentBuffId });
+                return activeBuff == null;
+            }
+            catch (Exception ex)
+            {
+                if (!_preservationErrorLogged)
+                {
+                    _preservationErrorLogged = true;
+                    _log?.LogError("PrayerClarity: Rebalanced Soul Contentment preservation failed open; stock soul decay continues. " + ex);
+                }
+                return true;
+            }
+        }
+
+        private static MemberInfo FindReadableMember(Type type, string name)
+        {
+            if (type == null) return null;
+            PropertyInfo property = type.GetProperty(name, R.Inst);
+            if (property != null && property.CanRead) return property;
+            return type.GetField(name, R.Inst);
+        }
+
+        private static object ReadMember(object instance, MemberInfo member)
+        {
+            PropertyInfo property = member as PropertyInfo;
+            if (property != null) return property.GetValue(instance, null);
+            FieldInfo field = member as FieldInfo;
+            return field == null ? null : field.GetValue(instance);
         }
 
         private static object FindSoulPortalGraph(object wgo)
