@@ -394,3 +394,76 @@ Stage fit:
 Better Save Soul is not structurally an endgame-only system. The Spiritualism tree can be entered around early church/morgue progression, and the prayer technology sits only a few nodes into that tree. Therefore this prayer can function as a **BSS-to-core-progression bridge** while Faith is still scarce. If a player postpones BSS until the main game is nearly complete, the prayer may naturally have low value; that is acceptable for a progression specialist and is preferable to forcing an artificial endgame role.
 
 This proposal is still a **design hypothesis**, not accepted production behavior.
+
+
+## 2026-09-23 Proposed player-facing wording for next BSS/Donations candidate
+
+Status: **wording proposal; no production/localization change yet**.
+
+Design rule: player-facing text should state the decision-relevant effect directly. Do not expose formulas when a simple semantic statement is sufficient.
+
+### Prayer for Donations
+
+Shared explanation:
+- RU: **«Успешная проповедь приносит дополнительные пожертвования.»**
+
+Tier effect:
+- Bronze: **«Дополнительные пожертвования: +20 серебра.»**
+- Silver: **«Дополнительные пожертвования: +50 серебра.»**
+- Gold: **«Дополнительные пожертвования: +1 золото.»**
+
+At the pulpit, keep the normal Base result section for graveyard-derived donations and show the flat specialist reward under the existing success section. No new special pulpit panel is required.
+
+### Prayer for Soul's Repose
+
+Shared explanation:
+- RU: **«При успешной проповеди преобразует Благодарность душ в Веру в соотношении 1:1. Использованная Благодарность душ расходуется.»**
+- Optional explicit safety sentence where space permits: **«При неудаче Благодарность душ не расходуется.»**
+
+Tier effect / Technology:
+- Bronze: **«Можно преобразовать до 30 Благодарности душ за проповедь.»**
+- Silver: **«Можно преобразовать до 60 Благодарности душ за проповедь.»**
+- Gold: **«Можно преобразовать до 90 Благодарности душ за проповедь.»**
+
+Preferred compact tier form when native icons are available:
+- **«До 30 (gratitude_points) -> +30 (faith)»**
+- **«До 60 (gratitude_points) -> +60 (faith)»**
+- **«До 90 (gratitude_points) -> +90 (faith)»**
+
+Pulpit requirement:
+- show the **actual pending conversion** from the player's current Gratitude, capped by prayer tier;
+- preferred single-line form under **При успехе:**:
+  - **«Преобразование душ: 73 (gratitude_points) -> +73 (faith)»**
+- if current Gratitude exceeds the tier cap, show only the amount that will actually be consumed;
+- if current Gratitude is zero, show **«Преобразование душ: нет Благодарности душ»** rather than a misleading +0 reward;
+- the ordinary church-derived Faith stays in the existing **Базовый результат** block;
+- no Gratitude is consumed on failure;
+- do not show capacity as if it were current Gratitude.
+
+This pulpit change is mandatory for accepting the mechanic because the prayer consumes a persistent player resource.
+
+### Prayer for Soul Contentment
+
+No mechanics change is currently accepted.
+
+Current wording should be tightened to make the affected resource explicit:
+- preferred RU: **«Благодарность душ за исцеление: +20%.»**
+
+This becomes more meaningful once Soul Gratitude has an explicit sink through Soul's Repose.
+
+### Prayer for Thorough Cleansing
+
+Shared explanation:
+- RU: **«Увеличивает количество Осколков грехов, получаемых при исцелении душ.»**
+
+Tier effect:
+- Bronze: **«Получаемые Осколки грехов: x2.»**
+- Silver: **«Получаемые Осколки грехов: x3.»**
+- Gold: **«Получаемые Осколки грехов: x4.»**
+
+Requirements remain part of the normal tier requirement line:
+- Bronze q30;
+- Silver q60;
+- Gold q120.
+
+No special pulpit dynamic value is required beyond the normal selected-tier effect because Thorough Cleansing does not consume a current player stockpile at sermon time.
