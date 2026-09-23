@@ -266,3 +266,17 @@ Do not commit game DLLs, full decompiled source, proprietary assets or bulk loca
 `main` is stable. Use `research/*` for evidence/design gathering and `dev/*` for runtime implementation. Unaccepted runtime behavior stays off `main`.
 
 Do not create hosted CI for routine research/docs/bookkeeping. Use hosted CI only when a concrete executable property requires it, and preserve the clean build/handoff gate for any binary given to the user.
+
+## Shared Graveyard Keeper research
+
+Cross-project Graveyard Keeper 1.407 host/runtime research is centralized in `NikichMods/GraveyardKeeperResearch`.
+
+Before starting a fresh investigation into vanilla/game-engine/UI/NGUI/data/lifecycle behavior:
+
+1. read this repository's own canonical verified-data / architecture docs first;
+2. consult `NikichMods/GraveyardKeeperResearch/docs/RESEARCH_INDEX.md` and the linked shared knowledge documents;
+3. search accepted local/shared test evidence and relevant history if the result has not yet been promoted;
+4. perform new static/runtime research or a probe only if the question remains open.
+
+Project-specific mechanics, product/UX decisions, release state, and build acceptance remain canonical in this repository. Reusable host/runtime facts that can serve multiple Graveyard Keeper mods should be promoted back into the shared research repository after acceptance rather than left only in chat, commit history, or a test log.
+
