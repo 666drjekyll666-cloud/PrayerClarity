@@ -467,3 +467,64 @@ Requirements remain part of the normal tier requirement line:
 - Gold q120.
 
 No special pulpit dynamic value is required beyond the normal selected-tier effect because Thorough Cleansing does not consume a current player stockpile at sermon time.
+
+
+## 2026-09-23 Compact icon-first wording refinement
+
+Status: **preferred presentation direction; Soul Contentment mechanics reopened**.
+
+### General rule
+
+Where the surrounding UI already establishes **Bonuses on success / При успехе**, do not repeat long labels such as “Additional donations”. Prefer the native resource icon plus the value.
+
+### Donations
+
+Preferred tier row:
+- Bronze: `[silver] +20`
+- Silver: `[silver] +50`
+- Gold: `[gold] +1` (or the native money formatter's equivalent of 100 silver)
+
+The surrounding success heading supplies the semantics. Do not render “Дополнительные пожертвования: +20 серебра” unless a surface lacks the success context.
+
+### Soul's Repose
+
+Static rule text:
+- **`[Soul Gratitude] -> [Faith] 1:1`**
+- tier-specific cap: **`Лимит: [Soul Gratitude] 30 / 60 / 90`**
+
+Preferred pulpit placement is **inside the existing success row**, not the separate “Prayer effect” area, because this is an instantaneous success transaction rather than a timed buff.
+
+Dynamic example:
+- **`При успехе (100%): [Soul Gratitude] -73 -> [Faith] +73`**
+
+This makes an explicit “on failure Gratitude is not spent” sentence unnecessary: the entire transaction is visibly scoped to sermon success.
+
+If current Gratitude is zero:
+- **`При успехе: [Soul Gratitude] 0 -> [Faith] +0`** is mechanically exact but visually weak;
+- preferred UX is a short state message such as **`Нет [Soul Gratitude] для преобразования`**, still inside the success block.
+
+### Thorough Cleansing
+
+Preferred tier effect:
+- Bronze: **`При исцелении душ: [Sin Shard] x2`**
+- Silver: **`При исцелении душ: [Sin Shard] x3`**
+- Gold: **`При исцелении душ: [Sin Shard] x4`**
+
+When the surrounding surface already establishes the healing context, the compact row may collapse to **`[Sin Shard] x2/x3/x4`**.
+
+### Soul Contentment reopened
+
+The current `+20%` Soul Gratitude gain is not merely a wording problem.
+
+Direct mechanics:
+- a fully preserved seven-sin soul can award up to 40 Gratitude before Contentment;
+- current +20% makes that 48;
+- four to five high-value souls can already generate roughly 160-200 base Gratitude in a week, above a common ~100-110 capacity unless Gratitude is being spent aggressively.
+
+With the proposed Gold Soul's Repose consuming at most 90 Gratitude weekly, ordinary high-throughput soul healing can already refill the conversion without Contentment. Therefore simply making the text prettier does not establish temptation parity.
+
+Do not finalize new Contentment wording/value yet. Research two conservative directions:
+1. larger tiered Gratitude gain for players who actively spend Gratitude through Soul's Repose / Remote Craft Control;
+2. a closer Remote Craft Control economy effect if raw generation remains cap-limited.
+
+Avoid changing Contentment merely for symmetry.
