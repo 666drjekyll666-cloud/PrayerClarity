@@ -1,5 +1,22 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.17 — candidate
+
+- Candidate scope accepted for implementation on **2026-09-23**; runtime acceptance is still pending.
+- Donations: q20 / q40 / q60; success-only flat payout **+20 / +50 / +100 silver**.
+- Soul's Repose: q30 / q60 / q90; ordinary church-derived base Faith plus success-only **1 Soul Gratitude -> 1 Faith**, capped at **30 / 60 / 90** and spending only the amount converted.
+- Soul's Repose pulpit shows the live pending transaction under the success row.
+- Soul Contentment: q20 / q40 / q60; **+50% Soul Gratitude**; duration **45 / 90 / 135 minutes** = 1 / 2 / 3 vanilla six-day weeks; passive soul-condition decay is suspended both in-corpse and after extraction, while direct Soul Extractor damage remains vanilla.
+- Thorough Cleansing: q30 / q60 / q120; native Sin Shard output scales **x2 / x3 / x4**.
+- Implementation architecture:
+  - Donations stays on the accepted fixed-money prayer-output path.
+  - Soul's Repose temporarily projects the conversion as a native fixed Faith output around `PrayLogics.CalculatePray`, then spends SG only if the native result succeeded.
+  - Contentment blocks only `Item.UpdateDurability` for `SoulBodyPart` / `Soul` while `buff_gp_increase` is active; no inventory/world scans.
+  - Thorough Cleansing temporarily projects the Silver/Gold delta into the native `increase_sin_shard_drop` input around `SoulHealingWidget.OnStartHealButtonPressed`.
+- Localization: all 11 supported Rebalanced locale overlays updated.
+- Required gate: clean CI build/package validation, then focused runtime evidence for Soul's Repose conversion/spend, Contentment preservation/resume, and Thorough Cleansing x2/x3/x4.
+- Status: **candidate build requested; not accepted, not merged, not published**.
+
 ## PrayerClarity: Rebalanced 0.2.16 — accepted for stable promotion
 
 - User acceptance/design approval: **2026-09-23**.
