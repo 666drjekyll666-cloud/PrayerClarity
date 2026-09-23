@@ -147,6 +147,7 @@ Accepted general grammar is:
 - Effect duration is semantically separated from Faith/Donations bonus information;
 - the `Crafted at` footer remains visually separated from the last tier;
 - vanilla lore comes through the verified base `b_*_d` localization seam rather than punctuation-sensitive parsing.
+- preserve prayer lore when it exists; if Rebalanced makes one mechanic clause or numeric value stale, replace or neutralize only that conflicting mechanic text and keep the non-conflicting lore rather than suppressing the whole paragraph.
 
 Rebalanced effects should fit this data-driven structure. Do not add bespoke layout code per prayer unless runtime evidence proves the generic semantic structure insufficient.
 
