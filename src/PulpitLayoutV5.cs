@@ -256,7 +256,7 @@ namespace PrayerClarity
             int extraW = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraWidth.Value));
             int containerWidth = CurrentContainerWidth(extraW);
 
-            int contextHeight = 44 + (_forecast != null && _forecast.UsesSoulGratitude ? 16 : 0);
+            int contextHeight = 44 + (_forecast != null && (_forecast.UsesSoulGratitude || _forecast.SoulGratitudeFaithCap > 0) ? 16 : 0);
             ConfigureLabel(_template,
                 PulpitTuning.ContextX.Value,
                 PulpitTuning.ContextY.Value,
