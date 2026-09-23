@@ -50,6 +50,16 @@ namespace PrayerClarity
             return ValueAfterColon(text, KeyAccent);
         }
 
+        internal static string AtomicValueAfterColon(string text)
+        {
+            return WrapFriendlyValueAfterColon(text, null);
+        }
+
+        internal static string AccentValueAfterColon(string text)
+        {
+            return WrapFriendlyValueAfterColon(text, KeyAccent);
+        }
+
         internal static string CorpseQualityCue()
         {
             // The cluster is one semantic symbol. NGUI may move the whole group to the
@@ -161,6 +171,25 @@ namespace PrayerClarity
             if (value.Length == 0) return text;
 
             return Atomic(label + " " + Color(value, color));
+        }
+
+        private static string WrapFriendlyValueAfterColon(string text, string color)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            int colon = Math.Max(text.LastIndexOf(':'), text.LastIndexOf('：'));
+            if (colon < 0 || colon + 1 >= text.Length) return text;
+
+            string label = text.Substring(0, colon + 1).TrimEnd();
+            string value = text.Substring(colon + 1).Trim();
+            if (value.Length == 0) return text;
+
+            string atomicValue = Atomic(value);
+            if (!string.IsNullOrEmpty(color))
+                atomicValue = Color(atomicValue, color);
+
+            // Keep localized prose wrappable while treating the decision value itself
+            // (for example "30 [Soul Gratitude]" or "×4") as one visual unit.
+            return label + " " + atomicValue;
         }
 
         private static bool IsHexColor(string value)
