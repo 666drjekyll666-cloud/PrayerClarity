@@ -17,13 +17,13 @@ Runtime/visual evidence:
 Root-cause assessment:
 - Soul's Repose mechanics and live craft identity remain closed by prior accepted evidence. The 0.2.19 pulpit fix targeted an intermediate writer only. `PulpitPolish.Apply` is the final presentation pass; its `PolishResultRows` rewrites the result text through `PresentationText.BuildPulpitResultRows`, which does not render `SoulGratitudeFaithCap` / `SoulGratitudeConversion`. `PolishEffectRow` then turns the intentionally empty separate effect into a visible dash.
 - Lore loss is deterministic production behavior introduced in 0.2.19: `ShouldSuppressVanillaPrayerLore` was broadened from the previously narrow stale-Contentment case to all three Rebalanced BSS prayer families and therefore affected both the combined unlock and individual prayer Technology surfaces.
-- Tooltip-width ownership is still an evidence gap. `TechnologyTooltipContentWidth` changes the generated label's `overflowWidth`; runtime evidence now proves that this is not sufficient to widen the enclosing parchment/frame. The host owner responsible for the final bubble/frame width must be verified before another production widening attempt.
+- Tooltip-width ownership is **not** an open evidence gap. Historical 1.0.12/1.0.13 research already proved the live Technology mechanics `UILabel` uses `ResizeFreely`, that its native `overflowWidth` is the effective wrapping/expansion ceiling, and that `WidgetsBubbleGUI.UpdateSize()` subsequently sizes the outer bubble/parchment from the child widgets. PrayerClarity 1.0.13 was then runtime-verified to make Technology prayer tooltips expand with content through this seam. The 0.2.19 failure is therefore a sizing-policy error, not an unknown owner: `WideMinimumAnchorWidth=360` was fed back as an `overflowWidth` ceiling, but `ResizeFreely` still chooses the natural content width and is not forced to 360 merely because the ceiling is at least 360.
 
 Assessment:
 - **0.2.19 is rejected and must not be rebuilt, merged, or published.**
 - Reuse the already-passed Soul's Repose conversion arithmetic, Soul Contentment preservation, Thorough Cleansing scaling, and natural pulpit craft-identity evidence.
 - Do not start production 0.2.20 from the unverified 0.2.19 layout assumptions.
-- Next step is research-only: verify the actual Technology tooltip width/frame owner and the exact BSS lore/mechanics composition, then implement the minimum final-renderer fix and width change against those verified owners.
+- Next step does **not** require another width-owner probe. Reuse the verified `UILabel.overflowWidth -> natural label size -> WidgetsBubbleGUI.UpdateSize() -> outer parchment` lifecycle, preserve BSS lore, and correct only the combined-tooltip sizing policy plus the final pulpit renderer. A new runtime probe is justified only if the corrected width policy needs a host behavior not already covered by that accepted evidence.
 
 ## PrayerClarity: Rebalanced 0.2.19 — visual acceptance candidate
 
