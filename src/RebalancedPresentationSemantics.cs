@@ -115,15 +115,6 @@ namespace PrayerClarity
                 return true;
             }
 
-            if (rule.SoulGratitudeFaithCaps != null &&
-                string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal))
-            {
-                int cap = rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0);
-                text = Localization.F("rebalanced.tech.souls_tier", cap);
-                semanticKey = "rebalanced:souls_conversion_cap=" + cap.ToString(CultureInfo.InvariantCulture);
-                return true;
-            }
-
             if (rule.CombatDamage != null && rule.CombatArmor != null && rule.CombatRegenPerSecond != null)
             {
                 sharedText = Localization.F("rebalanced.tech.combat_intro");
@@ -217,6 +208,15 @@ namespace PrayerClarity
                 }
 
                 text += " " + TechnologyTooltipTextStyle.CorpseQualityCue();
+                return true;
+            }
+
+            if (rule.SoulGratitudeFaithCaps != null &&
+                string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal))
+            {
+                int cap = rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0);
+                text = Localization.F("rebalanced.tech.souls_tier", cap);
+                semanticKey = "rebalanced:souls_conversion_cap=" + cap.ToString(CultureInfo.InvariantCulture);
                 return true;
             }
 
