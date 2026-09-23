@@ -1,5 +1,14 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.19 candidate
+
+- Fixes the Gold Soul's Repose pulpit presentation after runtime identity evidence proved the naturally selected prayer is the exact canonical `pray:b_souls:3` object: the live layout now preserves the success-only Soul Gratitude -> Faith transaction instead of overwriting it with the generic resource row or restoring the old stock effect sentence.
+- Keeps the accepted Soul's Repose conversion mechanics unchanged: ordinary church-derived base Faith plus success-only 1:1 Soul Gratitude conversion capped at 30 / 60 / 90.
+- Reworks mixed Rebalanced prayer Technology nodes generically by grouping tier snapshots under each localized prayer name, compacting each quality to a single semantic row, and widening only the mixed success-details body when needed.
+- Suppresses stale stock BSS lore when Rebalanced owns replacement semantics, removing conflicting `+10%`, old Soul-Gratitude base-scaling wording, and fixed `x2` text while retaining the effective tier values from the live Rebalanced rules.
+- Single-family Technology tooltips keep their existing width behavior. No new per-frame polling or broad scans are introduced.
+- Reuses already-passed runtime evidence for Soul's Repose conversion arithmetic, Soul Contentment decay protection, and Thorough Cleansing output scaling; the remaining acceptance gate is visual/readability verification only.
+
 ## PrayerClarity: Rebalanced 0.2.18 candidate
 
 - Fixes the live Soul's Repose sermon/pulpit path exposed by 0.2.17 runtime testing: the selected prayer now projects its tier's ordinary `default_1/2/3` event directly into the native `PrayLogics.CalculatePray` call, so stale runtime PrayCraft copies cannot fall back to the old Soul-Gratitude base formula.
