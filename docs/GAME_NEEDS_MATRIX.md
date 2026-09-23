@@ -602,3 +602,51 @@ Rejected as first-line directions:
 “Runtime seam” means the narrow game-code event that should own the resource mutation. It does **not** mean a user runtime test is automatically required.
 
 Current Rebalanced already observes successful `PlayerComponent.StartPrayAnimation` through `_pray_buff_success` for tier capture, but a persistent Soul Gratitude deduction must still be placed only after verifying the safest game-owned success point and one-time execution semantics. Prefer static/native inspection or a narrow automated probe first. Ask for a user in-game sermon test only if installed-game runtime evidence is genuinely required to close the remaining uncertainty.
+
+
+## 2026-09-23 Soul Contentment role audit — gain duration alone does not solve the problem
+
+Status: **design hypothesis; no production change**.
+
+The user correctly identified that simply making the current Gratitude-gain effect last two, three or four sermon weeks does not solve its core value problem. If the player naturally reaches the Soul Gratitude cap between weekly sermons, a longer +gain buff changes neither the weekly result nor the player's decision unless Gratitude is being spent unusually aggressively.
+
+Increasing +20% to larger values has the same structural weakness: it reduces the number of souls needed to refill a bounded stockpile but does not create a reason to need the extra inflow.
+
+### Better role candidate: Soul Preservation
+
+A stronger thematic rebalance is to make **Prayer for Soul's Contentment** remove or greatly reduce soul decay while active.
+
+Why this fits:
+- soul decay is a real BSS workflow pain, especially before Soul Container III;
+- Soul Container I and II only slow decay; Soul Container III is a later permanent solution;
+- the prayer technology is available before the player necessarily owns the permanent no-decay infrastructure;
+- “contented souls remain at peace” is a direct thematic extension of the prayer name;
+- the effect solves time pressure rather than printing another capped resource;
+- it remains naturally phase-limited: once permanent late BSS infrastructure solves decay, the prayer can become obsolete without being a design failure.
+
+Preferred candidate shape for further mechanics/seam research:
+- requirements remain **q20 / q40 / q60**;
+- retain a modest **+50% Soul Gratitude gain at all qualities** so the prayer still carries its stock identity;
+- add **no Soul-condition decay while active** as the meaningful primary utility;
+- quality mainly scales duration;
+- candidate duration target: approximately **1 / 2 / 3 stock sermon weeks**, rather than an extremely long 2/3/4-week ladder, because global no-decay is materially stronger than the old +Gratitude effect;
+- permanent Soul Container III remains valuable because it solves storage without spending a sermon slot.
+
+Open implementation question:
+- determine whether one narrow native decay consumer can cover both souls still in corpses and extracted Harmed/Healed soul items;
+- if only extracted souls can be covered safely, reassess value before implementation;
+- no production code until this scope is verified.
+
+Candidate copy if mechanics prove feasible:
+- shared: **«Души не теряют состояние, пока действует молитва. За их освобождение вы получаете на 50% больше [Soul Gratitude].»**
+- quality axis: duration only.
+
+### Alternatives considered
+
+1. **Very long +50% Gratitude only** — rejected as insufficient; cap saturation remains.
+2. **Larger +50/+100/+150% gain only** — rejected as first-line solution for the same reason.
+3. **Reduce Remote Craft Control Gratitude costs** — coherent but too dependent on an opaque/niche system and would not help many players.
+4. **Temporary Gratitude-cap increase** — creates expiry/over-cap semantics and risks competing with Souls-room infrastructure.
+5. **Overflow banking/conversion** — would require a new subsystem and reads as overhaul rather than rebalance.
+
+Soul Preservation is currently the preferred direction because it addresses a broad, legible BSS pain without colliding with Soul's Repose or Thorough Cleansing.
