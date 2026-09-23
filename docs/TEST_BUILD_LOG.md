@@ -1,5 +1,19 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.17 — runtime candidate
+
+- Candidate source SHA: `fbffbb4957adc186ef42d4874241ca80047e597e`.
+- Candidate ref: `candidate/rebalanced-0.2.17`.
+- GitHub Actions run: `35857253621`; job: `107168578129`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10747858765`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.17-ci-fbffbb4957adc186ef42d4874241ca80047e597e`.
+- Artifact ZIP digest: `sha256:c6f4e050a0a31a56d9ba6aa2cfe73321c172af09811c072257db65f6c0d7a236`.
+- Rebalanced DLL SHA-256: `68d19f495d44413e4f29a4b24a062b684be62bb1d1834020bbc0c2d57fcf42f2`.
+- Scope: Donations +20/+50/+100s; Soul's Repose q30/q60/q90 with capped 1:1 SG->Faith spend; Soul Contentment +50% SG + passive soul preservation for 45/90/135 min; Thorough Cleansing q30/q60/q120 with x2/x3/x4 Sin Shards.
+- Packaging labels and BUILD_INFO are stamped 0.2.17.
+- Status: **compiled candidate; runtime acceptance pending; not merged or published**.
+
 ## PrayerClarity: Rebalanced 0.2.16 — accepted for stable promotion
 
 - User acceptance/design approval: **2026-09-23**.
