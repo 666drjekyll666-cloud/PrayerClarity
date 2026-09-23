@@ -11,7 +11,7 @@
 - Artifact ZIP digest: `sha256:acc7044b3deece710607c210ee511d23d1f93a499bf6c9ab9f835e5887d7e9ed`.
 - Rebalanced DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`.
 - Scope relative to 0.2.17: live Soul's Repose event-argument projection + matching forecast event semantics; compact/wrap-safe BSS Technology tier values; red Thorough Cleansing x2/x3/x4 values; tier-neutral Thorough Cleansing description. Balance values and already-passed Thorough Cleansing runtime seam are unchanged.
-- Status: **runtime-tested and rejected; not merged or published**. Mechanics probes passed, but the natural pulpit identity/presentation path and Technology viewport presentation remain unresolved.
+- Status: **runtime-tested and rejected; not merged or published**. Mechanics probes passed; the remaining failures were localized to pulpit presentation overwrite and the combined BSS Technology layout.
 
 Research helper for the remaining gate:
 - Rebalanced Test Console **0.1.6**.
@@ -41,7 +41,7 @@ Accepted/reusable runtime evidence:
 
 Rejected/unclosed runtime evidence:
 - The natural Gold Soul's Repose pulpit with 115 SG still did **not** show the required live `SG -90 -> Faith +90` transaction. It showed the old Soul-Gratitude-dependent effect wording instead.
-- Because production Soul's Repose conversion currently identifies the selected prayer through the same live pulpit craft object, the automated probe does not by itself prove that a naturally selected sermon would receive the conversion. Do not spend a weekly sermon to test this until the live craft identity mismatch is understood.
+- Follow-up Test Console 0.1.7 closed the identity uncertainty: a naturally selected Gold Soul's Repose at the pulpit is the exact canonical `pray:b_souls:3` `CraftDefinition` reference, with `linked_sub_id=default_3`, q90, and 115 live SG. The production tier model resolves the same craft as tier 3 with a 90-SG conversion cap. Therefore the passed real `CalculatePray` conversion probe is representative of the naturally selected craft identity; no weekly sermon replay is required to re-prove that mechanic.
 - The combined BSS Technology tooltip under gamepad placement is physically taller than the viewport by roughly an additional prayer block. Position clamping cannot solve an object that is itself taller than the available screen height.
 - Thorough Cleansing still exposes stale vanilla lore ending in `(x2)`; Rebalanced tier mechanics are x2/x3/x4, so the shared lore must become tier-neutral on every supported locale.
 - The Soul's Repose item tooltip appears semantically correct in the supplied screenshot; no separate item-tooltip blocker was found.
@@ -49,7 +49,7 @@ Rejected/unclosed runtime evidence:
 Assessment:
 - **0.2.18 is rejected and must not be rebuilt under the same version.**
 - Reuse the passed conversion arithmetic, Contentment decay, and Thorough Cleansing runtime evidence.
-- Before production 0.2.19, resolve the natural pulpit craft identity with a read-only probe, then make the production resolver authoritative for both pulpit forecast and sermon conversion.
+- The natural pulpit craft identity is now resolved. The 0.2.18 visible failure is a presentation-layer overwrite: `PulpitPresentation` first builds the correct conversion row, then `PulpitLayoutV4` replaces it with the generic resource row and restores the old Soul's Repose effect sentence. Production 0.2.19 should fix that downstream rendering only; the accepted conversion arithmetic/seam remains unchanged.
 - Technology overflow design direction accepted by the user: normal tooltip unchanged when it fits; otherwise widen/reflow first, remove group-level duplicate information only if still needed, and consider columns only if the viewport still cannot contain the content. Do not shrink text into an unreadable fallback.
 
 Research helper prepared for the identity gap:
@@ -62,7 +62,9 @@ Research helper prepared for the identity gap:
 - Artifact ZIP digest: `sha256:25dd564f33b5d46612b3553693ee6a2a3b46805926754f34160a5524c475b578`.
 - DLL SHA-256: `abbb8df8c3b842ceb9215431e9ded1134c22a3114d1070eec24aaea9ba717e82`.
 - New action: **Capture live pulpit Soul's Repose identity (no sermon)**. With the pulpit open and Gold Soul's Repose selected naturally, it logs the exact live craft type/ID/event/requirement/modifiers/output, relevant GUI/craft identity members, reference equality against canonical `pray:b_souls:3`, and the production `PrayerForecast.BuildTierDetails` interpretation. It is read-only and spends no sermon/resource.
-- Required user action: replace Test Console 0.1.6 with 0.1.7, open the pulpit, naturally select Gold Soul's Repose, press F1 and the identity-capture button once, then return `LogOutput.log`. No other mechanic test should be repeated in this pass.
+- Runtime result, 2026-09-23: **PASS**. Natural pulpit Gold Soul's Repose was `CraftDefinition id=pray:b_souls:3`, `linked_sub_id=default_3`, `needs_quality=90`, `k_faith=0`, `k_money=0`, and `same_ref_as_canonical_gold=True` with live SG 115. The production tier model reported `CraftId=pray:b_souls:3`, `EventId=default_3`, tier 3, and `SoulGratitudeFaithCap=90`.
+- Consequence: the suspected live-craft identity mismatch is disproved. The remaining Soul's Repose defect is downstream presentation state, not prayer selection identity or the already-passed conversion arithmetic.
+- Status: identity question closed; Test Console 0.1.7 is no longer required for the next production visual acceptance pass.
 
 ## 2026-09-23 — Rebalanced 0.2.17 runtime result: rejected candidate
 
