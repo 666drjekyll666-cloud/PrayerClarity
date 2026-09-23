@@ -11,7 +11,22 @@ namespace PrayerClarity
                 TryBuildTierEffect,
                 TryBuildActiveEffect,
                 TryBuildTechnologyEffect,
-                TryGetSoulConversion);
+                TryGetSoulConversion,
+                TryGetEffectivePrayEvent);
+        }
+
+        private static bool TryGetEffectivePrayEvent(
+            string craftId,
+            string currentEventId,
+            out string effectiveEventId)
+        {
+            effectiveEventId = currentEventId;
+            string mapped;
+            if (!RebalancedRuleSet.TryGetEffectivePrayEventId(craftId, out mapped))
+                return false;
+
+            effectiveEventId = mapped;
+            return true;
         }
 
         private static bool TryGetSoulConversion(string craftId, out int cap, out int conversion)
