@@ -13,9 +13,90 @@ namespace PrayerClarity
         {
             if (tiers == null || tiers.Count == 0) return null;
 
+            List<List<PrayerForecast.TierDetails>> groups;
+            if (PrayerEditionSemantics.HasTechnologyProvider &&
+                TryGroupMultiplePrayerFamilies(tiers, out groups))
+            {
+                List<string> familyBlocks = new List<string>();
+                foreach (List<PrayerForecast.TierDetails> group in groups)
+                {
+                    TooltipPresentationSections family = BuildSingleFamilySections(group);
+                    if (family == null || string.IsNullOrEmpty(family.SuccessBonuses)) continue;
+
+                    string familyName = PrayerFamilyDisplayName(group[0]);
+                    string compactBody = CompactVerticalSections(family.SuccessBonuses);
+                    string block = string.IsNullOrEmpty(familyName)
+                        ? compactBody
+                        : TechnologyTooltipTextStyle.StructuralLabel(familyName) + "\n" + compactBody;
+                    AddSection(familyBlocks, block);
+                }
+
+                return new TooltipPresentationSections
+                {
+                    // Rebalanced multi-prayer technologies can contain different prayer
+                    // families. Base Faith/donations still use the ordinary dependency
+                    // map; family-specific inputs (for example SG conversion) belong in
+                    // the family's success/effect block instead of pretending to alter
+                    // the shared base result.
+                    BaseResult = PresentationText.DependencyMap(false),
+                    SuccessBonuses = familyBlocks.Count == 0
+                        ? null
+                        : string.Join("\n\n", familyBlocks.ToArray())
+                };
+            }
+
+            return BuildSingleFamilySections(tiers);
+        }
+
+        internal static string Build(List<PrayerForecast.TierDetails> tiers)
+        {
+            if (tiers == null || tiers.Count == 0) return null;
+
+            List<List<PrayerForecast.TierDetails>> groups;
+            if (PrayerEditionSemantics.HasTechnologyProvider &&
+                TryGroupMultiplePrayerFamilies(tiers, out groups))
+            {
+                List<string> familyBlocks = new List<string>();
+                foreach (List<PrayerForecast.TierDetails> group in groups)
+                {
+                    string familyBody = BuildSingleFamily(group, true);
+                    if (string.IsNullOrEmpty(familyBody)) continue;
+
+                    string familyName = PrayerFamilyDisplayName(group[0]);
+                    string block = string.IsNullOrEmpty(familyName)
+                        ? familyBody
+                        : TechnologyTooltipTextStyle.StructuralLabel(familyName) + "\n" + familyBody;
+                    AddSection(familyBlocks, block);
+                }
+
+                return familyBlocks.Count == 0 ? null : string.Join("\n\n", familyBlocks.ToArray());
+            }
+
+            return BuildSingleFamily(tiers, false);
+        }
+
+        private static TooltipPresentationSections BuildSingleFamilySections(List<PrayerForecast.TierDetails> tiers)
+        {
+            if (tiers == null || tiers.Count == 0) return null;
+
             tiers.Sort(CompareTiers);
             if (tiers.Count == 1)
                 return TooltipDetailsRenderer.BuildSingleSections(tiers[0]);
+
+            return new TooltipPresentationSections
+            {
+                BaseResult = PresentationText.DependencyMap(AllUseSoulGratitude(tiers)),
+                SuccessBonuses = BuildSingleFamily(tiers, false)
+            };
+        }
+
+        private static string BuildSingleFamily(List<PrayerForecast.TierDetails> tiers, bool compactTiers)
+        {
+            if (tiers == null || tiers.Count == 0) return null;
+
+            tiers.Sort(CompareTiers);
+            if (tiers.Count == 1)
+                return TooltipDetailsRenderer.BuildSingle(tiers[0]);
 
             List<string> success = new List<string>();
 
@@ -40,33 +121,63 @@ namespace PrayerClarity
             AddSection(success, BuildSharedDuration(tiers));
 
             foreach (PrayerForecast.TierDetails tier in tiers)
-                AddSection(success, BuildTierBlock(tier, tiers));
+                AddSection(success, BuildTierBlock(tier, tiers, compactTiers));
 
-            return new TooltipPresentationSections
-            {
-                BaseResult = PresentationText.DependencyMap(AllUseSoulGratitude(tiers)),
-                SuccessBonuses = success.Count == 0 ? null : string.Join("\n\n", success.ToArray())
-            };
+            return success.Count == 0 ? null : string.Join("\n\n", success.ToArray());
         }
 
-        internal static string Build(List<PrayerForecast.TierDetails> tiers)
+        private static bool TryGroupMultiplePrayerFamilies(
+            List<PrayerForecast.TierDetails> tiers,
+            out List<List<PrayerForecast.TierDetails>> groups)
         {
-            if (tiers == null || tiers.Count == 0) return null;
+            groups = new List<List<PrayerForecast.TierDetails>>();
+            if (tiers == null || tiers.Count == 0) return false;
 
-            tiers.Sort(CompareTiers);
-            if (tiers.Count == 1)
-                return TooltipDetailsRenderer.BuildSingle(tiers[0]);
-
-            List<string> sections = new List<string>();
-
-            AddSection(sections, BuildSuccessIntro(tiers));
-            AddSection(sections, BuildSharedEffect(tiers));
-            AddSection(sections, BuildSharedDuration(tiers));
+            Dictionary<string, List<PrayerForecast.TierDetails>> byFamily =
+                new Dictionary<string, List<PrayerForecast.TierDetails>>(StringComparer.Ordinal);
+            List<string> order = new List<string>();
 
             foreach (PrayerForecast.TierDetails tier in tiers)
-                AddSection(sections, BuildTierBlock(tier, tiers));
+            {
+                if (tier == null) continue;
+                string family = PrayerFamily(tier.CraftId);
+                if (string.IsNullOrEmpty(family)) family = tier.CraftId ?? string.Empty;
 
-            return sections.Count == 0 ? null : string.Join("\n\n", sections.ToArray());
+                List<PrayerForecast.TierDetails> group;
+                if (!byFamily.TryGetValue(family, out group))
+                {
+                    group = new List<PrayerForecast.TierDetails>();
+                    byFamily.Add(family, group);
+                    order.Add(family);
+                }
+                group.Add(tier);
+            }
+
+            if (order.Count <= 1) return false;
+            foreach (string family in order)
+                groups.Add(byFamily[family]);
+            return true;
+        }
+
+        private static string PrayerFamilyDisplayName(PrayerForecast.TierDetails tier)
+        {
+            if (tier == null) return null;
+            string family = PrayerFamily(tier.CraftId);
+            if (string.IsNullOrEmpty(family)) return null;
+
+            string localized = R.VanillaLocalize(family);
+            return string.IsNullOrEmpty(localized) || string.Equals(localized, family, StringComparison.Ordinal)
+                ? null
+                : localized;
+        }
+
+        private static string CompactVerticalSections(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            string compact = text.Replace("\r\n", "\n");
+            while (compact.IndexOf("\n\n", StringComparison.Ordinal) >= 0)
+                compact = compact.Replace("\n\n", "\n");
+            return compact;
         }
 
         private static void AddSection(List<string> sections, string section)
@@ -197,7 +308,8 @@ namespace PrayerClarity
 
         private static string BuildTierBlock(
             PrayerForecast.TierDetails tier,
-            List<PrayerForecast.TierDetails> allTiers)
+            List<PrayerForecast.TierDetails> allTiers,
+            bool compact = false)
         {
             if (tier == null) return null;
 
@@ -252,7 +364,7 @@ namespace PrayerClarity
                     Localization.F("active.timer_days", tier.SpecialDurationDays));
             }
 
-            return lines.Count == 0 ? null : string.Join("\n", lines.ToArray());
+            return lines.Count == 0 ? null : string.Join(compact ? " · " : "\n", lines.ToArray());
         }
 
         private static string FormatEditionTierEffect(PrayerForecast.TierDetails tier, string text)
