@@ -190,7 +190,7 @@ namespace PrayerClarity
                 MoneyBonusRate = R.Float(R.Get(craft, "k_money")),
                 FixedFaithBonus = fixedFaith,
                 FixedMoneyBonus = fixedMoney,
-                UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
+                UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal) || soulGratitudeFaithCap > 0,
                 SoulGratitudeFaithCap = soulGratitudeFaithCap,
                 Highlight = GetBonusHighlight(craftId),
                 SpecialSemanticKey = special == null ? null : special.SemanticKey,
