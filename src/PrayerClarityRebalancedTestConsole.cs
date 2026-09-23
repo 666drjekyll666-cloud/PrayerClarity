@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.5";
+        public const string PluginVersion = "0.1.6";
 
         private sealed class TimedEffect
         {
@@ -133,7 +133,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.5");
+                "PrayerClarity: Rebalanced Test Console 0.1.6");
         }
 
         private void DrawWindow(int id)
@@ -174,10 +174,10 @@ namespace PrayerClarityResearch
             if (GUILayout.Button("Probe 0.2.17 Soul's Repose conversion (no sermon spent)"))
                 ProbeSoulsReposeConversion();
 
-            if (GUILayout.Button("Probe 0.2.17 Soul Contentment decay (temporary items only)"))
+            if (GUILayout.Button("Probe 0.2.18 Soul Contentment decay (temporary items only)"))
                 ProbeSoulContentmentPreservation();
 
-            GUILayout.Label("Thorough Cleansing 0.2.17: activate a tier, then heal one real soul; the console logs base/actual/expected Sin Shards automatically.");
+            GUILayout.Label("Thorough Cleansing: existing diagnostic retained; 0.2.17 Gold x4 is already accepted evidence unless that seam changes.");
 
             GUILayout.Space(6f);
 
@@ -484,15 +484,21 @@ namespace PrayerClarityResearch
                 object craft = FindBalanceObjectById("craft_data", "pray:b_souls:3");
                 if (craft == null) throw new MissingMemberException("CraftDefinition pray:b_souls:3");
 
-                string eventId = Convert.ToString(Get(craft, "linked_sub_id"));
+                string projectedEventId = Convert.ToString(Get(craft, "linked_sub_id"));
                 float requirement = Convert.ToSingle(Get(craft, "needs_quality"));
                 float kFaith = Convert.ToSingle(Get(craft, "k_faith"));
-                if (!string.Equals(eventId, "default_3", StringComparison.Ordinal) ||
+                if (!string.Equals(projectedEventId, "default_3", StringComparison.Ordinal) ||
                     Math.Abs(requirement - 90f) > 0.0001f ||
                     Math.Abs(kFaith) > 0.0001f)
                     throw new InvalidOperationException(
-                        "Soul's Repose Gold projection is not the expected 0.2.17 shape: event=" +
-                        eventId + ", requirement=" + requirement + ", k_faith=" + kFaith + ".");
+                        "Soul's Repose Gold projection is not the expected 0.2.18 shape: event=" +
+                        projectedEventId + ", requirement=" + requirement + ", k_faith=" + kFaith + ".");
+
+                // Deliberately feed the old stock Souls event into the real patched
+                // CalculatePray call. 0.2.18 must replace this call-local argument from
+                // the selected b_souls tier, which is the natural pulpit failure found
+                // in 0.2.17. The probe does not manufacture the corrected result.
+                const string probeInputEventId = "pray_for_souls_3";
 
                 Type guiElementsType = FindType("GUIElements");
                 object guiElements = GetStatic(guiElementsType, "me");
@@ -515,22 +521,23 @@ namespace PrayerClarityResearch
                 object originalDrops = GetStatic(prayLogics, "_sermon_drops");
 
                 var diagnostics = new List<string>();
+                var baseFaiths = new List<int>();
                 try
                 {
                     Set(prayGui, "pray_craft", craft);
 
                     RunSoulsReposeCase(
-                        calculate, prayGui, player, eventId,
-                        73f, 999f, true, 73, 0f, "below_cap", diagnostics);
+                        calculate, prayGui, player, probeInputEventId,
+                        73f, 999f, true, 73, 0f, "below_cap", diagnostics, baseFaiths);
                     RunSoulsReposeCase(
-                        calculate, prayGui, player, eventId,
-                        136f, 999f, true, 90, 46f, "above_cap", diagnostics);
+                        calculate, prayGui, player, probeInputEventId,
+                        136f, 999f, true, 90, 46f, "above_cap", diagnostics, baseFaiths);
                     RunSoulsReposeCase(
-                        calculate, prayGui, player, eventId,
-                        0f, 999f, true, 0, 0f, "zero_sg", diagnostics);
+                        calculate, prayGui, player, probeInputEventId,
+                        0f, 999f, true, 0, 0f, "zero_sg", diagnostics, baseFaiths);
                     RunSoulsReposeCase(
-                        calculate, prayGui, player, eventId,
-                        73f, 0f, false, 0, 73f, "failure", diagnostics);
+                        calculate, prayGui, player, probeInputEventId,
+                        73f, 0f, false, 0, 73f, "failure", diagnostics, baseFaiths);
                 }
                 finally
                 {
@@ -541,8 +548,16 @@ namespace PrayerClarityResearch
                     SetStatic(prayLogics, "_sermon_drops", originalDrops);
                 }
 
-                _status = "Soul's Repose probe passed: 73->73, 136->90, zero, and deterministic failure/no-spend.";
-                _log?.LogInfo("SOULS_REPOSE_PROBE PASS " + string.Join(" | ", diagnostics.ToArray()));
+                if (baseFaiths.Count != 4 || baseFaiths.Distinct().Count() != 1)
+                    throw new InvalidOperationException(
+                        "Soul's Repose base Faith still varies with Soul Gratitude: " +
+                        string.Join(",", baseFaiths.Select(v => v.ToString()).ToArray()));
+
+                _status = "Soul's Repose live-event probe passed: stock Souls input was normalized, base Faith stayed SG-independent, conversion/spend cases passed.";
+                _log?.LogInfo(
+                    "SOULS_REPOSE_PROBE PASS input_event=" + probeInputEventId +
+                    " effective_base_faith=" + baseFaiths[0] +
+                    " | " + string.Join(" | ", diagnostics.ToArray()));
             }
             catch (Exception ex)
             {
@@ -562,7 +577,8 @@ namespace PrayerClarityResearch
             int expectedBonusFaith,
             float expectedRemainingGratitude,
             string label,
-            List<string> diagnostics)
+            List<string> diagnostics,
+            List<int> baseFaiths)
         {
             Set(player, "gratitude_points", startGratitude);
             Set(prayGui, "_cur_quality", churchQuality);
@@ -587,6 +603,7 @@ namespace PrayerClarityResearch
                 ", expected_bonus=" + expectedBonusFaith +
                 ", pass=" + pass;
             diagnostics.Add(diagnostic);
+            baseFaiths.Add(baseFaith);
             _log?.LogInfo("SOULS_REPOSE_DIAGNOSTIC " + diagnostic);
 
             if (!pass)
@@ -609,16 +626,24 @@ namespace PrayerClarityResearch
                 if (soulDefinition == null || soulBodyPartDefinition == null || bodyDefinition == null)
                     throw new InvalidOperationException("Could not find decaying Soul, SoulBodyPart and Body definitions in GameBalance.items_data.");
 
-                Type itemType = FindType("Item");
-                ConstructorInfo ctor = itemType?.GetConstructor(new[] { typeof(string), typeof(int) });
-                MethodInfo updateDurability = itemType?.GetMethod(
-                    "UpdateDurability",
+                Type itemType = FindGameType("Item");
+                ConstructorInfo ctor = itemType?.GetConstructor(
                     AnyInstance,
                     null,
-                    new[] { typeof(float), typeof(float) },
+                    new[] { typeof(string), typeof(int) },
                     null);
+                MethodInfo updateDurability = itemType?.GetMethods(AnyInstance)
+                    .FirstOrDefault(m =>
+                    {
+                        if (m.Name != "UpdateDurability") return false;
+                        ParameterInfo[] p = m.GetParameters();
+                        return p.Length == 2 &&
+                               p[0].ParameterType == typeof(float) &&
+                               p[1].ParameterType == typeof(float);
+                    });
                 if (ctor == null || updateDurability == null)
-                    throw new MissingMethodException("Item(string,int) / Item.UpdateDurability(float,float)");
+                    throw new MissingMethodException(
+                        "Assembly-CSharp Item(string,int) / Item.UpdateDurability(float,float)");
 
                 string[] labels = { "Soul", "SoulBodyPart", "Body" };
                 object[] definitions = { soulDefinition, soulBodyPartDefinition, bodyDefinition };
@@ -1490,6 +1515,30 @@ namespace PrayerClarityResearch
             }
 
             return null;
+        }
+
+        private static Type FindGameType(string fullOrShortName)
+        {
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => string.Equals(a.GetName().Name, "Assembly-CSharp", StringComparison.Ordinal));
+            if (assembly == null) return null;
+
+            Type direct = assembly.GetType(fullOrShortName, false);
+            if (direct != null) return direct;
+
+            Type[] types;
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types;
+            }
+
+            return types.FirstOrDefault(t =>
+                t != null &&
+                (t.FullName == fullOrShortName || t.Name == fullOrShortName));
         }
 
         private static Type FindType(string fullOrShortName)
