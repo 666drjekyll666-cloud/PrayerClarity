@@ -1,5 +1,43 @@
 # Test / Research Build Log
 
+
+## 2026-09-24 — Rebalanced 0.2.22 prayer-carousel result accepted
+
+- User runtime acceptance: the production Rebalanced 0.2.22 DLL reproduced the accepted research prototype exactly; the user reported that navigation and presentation work correctly as designed.
+- Frozen accepted ref: `accepted/rebalanced-0.2.22`.
+- Exact tested source SHA: `302104a00a6ffef03b1c3746faa7781b84da2c71`.
+- GitHub Actions run: `35989524570`; result: **success**, Rebalanced and Vanilla sibling builds both 0 warnings / 0 errors.
+- Artifact ID: `10803935926`.
+- Artifact: `PrayerClarity-rebalanced-0.2.22-ci-302104a00a6ffef03b1c3746faa7781b84da2c71`.
+- Artifact ZIP digest: `sha256:e031e3f5fa5e3ce44d4550b2cbb3c8d01172e6b9f28e734ae167d338c91b3d7b`.
+- Accepted Rebalanced DLL SHA-256: `19819097d7c90ee3ddfd4385cf8d2546a83e9c2bb78a1d1427e6a60bc0bcbaf6`.
+- Vanilla 1.0.32 sibling DLL from the same build: `742c06785b92deeb24a9251906e30f3c97596620921989530e87263ee2aaa21c`.
+- Accepted behavior for the Better Save Soul three-prayer Technology node:
+  - gamepad focus remains on the real parent Technology;
+  - exactly one existing child `TechUnlock.GetTooltip` is shown at a time;
+  - the selected child icon remains fully visible while the others are dimmed;
+  - Right traverses prayer 1 -> 2 -> 3 and then falls through to stock tree navigation;
+  - Left traverses prayer 3 -> 2 -> 1 and then falls through to stock tree navigation;
+  - entering horizontally selects the boundary child corresponding to the direction of entry;
+  - Up/Down and Technology purchase/progression state remain stock;
+  - no save, cost, unlock, prayer-mechanics, or DLC progression state is written.
+- This closes the BSS-specific UX hypothesis. The result is retained as exact accepted runtime evidence while the immediately following candidate tests the user's requested generalization to all prayer-bearing Technology nodes and to PrayerClarity: Vanilla.
+
+
+## PrayerClarity: Rebalanced 0.2.23 / Vanilla 1.0.33 — shared prayer-Technology navigation candidate
+
+- Product direction from the accepted 0.2.22 test: the one-child-at-a-time controller interaction is substantially more readable and feels native enough to generalize, but applying it to every Technology would be excessive.
+- Scope rule: on gamepad only, activate the carousel for a Technology when it has at least two visible unlocks and at least one visible unlock resolves through PrayerClarity's existing prayer-craft path.
+- Once activated, **all visible unlocks in that prayer-bearing Technology** participate in the horizontal sequence, including non-prayer perks/buildings/recipes. This keeps icon highlight and tooltip ownership one-to-one instead of leaving a mixed node partly combined.
+- Activation is data-driven; no Technology ID/name allowlist is introduced.
+- Each selected child is rendered through its existing `TechUnlock.GetTooltip` path. Prayer unlocks therefore continue through PrayerClarity's semantic Technology formatter; non-prayer unlocks remain stock.
+- Left/Right moves between child unlocks until an outer edge, then the original `BaseGUI.OnPressedLeft/Right -> GamepadNavigationController.Navigate` path runs unchanged.
+- Technologies with no prayer remain entirely stock. A prayer-bearing Technology with only one visible unlock also remains stock because there is nothing to disambiguate.
+- Mouse behavior remains stock: child unlocks already own independent tooltips in 1.407.
+- The same shared source is compiled into Rebalanced 0.2.23 and Vanilla 1.0.33. No prayer mechanics, balance values, localization strings, Technology costs, unlock state, or save state change.
+- Acceptance gate: one mixed prayer Technology with 2-3 visible child icons must prove icon/tooltip traversal and boundary exit; then spot-check the same behavior in the Vanilla sibling. BSS itself does not need another mechanics or architecture replay.
+- Status: **candidate implementation prepared; CI/runtime acceptance pending**.
+
 ## PrayerClarity: Rebalanced 0.2.20 — visual acceptance candidate
 
 - Exact production source SHA: `20781bfab72953694ce32c69ec2b07bcc85496ca`.
