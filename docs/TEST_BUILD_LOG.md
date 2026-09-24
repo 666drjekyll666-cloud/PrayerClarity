@@ -22,6 +22,18 @@
   3. with keyboard/mouse, spot-check the three individual BSS prayer Technology tooltips: Soul's Repose lore remains; Soul Contentment lore remains with the current Rebalanced percentage rather than stock 10%; Thorough Cleansing lore remains but no longer contains the stale parenthetical `(x2)`, while the red tier values remain x2/x3/x4.
 - No sermon, soul healing, decay wait, or Test Console run is required for this candidate.
 - Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+- Runtime/visual result, 2026-09-24: **partial pass / candidate not accepted**.
+  - Pulpit final-writer repair passed visually: Gold Soul's Repose with 115 SG now shows the live 90 SG -> 90 Faith success transaction and the stray `Effect: —` row is gone.
+  - The compact arrow-only pulpit wording is mechanically correct but reads too much like a rebus. Product direction: keep the dynamic amount, but make the transaction explicit in words because this surface has sufficient space.
+  - Combined BSS Technology tooltip still exceeds the viewport under the user's current mod set; the expected widening is not visible. The user has a separate Companion mod that repositions tooltips to the lower-left. Because it touches the same final tooltip surface, one controlled A/B without Companion is required before attributing the remaining geometry failure to PrayerClarity.
+  - Individual Soul's Repose Technology wording is still too ambiguous: “each spent Soul Gratitude” does not clearly tell a player who has not yet used the sermon that the sermon consumes their currently stored Soul Gratitude. Reword around “stored/current Soul Gratitude is converted into Faith 1:1 on a successful sermon” plus the existing tier cap.
+  - Soul Contentment should keep a short thematic lore sentence about preserving soul condition; do not duplicate the +50% magnitude in lore because the exact effect block already owns it.
+  - Thorough Cleansing still shows the stock fixed `(x2)` inside lore, so the 0.2.20 regex normalization did not satisfy the observable property. Do not add another punctuation/Unicode-sensitive regex guess; use an edition-owned BSS lore string or another exact-key replacement with verified localized output.
+  - Contentment duration is now explicitly reopened as a visual emphasis question because +50% is invariant across qualities and duration is the only tier ladder (4/8/12 days in the user's Longer Days presentation). If emphasized, color only the duration value, not the label.
+- Width next step: test the same combined BSS Technology tooltip once with Companion disabled. If it expands/fits, investigate compatibility/patch ordering with Companion. If it still does not, create a narrow read-only Technology geometry/patch-owner probe; do not ship another width-policy production guess.
+- No mechanics retest is required.
+- Status after this visual pass: **0.2.20 remains rejected for promotion; pulpit mechanics presentation path is proved, combined Technology layout and BSS wording/lore still require follow-up.**
+
 
 ## 2026-09-23 — Rebalanced 0.2.19 runtime visual result: rejected candidate
 
