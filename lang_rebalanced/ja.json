@@ -9,7 +9,13 @@
   "rebalanced.active.repose.silver": "半分の場合で最高品質の死体が保証される",
   "rebalanced.active.repose.gold": "ロバは最高品質の死体を必ず運んでくる",
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
-  "rebalanced.active.gratitude": "魂の治療：(gratitude_points) +{0:0}%",
+  "rebalanced.active.gratitude": "魂の状態は時間経過で悪化しません。死体の中でも、抽出後でも有効です。魂を解放すると(gratitude_points)が+{0:0}%増えます。",
   "rebalanced.tech.plant_tier": "植物の成長時間：-{0:0}%",
-  "rebalanced.tech.souls_intro": "(gratitude_points)が多いほど、信仰ボーナスが増えます。"
+  "rebalanced.tech.souls_intro": "成功時、消費した(gratitude_points)1につき(faith)1を得ます。",
+  "rebalanced.tech.souls_tier": "説教ごとの上限: {0} (gratitude_points)",
+  "rebalanced.item.souls_repose": "成功時、消費した(gratitude_points)1につき(faith)1を得ます。1回の説教で最大{0}(gratitude_points)を消費できます。",
+  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion_empty": "変換できる(gratitude_points)がありません",
+  "rebalanced.tech.sin_shard_intro": "魂の治療で得られる罪の欠片の数が増加します。",
+  "rebalanced.active.sin_shard": "魂の治療で得る罪の欠片: ×{0:0.#}"
 }
