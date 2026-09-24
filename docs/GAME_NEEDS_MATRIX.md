@@ -650,3 +650,26 @@ Candidate copy if mechanics prove feasible:
 5. **Overflow banking/conversion** — would require a new subsystem and reads as overhaul rather than rebalance.
 
 Soul Preservation is currently the preferred direction because it addresses a broad, legible BSS pain without colliding with Soul's Repose or Thorough Cleansing.
+
+## 2026-09-24 Combo follow-up after Donations 20 / 50 / 100 silver
+
+Status: **balance question reopened; no production change accepted**.
+
+The current candidate rule source has:
+- Donations: flat success premium **+20 / +50 / +100 silver**;
+- Combo Faith: **+100 / +150 / +200%**;
+- Combo donations: **+100 / +200 / +300%**;
+- base donations: `GQ * (0.03 + 0.01 * Cardinal)`.
+
+This materially changes the old Donations-vs-Combo crossover analysis that was based on +5/+15/+30 silver.
+
+With Cardinal active, pure-money crossover now occurs only when the Combo percentage bonus equals the specialist flat premium:
+- Bronze: `0.04 * GQ * 1 = 20s` -> **GQ 500**;
+- Silver: `0.04 * GQ * 2 = 50s` -> **GQ 625**;
+- Gold: `0.04 * GQ * 3 = 100s` -> **GQ ~833**.
+
+Without Cardinal the corresponding crossovers are approximately **GQ 667 / 833 / 1111**.
+
+At the user's current screenshot GQ403, Gold Combo's money premium is about **48.36 silver with Cardinal** (36.27 without), versus the Gold Donations **+100 silver** premium. Combo also pays its large Faith premium, so this does not by itself prove that Combo is weak as a whole; it does prove that its money half is now much less competitive than in the previous power-budget model.
+
+Design implication: reopen Combo as a **midgame generalist package**, not as a request to match the money specialist. The next audit should ask whether its money contribution is still decision-relevant in the q40/q60/q80 window while preserving the rule “specialist is best at one, Combo is good at both.” Do not bundle this balance question into the current BSS tooltip/presentation repair.
