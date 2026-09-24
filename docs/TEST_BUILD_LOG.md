@@ -22,6 +22,13 @@
 - Required runtime acceptance is one visual check only: with the same 2560x1440 setup and gamepad placement, open Technology -> Spiritualism and highlight the combined Better Save Soul prayer node. Confirm the parchment is visibly wider, the complete tooltip fits inside the viewport, and the individual prayer blocks remain readable. No sermon/mechanics replay is required.
 - The 0.2.20 wording/lore follow-ups remain intentionally separate from this width candidate; do not use this visual pass to infer they were fixed.
 - Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+- Runtime visual result, 2026-09-24: **mechanism proved, candidate rejected for UX**.
+  - The combined BSS parchment now becomes dramatically wider, proving the accumulated-row promotion reaches the live Technology width path.
+  - Width-only expansion is not sufficient as the final product solution: even after widening, the three complete prayer blocks still extend below the viewport, while the parchment becomes visually excessive in width.
+  - This changes the design conclusion. Do not keep increasing the width ceiling and do not force a giant minimum width. The remaining problem is structural vertical redundancy in the combined three-prayer tooltip.
+  - The observed combined shape repeats identical/shared scaffolding for each prayer: Base Result header + Faith/Donations dependency map, success framing, and crafting destination. A compact combined-BSS presentation should preserve all three prayer titles, lore, exact effects and tier values while rendering shared/common scaffolding once.
+  - 0.2.21 therefore remains **not accepted**. Its runtime evidence is retained as proof that the width marker/overflowWidth path is now correctly reached for accumulated BSS rows.
+
 
 ## PrayerClarity: Rebalanced 0.2.20 — visual acceptance candidate
 
