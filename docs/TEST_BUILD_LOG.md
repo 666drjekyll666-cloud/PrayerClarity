@@ -24,6 +24,22 @@
 - This closes the BSS-specific UX hypothesis. The result is retained as exact accepted runtime evidence while the immediately following candidate tests the user's requested generalization to all prayer-bearing Technology nodes and to PrayerClarity: Vanilla.
 
 
+## 2026-09-24 — Rebalanced 0.2.23 / Vanilla 1.0.33 accepted
+
+- User runtime acceptance: explicit confirmation that the generalized prayer-Technology navigation works correctly in both Rebalanced and Vanilla.
+- Frozen refs: `accepted/rebalanced-0.2.23` and `accepted/vanilla-1.0.33`.
+- Exact tested source SHA for both sibling DLLs: `93b66e747ffe1685003afb894b24f14416edb8c0`.
+- GitHub Actions run: `35991353623`; build result: **success**, both sibling builds 0 warnings / 0 errors.
+- Artifact ID: `10803884921`.
+- Artifact ZIP digest: `sha256:b4972906bd7c22d9f8b210f9830f46a745a81216b805899bc0fedb093361cce5`.
+- Rebalanced 0.2.23 DLL SHA-256: `22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796`.
+- Vanilla 1.0.33 DLL SHA-256: `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- Accepted scope: on gamepad, any Technology with at least two visible unlocks and at least one prayer becomes a horizontal one-unlock-at-a-time sequence across all of that node's visible unlocks. Boundary Left/Right falls through to stock tree navigation; Up/Down remains stock; mouse behavior remains stock.
+- The selected unlock's existing `TechUnlock.GetTooltip` remains authoritative. PrayerClarity only changes the controller presentation/navigation layer; Technology costs, unlock state, prayer mechanics, save state and non-prayer Technologies are unchanged.
+- No additional runtime replay is required for stable promotion.
+- Stable publication must reuse the exact accepted DLL bytes above; do not rebuild these numbered versions.
+
+
 ## PrayerClarity: Rebalanced 0.2.23 / Vanilla 1.0.33 — shared prayer-Technology navigation candidate
 
 - Product direction from the accepted 0.2.22 test: the one-child-at-a-time controller interaction is substantially more readable and feels native enough to generalize, but applying it to every Technology would be excessive.
