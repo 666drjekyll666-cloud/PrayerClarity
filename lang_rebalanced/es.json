@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Aumenta la cantidad de Fragmentos de pecado obtenidos al sanar almas.",
   "rebalanced.active.sin_shard": "Fragmentos de pecado al sanar almas: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) al liberar almas: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.",
-  "rebalanced.tech.sin_shard_lore": "Una limpieza más minuciosa deja más Fragmentos de pecado al sanar un alma."
+  "rebalanced.tech.gratitude_lore": "Unas palabras sobre el descanso para quienes han tenido especialmente poco de él.",
+  "rebalanced.tech.sin_shard_lore": "Unas palabras sobre por qué conviene purificar las almas a fondo.",
+  "rebalanced.tech.gratitude_effect": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.\\n(gratitude_points) al liberar almas: +{0:0}%"
 }
