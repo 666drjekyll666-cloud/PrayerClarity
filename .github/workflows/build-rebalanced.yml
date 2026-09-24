@@ -32,12 +32,22 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
+          required_rebalanced = {
+              'rebalanced.tech.gratitude_intro',
+              'rebalanced.tech.gratitude_lore',
+              'rebalanced.tech.sin_shard_lore',
+              'rebalanced.tech.souls_intro',
+              'rebalanced.pulpit.souls_conversion',
+          }
           for root in (Path('lang'), Path('lang_rebalanced')):
               files = sorted(root.glob('*.json'))
               assert len(files) == 11, (root, len(files))
               for path in files:
                   with path.open(encoding='utf-8') as fh:
-                      json.load(fh)
+                      data = json.load(fh)
+                  if root.name == 'lang_rebalanced':
+                      missing = sorted(required_rebalanced - set(data))
+                      assert not missing, (path, missing)
           PY
       - name: Restore sibling projects
         run: |
@@ -73,7 +83,7 @@ jobs:
           done
 
           mkdir -p dist
-          reb_handoff='PrayerClarity.Rebalanced-0.2.23-ci.dll'
+          reb_handoff='PrayerClarity.Rebalanced-0.2.24-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
           van_handoff='PrayerClarity-1.0.33-ci.dll'
           van_canonical='PrayerClarity.dll'
@@ -89,6 +99,9 @@ jobs:
           van_canonical_hash=$(sha256sum "dist/$van_canonical" | awk '{print $1}')
           test "$reb_hash" = "$reb_canonical_hash"
           test "$van_hash" = "$van_canonical_hash"
+          # Vanilla sources are intentionally unchanged in this Rebalanced-only
+          # presentation candidate. Enforce numbered-binary immutability explicitly.
+          test "$van_hash" = "30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a"
 
           {
             echo "Source SHA: $GITHUB_SHA"
@@ -102,7 +115,7 @@ jobs:
             echo "DLL SHA-256: $van_hash"
             echo
             echo "PrayerClarity: Rebalanced"
-            echo "Version: 0.2.23"
+            echo "Version: 0.2.24"
             echo "Handoff DLL: $reb_handoff"
             echo "Canonical DLL: $reb_canonical"
             echo "DLL SHA-256: $reb_hash"
@@ -114,12 +127,12 @@ jobs:
           echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
           echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
           echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity: Rebalanced 0.2.23 DLL SHA-256: $reb_hash"
+          echo "PrayerClarity: Rebalanced 0.2.24 DLL SHA-256: $reb_hash"
           echo "PrayerClarity: Vanilla 1.0.33 DLL SHA-256: $van_hash"
       - name: Upload shared runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-rebalanced-0.2.23-ci-${{ github.sha }}
+          name: PrayerClarity-rebalanced-0.2.24-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
