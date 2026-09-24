@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Aumenta il numero di Frammenti del peccato ottenuti curando le anime.",
   "rebalanced.active.sin_shard": "Frammenti del peccato dalla cura delle anime: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) ottenuti liberando le anime: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "La condizione delle anime non peggiora nel tempo, né nel corpo né dopo l'estrazione.",
-  "rebalanced.tech.sin_shard_lore": "Una purificazione più approfondita lascia più Frammenti del peccato dopo aver curato un'anima."
+  "rebalanced.tech.gratitude_lore": "Qualche parola sul riposo per chi ne ha avuto particolarmente poco.",
+  "rebalanced.tech.sin_shard_lore": "Qualche parola sul perché sia meglio purificare le anime a fondo.",
+  "rebalanced.tech.gratitude_effect": "La condizione delle anime non peggiora con il tempo — né nel corpo né dopo l'estrazione.\\n(gratitude_points) ottenuti liberando le anime: +{0:0}%"
 }
