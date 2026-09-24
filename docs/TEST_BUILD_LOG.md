@@ -1,5 +1,28 @@
 # Test / Research Build Log
 
+## PrayerClarity: Rebalanced 0.2.21 — combined BSS Technology width candidate
+
+- Exact production source SHA: `1d8eb667d4ddbc37efd24cbd84606f1a43e19606`.
+- Candidate ref: `candidate/rebalanced-0.2.21`.
+- GitHub Actions run: `35941541643`; build result: **success**.
+- Artifact ID: `10784743335`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.21-ci-1d8eb667d4ddbc37efd24cbd84606f1a43e19606`.
+- Artifact ZIP digest: `sha256:34516584e6a13a0318a644414be47ed7de0ce4d430405326ee2cad42f36aef22`.
+- Rebalanced DLL SHA-256: `67af33a62387fe481d73e2e22f90dd951568325df4b2dde6ce8758933859baf7`.
+- Vanilla sibling DLL SHA-256 from the same shared-source build: `2a1a531ed766a3fbec4dbb0e2497cbc71a62d72024562e47e4ae55fb88800fb9`.
+- Triggering evidence: Technology Tooltip Probe 0.1.0 proved the combined BSS tooltip reached six PrayerClarity `max_width=900` rows, but every live post-draw label still used only `overflowWidth=168-180`; the final bubble was 178 x 910 against a 1256 x 696 safe viewport.
+- Root cause: the combined tooltip is accumulated from separate BSS-family Technology passes. The 0.2.20 policy required multiple BSS families inside one `ResolvePrayerCrafts` result, so every family pass stayed narrow and never marked either its mechanics rows or lore row for the verified 520-unit `UILabel.overflowWidth` path.
+- 0.2.21 change: after each BSS family pass, inspect the already-accumulated Tooltip data. Once at least two BSS prayer blocks are present (at least four PrayerClarity-owned width rows plus two Base Result headers), mark all accumulated PrayerClarity mechanics rows and the retained lore row immediately preceding each Base Result header for the existing wide-layout marker.
+- Preserved invariants:
+  - no prayer mechanics, requirements, payout formulas, durations, save state, or buff behavior changed;
+  - no manual final label width/height is assigned;
+  - no new placement algorithm or per-frame scan was added;
+  - ordinary single-prayer Technology tooltips keep the existing content-driven atomic-width policy;
+  - Vanilla remains behaviorally gated out because the promotion requires the Rebalanced Technology provider and BSS prayer families.
+- Required runtime acceptance is one visual check only: with the same 2560x1440 setup and gamepad placement, open Technology -> Spiritualism and highlight the combined Better Save Soul prayer node. Confirm the parchment is visibly wider, the complete tooltip fits inside the viewport, and the individual prayer blocks remain readable. No sermon/mechanics replay is required.
+- The 0.2.20 wording/lore follow-ups remain intentionally separate from this width candidate; do not use this visual pass to infer they were fixed.
+- Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+
 ## PrayerClarity: Rebalanced 0.2.20 — visual acceptance candidate
 
 - Exact production source SHA: `20781bfab72953694ce32c69ec2b07bcc85496ca`.
