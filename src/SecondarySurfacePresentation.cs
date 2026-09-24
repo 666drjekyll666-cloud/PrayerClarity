@@ -249,6 +249,7 @@ namespace PrayerClarity
                 }
 
                 NormalizeRebalancedBssLoreRows(__0, crafts, preferWideLayout);
+                PromoteAccumulatedBssWideLayout(__0, crafts);
                 TechnologyTooltipViewportClamp.MarkTechnologyTooltip(__0);
             }
             catch (Exception ex)
@@ -459,6 +460,89 @@ namespace PrayerClarity
             return string.Equals(family, "b_souls", StringComparison.Ordinal) ||
                    string.Equals(family, "b_grat_points_incr", StringComparison.Ordinal) ||
                    string.Equals(family, "b_sin_shard", StringComparison.Ordinal);
+        }
+
+        private static void PromoteAccumulatedBssWideLayout(
+            object tooltip,
+            List<object> currentCrafts)
+        {
+            if (!PrayerEditionSemantics.HasTechnologyProvider ||
+                tooltip == null ||
+                currentCrafts == null ||
+                currentCrafts.Count == 0)
+                return;
+
+            // The Better Save Soul Technology tooltip is assembled from separate
+            // per-family TechUnlock.GetTooltip passes. The 0.2.20 policy looked for
+            // multiple BSS families inside one pass, so every pass stayed narrow even
+            // though the final Tooltip contained all three prayer blocks.
+            //
+            // Detect the combined shape from PrayerClarity-owned rows already
+            // accumulated in the shared Tooltip. A single prayer contributes exactly
+            // two max-width rows (Base Result + success body); two or more prayer
+            // blocks therefore produce at least four. Keep the policy gated to BSS
+            // families so unrelated combined Technology tooltips retain their current
+            // layout.
+            foreach (object craft in currentCrafts)
+            {
+                if (!IsRebalancedBssFamily(PrayerFamilyFromCraftId(R.Id(craft))))
+                    return;
+            }
+
+            object data = R.Get(tooltip, "data");
+            IList list = data == null ? null : R.Get(data, "data_list") as IList;
+            if (list == null || list.Count == 0) return;
+
+            if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
+            if (_bubbleTextType == null) return;
+
+            int ownedBodyRows = 0;
+            int baseHeaders = 0;
+            string baseHeader = Localization.F("tech.base_result");
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                object row = list[i];
+                if (row == null || !_bubbleTextType.IsInstanceOfType(row)) continue;
+
+                if (R.Int(R.Get(row, "max_width")) == TechnologyTooltipMaxWidth)
+                    ownedBodyRows++;
+
+                string text = R.Get(row, "text") as string;
+                if (string.Equals(text, baseHeader, StringComparison.Ordinal))
+                    baseHeaders++;
+            }
+
+            if (ownedBodyRows < 4 || baseHeaders < 2) return;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                object row = list[i];
+                if (row == null || !_bubbleTextType.IsInstanceOfType(row)) continue;
+
+                if (R.Int(R.Get(row, "max_width")) == TechnologyTooltipMaxWidth)
+                {
+                    TechnologyTooltipContentWidth.PreferWideLayout(row);
+                    continue;
+                }
+
+                string text = R.Get(row, "text") as string;
+                if (!string.Equals(text, baseHeader, StringComparison.Ordinal) || i <= 0)
+                    continue;
+
+                // In the verified BSS block shape the retained lore row is immediately
+                // before "Base Result". Let that real visible prose participate in the
+                // same native ResizeFreely/overflowWidth path so widening actually
+                // reduces the aggregate tooltip height.
+                object lore = list[i - 1];
+                if (lore == null || !_bubbleTextType.IsInstanceOfType(lore)) continue;
+
+                string loreText = R.Get(lore, "text") as string;
+                if (string.IsNullOrEmpty(loreText)) continue;
+
+                R.Set(lore, "max_width", TechnologyTooltipMaxWidth);
+                TechnologyTooltipContentWidth.PreferWideLayout(lore);
+            }
         }
 
         private static string PrayerFamilyFromCraftId(string craftId)
