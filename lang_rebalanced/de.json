@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Erhöht die Anzahl der Sündensplitter, die du beim Heilen von Seelen erhältst.",
   "rebalanced.active.sin_shard": "Sündensplitter beim Heilen von Seelen: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht - weder im Körper noch nach der Extraktion.",
-  "rebalanced.tech.sin_shard_lore": "Eine gründlichere Reinigung hinterlässt nach der Heilung einer Seele mehr Sündensplitter."
+  "rebalanced.tech.gratitude_lore": "Ein paar Worte über Ruhe für jene, denen davon besonders wenig vergönnt war.",
+  "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
+  "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%"
 }
