@@ -39,6 +39,8 @@ namespace PrayerClarity
             internal float GraveyardQuality;
             internal float SoulGratitude;
             internal bool UsesSoulGratitude;
+            internal int SoulGratitudeFaithCap;
+            internal int SoulGratitudeConversion;
             internal BonusHighlight Highlight;
             internal string SpecialText;
             // Leading effect icon only. For timed effects this is the exact
@@ -57,6 +59,7 @@ namespace PrayerClarity
             internal int FixedFaithBonus;
             internal float FixedMoneyBonus;
             internal bool UsesSoulGratitude;
+            internal int SoulGratitudeFaithCap;
             internal BonusHighlight Highlight;
 
             // Structured special-effect data for property-first tooltip comparison.
@@ -112,7 +115,16 @@ namespace PrayerClarity
             float baseMoney = Mathf.Max(0f, R.SmartFloat(R.Get(prayEvent, "money")));
 
             // Preserve the verified exact side-effect-free calculator unchanged.
-            int bonusFaith = tier.FixedFaithBonus + Mathf.RoundToInt(baseFaith * tier.FaithBonusRate);
+            // Edition-specific mechanics can contribute through the shared provider
+            // without making the Vanilla sibling depend on Rebalanced types.
+            int dynamicCap;
+            int soulConversion;
+            if (!PrayerEditionSemantics.TryGetSoulConversion(tier.CraftId, out dynamicCap, out soulConversion))
+            {
+                dynamicCap = 0;
+                soulConversion = 0;
+            }
+            int bonusFaith = tier.FixedFaithBonus + Mathf.RoundToInt(baseFaith * tier.FaithBonusRate) + soulConversion;
             float bonusMoney = tier.FixedMoneyBonus + Mathf.Round(baseMoney * tier.MoneyBonusRate * 100f) / 100f;
 
             return new Result
@@ -129,8 +141,12 @@ namespace PrayerClarity
                 FixedMoneyBonus = tier.FixedMoneyBonus,
                 ChancePercent = Mathf.RoundToInt(Mathf.Clamp01(chance) * 100f),
                 GraveyardQuality = R.ZoneQuality("graveyard"),
-                SoulGratitude = tier.UsesSoulGratitude ? R.PlayerParam("gratitude_points") : 0f,
+                SoulGratitude = (tier.UsesSoulGratitude || tier.SoulGratitudeFaithCap > 0)
+                    ? R.PlayerParam("gratitude_points")
+                    : 0f,
                 UsesSoulGratitude = tier.UsesSoulGratitude,
+                SoulGratitudeFaithCap = dynamicCap,
+                SoulGratitudeConversion = soulConversion,
                 Highlight = tier.Highlight,
                 SpecialText = tier.SpecialText,
                 SpecialIconName = tier.SpecialIconName
@@ -147,6 +163,10 @@ namespace PrayerClarity
             string eventId = R.Get(craft, "linked_sub_id") as string;
             if (string.IsNullOrEmpty(eventId)) return null;
 
+            string effectiveEventId;
+            if (PrayerEditionSemantics.TryGetEffectivePrayEvent(craftId, eventId, out effectiveEventId))
+                eventId = effectiveEventId;
+
             Localization.UseCurrentGameLanguage();
 
             int fixedFaith = 0;
@@ -155,7 +175,11 @@ namespace PrayerClarity
             CollectOutputs(craft, ref fixedFaith, ref fixedMoney, rewards);
 
             int qualityTier = ParseQualityTier(craftId);
-            SpecialInfo special = BuildSpecial(craft, eventId, rewards);
+            int soulGratitudeFaithCap;
+            int ignoredConversion;
+            if (!PrayerEditionSemantics.TryGetSoulConversion(craftId, out soulGratitudeFaithCap, out ignoredConversion))
+                soulGratitudeFaithCap = 0;
+            SpecialInfo special = BuildSpecial(craft, eventId, rewards, soulGratitudeFaithCap);
             return new TierDetails
             {
                 CraftId = craftId,
@@ -167,6 +191,7 @@ namespace PrayerClarity
                 FixedFaithBonus = fixedFaith,
                 FixedMoneyBonus = fixedMoney,
                 UsesSoulGratitude = eventId.StartsWith("pray_for_souls_", StringComparison.Ordinal),
+                SoulGratitudeFaithCap = soulGratitudeFaithCap,
                 Highlight = GetBonusHighlight(craftId),
                 SpecialSemanticKey = special == null ? null : special.SemanticKey,
                 SpecialCoreText = special == null ? null : special.CoreText,
@@ -252,7 +277,7 @@ namespace PrayerClarity
             }
         }
 
-        private static SpecialInfo BuildSpecial(object craft, string eventId, List<RewardItem> rewards)
+        private static SpecialInfo BuildSpecial(object craft, string eventId, List<RewardItem> rewards, int soulGratitudeFaithCap)
         {
             List<string> displayParts = new List<string>();
             List<string> coreParts = new List<string>();
@@ -272,6 +297,16 @@ namespace PrayerClarity
             }
 
             string craftId = R.Id(craft) ?? string.Empty;
+
+            if (soulGratitudeFaithCap > 0)
+            {
+                string soulsText = Localization.F("rebalanced.item.souls_repose", soulGratitudeFaithCap);
+                displayParts.Add(soulsText);
+                coreParts.Add(soulsText);
+                semanticParts.Add("rebalanced:souls_conversion_cap=" +
+                                  soulGratitudeFaithCap.ToString(CultureInfo.InvariantCulture));
+            }
+
             string buffId = R.Get(craft, "buff") as string;
             float duration = R.Float(R.Get(craft, "dur_parameter"));
             SpecialInfo buff = BuildBuffEffect(craftId, buffId, duration);

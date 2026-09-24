@@ -1,5 +1,55 @@
 # Changelog
 
+
+## PrayerClarity: Vanilla 1.0.33
+
+- Adds the accepted gamepad prayer-Technology carousel without changing stock prayer mechanics or balance.
+- In any Technology with multiple visible unlocks and at least one prayer, Left/Right now selects one visible unlock at a time, highlights its icon, and shows only its own tooltip; moving past the first/last unlock returns to normal Technology-tree navigation.
+- Mixed prayer Technologies include their non-prayer visible unlocks in the same sequence so icon and tooltip ownership stay one-to-one.
+- Mouse/keyboard tooltip behavior and Technologies without prayers remain vanilla.
+
+## PrayerClarity: Rebalanced 0.2.23
+
+- Generalizes the accepted Better Save Soul controller carousel to every prayer-bearing Technology with multiple visible unlocks.
+- Uses the same data-driven rule and horizontal boundary behavior as Vanilla 1.0.33.
+- Preserves all accepted Rebalanced prayer mechanics, balance values, requirements, BSS effects and save behavior; this release changes only Technology presentation/navigation on gamepad.
+
+## PrayerClarity: Rebalanced 0.2.20 candidate
+
+- Reverts the unaccepted 0.2.19 mixed-BSS grouping/lore-suppression experiment and returns Technology presentation structure to the 0.2.18 baseline.
+- Fixes the final Soul's Repose pulpit writer: the last `PulpitPolish` pass now renders the live success-only Soul Gratitude -> Faith transaction and hides the otherwise empty separate Effect row.
+- Preserves BSS prayer lore instead of deleting it. Rebalanced normalizes only stale mechanic fragments: Soul Contentment keeps the stock localized prose while its obsolete stock percentage is replaced from the current edition-owned effect value; Thorough Cleansing keeps its sentence while the stock fixed `(x2)` suffix is removed.
+- Reuses the historically runtime-verified Technology width lifecycle from PrayerClarity 1.0.13: `UILabel.overflowWidth` controls the native `ResizeFreely` label, then `WidgetsBubbleGUI.UpdateSize()` grows the enclosing parchment. For the combined BSS tooltip, the retained real lore rows and PrayerClarity mechanics row use a finite 520-unit expansion ceiling; ordinary single-prayer Technology tooltips retain the existing content-driven width policy.
+- Prayer mechanics, BSS balance values and already-passed 0.2.18 runtime mechanics are unchanged. Acceptance is visual/presentation-only.
+
+## PrayerClarity: Rebalanced 0.2.19 candidate
+
+- Fixes the Gold Soul's Repose pulpit presentation after runtime identity evidence proved the naturally selected prayer is the exact canonical `pray:b_souls:3` object: the live layout now preserves the success-only Soul Gratitude -> Faith transaction instead of overwriting it with the generic resource row or restoring the old stock effect sentence.
+- Keeps the accepted Soul's Repose conversion mechanics unchanged: ordinary church-derived base Faith plus success-only 1:1 Soul Gratitude conversion capped at 30 / 60 / 90.
+- Reworks mixed Rebalanced prayer Technology nodes generically by grouping tier snapshots under each localized prayer name, compacting each quality to a single semantic row, and widening only the mixed success-details body when needed.
+- Suppresses stale stock BSS lore when Rebalanced owns replacement semantics, removing conflicting `+10%`, old Soul-Gratitude base-scaling wording, and fixed `x2` text while retaining the effective tier values from the live Rebalanced rules.
+- Single-family Technology tooltips keep their existing width behavior. No new per-frame polling or broad scans are introduced.
+- Reuses already-passed runtime evidence for Soul's Repose conversion arithmetic, Soul Contentment decay protection, and Thorough Cleansing output scaling; the remaining acceptance gate is visual/readability verification only.
+
+## PrayerClarity: Rebalanced 0.2.18 candidate
+
+- Fixes the live Soul's Repose sermon/pulpit path exposed by 0.2.17 runtime testing: the selected prayer now projects its tier's ordinary `default_1/2/3` event directly into the native `PrayLogics.CalculatePray` call, so stale runtime PrayCraft copies cannot fall back to the old Soul-Gratitude base formula.
+- The pulpit forecast resolves the same edition-owned effective event and again shows the live success transaction `(gratitude_points) -X -> (faith) +X`.
+- Soul's Repose Technology tier rows use a shorter localized “sermon limit” label and keep only the amount + Soul Gratitude icon as an unbreakable unit, preserving normal wrapping for long locales.
+- Thorough Cleansing uses tier-neutral explanatory prose; its `×2 / ×3 / ×4` value is highlighted with the existing Technology accent color while the localized label remains wrappable.
+- Keeps the 0.2.17 balance values and runtime architecture otherwise unchanged.
+- 0.2.17 remains an immutable rejected candidate: its direct conversion probe and Gold Thorough Cleansing path passed, but the natural Soul's Repose pulpit path exposed the stale-event presentation/runtime gap and the Contentment research probe itself had a reflection lookup failure.
+
+## PrayerClarity: Rebalanced 0.2.17 candidate
+
+- Prayer for Donations keeps q20 / q40 / q60 and changes its success-only flat payout to **+20 / +50 / +100 silver**.
+- Prayer for Soul's Repose changes to q30 / q60 / q90. Its base Faith now uses the ordinary church sermon event; on success it converts current Soul Gratitude to bonus Faith at **1:1**, capped at **30 / 60 / 90** by prayer quality, and spends only the amount converted.
+- Soul's Repose shows the live pending transaction at the pulpit, e.g. `(gratitude_points) -73 -> (faith) +73`.
+- Prayer for Soul Contentment keeps q20 / q40 / q60, gives **+50% Soul Gratitude** at all qualities, lasts **45 / 90 / 135 minutes** (1 / 2 / 3 vanilla six-day weeks), and prevents passive soul-condition decay while active, both in the corpse and after extraction. Soul Extractor damage remains vanilla.
+- Prayer for Thorough Cleansing changes to q30 / q60 / q120 and scales Sin Shard output to **x2 / x3 / x4** through the game's native `increase_sin_shard_drop` calculation.
+- All new player-facing strings are present in the 11 supported locales.
+- Runtime acceptance is still required before promotion to `main`.
+
 ## PrayerClarity: Rebalanced 0.2.16
 
 - Repose Gold 100%-success requirement changes from **90** to **95 Church Quality**.

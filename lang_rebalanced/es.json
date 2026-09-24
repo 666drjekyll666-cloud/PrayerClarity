@@ -9,7 +9,13 @@
   "rebalanced.active.repose.silver": "En la mitad de los casos se garantiza el mejor cuerpo",
   "rebalanced.active.repose.gold": "El burro trae garantizado el mejor cuerpo",
   "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
-  "rebalanced.active.gratitude": "Al sanar un alma: +{0:0}% (gratitude_points)",
+  "rebalanced.active.gratitude": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas. Liberar almas otorga +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tiempo de crecimiento de las plantas: -{0:0}%",
-  "rebalanced.tech.souls_intro": "Más (gratitude_points) aumenta el bonus de Fe."
+  "rebalanced.tech.souls_intro": "Al tener éxito, cada (gratitude_points) gastado otorga 1 (faith).",
+  "rebalanced.tech.souls_tier": "Límite por sermón: {0} (gratitude_points)",
+  "rebalanced.item.souls_repose": "Al tener éxito, cada (gratitude_points) gastado otorga 1 (faith). Se pueden gastar hasta {0} (gratitude_points) por sermón.",
+  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion_empty": "no hay (gratitude_points) para convertir",
+  "rebalanced.tech.sin_shard_intro": "Aumenta la cantidad de Fragmentos de pecado obtenidos al sanar almas.",
+  "rebalanced.active.sin_shard": "Fragmentos de pecado al sanar almas: ×{0:0.#}"
 }

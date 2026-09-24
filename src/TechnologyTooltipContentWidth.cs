@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using BepInEx.Logging;
 using UnityEngine;
 
@@ -9,11 +10,24 @@ namespace PrayerClarity
     {
         internal const int OwnedMaxWidth = 900;
         private const int MinimumAnchorWidth = 150;
+        private const int WideLayoutMaxWidth = 520;
         private const string NoBreakSpace = "\u00A0";
         private const int SoftProseWordThreshold = 5;
 
+        private sealed class WideLayoutMarker { }
+
+        private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
+            new ConditionalWeakTable<object, WideLayoutMarker>();
+
         private static ManualLogSource _log;
         private static bool _errorLogged;
+
+        internal static void PreferWideLayout(object data)
+        {
+            if (data == null) return;
+            WideLayoutData.Remove(data);
+            WideLayoutData.Add(data, new WideLayoutMarker());
+        }
 
         internal static void Install(string harmonyId, ManualLogSource log)
         {
@@ -51,6 +65,24 @@ namespace PrayerClarity
 
                 string fullText = R.Get(label, "text") as string;
                 if (string.IsNullOrEmpty(fullText)) return;
+
+                WideLayoutMarker marker;
+                if (WideLayoutData.TryGetValue(__0, out marker))
+                {
+                    // This is the same native NGUI seam runtime-verified in the
+                    // 1.0.13 width work: ResizeFreely + overflowWidth lets content
+                    // expand naturally, and WidgetsBubbleGUI.UpdateSize() then grows
+                    // the enclosing bubble/parchment from the child widget size.
+                    //
+                    // The 0.2.19 experiment mistakenly treated a larger overflowWidth
+                    // as a minimum width. For the combined BSS tooltip we instead use a
+                    // real finite expansion ceiling and let its retained long prose
+                    // drive the natural width up to that ceiling.
+                    R.Set(label, "text", fullText);
+                    R.Set(label, "overflowWidth", Math.Min(maxWidth, WideLayoutMaxWidth));
+                    R.Get(label, "processedText");
+                    return;
+                }
 
                 int anchorWidth = MeasureAtomicAnchor(label, fullText, maxWidth);
                 if (anchorWidth <= 0) anchorWidth = maxWidth;

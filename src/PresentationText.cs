@@ -14,11 +14,25 @@ namespace PrayerClarity
             if (forecast == null) return string.Empty;
 
             string dependencies = IndentMultiline(DependencyMap(forecast.UsesSoulGratitude), "    ");
-            string contribution = FormatPrayerContribution(
-                forecast.FaithBonusRate,
-                forecast.FixedFaithBonus,
-                forecast.MoneyBonusRate,
-                forecast.FixedMoneyBonus);
+            string contribution;
+            if (forecast.SoulGratitudeFaithCap > 0)
+            {
+                string conversion = forecast.SoulGratitudeConversion > 0
+                    ? Localization.F(
+                        "rebalanced.pulpit.souls_conversion",
+                        forecast.SoulGratitudeConversion,
+                        forecast.SoulGratitudeConversion)
+                    : Localization.F("rebalanced.pulpit.souls_conversion_empty");
+                contribution = "\n    " + conversion;
+            }
+            else
+            {
+                contribution = FormatPrayerContribution(
+                    forecast.FaithBonusRate,
+                    forecast.FixedFaithBonus,
+                    forecast.MoneyBonusRate,
+                    forecast.FixedMoneyBonus);
+            }
 
             return "  " + Localization.F("forecast.guaranteed") + ":\n" +
                    dependencies + "\n" +

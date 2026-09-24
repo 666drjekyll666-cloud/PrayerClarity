@@ -220,6 +220,18 @@ namespace PrayerClarity
             return formatted == null ? value.ToString("0.##", CultureInfo.InvariantCulture) : formatted.ToString();
         }
 
+        internal static string FormatSignedMoney(float value)
+        {
+            if (Math.Abs(value) < 0.0001f) return FormatMoney(0f);
+
+            string formatted = FormatMoney(Math.Abs(value));
+            string sign = value > 0f ? "+" : "-";
+            int iconEnd = formatted.IndexOf(')');
+            return iconEnd >= 0
+                ? formatted.Insert(iconEnd + 1, sign)
+                : sign + formatted;
+        }
+
         internal static void Patch(string harmonyId, Type owner, MethodInfo target, string postfixName)
         {
             PatchHooks(harmonyId, owner, target, null, postfixName, null);

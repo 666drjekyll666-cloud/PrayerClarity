@@ -30,8 +30,8 @@ Treat these as peer alternatives in the PrayerClarity family, not as a base mod 
 
 ### Current accepted stable baselines
 
-- **PrayerClarity: Vanilla 1.0.32** — tag/release `v1.0.32`, accepted ref `accepted/vanilla-1.0.32`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, accepted DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
-- **PrayerClarity: Rebalanced 0.2.16** — tag/release `rebalanced-v0.2.16`, accepted ref `accepted/rebalanced-0.2.16`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`, accepted DLL SHA-256 `2ac89af8f517905fb859dbf496e9f16c098f9e75425b8ed03617927b27f75591`.
+- **PrayerClarity: Vanilla 1.0.33** — tag/release `v1.0.33`, accepted ref `accepted/vanilla-1.0.33`, canonical DLL `PrayerClarity.dll`, exact accepted source SHA `93b66e747ffe1685003afb894b24f14416edb8c0`, accepted DLL SHA-256 `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- **PrayerClarity: Rebalanced 0.2.23** — tag/release `rebalanced-v0.2.23`, accepted ref `accepted/rebalanced-0.2.23`, canonical DLL `PrayerClarity.Rebalanced.dll`, exact accepted runtime source SHA `93b66e747ffe1685003afb894b24f14416edb8c0`, accepted DLL SHA-256 `22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796`.
 - Stable publication must reuse the exact accepted CI binaries without rebuilding or changing bytes under the same version.
 - `main` may contain later documentation/repository-hygiene commits; numbered stable runtime identity remains tied to the frozen accepted refs and release hashes recorded in `docs/TEST_BUILD_LOG.md`.
 
@@ -154,7 +154,7 @@ Prefer making alternatives attractive over reducing familiar player rewards. Ner
 
 `docs/PRAYER_DESIGN_AUDIT.md` is the current source of truth for prayer-by-prayer design judgements.
 `docs/PRAYER_POWER_BUDGET.md` is the current source of truth for quantitative unlock/craft/opportunity-cost comparisons.
-`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset unless a later accepted runtime-safety constraint is recorded in `docs/TEST_BUILD_LOG.md`. Rebalanced 0.2.16 retains the accepted native runtime seams and the 95% combined Roots safety cap, uses 30/42/54-minute Repentance/Repose durations, ordinary Repose q20/q40/q95 with Gold guaranteeing the maximum total skull count inside the best actually available ordinary tier, Excellence q20/q60/q95, the specialist-purity cleanup, Donations +5/+15/+30 silver, Combo Faith +100/+150/+200% with donations +100/+200/+300%, and the shared Technology success heading **On success:** / **При успехе:**. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
+`docs/PRAYER_REBALANCE_OPTIONS.md` is the canonical accepted Rebalanced ruleset unless a later accepted runtime-safety constraint is recorded in `docs/TEST_BUILD_LOG.md`. Rebalanced 0.2.23 retains the accepted native runtime seams and the 95% combined Roots safety cap, uses 30/42/54-minute Repentance/Repose durations, ordinary Repose q20/q40/q95 with Gold guaranteeing the maximum total skull count inside the best actually available ordinary tier, Excellence q20/q60/q95, the specialist-purity cleanup, Donations +5/+15/+30 silver, Combo Faith +100/+150/+200% with donations +100/+200/+300%, and the shared Technology success heading **On success:** / **При успехе:**. Historical candidate values elsewhere are superseded unless explicitly retained as analysis. Any future gameplay change still requires the normal discover -> verify -> implement -> test -> accept gate.
 
 ## Player-facing clarity target
 

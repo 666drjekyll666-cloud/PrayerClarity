@@ -9,7 +9,13 @@
   "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste Körper garantiert",
   "rebalanced.active.repose.gold": "Der Esel bringt garantiert den besten Körper",
   "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
-  "rebalanced.active.gratitude": "Seelenheilung: +{0:0}% (gratitude_points)",
+  "rebalanced.active.gratitude": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht - weder im Körper noch nach der Extraktion. Das Freilassen von Seelen gewährt +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%",
-  "rebalanced.tech.souls_intro": "Mehr (gratitude_points) erhöht den Glaubensbonus."
+  "rebalanced.tech.souls_intro": "Bei Erfolg gewährt jeder ausgegebene (gratitude_points) 1 (faith).",
+  "rebalanced.tech.souls_tier": "Limit pro Predigt: {0} (gratitude_points)",
+  "rebalanced.item.souls_repose": "Bei Erfolg gewährt jeder ausgegebene (gratitude_points) 1 (faith). Pro Predigt können bis zu {0} (gratitude_points) ausgegeben werden.",
+  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion_empty": "keine (gratitude_points) zum Umwandeln",
+  "rebalanced.tech.sin_shard_intro": "Erhöht die Anzahl der Sündensplitter, die du beim Heilen von Seelen erhältst.",
+  "rebalanced.active.sin_shard": "Sündensplitter beim Heilen von Seelen: ×{0:0.#}"
 }

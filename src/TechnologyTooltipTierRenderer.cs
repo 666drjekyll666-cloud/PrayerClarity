@@ -263,6 +263,12 @@ namespace PrayerClarity
                 string.Equals(family, "b_sword", StringComparison.Ordinal))
                 return TechnologyTooltipTextStyle.Atomic(text);
 
+            if (string.Equals(family, "b_souls", StringComparison.Ordinal))
+                return TechnologyTooltipTextStyle.AtomicValueAfterColon(text);
+
+            if (string.Equals(family, "b_sin_shard", StringComparison.Ordinal))
+                return TechnologyTooltipTextStyle.AccentValueAfterColon(text);
+
             if (string.Equals(family, "b_star", StringComparison.Ordinal))
                 return TechnologyTooltipTextStyle.QualityValueAfterColon(tier.QualityTier, text);
 
@@ -317,10 +323,12 @@ namespace PrayerClarity
                 bool hasRate = Math.Abs(tier.MoneyBonusRate) >= Epsilon ||
                                IsSharedNonZero(allTiers, t => t.MoneyBonusRate);
                 lines.Add(
-                    hasRate
-                        ? "(slv) " + FormatSignedNumber(tier.FixedMoneyBonus)
-                        : "(slv) " + Localization.F("tech.donations") + ": " +
-                          FormatSignedNumber(tier.FixedMoneyBonus));
+                    !hasRate && tier.Highlight == PrayerForecast.BonusHighlight.Money
+                        ? R.FormatSignedMoney(tier.FixedMoneyBonus)
+                        : hasRate
+                            ? "(slv) " + FormatSignedNumber(tier.FixedMoneyBonus)
+                            : "(slv) " + Localization.F("tech.donations") + ": " +
+                              FormatSignedNumber(tier.FixedMoneyBonus));
             }
 
             TooltipSemanticModel.RewardDetails commonReward;

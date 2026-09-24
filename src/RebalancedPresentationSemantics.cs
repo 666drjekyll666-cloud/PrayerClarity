@@ -7,7 +7,43 @@ namespace PrayerClarity
     {
         internal static void Install()
         {
-            PrayerEditionSemantics.Install(TryBuildTierEffect, TryBuildActiveEffect, TryBuildTechnologyEffect);
+            PrayerEditionSemantics.Install(
+                TryBuildTierEffect,
+                TryBuildActiveEffect,
+                TryBuildTechnologyEffect,
+                TryGetSoulConversion,
+                TryGetEffectivePrayEvent);
+        }
+
+        private static bool TryGetEffectivePrayEvent(
+            string craftId,
+            string currentEventId,
+            out string effectiveEventId)
+        {
+            effectiveEventId = currentEventId;
+            string mapped;
+            if (!RebalancedRuleSet.TryGetEffectivePrayEventId(craftId, out mapped))
+                return false;
+
+            effectiveEventId = mapped;
+            return true;
+        }
+
+        private static bool TryGetSoulConversion(string craftId, out int cap, out int conversion)
+        {
+            cap = 0;
+            conversion = 0;
+
+            RebalancedPrayerRule rule;
+            int tier;
+            if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier)) return false;
+            if (!string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal) ||
+                rule.SoulGratitudeFaithCaps == null)
+                return false;
+
+            cap = Math.Max(0, rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0));
+            conversion = RebalancedSoulsRepose.GetConversionAmountForCap(cap);
+            return cap > 0;
         }
 
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
@@ -52,6 +88,9 @@ namespace PrayerClarity
                     return tier > 0 && RebalancedRuleSet.TryGet("b_star", out rule) && TryBuildRuleEffect(rule, tier, out text, out semanticKey);
                 case "buff_gp_increase":
                     return RebalancedRuleSet.TryGet("b_grat_points_incr", out rule) && TryBuildRuleEffect(rule, 1, out text, out semanticKey);
+                case "buff_sin_shard":
+                    tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.SinShardTierParam);
+                    return tier > 0 && RebalancedRuleSet.TryGet("b_sin_shard", out rule) && TryBuildRuleEffect(rule, tier, out text, out semanticKey);
                 default:
                     return false;
             }
@@ -103,9 +142,12 @@ namespace PrayerClarity
                 }
             }
 
-            if (string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal))
+            if (string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal) &&
+                rule.SoulGratitudeFaithCaps != null)
             {
+                int cap = rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0);
                 sharedText = Localization.F("rebalanced.tech.souls_intro");
+                tierText = Localization.F("rebalanced.tech.souls_tier", cap);
                 return true;
             }
 
@@ -147,11 +189,9 @@ namespace PrayerClarity
             if (rule.SinShardMultiplier != null)
             {
                 float value = rule.TierValue(rule.SinShardMultiplier, tier);
-                if (Math.Abs(value - 2f) < 0.0001f)
-                {
-                    sharedText = Localization.F("active.sin_shard");
-                    return true;
-                }
+                sharedText = Localization.F("rebalanced.tech.sin_shard_intro");
+                tierText = Localization.F("rebalanced.active.sin_shard", value);
+                return true;
             }
 
             return false;
@@ -207,6 +247,15 @@ namespace PrayerClarity
                 return true;
             }
 
+            if (rule.SoulGratitudeFaithCaps != null &&
+                string.Equals(rule.PrayerId, "b_souls", StringComparison.Ordinal))
+            {
+                int cap = rule.TierValue(rule.SoulGratitudeFaithCaps, tier, 0);
+                text = Localization.F("rebalanced.tech.souls_tier", cap);
+                semanticKey = "rebalanced:souls_conversion_cap=" + cap.ToString(CultureInfo.InvariantCulture);
+                return true;
+            }
+
             if (rule.CombatDamage != null && rule.CombatArmor != null && rule.CombatRegenPerSecond != null)
             {
                 float damage = rule.TierValue(rule.CombatDamage, tier);
@@ -241,10 +290,7 @@ namespace PrayerClarity
             if (rule.SinShardMultiplier != null)
             {
                 float value = rule.TierValue(rule.SinShardMultiplier, tier);
-                if (Math.Abs(value - 2f) < 0.0001f)
-                    text = Localization.F("active.sin_shard");
-                else
-                    return false;
+                text = Localization.F("rebalanced.active.sin_shard", value);
                 semanticKey = "rebalanced:sin_shard=" + Rv(value);
                 return true;
             }

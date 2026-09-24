@@ -10,7 +10,7 @@ namespace PrayerClarity
     {
         internal const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         internal const string PluginName = "PrayerClarity: Rebalanced";
-        internal const string PluginVersion = "0.2.16";
+        internal const string PluginVersion = "0.2.23";
         private static readonly Guid SupportedGameMvid = new Guid("6f50b8e7-156b-49ac-bbe8-7505894b2364");
         private static ManualLogSource _log;
         private static bool _runtimeErrorLogged;
@@ -45,6 +45,8 @@ namespace PrayerClarity
                 RebalancedRepose.Install(PluginGuid, Logger);
                 RebalancedCombat.Install(PluginGuid, Logger);
                 RebalancedExcellence.Install(PluginGuid, Logger);
+                RebalancedSoulsRepose.Install(PluginGuid, Logger);
+                RebalancedThoroughCleansing.Install(PluginGuid, Logger);
                 RebalancedSoulContentment.Install(PluginGuid, Logger);
 
                 Logger.LogInfo(PluginName + " " + PluginVersion + " loaded. Includes the PrayerClarity: Vanilla presentation layer plus the Rebalanced mechanics foundation.");
@@ -86,6 +88,15 @@ namespace PrayerClarity
             catch (Exception ex)
             {
                 Logger.LogError("PrayerClarity secondary Clarity surfaces are disabled; pulpit Clarity remains active. " + ex);
+            }
+
+            try
+            {
+                TechnologyPrayerCarousel.Install(PluginGuid, Logger);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("PrayerClarity BSS Technology prayer navigation is disabled; other Rebalanced behavior remains active. " + ex);
             }
 
             try

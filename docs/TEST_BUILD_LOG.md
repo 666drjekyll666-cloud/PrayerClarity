@@ -1,5 +1,275 @@
 # Test / Research Build Log
 
+
+## 2026-09-24 — Rebalanced 0.2.22 prayer-carousel result accepted
+
+- User runtime acceptance: the production Rebalanced 0.2.22 DLL reproduced the accepted research prototype exactly; the user reported that navigation and presentation work correctly as designed.
+- Frozen accepted ref: `accepted/rebalanced-0.2.22`.
+- Exact tested source SHA: `302104a00a6ffef03b1c3746faa7781b84da2c71`.
+- GitHub Actions run: `35989524570`; result: **success**, Rebalanced and Vanilla sibling builds both 0 warnings / 0 errors.
+- Artifact ID: `10803935926`.
+- Artifact: `PrayerClarity-rebalanced-0.2.22-ci-302104a00a6ffef03b1c3746faa7781b84da2c71`.
+- Artifact ZIP digest: `sha256:e031e3f5fa5e3ce44d4550b2cbb3c8d01172e6b9f28e734ae167d338c91b3d7b`.
+- Accepted Rebalanced DLL SHA-256: `19819097d7c90ee3ddfd4385cf8d2546a83e9c2bb78a1d1427e6a60bc0bcbaf6`.
+- Vanilla 1.0.32 sibling DLL from the same build: `742c06785b92deeb24a9251906e30f3c97596620921989530e87263ee2aaa21c`.
+- Accepted behavior for the Better Save Soul three-prayer Technology node:
+  - gamepad focus remains on the real parent Technology;
+  - exactly one existing child `TechUnlock.GetTooltip` is shown at a time;
+  - the selected child icon remains fully visible while the others are dimmed;
+  - Right traverses prayer 1 -> 2 -> 3 and then falls through to stock tree navigation;
+  - Left traverses prayer 3 -> 2 -> 1 and then falls through to stock tree navigation;
+  - entering horizontally selects the boundary child corresponding to the direction of entry;
+  - Up/Down and Technology purchase/progression state remain stock;
+  - no save, cost, unlock, prayer-mechanics, or DLC progression state is written.
+- This closes the BSS-specific UX hypothesis. The result is retained as exact accepted runtime evidence while the immediately following candidate tests the user's requested generalization to all prayer-bearing Technology nodes and to PrayerClarity: Vanilla.
+
+
+## 2026-09-24 — Rebalanced 0.2.23 / Vanilla 1.0.33 accepted
+
+- User runtime acceptance: explicit confirmation that the generalized prayer-Technology navigation works correctly in both Rebalanced and Vanilla.
+- Frozen refs: `accepted/rebalanced-0.2.23` and `accepted/vanilla-1.0.33`.
+- Exact tested source SHA for both sibling DLLs: `93b66e747ffe1685003afb894b24f14416edb8c0`.
+- GitHub Actions run: `35991353623`; build result: **success**, both sibling builds 0 warnings / 0 errors.
+- Artifact ID: `10803884921`.
+- Artifact ZIP digest: `sha256:b4972906bd7c22d9f8b210f9830f46a745a81216b805899bc0fedb093361cce5`.
+- Rebalanced 0.2.23 DLL SHA-256: `22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796`.
+- Vanilla 1.0.33 DLL SHA-256: `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- Accepted scope: on gamepad, any Technology with at least two visible unlocks and at least one prayer becomes a horizontal one-unlock-at-a-time sequence across all of that node's visible unlocks. Boundary Left/Right falls through to stock tree navigation; Up/Down remains stock; mouse behavior remains stock.
+- The selected unlock's existing `TechUnlock.GetTooltip` remains authoritative. PrayerClarity only changes the controller presentation/navigation layer; Technology costs, unlock state, prayer mechanics, save state and non-prayer Technologies are unchanged.
+- No additional runtime replay is required for stable promotion.
+- Stable publication must reuse the exact accepted DLL bytes above; do not rebuild these numbered versions.
+
+
+## PrayerClarity: Rebalanced 0.2.23 / Vanilla 1.0.33 — shared prayer-Technology navigation candidate
+
+- Product direction from the accepted 0.2.22 test: the one-child-at-a-time controller interaction is substantially more readable and feels native enough to generalize, but applying it to every Technology would be excessive.
+- Scope rule: on gamepad only, activate the carousel for a Technology when it has at least two visible unlocks and at least one visible unlock resolves through PrayerClarity's existing prayer-craft path.
+- Once activated, **all visible unlocks in that prayer-bearing Technology** participate in the horizontal sequence, including non-prayer perks/buildings/recipes. This keeps icon highlight and tooltip ownership one-to-one instead of leaving a mixed node partly combined.
+- Activation is data-driven; no Technology ID/name allowlist is introduced.
+- Each selected child is rendered through its existing `TechUnlock.GetTooltip` path. Prayer unlocks therefore continue through PrayerClarity's semantic Technology formatter; non-prayer unlocks remain stock.
+- Left/Right moves between child unlocks until an outer edge, then the original `BaseGUI.OnPressedLeft/Right -> GamepadNavigationController.Navigate` path runs unchanged.
+- Technologies with no prayer remain entirely stock. A prayer-bearing Technology with only one visible unlock also remains stock because there is nothing to disambiguate.
+- Mouse behavior remains stock: child unlocks already own independent tooltips in 1.407.
+- The same shared source is compiled into Rebalanced 0.2.23 and Vanilla 1.0.33. No prayer mechanics, balance values, localization strings, Technology costs, unlock state, or save state change.
+- Acceptance gate: one mixed prayer Technology with 2-3 visible child icons must prove icon/tooltip traversal and boundary exit; then spot-check the same behavior in the Vanilla sibling. BSS itself does not need another mechanics or architecture replay.
+- Status: **candidate implementation prepared; CI/runtime acceptance pending**.
+
+## PrayerClarity: Rebalanced 0.2.20 — visual acceptance candidate
+
+- Exact production source SHA: `20781bfab72953694ce32c69ec2b07bcc85496ca`.
+- Candidate ref: `candidate/rebalanced-0.2.20`.
+- GitHub Actions run: `35907572726`; job: `107338980659`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10772181010`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.20-ci-20781bfab72953694ce32c69ec2b07bcc85496ca`.
+- Artifact ZIP digest: `sha256:89a1ff45a6044660e773fc0e05ae320f4f360257ecd41111b0c839ba1dc52207`.
+- Rebalanced DLL SHA-256: `c77322aec1020eb920fd6ea6cb6abea735d8ac0048089cb03ba21053414a69a0`.
+- Vanilla sibling DLL SHA-256 from the same shared-source build: `1d547ac036280f9a9e9ebed9fdb2425cba06e7054f4637c2d4897bb7357fc2bc`.
+- 0.2.20 deliberately removes the unaccepted 0.2.19 mixed-family grouping/lore-suppression experiment and restores the 0.2.18 Technology structure before applying the narrower repairs below.
+- Pulpit repair: the verified final writer `PulpitPolish -> PresentationText.BuildPulpitResultRows` now renders the current Soul's Repose success transaction from `SoulGratitudeConversion`; when that conversion is the prayer's success effect, the otherwise empty separate `Effect: —` row is hidden.
+- Lore repair: BSS lore remains visible. Soul Contentment replaces only the stock percentage token with the percentage produced by the current Rebalanced Technology effect; Thorough Cleansing removes only the stock fixed `(x2)` suffix, leaving the sentence itself intact; Soul's Repose lore is preserved unchanged.
+- Width repair: historical 1.0.12/1.0.13 evidence is treated as canonical. The combined BSS tooltip marks its retained real lore rows plus the PrayerClarity mechanics row for the proven `UILabel.overflowWidth -> ResizeFreely -> WidgetsBubbleGUI.UpdateSize()` lifecycle. Those rows use a finite 520-unit expansion ceiling; ordinary single-prayer Technology tooltips keep the accepted atomic/content-driven width policy.
+- No prayer mechanics, requirements, conversion arithmetic, Contentment decay behavior, Sin Shard scaling, or duration values changed from the already-tested 0.2.18 mechanics.
+- Required user acceptance is presentation-only:
+  1. select Gold Soul's Repose at the pulpit with nonzero SG and confirm the success row shows the live SG -> Faith transaction (115 SG should currently show 90 -> 90) and no `Effect: —` row remains;
+  2. with gamepad placement, open the combined BSS prayer Technology tooltip and confirm the parchment is visibly wider, the complete tooltip fits the viewport, and all three prayers retain readable lore;
+  3. with keyboard/mouse, spot-check the three individual BSS prayer Technology tooltips: Soul's Repose lore remains; Soul Contentment lore remains with the current Rebalanced percentage rather than stock 10%; Thorough Cleansing lore remains but no longer contains the stale parenthetical `(x2)`, while the red tier values remain x2/x3/x4.
+- No sermon, soul healing, decay wait, or Test Console run is required for this candidate.
+- Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+- Runtime/visual result, 2026-09-24: **partial pass / candidate not accepted**.
+  - Pulpit final-writer repair passed visually: Gold Soul's Repose with 115 SG now shows the live 90 SG -> 90 Faith success transaction and the stray `Effect: —` row is gone.
+  - The compact arrow-only pulpit wording is mechanically correct but reads too much like a rebus. Product direction: keep the dynamic amount, but make the transaction explicit in words because this surface has sufficient space.
+  - Combined BSS Technology tooltip still exceeds the viewport under the user's current mod set; the expected widening is not visible. The user has a separate Companion mod that repositions tooltips to the lower-left. Because it touches the same final tooltip surface, one controlled A/B without Companion is required before attributing the remaining geometry failure to PrayerClarity.
+  - Individual Soul's Repose Technology wording is still too ambiguous: “each spent Soul Gratitude” does not clearly tell a player who has not yet used the sermon that the sermon consumes their currently stored Soul Gratitude. Reword around “stored/current Soul Gratitude is converted into Faith 1:1 on a successful sermon” plus the existing tier cap.
+  - Soul Contentment should keep a short thematic lore sentence about preserving soul condition; do not duplicate the +50% magnitude in lore because the exact effect block already owns it.
+  - Thorough Cleansing still shows the stock fixed `(x2)` inside lore, so the 0.2.20 regex normalization did not satisfy the observable property. Do not add another punctuation/Unicode-sensitive regex guess; use an edition-owned BSS lore string or another exact-key replacement with verified localized output.
+  - Contentment duration is now explicitly reopened as a visual emphasis question because +50% is invariant across qualities and duration is the only tier ladder (4/8/12 days in the user's Longer Days presentation). If emphasized, color only the duration value, not the label.
+- Width next step: test the same combined BSS Technology tooltip once with Companion disabled. If it expands/fits, investigate compatibility/patch ordering with Companion. If it still does not, create a narrow read-only Technology geometry/patch-owner probe; do not ship another width-policy production guess.
+- Companion-off A/B result, 2026-09-24: **failure persists and Companion is ruled out for this case**.
+  - The supplied runtime session loads Rebalanced 0.2.20 on Graveyard Keeper 1.407 at 2560x1440 and does not load Companion.
+  - The combined Better Save Soul prayer Technology tooltip still runs below the bottom of the viewport.
+  - User control observation: other prayer Technology tooltips shown through gamepad placement move upward when needed; this combined three-prayer tooltip is the only observed prayer case that does not.
+  - Static source inspection now explains the vertical-placement difference: `TechnologyTooltipViewportClamp.ClampAxis` returns the original coordinate whenever the bubble itself is taller than the available safe axis (`min > max`). Therefore ordinary tooltips can be clamped upward because they fit; an over-tall combined BSS tooltip cannot be made fully visible by translation alone and is deliberately left at its original Y.
+  - This closes the Companion/vertical-clamp hypothesis. It does **not** close the remaining width question: why the combined BSS rows marked for a 520-unit `UILabel.overflowWidth` expansion ceiling are not producing a sufficiently wide/short final bubble.
+  - Next evidence gate: a separate research-only, read-only Technology tooltip probe must record the post-draw live label geometry, final bubble geometry, and Harmony patch owners/order for `BubbleWidgetText.Draw`, `Tooltip.Show`, and `WidgetsBubbleGUI.Update`. Production 0.2.20 remains unchanged while this is investigated.
+- Research helper prepared for that gate: **Technology Tooltip Probe 0.1.0**.
+  - research ref: `research/technology-tooltip-probe-0.1.0`;
+  - exact source SHA: `3591b8b0b1287f88528f5112af72792bdee354bc`;
+  - GitHub Actions run: `35937587610`; result: **success**;
+  - artifact ID: `10783462850`;
+  - artifact ZIP digest: `sha256:35e4819df17c1df64a4abccb80e24999decd96472b9df1ddbf8b956a64ab0979`;
+  - handoff DLL: `PrayerClarity.TechnologyTooltipProbe-0.1.0-ci.dll`;
+  - DLL SHA-256: `ff96a2fb380b2596bf297202018e63d4495531fef50faa7b95000d548a97a8a8`.
+  - The probe is read-only with respect to game/UI/save state: it observes PrayerClarity-owned `max_width=900` rows after live `BubbleWidgetText.Draw`, records label `overflowWidth`/processed geometry, records final `WidgetsBubbleGUI` geometry for the displayed tooltip, and dumps Harmony patch ownership/order. It does not write label geometry or save data.
+  - Required runtime action: keep Rebalanced 0.2.20 unchanged, install only the probe DLL alongside it, open Technology -> Spiritualism, highlight the combined Better Save Soul prayer node once with the gamepad, then return the resulting `LogOutput.log`. No sermon/mechanics action is required.
+- Technology Tooltip Probe 0.1.0 runtime result, 2026-09-24: **root cause isolated**.
+  - Rebalanced 0.2.20 and the read-only probe loaded on GK 1.407 at 2560x1440; Companion / Gamepad Tooltip Position Fix was not loaded in the session.
+  - Harmony ownership on the inspected path contained only PrayerClarity's content-width/viewport hooks plus the probe. No third-party final writer was present on `BubbleWidgetText.Draw`, `Tooltip.Show`, or `WidgetsBubbleGUI.Update`.
+  - The final combined BSS tooltip contained 29 rows and six PrayerClarity-owned mechanics rows with `max_width=900` (base + success body for each of the three prayer families).
+  - Despite that marker, the live post-draw labels remained narrow: measured `overflowWidth` was 168-180 and live widths 166-178. The final bubble was 178 x 910 UI units while the safe viewport was 1256 x 696, so the bubble was vertically impossible to fit by translation alone.
+  - The retained BSS lore rows still had `max_width=-1`, while per-family semantic normalization had already run (for example Soul Contentment showed the Rebalanced +50% wording). This proves the intended `preferWideLayout` classification was false during each per-family Technology pass; the problem is not a later NGUI overwrite.
+  - Source correlation: `ShouldPreferWideBssLayout(crafts)` requires multiple BSS families inside one `ResolvePrayerCrafts` result, but the shared tooltip is accumulated from separate family passes. Each pass therefore sees one family and never marks its rows for the 520-unit `UILabel.overflowWidth` ceiling, even though all three families are present in the final Tooltip data.
+  - Next production change is narrow: after a BSS family pass, inspect the already-accumulated Tooltip data; once at least two BSS prayer blocks are present, mark the existing PrayerClarity mechanics rows and their immediately preceding lore rows for the already-verified wide `overflowWidth` path. Do not change viewport math, manually force final label width/height, or add a new placement algorithm.
+- No mechanics retest is required.
+- Status after this visual pass: **0.2.20 remains rejected for promotion; pulpit mechanics presentation path is proved, combined Technology layout and BSS wording/lore still require follow-up.**
+
+
+## 2026-09-23 — Rebalanced 0.2.19 runtime visual result: rejected candidate
+
+Tested immutable production candidate:
+- source: `b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`;
+- ref: `candidate/rebalanced-0.2.19`;
+- Rebalanced DLL SHA-256: `7b163d31e1f9f61d3db1460ba0794c06d8fba649b653cc870265186c7546203c`.
+
+Runtime/visual evidence:
+- PrayerClarity: Rebalanced 0.2.19 loaded normally on Graveyard Keeper 1.407; no PrayerClarity-specific runtime exception was reported in the supplied session.
+- Gold Soul's Repose at the pulpit still failed the presentation gate: with Church Quality 94 and Soul Gratitude 115, the success row did not show the expected live 90 SG -> 90 Faith transaction and the separate Effect row rendered only a dash.
+- The combined Better Save Soul prayer Technology tooltip still exceeded the viewport under gamepad placement. The attempted 360-wide content preference did not visibly widen the parchment/frame.
+- The 0.2.19 broad BSS lore suppression removed the base lore from the individual keyboard/mouse Technology tooltips for Soul's Repose, Soul Contentment, and Thorough Cleansing. This is an unacceptable regression.
+- User product decision: preserve prayer lore where it exists. Resolve stale Rebalanced mechanic clauses/values narrowly; do not delete the whole lore paragraph as a space-saving or conflict-avoidance shortcut. A genuinely wider final Technology tooltip is preferred over sacrificing lore.
+
+Root-cause assessment:
+- Soul's Repose mechanics and live craft identity remain closed by prior accepted evidence. The 0.2.19 pulpit fix targeted an intermediate writer only. `PulpitPolish.Apply` is the final presentation pass; its `PolishResultRows` rewrites the result text through `PresentationText.BuildPulpitResultRows`, which does not render `SoulGratitudeFaithCap` / `SoulGratitudeConversion`. `PolishEffectRow` then turns the intentionally empty separate effect into a visible dash.
+- Lore loss is deterministic production behavior introduced in 0.2.19: `ShouldSuppressVanillaPrayerLore` was broadened from the previously narrow stale-Contentment case to all three Rebalanced BSS prayer families and therefore affected both the combined unlock and individual prayer Technology surfaces.
+- Tooltip-width ownership is **not** an open evidence gap. Historical 1.0.12/1.0.13 research already proved the live Technology mechanics `UILabel` uses `ResizeFreely`, that its native `overflowWidth` is the effective wrapping/expansion ceiling, and that `WidgetsBubbleGUI.UpdateSize()` subsequently sizes the outer bubble/parchment from the child widgets. PrayerClarity 1.0.13 was then runtime-verified to make Technology prayer tooltips expand with content through this seam. The 0.2.19 failure is therefore a sizing-policy error, not an unknown owner: `WideMinimumAnchorWidth=360` was fed back as an `overflowWidth` ceiling, but `ResizeFreely` still chooses the natural content width and is not forced to 360 merely because the ceiling is at least 360.
+
+Assessment:
+- **0.2.19 is rejected and must not be rebuilt, merged, or published.**
+- Reuse the already-passed Soul's Repose conversion arithmetic, Soul Contentment preservation, Thorough Cleansing scaling, and natural pulpit craft-identity evidence.
+- Do not start production 0.2.20 from the unverified 0.2.19 layout assumptions.
+- Next step does **not** require another width-owner probe. Reuse the verified `UILabel.overflowWidth -> natural label size -> WidgetsBubbleGUI.UpdateSize() -> outer parchment` lifecycle, preserve BSS lore, and correct only the combined-tooltip sizing policy plus the final pulpit renderer. A new runtime probe is justified only if the corrected width policy needs a host behavior not already covered by that accepted evidence.
+
+## PrayerClarity: Rebalanced 0.2.19 — visual acceptance candidate
+
+- Exact production source SHA: `b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`.
+- Candidate ref: `candidate/rebalanced-0.2.19`.
+- GitHub Actions run: `35900091899`; job: `107313733159`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10767684729`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.19-ci-b593a9391f0b8a1c1bc1a2f362adb63db2287ce9`.
+- Artifact ZIP digest: `sha256:001b7c42bdee37c57172ff0f516fdf00aa28c458f3e8acc783f4f587b9dd565c`.
+- Rebalanced DLL SHA-256: `7b163d31e1f9f61d3db1460ba0794c06d8fba649b653cc870265186c7546203c`.
+- Scope:
+  - preserve the correct Soul's Repose success transaction through the final pulpit layout pass and suppress the obsolete stock effect sentence there;
+  - keep Soul Gratitude separate from ordinary base-Faith dependency semantics while still showing the current SG context for the conversion;
+  - group mixed Rebalanced Technology prayer tiers by localized prayer family;
+  - compact each mixed-family Bronze/Silver/Gold snapshot to one semantic row;
+  - request a wider content-driven layout only for the mixed success-details body;
+  - suppress conflicting stock BSS lore when Rebalanced owns replacement semantics, including the stale Thorough Cleansing `x2`.
+- Mechanics unchanged from the already-tested 0.2.18 paths. Reuse the accepted Soul's Repose conversion arithmetic, Contentment preservation, and Thorough Cleansing output evidence; **no sermon, soul-healing, or decay replay is required**.
+- Required acceptance is visual/perceptual only:
+  1. at the pulpit, select Gold Soul's Repose with the current SG state and confirm the success row shows the live SG -> Faith transaction while the old stock effect sentence is absent;
+  2. open the combined Better Save Soul prayer Technology tooltip with gamepad placement and confirm it fits the viewport, remains readable, is grouped by prayer, and contains no stale fixed `x2` lore.
+- Test Console 0.1.7 is not required for this pass.
+- Status: **compiled immutable candidate; visual acceptance pending; not merged or published**.
+
+## PrayerClarity: Rebalanced 0.2.18 — runtime candidate
+
+- Candidate source SHA: `449748ceb9f50c873e15dede485315912ca9935c`.
+- Candidate ref: `candidate/rebalanced-0.2.18`.
+- GitHub Actions run: `35871569228`; job: `107216690190`.
+- Build result: **success**; Rebalanced 0 warnings / 0 errors, Vanilla 0 warnings / 0 errors.
+- Artifact ID: `10754947841`.
+- Artifact name: `PrayerClarity-rebalanced-0.2.18-ci-449748ceb9f50c873e15dede485315912ca9935c`.
+- Artifact ZIP digest: `sha256:acc7044b3deece710607c210ee511d23d1f93a499bf6c9ab9f835e5887d7e9ed`.
+- Rebalanced DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`.
+- Scope relative to 0.2.17: live Soul's Repose event-argument projection + matching forecast event semantics; compact/wrap-safe BSS Technology tier values; red Thorough Cleansing x2/x3/x4 values; tier-neutral Thorough Cleansing description. Balance values and already-passed Thorough Cleansing runtime seam are unchanged.
+- Status: **runtime-tested and rejected; not merged or published**. Mechanics probes passed; the remaining failures were localized to pulpit presentation overwrite and the combined BSS Technology layout.
+
+Research helper for the remaining gate:
+- Rebalanced Test Console **0.1.6**.
+- Candidate source: `e61481a754c38f2b362b7486d15148bec96fe8df`.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.6`.
+- GitHub Actions run: `35871876168`; job: `107217747611`.
+- Build result: **success**, 0 warnings / 0 errors.
+- Artifact ID: `10755627030`.
+- Artifact name: `PrayerClarity-RebalancedTestConsole-0.1.6-ci-e61481a754c38f2b362b7486d15148bec96fe8df`.
+- Artifact ZIP digest: `sha256:a5e8c5311682cf62d2dddc426f6017880b4bffef8d37ac28f7fc0f78e4acb99b`.
+- DLL SHA-256: `3e30ba6cc68256e14aa600cac36f528cacd2baafbfdee94226e1b798b60e8fd6`.
+- 0.1.6 fixes the Contentment probe's game-type/method lookup and strengthens the Soul's Repose probe by deliberately feeding the old `pray_for_souls_3` event into the real patched call, requiring 0.2.18 to normalize it while base Faith remains independent of SG.
+
+## 2026-09-23 — Rebalanced 0.2.18 runtime result: rejected candidate
+
+Tested immutable production candidate:
+- source: `449748ceb9f50c873e15dede485315912ca9935c`;
+- ref: `candidate/rebalanced-0.2.18`;
+- DLL SHA-256: `f9e7d455bc027529547252628f9b10626b0c4dbdac3bc686103cfea4bf8369a4`;
+- research helper used for this pass: Rebalanced Test Console 0.1.6, source `e61481a754c38f2b362b7486d15148bec96fe8df`.
+
+Accepted/reusable runtime evidence:
+- The strengthened Soul's Repose probe deliberately passed stock `pray_for_souls_3` into the real patched `PrayLogics.CalculatePray` path. All four controlled cases passed with a single SG-independent base Faith value of 19: 73 SG -> +73 Faith / 0 SG; 136 SG -> +90 Faith / 46 SG; 0 SG -> +0; deterministic failure -> +0 and no SG spend.
+- The corrected Soul Contentment decay probe passed: ordinary extracted Soul and in-corpse SoulBodyPart decayed without Contentment, both remained protected with `buff_gp_increase`, and ordinary Body decay continued.
+- Thorough Cleansing's real Gold x4 healing evidence from 0.2.17 remains valid because the production seam did not change in 0.2.18; no repeat heal is required.
+- Keyboard/mouse per-prayer BSS Technology tooltips are structurally correct: Soul's Repose shows q30/q60/q90 and 30/60/90 SG caps; Contentment shows +50% SG and the projected durations; Thorough Cleansing shows q30/q60/q120 and red x2/x3/x4 values.
+
+Rejected/unclosed runtime evidence:
+- The natural Gold Soul's Repose pulpit with 115 SG still did **not** show the required live `SG -90 -> Faith +90` transaction. It showed the old Soul-Gratitude-dependent effect wording instead.
+- Follow-up Test Console 0.1.7 closed the identity uncertainty: a naturally selected Gold Soul's Repose at the pulpit is the exact canonical `pray:b_souls:3` `CraftDefinition` reference, with `linked_sub_id=default_3`, q90, and 115 live SG. The production tier model resolves the same craft as tier 3 with a 90-SG conversion cap. Therefore the passed real `CalculatePray` conversion probe is representative of the naturally selected craft identity; no weekly sermon replay is required to re-prove that mechanic.
+- The combined BSS Technology tooltip under gamepad placement is physically taller than the viewport by roughly an additional prayer block. Position clamping cannot solve an object that is itself taller than the available screen height.
+- Thorough Cleansing still exposes stale vanilla lore ending in `(x2)`; Rebalanced tier mechanics are x2/x3/x4, so the shared lore must become tier-neutral on every supported locale.
+- The Soul's Repose item tooltip appears semantically correct in the supplied screenshot; no separate item-tooltip blocker was found.
+
+Assessment:
+- **0.2.18 is rejected and must not be rebuilt under the same version.**
+- Reuse the passed conversion arithmetic, Contentment decay, and Thorough Cleansing runtime evidence.
+- The natural pulpit craft identity is now resolved. The 0.2.18 visible failure is a presentation-layer overwrite: `PulpitPresentation` first builds the correct conversion row, then `PulpitLayoutV4` replaces it with the generic resource row and restores the old Soul's Repose effect sentence. Production 0.2.19 should fix that downstream rendering only; the accepted conversion arithmetic/seam remains unchanged.
+- Technology overflow design direction accepted by the user: normal tooltip unchanged when it fits; otherwise widen/reflow first, remove group-level duplicate information only if still needed, and consider columns only if the viewport still cannot contain the content. Do not shrink text into an unreadable fallback.
+
+Research helper prepared for the identity gap:
+- Rebalanced Test Console **0.1.7**.
+- Exact source: `fefe877347b68c51e108d9b4824b43549f182921`.
+- Candidate ref: `candidate/rebalanced-test-console-0.1.7`.
+- GitHub Actions run: `35898012483`; job: `107306705139`; build **success**.
+- Artifact ID: `10767965435`.
+- Artifact name: `PrayerClarity-RebalancedTestConsole-0.1.7-ci-fefe877347b68c51e108d9b4824b43549f182921`.
+- Artifact ZIP digest: `sha256:25dd564f33b5d46612b3553693ee6a2a3b46805926754f34160a5524c475b578`.
+- DLL SHA-256: `abbb8df8c3b842ceb9215431e9ded1134c22a3114d1070eec24aaea9ba717e82`.
+- New action: **Capture live pulpit Soul's Repose identity (no sermon)**. With the pulpit open and Gold Soul's Repose selected naturally, it logs the exact live craft type/ID/event/requirement/modifiers/output, relevant GUI/craft identity members, reference equality against canonical `pray:b_souls:3`, and the production `PrayerForecast.BuildTierDetails` interpretation. It is read-only and spends no sermon/resource.
+- Runtime result, 2026-09-23: **PASS**. Natural pulpit Gold Soul's Repose was `CraftDefinition id=pray:b_souls:3`, `linked_sub_id=default_3`, `needs_quality=90`, `k_faith=0`, `k_money=0`, and `same_ref_as_canonical_gold=True` with live SG 115. The production tier model reported `CraftId=pray:b_souls:3`, `EventId=default_3`, tier 3, and `SoulGratitudeFaithCap=90`.
+- Consequence: the suspected live-craft identity mismatch is disproved. The remaining Soul's Repose defect is downstream presentation state, not prayer selection identity or the already-passed conversion arithmetic.
+- Status: identity question closed; Test Console 0.1.7 is no longer required for the next production visual acceptance pass.
+
+## 2026-09-23 — Rebalanced 0.2.17 runtime result: rejected candidate
+
+Tested immutable production candidate:
+- source: `fbffbb4957adc186ef42d4874241ca80047e597e`;
+- ref: `candidate/rebalanced-0.2.17`;
+- DLL SHA-256: `68d19f495d44413e4f29a4b24a062b684be62bb1d1834020bbc0c2d57fcf42f2`;
+- research helper: Rebalanced Test Console 0.1.5, source `233ea9d6680b27ebf8dd536779442872dec05b1e`.
+
+Accepted evidence retained from this candidate:
+- Soul's Repose direct native-calculation probe passed all four controlled cases: below cap 73 SG -> +73 Faith / 0 SG, Gold above cap 136 -> +90 Faith / 46 SG, zero SG -> +0, deterministic failure -> +0 and no SG spend.
+- Thorough Cleansing real Gold healing path passed: base 4 Sin Shards, expected x4, actual 16. A no-buff baseline also matched base output.
+- No additional Bronze/Silver Thorough Cleansing runtime repetition is required unless that seam changes.
+
+Unclosed / rejected evidence:
+- Soul Contentment decay probe did not reach the assertion. Test Console 0.1.5 failed its reflection lookup for `Item(string,int) / Item.UpdateDurability(float,float)`; this is a research-harness failure and is not evidence that production preservation failed.
+- The real pulpit with Gold Soul's Repose, Church Quality 94 and Soul Gratitude 115 did not show the required `SG -90 -> Faith +90` success transaction. It instead exposed the old Soul-Gratitude-dependent effect semantics.
+- The BSS Technology tooltip overflowed the viewport under gamepad placement. Soul's Repose tier rows also split the numeric cap from the Soul Gratitude icon.
+- Thorough Cleansing wording was too generic for the tier ladder and its x2/x3/x4 values lacked the established Technology accent.
+
+Assessment:
+- **0.2.17 is not accepted and must not be rebuilt.**
+- The direct conversion and Thorough Cleansing evidence remain reusable.
+- 0.2.18 must close the live Soul's Repose event/pulpit path, compact the BSS Technology presentation, and use a corrected research helper for the Contentment decay assertion.
+
+## PrayerClarity: Rebalanced 0.2.17 — candidate
+
+- Candidate scope accepted for implementation on **2026-09-23**; runtime acceptance is still pending.
+- Donations: q20 / q40 / q60; success-only flat payout **+20 / +50 / +100 silver**.
+- Soul's Repose: q30 / q60 / q90; ordinary church-derived base Faith plus success-only **1 Soul Gratitude -> 1 Faith**, capped at **30 / 60 / 90** and spending only the amount converted.
+- Soul's Repose pulpit shows the live pending transaction under the success row.
+- Soul Contentment: q20 / q40 / q60; **+50% Soul Gratitude**; duration **45 / 90 / 135 minutes** = 1 / 2 / 3 vanilla six-day weeks; passive soul-condition decay is suspended both in-corpse and after extraction, while direct Soul Extractor damage remains vanilla.
+- Thorough Cleansing: q30 / q60 / q120; native Sin Shard output scales **x2 / x3 / x4**.
+- Implementation architecture:
+  - Donations stays on the accepted fixed-money prayer-output path.
+  - Soul's Repose temporarily projects the conversion as a native fixed Faith output around `PrayLogics.CalculatePray`, then spends SG only if the native result succeeded.
+  - Contentment blocks only `Item.UpdateDurability` for `SoulBodyPart` / `Soul` while `buff_gp_increase` is active; no inventory/world scans.
+  - Thorough Cleansing temporarily projects the Silver/Gold delta into the native `increase_sin_shard_drop` input around `SoulHealingWidget.OnStartHealButtonPressed`.
+- Localization: all 11 supported Rebalanced locale overlays updated.
+- Required gate: clean CI build/package validation, then focused runtime evidence for Soul's Repose conversion/spend, Contentment preservation/resume, and Thorough Cleansing x2/x3/x4.
+- Status: **candidate build requested; not accepted, not merged, not published**.
+
 ## PrayerClarity: Rebalanced 0.2.16 — accepted for stable promotion
 
 - User acceptance/design approval: **2026-09-23**.
