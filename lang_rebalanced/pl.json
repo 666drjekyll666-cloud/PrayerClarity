@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Zwiększa liczbę Odłamków grzechu otrzymywanych podczas leczenia dusz.",
   "rebalanced.active.sin_shard": "Odłamki grzechu z leczenia dusz: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) za uwalnianie dusz: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu.",
-  "rebalanced.tech.sin_shard_lore": "Dokładniejsze oczyszczenie pozostawia więcej Odłamków grzechu po uzdrowieniu duszy."
+  "rebalanced.tech.gratitude_lore": "Kilka słów o spokoju dla tych, którym szczególnie go brakowało.",
+  "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
+  "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\\n(gratitude_points) za uwalnianie dusz: +{0:0}%"
 }
