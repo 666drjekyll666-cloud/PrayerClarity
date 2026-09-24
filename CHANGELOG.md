@@ -1,6 +1,20 @@
 # Changelog
 
 
+## PrayerClarity: Vanilla 1.0.34 / Rebalanced 0.2.25 candidates
+
+- Gamepad prayer-Technology carousel tooltips now avoid covering the currently selected child-unlock icon.
+- Placement uses the selected widget's live geometry, the tooltip's live geometry, and the current safe area. Horizontal separation is preferred; vertical separation is only a fallback when the viewport/localization does not leave enough horizontal room.
+- Technologies outside the existing prayer-bearing carousel scope remain unchanged.
+- Routine per-selection carousel Info logging has been removed; runtime failures remain logged.
+
+### Rebalanced-only presentation polish
+
+- Soul Contentment lore is now deliberately flavour-first: "A few words about peace for those who have had particularly little of it." (localized per language).
+- Soul Contentment's Effect block is self-contained: passive soul-condition preservation is stated explicitly, followed by the +50% Soul Gratitude line.
+- Thorough Cleansing lore is now flavour-first and no longer restates the shard multiplier mechanic; exact x2/x3/x4 values remain in the tier rows.
+
+
 ## PrayerClarity: Rebalanced 0.2.24 candidate
 
 - Finishes the deferred Better Save Soul presentation cleanup without changing prayer mechanics or balance.
