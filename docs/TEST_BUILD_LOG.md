@@ -14,11 +14,11 @@
   - pulpit result rows: `PulpitPolish -> PresentationText.BuildPulpitResultRows`.
 - The stale Thorough Cleansing x2 is an already-proved presentation defect: the old punctuation-sensitive regex did not satisfy the runtime property in 0.2.20. 0.2.24 does not add another regex guess; a Rebalanced-only final Technology postfix performs exact localized lore replacement after the established writer.
 - Blast radius: only Rebalanced BSS Technology presentation for `b_grat_points_incr` and `b_sin_shard`, plus Rebalanced Soul's Repose Technology/pulpit localization. Prayer mechanics, requirements, durations, Soul Gratitude conversion arithmetic, Sin Shard multipliers, save state, mouse/gamepad carousel behavior and non-BSS prayers are unchanged.
-- Vanilla remains 1.0.33. Shared/Vanilla compile inputs are intentionally unchanged; candidate CI must reproduce the exact accepted Vanilla 1.0.33 SHA-256 `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- Vanilla remains 1.0.33. Shared/Vanilla compile inputs are intentionally unchanged by the source diff, and this Rebalanced-only candidate workflow does **not** rebuild or emit a second Vanilla 1.0.33 binary.
 - Required runtime acceptance is one focused visual pass only:
   - open the three BSS prayer Technology tooltips and confirm the revised lore/wording plus Contentment duration emphasis;
   - select Soul's Repose at the pulpit and confirm the conversion sentence reads naturally with the current live amount.
-- No sermon execution, Soul healing, decay wait, save/reload, mechanics harness or Vanilla runtime retest is required unless CI reports sibling drift.
+- No sermon execution, Soul healing, decay wait, save/reload, mechanics harness or Vanilla runtime retest is required.
 - Status: **implementation prepared; CI/runtime acceptance pending**.
 
 
