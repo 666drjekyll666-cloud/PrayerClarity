@@ -1,5 +1,19 @@
 # Changelog
 
+
+## PrayerClarity: Vanilla 1.0.33
+
+- Adds the accepted gamepad prayer-Technology carousel without changing stock prayer mechanics or balance.
+- In any Technology with multiple visible unlocks and at least one prayer, Left/Right now selects one visible unlock at a time, highlights its icon, and shows only its own tooltip; moving past the first/last unlock returns to normal Technology-tree navigation.
+- Mixed prayer Technologies include their non-prayer visible unlocks in the same sequence so icon and tooltip ownership stay one-to-one.
+- Mouse/keyboard tooltip behavior and Technologies without prayers remain vanilla.
+
+## PrayerClarity: Rebalanced 0.2.23
+
+- Generalizes the accepted Better Save Soul controller carousel to every prayer-bearing Technology with multiple visible unlocks.
+- Uses the same data-driven rule and horizontal boundary behavior as Vanilla 1.0.33.
+- Preserves all accepted Rebalanced prayer mechanics, balance values, requirements, BSS effects and save behavior; this release changes only Technology presentation/navigation on gamepad.
+
 ## PrayerClarity: Rebalanced 0.2.20 candidate
 
 - Reverts the unaccepted 0.2.19 mixed-BSS grouping/lore-suppression experiment and returns Technology presentation structure to the 0.2.18 baseline.
