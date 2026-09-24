@@ -1,4 +1,4 @@
-name: Build PrayerClarity shared candidate
+name: Build PrayerClarity Rebalanced candidate
 
 on:
   workflow_dispatch:
@@ -49,23 +49,17 @@ jobs:
                       missing = sorted(required_rebalanced - set(data))
                       assert not missing, (path, missing)
           PY
-      - name: Restore sibling projects
-        run: |
-          dotnet restore PrayerClarity.Rebalanced.csproj
-          dotnet restore PrayerClarity.csproj
+      - name: Restore Rebalanced
+        run: dotnet restore PrayerClarity.Rebalanced.csproj
       - name: Build Rebalanced
         run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
-      - name: Build Vanilla
-        run: dotnet build PrayerClarity.csproj -c Release --no-restore
-      - name: Verify locales and stage both runtime candidates
+      - name: Verify locales and stage Rebalanced runtime candidate
         id: artifact
         shell: bash
         run: |
           set -euo pipefail
           rebalanced='bin/Rebalanced/PrayerClarity.Rebalanced.dll'
-          vanilla='bin/Release/PrayerClarity.dll'
           test -f "$rebalanced"
-          test -f "$vanilla"
 
           for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
             grep -a -q ".lang.${locale}.json" "$rebalanced" || {
@@ -76,43 +70,22 @@ jobs:
               echo "Rebalanced overlay locale marker missing: ${locale}" >&2
               exit 1
             }
-            grep -a -q ".lang.${locale}.json" "$vanilla" || {
-              echo "Vanilla locale marker missing: ${locale}" >&2
-              exit 1
-            }
           done
 
           mkdir -p dist
           reb_handoff='PrayerClarity.Rebalanced-0.2.24-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
-          van_handoff='PrayerClarity-1.0.33-ci.dll'
-          van_canonical='PrayerClarity.dll'
-
           cp "$rebalanced" "dist/$reb_handoff"
           cp "$rebalanced" "dist/$reb_canonical"
-          cp "$vanilla" "dist/$van_handoff"
-          cp "$vanilla" "dist/$van_canonical"
 
           reb_hash=$(sha256sum "dist/$reb_handoff" | awk '{print $1}')
           reb_canonical_hash=$(sha256sum "dist/$reb_canonical" | awk '{print $1}')
-          van_hash=$(sha256sum "dist/$van_handoff" | awk '{print $1}')
-          van_canonical_hash=$(sha256sum "dist/$van_canonical" | awk '{print $1}')
           test "$reb_hash" = "$reb_canonical_hash"
-          test "$van_hash" = "$van_canonical_hash"
-          # Vanilla sources are intentionally unchanged in this Rebalanced-only
-          # presentation candidate. Enforce numbered-binary immutability explicitly.
-          test "$van_hash" = "30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a"
 
           {
             echo "Source SHA: $GITHUB_SHA"
             echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
-            echo
-            echo "PrayerClarity: Vanilla"
-            echo "Version: 1.0.33"
-            echo "Handoff DLL: $van_handoff"
-            echo "Canonical DLL: $van_canonical"
-            echo "DLL SHA-256: $van_hash"
             echo
             echo "PrayerClarity: Rebalanced"
             echo "Version: 0.2.24"
@@ -123,21 +96,15 @@ jobs:
 
           echo "reb_handoff=$reb_handoff" >> "$GITHUB_OUTPUT"
           echo "reb_canonical=$reb_canonical" >> "$GITHUB_OUTPUT"
-          echo "van_handoff=$van_handoff" >> "$GITHUB_OUTPUT"
-          echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
           echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
-          echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
           echo "PrayerClarity: Rebalanced 0.2.24 DLL SHA-256: $reb_hash"
-          echo "PrayerClarity: Vanilla 1.0.33 DLL SHA-256: $van_hash"
-      - name: Upload shared runtime candidates
+      - name: Upload Rebalanced runtime candidate
         uses: actions/upload-artifact@v4
         with:
           name: PrayerClarity-rebalanced-0.2.24-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
-            dist/${{ steps.artifact.outputs.van_handoff }}
-            dist/${{ steps.artifact.outputs.van_canonical }}
             dist/BUILD_INFO.txt
           if-no-files-found: error
           retention-days: 14
@@ -156,6 +123,6 @@ jobs:
           esac
           gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
             -f state="$state" \
-            -f context="PrayerClarity shared candidate" \
-            -f description="Shared candidate workflow: $JOB_STATUS" \
+            -f context="PrayerClarity Rebalanced candidate" \
+            -f description="Rebalanced candidate workflow: $JOB_STATUS" \
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
