@@ -182,7 +182,9 @@ namespace PrayerClarity
 
             if (rule.SoulGratitudeBonusRate != null)
             {
-                sharedText = Localization.F("rebalanced.active.gratitude", rule.TierValue(rule.SoulGratitudeBonusRate, tier) * 100f);
+                sharedText = Localization.F(
+                    "rebalanced.tech.gratitude_intro",
+                    rule.TierValue(rule.SoulGratitudeBonusRate, tier) * 100f);
                 return true;
             }
 
