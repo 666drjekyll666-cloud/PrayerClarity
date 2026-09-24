@@ -11,11 +11,14 @@
   "rebalanced.active.combat": "伤害 +{0:0.##} · 护甲 +{1:0.##} · 生命恢复 {2:0.##}/秒",
   "rebalanced.active.gratitude": "灵魂状态不会随时间恶化，无论仍在尸体中还是已被提取。释放灵魂时获得的(gratitude_points)提高{0:0}%。",
   "rebalanced.tech.plant_tier": "植物生长时间：-{0:0}%",
-  "rebalanced.tech.souls_intro": "成功时，每消耗1点(gratitude_points)获得1点(faith)。",
+  "rebalanced.tech.souls_intro": "成功时，已储存的(gratitude_points)会按1:1转化为(faith)。",
   "rebalanced.tech.souls_tier": "每次布道上限：{0} (gratitude_points)",
   "rebalanced.item.souls_repose": "成功时，每消耗1点(gratitude_points)获得1点(faith)。每次布道最多可消耗{0}点(gratitude_points)。",
-  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion": "将{0}(gratitude_points)转化为{1}(faith)。",
   "rebalanced.pulpit.souls_conversion_empty": "没有可转换的(gratitude_points)",
   "rebalanced.tech.sin_shard_intro": "增加治愈灵魂时获得的罪恶碎片数量。",
-  "rebalanced.active.sin_shard": "治愈灵魂获得的罪恶碎片: ×{0:0.#}"
+  "rebalanced.active.sin_shard": "治愈灵魂获得的罪恶碎片: ×{0:0.#}",
+  "rebalanced.tech.gratitude_intro": "释放灵魂获得的(gratitude_points)：+{0:0}%",
+  "rebalanced.tech.gratitude_lore": "灵魂状态不会随时间恶化，无论仍在尸体中还是已被提取。",
+  "rebalanced.tech.sin_shard_lore": "更彻底的净化会在灵魂治愈后留下更多罪恶碎片。"
 }
