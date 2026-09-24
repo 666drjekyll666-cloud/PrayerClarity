@@ -11,11 +11,14 @@
   "rebalanced.active.combat": "Daño +{0:0.##} · Armadura +{1:0.##} · Regeneración {2:0.##} PV/s",
   "rebalanced.active.gratitude": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas. Liberar almas otorga +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tiempo de crecimiento de las plantas: -{0:0}%",
-  "rebalanced.tech.souls_intro": "Al tener éxito, cada (gratitude_points) gastado otorga 1 (faith).",
+  "rebalanced.tech.souls_intro": "Al tener éxito, los (gratitude_points) acumulados se convierten en (faith) a razón de 1:1.",
   "rebalanced.tech.souls_tier": "Límite por sermón: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "Al tener éxito, cada (gratitude_points) gastado otorga 1 (faith). Se pueden gastar hasta {0} (gratitude_points) por sermón.",
-  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion": "Convierte {0} (gratitude_points) en {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "no hay (gratitude_points) para convertir",
   "rebalanced.tech.sin_shard_intro": "Aumenta la cantidad de Fragmentos de pecado obtenidos al sanar almas.",
-  "rebalanced.active.sin_shard": "Fragmentos de pecado al sanar almas: ×{0:0.#}"
+  "rebalanced.active.sin_shard": "Fragmentos de pecado al sanar almas: ×{0:0.#}",
+  "rebalanced.tech.gratitude_intro": "(gratitude_points) al liberar almas: +{0:0}%",
+  "rebalanced.tech.gratitude_lore": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.",
+  "rebalanced.tech.sin_shard_lore": "Una limpieza más minuciosa deja más Fragmentos de pecado al sanar un alma."
 }
