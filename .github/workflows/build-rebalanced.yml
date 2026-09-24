@@ -1,4 +1,4 @@
-name: Build PrayerClarity Rebalanced candidate
+name: Build PrayerClarity shared candidate
 
 on:
   workflow_dispatch:
@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  statuses: write
 
 concurrency:
   group: prayerclarity-shared-${{ github.ref }}
@@ -33,7 +32,7 @@ jobs:
           import json
           from pathlib import Path
           required_rebalanced = {
-              'rebalanced.tech.gratitude_intro',
+              'rebalanced.tech.gratitude_effect',
               'rebalanced.tech.gratitude_lore',
               'rebalanced.tech.sin_shard_lore',
               'rebalanced.tech.souls_intro',
@@ -49,46 +48,61 @@ jobs:
                       missing = sorted(required_rebalanced - set(data))
                       assert not missing, (path, missing)
           PY
-      - name: Restore Rebalanced
-        run: dotnet restore PrayerClarity.Rebalanced.csproj
+      - name: Restore sibling projects
+        run: |
+          dotnet restore PrayerClarity.Rebalanced.csproj
+          dotnet restore PrayerClarity.csproj
       - name: Build Rebalanced
         run: dotnet build PrayerClarity.Rebalanced.csproj -c Release --no-restore
-      - name: Verify locales and stage Rebalanced runtime candidate
+      - name: Build Vanilla
+        run: dotnet build PrayerClarity.csproj -c Release --no-restore
+      - name: Verify locales and stage both runtime candidates
         id: artifact
         shell: bash
         run: |
           set -euo pipefail
           rebalanced='bin/Rebalanced/PrayerClarity.Rebalanced.dll'
+          vanilla='bin/Release/PrayerClarity.dll'
           test -f "$rebalanced"
+          test -f "$vanilla"
 
           for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
-            grep -a -q ".lang.${locale}.json" "$rebalanced" || {
-              echo "Rebalanced base locale marker missing: ${locale}" >&2
-              exit 1
-            }
-            grep -a -q ".lang_rebalanced.${locale}.json" "$rebalanced" || {
-              echo "Rebalanced overlay locale marker missing: ${locale}" >&2
-              exit 1
-            }
+            grep -a -q ".lang.${locale}.json" "$rebalanced"
+            grep -a -q ".lang_rebalanced.${locale}.json" "$rebalanced"
+            grep -a -q ".lang.${locale}.json" "$vanilla"
           done
 
           mkdir -p dist
-          reb_handoff='PrayerClarity.Rebalanced-0.2.24-ci.dll'
+          reb_handoff='PrayerClarity.Rebalanced-0.2.25-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
+          van_handoff='PrayerClarity-1.0.34-ci.dll'
+          van_canonical='PrayerClarity.dll'
+
           cp "$rebalanced" "dist/$reb_handoff"
           cp "$rebalanced" "dist/$reb_canonical"
+          cp "$vanilla" "dist/$van_handoff"
+          cp "$vanilla" "dist/$van_canonical"
 
           reb_hash=$(sha256sum "dist/$reb_handoff" | awk '{print $1}')
           reb_canonical_hash=$(sha256sum "dist/$reb_canonical" | awk '{print $1}')
+          van_hash=$(sha256sum "dist/$van_handoff" | awk '{print $1}')
+          van_canonical_hash=$(sha256sum "dist/$van_canonical" | awk '{print $1}')
           test "$reb_hash" = "$reb_canonical_hash"
+          test "$van_hash" = "$van_canonical_hash"
 
           {
             echo "Source SHA: $GITHUB_SHA"
             echo "Supported game MVID: 6f50b8e7-156b-49ac-bbe8-7505894b2364"
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
             echo
+            echo "PrayerClarity: Vanilla"
+            echo "Version: 1.0.34"
+            echo "Handoff DLL: $van_handoff"
+            echo "Canonical DLL: $van_canonical"
+            echo "DLL SHA-256: $van_hash"
+            echo
             echo "PrayerClarity: Rebalanced"
-            echo "Version: 0.2.24"
+            echo "Version: 0.2.25"
             echo "Handoff DLL: $reb_handoff"
             echo "Canonical DLL: $reb_canonical"
             echo "DLL SHA-256: $reb_hash"
@@ -96,33 +110,17 @@ jobs:
 
           echo "reb_handoff=$reb_handoff" >> "$GITHUB_OUTPUT"
           echo "reb_canonical=$reb_canonical" >> "$GITHUB_OUTPUT"
-          echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
-          echo "PrayerClarity: Rebalanced 0.2.24 DLL SHA-256: $reb_hash"
-      - name: Upload Rebalanced runtime candidate
+          echo "van_handoff=$van_handoff" >> "$GITHUB_OUTPUT"
+          echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
+      - name: Upload shared runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-rebalanced-0.2.24-ci-${{ github.sha }}
+          name: PrayerClarity-rebalanced-0.2.25-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
+            dist/${{ steps.artifact.outputs.van_handoff }}
+            dist/${{ steps.artifact.outputs.van_canonical }}
             dist/BUILD_INFO.txt
           if-no-files-found: error
           retention-days: 14
-      - name: Report candidate workflow run
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          JOB_STATUS: ${{ job.status }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          case "$JOB_STATUS" in
-            success) state=success ;;
-            cancelled) state=error ;;
-            *) state=failure ;;
-          esac
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-            -f state="$state" \
-            -f context="PrayerClarity Rebalanced candidate" \
-            -f description="Rebalanced candidate workflow: $JOB_STATUS" \
-            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
