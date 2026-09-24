@@ -1,0 +1,65 @@
+name: Publish accepted PrayerClarity 1.0.33 and Rebalanced 0.2.23
+
+on:
+  push:
+    branches:
+      - 'publication/accepted-1.0.33-rebalanced-0.2.23'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download exact accepted artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir accepted
+          gh run download 35991353623 -R "$GITHUB_REPOSITORY" \
+            -n "PrayerClarity-rebalanced-0.2.23-ci-93b66e747ffe1685003afb894b24f14416edb8c0" \
+            -D accepted
+          test -f accepted/PrayerClarity.dll
+          test -f accepted/PrayerClarity.Rebalanced.dll
+
+      - name: Verify exact accepted hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          van=$(sha256sum accepted/PrayerClarity.dll | awk '{print $1}')
+          reb=$(sha256sum accepted/PrayerClarity.Rebalanced.dll | awk '{print $1}')
+          test "$van" = "30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a"
+          test "$reb" = "22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796"
+          echo "Vanilla SHA-256: $van"
+          echo "Rebalanced SHA-256: $reb"
+
+      - name: Publish exact accepted releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.33 -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v1.0.33 already exists" >&2
+            exit 1
+          fi
+          if gh release view rebalanced-v0.2.23 -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "rebalanced-v0.2.23 already exists" >&2
+            exit 1
+          fi
+
+          gh release create v1.0.33 -R "$GITHUB_REPOSITORY" \
+            --target 93b66e747ffe1685003afb894b24f14416edb8c0 \
+            --title "PrayerClarity: Vanilla 1.0.33" \
+            --notes "Accepted controller UX release for Graveyard Keeper 1.407. Prayer-bearing Technologies with multiple visible unlocks now let gamepad users traverse those unlocks one at a time with Left/Right; the selected icon stays clear and only its own tooltip is shown. Moving past the outer unlock returns to normal Technology-tree navigation. Mouse behavior, Technologies without prayers, and all vanilla prayer mechanics/balance remain unchanged. Exact accepted source: 93b66e747ffe1685003afb894b24f14416edb8c0. Exact DLL SHA-256: 30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a." \
+            accepted/PrayerClarity.dll
+
+          gh release create rebalanced-v0.2.23 -R "$GITHUB_REPOSITORY" \
+            --target 93b66e747ffe1685003afb894b24f14416edb8c0 \
+            --title "PrayerClarity: Rebalanced 0.2.23" \
+            --notes "Accepted PrayerClarity: Rebalanced release for Graveyard Keeper 1.407. Generalizes the tested one-unlock-at-a-time gamepad Technology navigation to every prayer-bearing Technology with multiple visible unlocks. Includes the accumulated accepted Better Save Soul prayer mechanics and presentation work from the 0.2.17-0.2.22 development line. Exact accepted source: 93b66e747ffe1685003afb894b24f14416edb8c0. Exact DLL SHA-256: 22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796." \
+            accepted/PrayerClarity.Rebalanced.dll
