@@ -1,6 +1,16 @@
 # Changelog
 
 
+## PrayerClarity: Rebalanced 0.2.24 candidate
+
+- Finishes the deferred Better Save Soul presentation cleanup without changing prayer mechanics or balance.
+- Soul's Repose Technology now states explicitly that stored Soul Gratitude is converted into Faith at 1:1 on a successful sermon; the tier line still owns the per-sermon cap.
+- Soul's Repose pulpit replaces the arrow-only transaction rebus with a short sentence using the live conversion amounts.
+- Soul Contentment separates its thematic preservation lore from its exact +50% Soul Gratitude effect; the changing duration value is highlighted in each tier because duration is the prayer's quality progression axis.
+- Thorough Cleansing replaces the stale stock lore that hard-codes x2 with edition-owned tier-neutral lore; the actual x2/x3/x4 values remain in the tier rows.
+- The final BSS lore correction runs in a Rebalanced-only post-pass after the accepted Technology writer. Vanilla 1.0.33 source inputs are unchanged and CI requires its DLL hash to remain exactly the accepted 1.0.33 hash.
+
+
 ## PrayerClarity: Vanilla 1.0.33
 
 - Adds the accepted gamepad prayer-Technology carousel without changing stock prayer mechanics or balance.
