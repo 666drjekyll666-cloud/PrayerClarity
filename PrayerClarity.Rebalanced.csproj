@@ -4,7 +4,7 @@
     <LangVersion>7.3</LangVersion>
     <AssemblyName>PrayerClarity.Rebalanced</AssemblyName>
     <RootNamespace>PrayerClarity</RootNamespace>
-    <Version>0.2.23</Version>
+    <Version>0.2.24</Version>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -49,6 +49,7 @@
     <Compile Include="src/RebalancedSoulsRepose.cs" />
     <Compile Include="src/RebalancedThoroughCleansing.cs" />
     <Compile Include="src/RebalancedSoulContentment.cs" />
+    <Compile Include="src/RebalancedBssPresentationPolish.cs" />
     <Compile Include="src/RebalancedPresentationSemantics.cs" />
   </ItemGroup>
   <ItemGroup>
