@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Increases the number of Sin Shards gained from healing souls.",
   "rebalanced.active.sin_shard": "Sin Shards from soul healing: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) from releasing souls: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "Soul condition does not deteriorate over time - whether still in the body or already extracted.",
-  "rebalanced.tech.sin_shard_lore": "A more thorough cleansing leaves more Sin Shards after a soul is healed."
+  "rebalanced.tech.gratitude_lore": "A few words about peace for those who have had particularly little of it.",
+  "rebalanced.tech.sin_shard_lore": "A few words about why souls are best cleansed thoroughly.",
+  "rebalanced.tech.gratitude_effect": "Soul condition does not deteriorate over time — neither in the body nor after extraction.\\n(gratitude_points) from releasing souls: +{0:0}%"
 }
