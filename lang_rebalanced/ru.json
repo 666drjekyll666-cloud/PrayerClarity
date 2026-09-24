@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Увеличивает количество Осколков греха, получаемых при исцелении душ.",
   "rebalanced.active.sin_shard": "Осколки греха за исцеление душ: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) за освобождение душ: +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "Состояние душ не ухудшается со временем — ни в теле, ни после извлечения.",
-  "rebalanced.tech.sin_shard_lore": "Чем тщательнее очищение, тем больше Осколков греха остаётся после исцеления души."
+  "rebalanced.tech.gratitude_lore": "Несколько слов о покое для тех, кому с ним особенно не повезло.",
+  "rebalanced.tech.sin_shard_lore": "Несколько слов о том, что душу лучше очищать тщательно.",
+  "rebalanced.tech.gratitude_effect": "Состояние душ со временем не ухудшается — ни в теле, ни после извлечения.\\n(gratitude_points) за освобождение душ: +{0:0}%"
 }
