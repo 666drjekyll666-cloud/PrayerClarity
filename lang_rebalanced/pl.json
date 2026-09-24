@@ -11,11 +11,14 @@
   "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
   "rebalanced.active.gratitude": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu. Uwalnianie dusz daje +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%",
-  "rebalanced.tech.souls_intro": "Przy powodzeniu każdy wydany (gratitude_points) daje 1 (faith).",
+  "rebalanced.tech.souls_intro": "Przy powodzeniu zgromadzone (gratitude_points) są zamieniane na (faith) w stosunku 1:1.",
   "rebalanced.tech.souls_tier": "Limit na kazanie: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "Przy powodzeniu każdy wydany (gratitude_points) daje 1 (faith). Podczas jednego kazania można wydać do {0} (gratitude_points).",
-  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion": "Zamienia {0} (gratitude_points) na {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "brak (gratitude_points) do zamiany",
   "rebalanced.tech.sin_shard_intro": "Zwiększa liczbę Odłamków grzechu otrzymywanych podczas leczenia dusz.",
-  "rebalanced.active.sin_shard": "Odłamki grzechu z leczenia dusz: ×{0:0.#}"
+  "rebalanced.active.sin_shard": "Odłamki grzechu z leczenia dusz: ×{0:0.#}",
+  "rebalanced.tech.gratitude_intro": "(gratitude_points) za uwalnianie dusz: +{0:0}%",
+  "rebalanced.tech.gratitude_lore": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu.",
+  "rebalanced.tech.sin_shard_lore": "Dokładniejsze oczyszczenie pozostawia więcej Odłamków grzechu po uzdrowieniu duszy."
 }
