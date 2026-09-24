@@ -34,16 +34,16 @@ jobs:
           dll='bin/TechnologyPrayerCarouselPrototype/PrayerClarity.TechnologyPrayerCarouselPrototype.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.TechnologyPrayerCarouselPrototype-0.1.0.dll'
+          handoff='PrayerClarity.TechnologyPrayerCarouselPrototype-0.1.1.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo 'Version: 0.1.0'
+            echo 'Version: 0.1.1'
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
             echo 'Target: PrayerClarity: Rebalanced 0.2.21 candidate source 1d8eb667d4ddbc37efd24cbd84606f1a43e19606 / Graveyard Keeper 1.407'
-            echo 'Purpose: research-only UI prototype. Keeps the existing BSS Technology node focused; X/Y cycles its three existing TechUnlock tooltips while D-pad tree navigation remains untouched.'
+            echo 'Purpose: research-only UI prototype. Left/Right traverse the three existing BSS TechUnlock tooltips; at the outer prayer edges input falls through to vanilla Technology-tree navigation.'
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
           echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
@@ -51,7 +51,7 @@ jobs:
       - name: Upload research artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-technology-prayer-carousel-prototype-0.1.0-${{ github.sha }}
+          name: PrayerClarity-technology-prayer-carousel-prototype-0.1.1-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
