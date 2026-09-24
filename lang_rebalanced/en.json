@@ -11,11 +11,14 @@
   "rebalanced.active.combat": "Damage +{0:0.##} · Armor +{1:0.##} · Regeneration {2:0.##} HP/s",
   "rebalanced.active.gratitude": "Soul condition does not deteriorate over time - whether still in the body or already extracted. Releasing souls grants +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Plant growth time: -{0:0}%",
-  "rebalanced.tech.souls_intro": "On success, each spent (gratitude_points) grants 1 (faith).",
+  "rebalanced.tech.souls_intro": "On success, stored (gratitude_points) is converted into (faith) at a 1:1 rate.",
   "rebalanced.tech.souls_tier": "Sermon limit: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "On success, each spent (gratitude_points) grants 1 (faith). Up to {0} (gratitude_points) can be spent per sermon.",
-  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion": "Converts {0} (gratitude_points) into {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "no (gratitude_points) to convert",
   "rebalanced.tech.sin_shard_intro": "Increases the number of Sin Shards gained from healing souls.",
-  "rebalanced.active.sin_shard": "Sin Shards from soul healing: ×{0:0.#}"
+  "rebalanced.active.sin_shard": "Sin Shards from soul healing: ×{0:0.#}",
+  "rebalanced.tech.gratitude_intro": "(gratitude_points) from releasing souls: +{0:0}%",
+  "rebalanced.tech.gratitude_lore": "Soul condition does not deteriorate over time - whether still in the body or already extracted.",
+  "rebalanced.tech.sin_shard_lore": "A more thorough cleansing leaves more Sin Shards after a soul is healed."
 }
