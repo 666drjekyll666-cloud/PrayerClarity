@@ -24,6 +24,25 @@
 - This closes the BSS-specific UX hypothesis. The result is retained as exact accepted runtime evidence while the immediately following candidate tests the user's requested generalization to all prayer-bearing Technology nodes and to PrayerClarity: Vanilla.
 
 
+## 2026-09-24 — stable publication complete for Vanilla 1.0.33 / Rebalanced 0.2.23
+
+- Stable promotion PR: **#32**, squash-merged to `main` as `1cfef778e4f6744dd226c5ffab03a1de8cad9e27`.
+- Publication workflow run: `35994536699`; result: **success**.
+- The workflow downloaded accepted artifact `10803884921`, verified both recorded SHA-256 values, and published the exact accepted DLL bytes; **no rebuild occurred**.
+- Vanilla release: `v1.0.33` -> target `93b66e747ffe1685003afb894b24f14416edb8c0`.
+  - release ID: `395614611`;
+  - asset ID: `585838555`;
+  - asset: `PrayerClarity.dll`;
+  - asset digest: `sha256:30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- Rebalanced release: `rebalanced-v0.2.23` -> target `93b66e747ffe1685003afb894b24f14416edb8c0`.
+  - release ID: `395614626`;
+  - asset ID: `585838632`;
+  - asset: `PrayerClarity.Rebalanced.dll`;
+  - asset digest: `sha256:22ba558786eb139f01aabeaa99a31b8a55bc263c9a320ed1790ca00494f80796`.
+- Final status: **accepted, frozen, merged to main, and published as both current stable sibling editions**.
+- Numbered accepted bytes are immutable.
+
+
 ## 2026-09-24 — Rebalanced 0.2.23 / Vanilla 1.0.33 accepted
 
 - User runtime acceptance: explicit confirmation that the generalized prayer-Technology navigation works correctly in both Rebalanced and Vanilla.
