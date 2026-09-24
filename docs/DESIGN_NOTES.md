@@ -151,6 +151,27 @@ Accepted general grammar is:
 
 Rebalanced effects should fit this data-driven structure. Do not add bespoke layout code per prayer unless runtime evidence proves the generic semantic structure insufficient.
 
+### Controller navigation inside prayer-bearing Technologies
+
+For gamepad/controller presentation, a Technology node that exposes multiple visible unlocks and contains at least one prayer should behave as a short horizontal sequence of its **existing visible child unlocks**, rather than concatenating every child tooltip into one long parent tooltip.
+
+Accepted interaction model from the Better Save Soul prototype/runtime pass:
+
+- the real Technology node remains the only navigation/progression object;
+- one child unlock is visually selected at a time; non-selected child icons are dimmed;
+- the parent tooltip is rebuilt from the selected existing `TechUnlock.GetTooltip`;
+- Left/Right walks child unlocks in their native visible order;
+- at the first/last child, the next Left/Right input falls through to ordinary Technology-tree navigation;
+- horizontal entry chooses the corresponding boundary child, so movement remains spatially reversible;
+- Up/Down remains ordinary tree navigation;
+- no child focus object, duplicate Technology, save state, or custom unlock state is created.
+
+Scope policy: apply this only to **prayer-bearing** Technologies, not to the entire Technology tree. If such a node also contains non-prayer perks/buildings/recipes, those visible children participate in the same sequence so each icon has exactly one matching tooltip while the node is active.
+
+The activation rule should be data-driven from the visible `TechUnlock` list and the existing prayer-craft resolver, not a hard-coded Technology-name list. Mouse presentation stays native because stock 1.407 already gives child unlocks independent tooltips there.
+
+This is shared presentation behavior for PrayerClarity: Vanilla and PrayerClarity: Rebalanced; it changes no mechanics or balance.
+
 ## Prayer item tooltip contract
 
 A prayer item tooltip describes the **concrete quality currently held**, not the whole Bronze/Silver/Gold comparison.
