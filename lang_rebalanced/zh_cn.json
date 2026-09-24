@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "增加治愈灵魂时获得的罪恶碎片数量。",
   "rebalanced.active.sin_shard": "治愈灵魂获得的罪恶碎片: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "释放灵魂获得的(gratitude_points)：+{0:0}%",
-  "rebalanced.tech.gratitude_lore": "灵魂状态不会随时间恶化，无论仍在尸体中还是已被提取。",
-  "rebalanced.tech.sin_shard_lore": "更彻底的净化会在灵魂治愈后留下更多罪恶碎片。"
+  "rebalanced.tech.gratitude_lore": "给那些尤其与安宁无缘的灵魂说几句关于安宁的话。",
+  "rebalanced.tech.sin_shard_lore": "说几句为什么灵魂最好要彻底净化。",
+  "rebalanced.tech.gratitude_effect": "灵魂状态不会随时间恶化——无论仍在尸体中还是已经提取。\\n释放灵魂获得的(gratitude_points)：+{0:0}%"
 }
