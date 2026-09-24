@@ -38,6 +38,16 @@
   - Static source inspection now explains the vertical-placement difference: `TechnologyTooltipViewportClamp.ClampAxis` returns the original coordinate whenever the bubble itself is taller than the available safe axis (`min > max`). Therefore ordinary tooltips can be clamped upward because they fit; an over-tall combined BSS tooltip cannot be made fully visible by translation alone and is deliberately left at its original Y.
   - This closes the Companion/vertical-clamp hypothesis. It does **not** close the remaining width question: why the combined BSS rows marked for a 520-unit `UILabel.overflowWidth` expansion ceiling are not producing a sufficiently wide/short final bubble.
   - Next evidence gate: a separate research-only, read-only Technology tooltip probe must record the post-draw live label geometry, final bubble geometry, and Harmony patch owners/order for `BubbleWidgetText.Draw`, `Tooltip.Show`, and `WidgetsBubbleGUI.Update`. Production 0.2.20 remains unchanged while this is investigated.
+- Research helper prepared for that gate: **Technology Tooltip Probe 0.1.0**.
+  - research ref: `research/technology-tooltip-probe-0.1.0`;
+  - exact source SHA: `3591b8b0b1287f88528f5112af72792bdee354bc`;
+  - GitHub Actions run: `35937587610`; result: **success**;
+  - artifact ID: `10783462850`;
+  - artifact ZIP digest: `sha256:35e4819df17c1df64a4abccb80e24999decd96472b9df1ddbf8b956a64ab0979`;
+  - handoff DLL: `PrayerClarity.TechnologyTooltipProbe-0.1.0-ci.dll`;
+  - DLL SHA-256: `ff96a2fb380b2596bf297202018e63d4495531fef50faa7b95000d548a97a8a8`.
+  - The probe is read-only with respect to game/UI/save state: it observes PrayerClarity-owned `max_width=900` rows after live `BubbleWidgetText.Draw`, records label `overflowWidth`/processed geometry, records final `WidgetsBubbleGUI` geometry for the displayed tooltip, and dumps Harmony patch ownership/order. It does not write label geometry or save data.
+  - Required runtime action: keep Rebalanced 0.2.20 unchanged, install only the probe DLL alongside it, open Technology -> Spiritualism, highlight the combined Better Save Soul prayer node once with the gamepad, then return the resulting `LogOutput.log`. No sermon/mechanics action is required.
 - No mechanics retest is required.
 - Status after this visual pass: **0.2.20 remains rejected for promotion; pulpit mechanics presentation path is proved, combined Technology layout and BSS wording/lore still require follow-up.**
 
