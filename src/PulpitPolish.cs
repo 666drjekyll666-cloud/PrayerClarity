@@ -137,6 +137,15 @@ namespace PrayerClarity
             object craft = R.Get(_gui, "pray_craft");
             string craftId = R.Id(craft) ?? string.Empty;
             string body = _forecast.SpecialText;
+
+            if (_forecast.SoulGratitudeFaithCap > 0 && string.IsNullOrEmpty(body))
+            {
+                _forecast.SpecialIconName = null;
+                SetSprite(_effectIcon, null);
+                _effectLabelObject.SetActive(false);
+                return;
+            }
+
             if (string.IsNullOrEmpty(body)) body = "—";
 
             // Prosperity is a physical sermon output rather than a timed buff, so use
