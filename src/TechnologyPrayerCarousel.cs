@@ -17,20 +17,12 @@ namespace PrayerClarity
         private static readonly BindingFlags Stat =
             BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-        private static readonly HashSet<string> TargetFamilies =
-            new HashSet<string>(StringComparer.Ordinal)
-            {
-                "b_souls",
-                "b_grat_points_incr",
-                "b_sin_shard"
-            };
-
         private sealed class State
         {
             internal object Item;
             internal object Tooltip;
             internal readonly List<object> Unlocks = new List<object>();
-            internal readonly List<string> Families = new List<string>();
+            internal readonly List<string> PrayerLabels = new List<string>();
             internal readonly List<object> Children = new List<object>();
             internal readonly Dictionary<object, Color> OriginalSpriteColors =
                 new Dictionary<object, Color>(ReferenceComparer.Instance);
@@ -124,7 +116,7 @@ namespace PrayerClarity
             Patch(right, nameof(RightPrefix), null);
 
             _log?.LogInfo(
-                "PrayerClarity BSS Technology prayer navigation enabled: Left/Right traverses the three prayer unlocks and falls through to native Technology navigation at the outer edges.");
+                "PrayerClarity prayer-Technology navigation enabled: on gamepad, Left/Right traverses visible unlocks one at a time in any multi-unlock Technology that contains a prayer, then falls through to native Technology navigation at the outer edges.");
         }
 
         private static void InitGamepadTooltipPostfix(object __instance, object __0)
@@ -150,7 +142,7 @@ namespace PrayerClarity
                 {
                     _log?.LogInfo(
                         "PC_CAROUSEL_TARGET tech_id=" + techId +
-                        " families=" + string.Join(",", state.Families.ToArray()) +
+                        " prayer_labels=" + string.Join(",", state.PrayerLabels.ToArray()) +
                         " unlock_ids=" + string.Join(",", state.Unlocks.Select(GetId).ToArray()));
                 }
             }
@@ -249,10 +241,11 @@ namespace PrayerClarity
                     }
                 }
 
-                // At an outer prayer edge (or when entering from a neighbouring
+                // At an outer child-unlock edge (or when entering from a neighbouring
                 // Technology), let Graveyard Keeper run its normal tree navigation.
                 // The same-frame direction marker lets OnGamepadOver choose the
-                // corresponding boundary prayer when this native move lands on BSS.
+                // corresponding boundary unlock when this native move lands on a
+                // prayer-bearing Technology.
                 _pendingHorizontalDirection = direction;
                 _pendingHorizontalFrame = Time.frameCount;
                 return true;
@@ -267,19 +260,19 @@ namespace PrayerClarity
         private static State TryBuildState(object item, object visibleUnlocks)
         {
             List<object> unlocks = ToList(visibleUnlocks as IEnumerable);
-            if (unlocks.Count != 3) return null;
+            if (unlocks.Count < 2) return null;
 
-            var families = new List<string>();
+            var prayerLabels = new List<string>();
+            bool containsPrayer = false;
             foreach (object unlock in unlocks)
             {
-                string family = ResolveSingleFamily(unlock);
-                if (string.IsNullOrEmpty(family) || !TargetFamilies.Contains(family))
-                    return null;
-                families.Add(family);
+                string prayerLabel = ResolvePrayerLabel(unlock);
+                if (!string.IsNullOrEmpty(prayerLabel))
+                    containsPrayer = true;
+                prayerLabels.Add(string.IsNullOrEmpty(prayerLabel) ? "-" : prayerLabel);
             }
 
-            if (new HashSet<string>(families, StringComparer.Ordinal).Count != 3)
-                return null;
+            if (!containsPrayer) return null;
 
             Component component = item as Component;
             if (component == null) return null;
@@ -293,7 +286,7 @@ namespace PrayerClarity
                 SelectedIndex = 0
             };
             state.Unlocks.AddRange(unlocks);
-            state.Families.AddRange(families);
+            state.PrayerLabels.AddRange(prayerLabels);
 
             IEnumerable childEnumerable = Get(item, "_unlocks") as IEnumerable;
             if (childEnumerable != null)
@@ -307,25 +300,26 @@ namespace PrayerClarity
             return state;
         }
 
-        private static string ResolveSingleFamily(object techUnlock)
+        private static string ResolvePrayerLabel(object techUnlock)
         {
             IEnumerable crafts = _resolvePrayerCrafts.Invoke(null, new[] { techUnlock }) as IEnumerable;
             if (crafts == null) return null;
 
-            string family = null;
-            int count = 0;
+            var families = new List<string>();
             foreach (object craft in crafts)
             {
-                string craftFamily = PrayerFamilyFromCraftId(GetId(craft));
-                if (string.IsNullOrEmpty(craftFamily)) continue;
-                count++;
+                string craftId = GetId(craft);
+                if (string.IsNullOrEmpty(craftId) ||
+                    !craftId.StartsWith("pray:", StringComparison.Ordinal))
+                    continue;
 
-                if (family == null) family = craftFamily;
-                else if (!string.Equals(family, craftFamily, StringComparison.Ordinal))
-                    return null;
+                string family = PrayerFamilyFromCraftId(craftId);
+                string label = string.IsNullOrEmpty(family) ? craftId : family;
+                if (!families.Contains(label))
+                    families.Add(label);
             }
 
-            return count == 0 ? null : family;
+            return families.Count == 0 ? null : string.Join("+", families.ToArray());
         }
 
         private static string PrayerFamilyFromCraftId(string craftId)
@@ -405,7 +399,7 @@ namespace PrayerClarity
             _log?.LogInfo(
                 "PC_CAROUSEL_SELECT reason=" + reason +
                 " index=" + (state.SelectedIndex + 1) + "/" + state.Unlocks.Count +
-                " family=" + state.Families[state.SelectedIndex] +
+                " prayer=" + state.PrayerLabels[state.SelectedIndex] +
                 " unlock_id=" + GetId(state.Unlocks[state.SelectedIndex]));
         }
 
