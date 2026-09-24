@@ -14,6 +14,7 @@ namespace PrayerClarity
         internal const string CombatTierParam = "prayerclarity_rebalanced_combat_tier";
         internal const string CombatRegenParam = "prayerclarity_rebalanced_combat_regen";
         internal const string ExcellenceTierParam = "prayerclarity_rebalanced_excellence_tier";
+        internal const string SinShardTierParam = "prayerclarity_rebalanced_sin_shard_tier";
 
         private static readonly Dictionary<string, string> PrayerToToken =
             new Dictionary<string, string>(StringComparer.Ordinal)
@@ -23,7 +24,8 @@ namespace PrayerClarity
                 ["b_skull"] = ReposeTierParam,
                 ["b_sword"] = CombatTierParam,
                 ["b_shield"] = CombatTierParam,
-                ["b_star"] = ExcellenceTierParam
+                ["b_star"] = ExcellenceTierParam,
+                ["b_sin_shard"] = SinShardTierParam
             };
 
         private static ManualLogSource _log;
