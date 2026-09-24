@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "魂の治療で得られる罪の欠片の数が増加します。",
   "rebalanced.active.sin_shard": "魂の治療で得る罪の欠片: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "魂の解放で得られる(gratitude_points)：+{0:0}%",
-  "rebalanced.tech.gratitude_lore": "魂の状態は時間経過で悪化しません。死体の中でも、抽出後でも有効です。",
-  "rebalanced.tech.sin_shard_lore": "より徹底した浄化では、魂の治療後に得られる罪の欠片が増えます。"
+  "rebalanced.tech.gratitude_lore": "とりわけ安らぎに恵まれなかった者たちへ、安息について少しばかり。",
+  "rebalanced.tech.sin_shard_lore": "魂は念入りに浄化したほうがよい、という話を少しばかり。",
+  "rebalanced.tech.gratitude_effect": "魂の状態は時間が経っても悪化しません。死体の中でも、抽出後でも同じです。\\n魂の解放で得られる(gratitude_points)：+{0:0}%"
 }
