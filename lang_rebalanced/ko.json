@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "영혼 치유로 얻는 죄의 조각 수가 증가합니다.",
   "rebalanced.active.sin_shard": "영혼 치유로 얻는 죄의 조각: ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "영혼 해방으로 얻는 (gratitude_points): +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "영혼의 상태는 시간이 지나도 악화되지 않습니다. 시체 안에 있거나 추출된 뒤에도 적용됩니다.",
-  "rebalanced.tech.sin_shard_lore": "더 철저히 정화할수록 영혼 치유 후 더 많은 죄의 조각이 남습니다."
+  "rebalanced.tech.gratitude_lore": "유난히 안식을 누리지 못한 이들을 위한 몇 마디.",
+  "rebalanced.tech.sin_shard_lore": "영혼은 철저히 정화하는 편이 낫다는 몇 마디.",
+  "rebalanced.tech.gratitude_effect": "영혼의 상태는 시간이 지나도 악화되지 않습니다. 시체 안에 있을 때도, 추출된 뒤에도 마찬가지입니다.\\n영혼 해방으로 얻는 (gratitude_points): +{0:0}%"
 }
