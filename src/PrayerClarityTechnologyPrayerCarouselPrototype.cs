@@ -17,7 +17,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.techprayercarouselprototype";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Technology Prayer Carousel Prototype";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         private static readonly BindingFlags Inst =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -62,6 +62,8 @@ namespace PrayerClarityResearch
         private static readonly HashSet<string> LoggedTargets =
             new HashSet<string>(StringComparer.Ordinal);
         private static State _active;
+        private static int _pendingHorizontalDirection;
+        private static int _pendingHorizontalFrame = -1;
         private static bool _runtimeErrorLogged;
 
         private void Awake()
@@ -109,10 +111,10 @@ namespace PrayerClarityResearch
                 "OnGamepadOver", Inst, null, Type.EmptyTypes, null);
             MethodInfo onGamepadOut = techTreeItemType.GetMethod(
                 "OnGamepadOut", Inst, null, Type.EmptyTypes, null);
-            MethodInfo option1 = baseGuiType.GetMethod(
-                "OnPressedOption1", Inst, null, Type.EmptyTypes, null);
-            MethodInfo option2 = baseGuiType.GetMethod(
-                "OnPressedOption2", Inst, null, Type.EmptyTypes, null);
+            MethodInfo left = baseGuiType.GetMethod(
+                "OnPressedLeft", Inst, null, Type.EmptyTypes, null);
+            MethodInfo right = baseGuiType.GetMethod(
+                "OnPressedRight", Inst, null, Type.EmptyTypes, null);
 
             _resolvePrayerCrafts = presentationType.GetMethod(
                 "ResolvePrayerCrafts", Stat, null, new[] { typeof(object) }, null);
@@ -127,10 +129,10 @@ namespace PrayerClarityResearch
                 throw new MissingMethodException("TechTreeGUIItem.OnGamepadOver");
             if (onGamepadOut == null)
                 throw new MissingMethodException("TechTreeGUIItem.OnGamepadOut");
-            if (option1 == null)
-                throw new MissingMethodException("BaseGUI.OnPressedOption1");
-            if (option2 == null)
-                throw new MissingMethodException("BaseGUI.OnPressedOption2");
+            if (left == null)
+                throw new MissingMethodException("BaseGUI.OnPressedLeft");
+            if (right == null)
+                throw new MissingMethodException("BaseGUI.OnPressedRight");
             if (_resolvePrayerCrafts == null)
                 throw new MissingMethodException("SecondarySurfacePresentation.ResolvePrayerCrafts(object)");
             if (_tooltipClearData == null)
@@ -141,11 +143,11 @@ namespace PrayerClarityResearch
             Patch(initGamepadTooltip, null, nameof(InitGamepadTooltipPostfix));
             Patch(onGamepadOver, null, nameof(OnGamepadOverPostfix));
             Patch(onGamepadOut, null, nameof(OnGamepadOutPostfix));
-            Patch(option1, nameof(Option1Prefix), null);
-            Patch(option2, nameof(Option2Prefix), null);
+            Patch(left, nameof(LeftPrefix), null);
+            Patch(right, nameof(RightPrefix), null);
 
             _log?.LogInfo(
-                "PC_CAROUSEL_READY focus the Better Save Soul prayer Technology node; X=previous prayer, Y=next prayer; D-pad remains native tree navigation.");
+                "PC_CAROUSEL_READY focus the Better Save Soul prayer Technology node; Left/Right traverse the three prayers, then fall through to native Technology navigation at the outer edges.");
         }
 
         private static void InitGamepadTooltipPostfix(object __instance, object __0)
@@ -189,6 +191,20 @@ namespace PrayerClarityResearch
                 if (!States.TryGetValue(__instance, out state)) return;
 
                 _active = state;
+
+                if (_pendingHorizontalFrame == Time.frameCount)
+                {
+                    if (_pendingHorizontalDirection > 0)
+                        state.SelectedIndex = 0;
+                    else if (_pendingHorizontalDirection < 0)
+                        state.SelectedIndex = state.Unlocks.Count - 1;
+
+                    RebuildSelectedTooltip(state, true);
+                }
+
+                _pendingHorizontalDirection = 0;
+                _pendingHorizontalFrame = -1;
+
                 ApplyHighlight(state);
                 LogSelection(state, "focus");
             }
@@ -214,17 +230,17 @@ namespace PrayerClarityResearch
             }
         }
 
-        private static bool Option1Prefix(object __instance, ref bool __result)
+        private static bool LeftPrefix(object __instance, ref bool __result)
         {
-            return HandleOption(__instance, -1, ref __result);
+            return HandleHorizontal(__instance, -1, ref __result);
         }
 
-        private static bool Option2Prefix(object __instance, ref bool __result)
+        private static bool RightPrefix(object __instance, ref bool __result)
         {
-            return HandleOption(__instance, 1, ref __result);
+            return HandleHorizontal(__instance, 1, ref __result);
         }
 
-        private static bool HandleOption(object gui, int delta, ref bool result)
+        private static bool HandleHorizontal(object gui, int direction, ref bool result)
         {
             try
             {
@@ -232,25 +248,37 @@ namespace PrayerClarityResearch
                     return true;
 
                 State state = _active;
-                if (state == null || state.Unlocks.Count == 0)
-                    return true;
-
-                Component item = state.Item as Component;
-                if (item == null || !item.gameObject.activeInHierarchy)
+                if (state != null && state.Unlocks.Count > 0)
                 {
-                    RestoreHighlight(state);
-                    _active = null;
-                    return true;
+                    Component item = state.Item as Component;
+                    if (item == null || !item.gameObject.activeInHierarchy)
+                    {
+                        RestoreHighlight(state);
+                        _active = null;
+                    }
+                    else
+                    {
+                        int nextIndex = state.SelectedIndex + direction;
+                        if (nextIndex >= 0 && nextIndex < state.Unlocks.Count)
+                        {
+                            state.SelectedIndex = nextIndex;
+                            RebuildSelectedTooltip(state, true);
+                            ApplyHighlight(state);
+                            LogSelection(state, direction < 0 ? "left" : "right");
+
+                            result = true;
+                            return false;
+                        }
+                    }
                 }
 
-                int count = state.Unlocks.Count;
-                state.SelectedIndex = (state.SelectedIndex + delta + count) % count;
-                RebuildSelectedTooltip(state, true);
-                ApplyHighlight(state);
-                LogSelection(state, delta < 0 ? "previous" : "next");
-
-                result = true;
-                return false;
+                // At an outer prayer edge (or when entering from a neighbouring
+                // Technology), let Graveyard Keeper run its normal tree navigation.
+                // The same-frame direction marker lets OnGamepadOver choose the
+                // corresponding boundary prayer when this native move lands on BSS.
+                _pendingHorizontalDirection = direction;
+                _pendingHorizontalFrame = Time.frameCount;
+                return true;
             }
             catch (Exception ex)
             {
