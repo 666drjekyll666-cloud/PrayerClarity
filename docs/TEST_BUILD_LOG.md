@@ -31,6 +31,13 @@
   - Thorough Cleansing still shows the stock fixed `(x2)` inside lore, so the 0.2.20 regex normalization did not satisfy the observable property. Do not add another punctuation/Unicode-sensitive regex guess; use an edition-owned BSS lore string or another exact-key replacement with verified localized output.
   - Contentment duration is now explicitly reopened as a visual emphasis question because +50% is invariant across qualities and duration is the only tier ladder (4/8/12 days in the user's Longer Days presentation). If emphasized, color only the duration value, not the label.
 - Width next step: test the same combined BSS Technology tooltip once with Companion disabled. If it expands/fits, investigate compatibility/patch ordering with Companion. If it still does not, create a narrow read-only Technology geometry/patch-owner probe; do not ship another width-policy production guess.
+- Companion-off A/B result, 2026-09-24: **failure persists and Companion is ruled out for this case**.
+  - The supplied runtime session loads Rebalanced 0.2.20 on Graveyard Keeper 1.407 at 2560x1440 and does not load Companion.
+  - The combined Better Save Soul prayer Technology tooltip still runs below the bottom of the viewport.
+  - User control observation: other prayer Technology tooltips shown through gamepad placement move upward when needed; this combined three-prayer tooltip is the only observed prayer case that does not.
+  - Static source inspection now explains the vertical-placement difference: `TechnologyTooltipViewportClamp.ClampAxis` returns the original coordinate whenever the bubble itself is taller than the available safe axis (`min > max`). Therefore ordinary tooltips can be clamped upward because they fit; an over-tall combined BSS tooltip cannot be made fully visible by translation alone and is deliberately left at its original Y.
+  - This closes the Companion/vertical-clamp hypothesis. It does **not** close the remaining width question: why the combined BSS rows marked for a 520-unit `UILabel.overflowWidth` expansion ceiling are not producing a sufficiently wide/short final bubble.
+  - Next evidence gate: a separate research-only, read-only Technology tooltip probe must record the post-draw live label geometry, final bubble geometry, and Harmony patch owners/order for `BubbleWidgetText.Draw`, `Tooltip.Show`, and `WidgetsBubbleGUI.Update`. Production 0.2.20 remains unchanged while this is investigated.
 - No mechanics retest is required.
 - Status after this visual pass: **0.2.20 remains rejected for promotion; pulpit mechanics presentation path is proved, combined Technology layout and BSS wording/lore still require follow-up.**
 
