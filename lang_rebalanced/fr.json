@@ -19,6 +19,7 @@
   "rebalanced.tech.sin_shard_intro": "Augmente le nombre d’Éclats de péché obtenus en soignant les âmes.",
   "rebalanced.active.sin_shard": "Éclats de péché obtenus en soignant les âmes : ×{0:0.#}",
   "rebalanced.tech.gratitude_intro": "(gratitude_points) obtenus en libérant des âmes : +{0:0}%",
-  "rebalanced.tech.gratitude_lore": "L'état des âmes ne se dégrade pas avec le temps, ni dans le corps ni après extraction.",
-  "rebalanced.tech.sin_shard_lore": "Un nettoyage plus approfondi laisse davantage d’Éclats de péché après la guérison d’une âme."
+  "rebalanced.tech.gratitude_lore": "Quelques mots sur le repos pour ceux qui en ont particulièrement manqué.",
+  "rebalanced.tech.sin_shard_lore": "Quelques mots sur l’intérêt de purifier les âmes avec soin.",
+  "rebalanced.tech.gratitude_effect": "L’état des âmes ne se dégrade pas avec le temps — ni dans le corps, ni après extraction.\\n(gratitude_points) obtenus en libérant des âmes : +{0:0}%"
 }
