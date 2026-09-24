@@ -101,10 +101,13 @@ namespace PrayerClarity
 
             if (hasFixed)
             {
-                lines.Add(
-                    hasRate
-                        ? icon + " " + FormatSignedNumber(fixedAmount, false)
-                        : icon + " " + label + ": " + FormatSignedNumber(fixedAmount, false));
+                if (!hasRate && tier.Highlight == PrayerForecast.BonusHighlight.Money)
+                    lines.Add(R.FormatSignedMoney(fixedAmount));
+                else
+                    lines.Add(
+                        hasRate
+                            ? icon + " " + FormatSignedNumber(fixedAmount, false)
+                            : icon + " " + label + ": " + FormatSignedNumber(fixedAmount, false));
             }
         }
 
