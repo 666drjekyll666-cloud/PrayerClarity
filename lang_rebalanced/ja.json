@@ -11,11 +11,14 @@
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
   "rebalanced.active.gratitude": "魂の状態は時間経過で悪化しません。死体の中でも、抽出後でも有効です。魂を解放すると(gratitude_points)が+{0:0}%増えます。",
   "rebalanced.tech.plant_tier": "植物の成長時間：-{0:0}%",
-  "rebalanced.tech.souls_intro": "成功時、消費した(gratitude_points)1につき(faith)1を得ます。",
+  "rebalanced.tech.souls_intro": "成功時、蓄積した(gratitude_points)を1:1で(faith)に変換します。",
   "rebalanced.tech.souls_tier": "説教ごとの上限: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "成功時、消費した(gratitude_points)1につき(faith)1を得ます。1回の説教で最大{0}(gratitude_points)を消費できます。",
-  "rebalanced.pulpit.souls_conversion": "(gratitude_points) -{0} -> (faith) +{1}",
+  "rebalanced.pulpit.souls_conversion": "{0}(gratitude_points)を{1}(faith)に変換します。",
   "rebalanced.pulpit.souls_conversion_empty": "変換できる(gratitude_points)がありません",
   "rebalanced.tech.sin_shard_intro": "魂の治療で得られる罪の欠片の数が増加します。",
-  "rebalanced.active.sin_shard": "魂の治療で得る罪の欠片: ×{0:0.#}"
+  "rebalanced.active.sin_shard": "魂の治療で得る罪の欠片: ×{0:0.#}",
+  "rebalanced.tech.gratitude_intro": "魂の解放で得られる(gratitude_points)：+{0:0}%",
+  "rebalanced.tech.gratitude_lore": "魂の状態は時間経過で悪化しません。死体の中でも、抽出後でも有効です。",
+  "rebalanced.tech.sin_shard_lore": "より徹底した浄化では、魂の治療後に得られる罪の欠片が増えます。"
 }
