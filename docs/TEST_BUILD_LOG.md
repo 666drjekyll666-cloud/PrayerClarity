@@ -1,6 +1,27 @@
 # Test / Research Build Log
 
 
+## PrayerClarity: Rebalanced 0.2.24 — Better Save Soul presentation cleanup candidate
+
+- User-approved scope: close the remaining BSS presentation tails as one coherent presentation-only candidate.
+- Observable changes:
+  1. Thorough Cleansing stock lore must no longer expose a fixed x2; edition-owned lore is tier-neutral while the existing tier rows remain x2/x3/x4.
+  2. Soul's Repose Technology must say that **stored** Soul Gratitude is converted to Faith 1:1 on success; the existing tier cap remains separate.
+  3. Soul's Repose pulpit must express the live Soul Gratitude -> Faith conversion in words rather than arrow-only notation.
+  4. Soul Contentment Technology must keep a short lore sentence about preventing soul-condition deterioration, show the exact +50% Soul Gratitude effect separately, and visually accent only the changing duration value.
+- Canonical/final writers are already established by accepted evidence:
+  - Technology: `TechUnlock.GetTooltip(Tooltip)` -> `SecondarySurfacePresentation`;
+  - pulpit result rows: `PulpitPolish -> PresentationText.BuildPulpitResultRows`.
+- The stale Thorough Cleansing x2 is an already-proved presentation defect: the old punctuation-sensitive regex did not satisfy the runtime property in 0.2.20. 0.2.24 does not add another regex guess; a Rebalanced-only final Technology postfix performs exact localized lore replacement after the established writer.
+- Blast radius: only Rebalanced BSS Technology presentation for `b_grat_points_incr` and `b_sin_shard`, plus Rebalanced Soul's Repose Technology/pulpit localization. Prayer mechanics, requirements, durations, Soul Gratitude conversion arithmetic, Sin Shard multipliers, save state, mouse/gamepad carousel behavior and non-BSS prayers are unchanged.
+- Vanilla remains 1.0.33. Shared/Vanilla compile inputs are intentionally unchanged; candidate CI must reproduce the exact accepted Vanilla 1.0.33 SHA-256 `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- Required runtime acceptance is one focused visual pass only:
+  - open the three BSS prayer Technology tooltips and confirm the revised lore/wording plus Contentment duration emphasis;
+  - select Soul's Repose at the pulpit and confirm the conversion sentence reads naturally with the current live amount.
+- No sermon execution, Soul healing, decay wait, save/reload, mechanics harness or Vanilla runtime retest is required unless CI reports sibling drift.
+- Status: **implementation prepared; CI/runtime acceptance pending**.
+
+
 ## 2026-09-24 — Rebalanced 0.2.22 prayer-carousel result accepted
 
 - User runtime acceptance: the production Rebalanced 0.2.22 DLL reproduced the accepted research prototype exactly; the user reported that navigation and presentation work correctly as designed.
