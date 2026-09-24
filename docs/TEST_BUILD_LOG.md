@@ -1,6 +1,46 @@
 # Test / Research Build Log
 
 
+## 2026-09-24 — Rebalanced 0.2.24 runtime review / superseded by 0.2.25
+
+- User visual/runtime review confirmed the 0.2.24 BSS cleanup behaves correctly for:
+  - Soul's Repose Technology wording;
+  - Soul's Repose pulpit conversion sentence;
+  - Soul Contentment tier/duration presentation;
+  - Thorough Cleansing tier-neutral lore replacing the stale fixed x2 claim.
+- User identified two remaining presentation refinements:
+  1. Soul Contentment's preservation mechanic belongs in the explicit Effect block, while its lore should be flavour text rather than a mechanics sentence.
+  2. In the mixed prayer-bearing Technology `Embalming`, entering from the right correctly selects the rightmost prayer unlock, but the resulting tooltip can overlap that selected icon.
+- Returned runtime log `LogOutput(20260924-161109).log` confirms Rebalanced 0.2.24 loaded and the carousel identifies `Embalming` as three visible unlocks in order: embalming table, organ rack, prayer `b_skull`; horizontal entry from the right selects index 3/3. No PrayerClarity error line was reported in the supplied log.
+- 0.2.24 is therefore not frozen as stable; 0.2.25 supersedes it.
+
+
+## PrayerClarity: Rebalanced 0.2.25 / Vanilla 1.0.34 — selected-unlock clearance candidate
+
+- User-approved product rule: a gamepad Technology tooltip owned by PrayerClarity's prayer-bearing carousel must not visually cover the currently selected child-unlock icon.
+- Canonical/final placement seam remains the already accepted late `WidgetsBubbleGUI.Update()` postfix in `TechnologyTooltipViewportClamp`, ordered after Gamepad Tooltip Position Fix. No second positioning hook is introduced.
+- Implementation rule:
+  - the carousel exposes the currently selected child `UISprite` to the existing viewport-safety layer;
+  - after ordinary host/mod placement and safe-area clamp, actual widget geometry is compared in the active `UIRoot` coordinate space;
+  - if there is no intersection, no position change occurs;
+  - if there is an intersection, left/right separation is preferred, choosing a viewport-safe result; vertical separation is a fallback only when horizontal placement cannot clear the selected icon;
+  - the rule is limited to the existing multi-unlock prayer-bearing carousel scope, including mixed nodes such as Embalming.
+- Preserved invariants: existing Left/Right carousel order, horizontal-entry boundary selection, icon dimming, Up/Down native navigation, mouse behavior, Technology mechanics/unlock state, safe-area clamping, and all prayer mechanics remain unchanged.
+- Shared presentation code changes, so sibling versions advance together: Vanilla 1.0.34 and Rebalanced 0.2.25. Stable 1.0.33 / 0.2.23 bytes remain immutable.
+- Rebalanced-only text decisions accepted by user:
+  - Contentment lore (RU): `Несколько слов о покое для тех, кому с ним особенно не повезло.`
+  - Contentment Effect preservation line (RU): `Состояние душ со временем не ухудшается — ни в теле, ни после извлечения.`
+  - Thorough Cleansing lore (RU): `Несколько слов о том, что душу лучше очищать тщательно.`
+  - Contentment's +50% Soul Gratitude line remains a separate mechanics line in the same Effect block; Thorough Cleansing's exact x2/x3/x4 remains tier-owned.
+- Acceptance gate is visual/ergonomic and therefore requires direct runtime observation:
+  1. enter Embalming from the right and confirm the prayer tooltip no longer covers the selected rightmost icon;
+  2. traverse its three child unlocks in both directions and confirm tooltip clearance plus unchanged carousel behavior;
+  3. spot-check one other prayer-bearing multi-unlock Technology;
+  4. in Rebalanced, confirm the final Contentment and Thorough Cleansing lore/effect wording.
+- Because positioning is shared, perform one Vanilla spot-check of the same Embalming entry case. No prayer mechanics, sermon execution, save/reload, or BSS mechanic replay is required.
+- Status: **implementation prepared; CI/runtime acceptance pending**.
+
+
 ## PrayerClarity: Rebalanced 0.2.24 — Better Save Soul presentation cleanup candidate
 
 - User-approved scope: close the remaining BSS presentation tails as one coherent presentation-only candidate.
