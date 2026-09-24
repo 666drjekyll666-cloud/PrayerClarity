@@ -124,7 +124,7 @@ namespace PrayerClarityResearch
                 _log?.LogInfo(
                     "TT_PROBE_ROW seq=" + sequence +
                     " data_type=" + __0.GetType().FullName +
-                    " text="" + Preview(text) + """ +
+                    " text=\\\"" + Preview(text) + "\\\"" +
                     " label_type=" + label.GetType().FullName +
                     " overflow_method=" + SafeValue(Get(label, "overflowMethod")) +
                     " width=" + SafeValue(Get(label, "width")) +
@@ -133,8 +133,8 @@ namespace PrayerClarityResearch
                     " overflow_width=" + SafeValue(Get(label, "overflowWidth")) +
                     " printed_size=" + VectorValue(printed) +
                     " processed_lines=" + CountLines(processed) +
-                    " processed="" + Preview(processed) + """ +
-                    " hierarchy="" + ComponentPath(label as Component) + """);
+                    " processed=\\\"" + Preview(processed) + "\\\"" +
+                    " hierarchy=\\\"" + ComponentPath(label as Component) + "\\\"");
             }
             catch (Exception ex)
             {
@@ -164,7 +164,7 @@ namespace PrayerClarityResearch
                     rowDescriptions.Add(
                         total + ":" + row.GetType().Name +
                         ":max=" + maxWidth +
-                        ":text="" + Preview(rowText) + """);
+                        ":text=\\\"" + Preview(rowText) + "\\\"");
                     total++;
                 }
 
@@ -178,7 +178,7 @@ namespace PrayerClarityResearch
                     "TT_PROBE_SHOW total_rows=" + total +
                     " owned_width_rows=" + wide +
                     " linked_type=" + (linked == null ? "<null>" : linked.GetType().FullName) +
-                    " linked_hierarchy="" + ComponentPath(linked as Component) + """);
+                    " linked_hierarchy=\\\"" + ComponentPath(linked as Component) + "\\\"");
 
                 foreach (string description in rowDescriptions)
                     _log?.LogInfo("TT_PROBE_DATA_ROW " + description);
@@ -254,7 +254,7 @@ namespace PrayerClarityResearch
                     " available_ui=(" + F(availableWidth) + "," + F(availableHeight) + ")" +
                     " oversize_x=" + (width > availableWidth) +
                     " oversize_y=" + (height > availableHeight) +
-                    " hierarchy="" + ComponentPath(bubble) + """);
+                    " hierarchy=\\\"" + ComponentPath(bubble) + "\\\"");
             }
             catch (Exception ex)
             {
