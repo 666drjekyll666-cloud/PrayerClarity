@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using BepInEx.Logging;
@@ -90,7 +91,19 @@ namespace PrayerClarity
                     R.Set(label, "width", PrayerItemContentWidth);
                     R.Set(label, "height", 20);
                     R.Set(label, "text", fullText);
-                    R.Get(label, "processedText");
+                    string processed = R.Get(label, "processedText") as string ?? string.Empty;
+
+                    // NGUI can wrap between a numeric amount and the following inline
+                    // symbol, leaving the icon alone on the next visual line. Runtime
+                    // evidence on the 200-unit prayer-item column showed this with
+                    // both 1 (faith) and 90 (gratitude_points). Keep that semantic
+                    // pair together by moving the wrap opportunity before the amount.
+                    string repaired = KeepAmountAndInlineSymbolTogether(fullText, processed);
+                    if (!string.Equals(repaired, fullText, StringComparison.Ordinal))
+                    {
+                        R.Set(label, "text", repaired);
+                        R.Get(label, "processedText");
+                    }
                     return;
                 }
 
@@ -129,6 +142,103 @@ namespace PrayerClarity
                     "PrayerClarity Technology tooltip anchor-width sizing failed; " +
                     "the tooltip remains available at the wide fallback ceiling. " + ex);
             }
+        }
+
+        private static string KeepAmountAndInlineSymbolTogether(string raw, string processed)
+        {
+            if (string.IsNullOrEmpty(raw) || string.IsNullOrEmpty(processed))
+                return raw;
+
+            string normalized = processed.Replace("\r\n", "\n");
+            string[] lines = normalized.Split(new[] { '\n' }, StringSplitOptions.None);
+            List<int> insertionPoints = new List<int>();
+
+            for (int i = 0; i + 1 < lines.Length; i++)
+            {
+                string previous = (lines[i] ?? string.Empty).TrimEnd();
+                string next = (lines[i + 1] ?? string.Empty).TrimStart();
+                if (previous.Length == 0 || next.Length == 0 || next[0] != '(')
+                    continue;
+
+                int close = next.IndexOf(')');
+                if (close <= 1 || close > 48) continue;
+
+                string symbol = next.Substring(0, close + 1);
+                if (!IsInlineSymbolToken(symbol)) continue;
+
+                string amount = TrailingAmountToken(previous);
+                if (string.IsNullOrEmpty(amount)) continue;
+
+                int clusterAt = FindUniqueAmountSymbolCluster(raw, amount, symbol);
+                if (clusterAt <= 0 || raw[clusterAt - 1] == '\n') continue;
+                if (!insertionPoints.Contains(clusterAt))
+                    insertionPoints.Add(clusterAt);
+            }
+
+            if (insertionPoints.Count == 0) return raw;
+
+            insertionPoints.Sort();
+            string repaired = raw;
+            for (int i = insertionPoints.Count - 1; i >= 0; i--)
+                repaired = repaired.Insert(insertionPoints[i], "\n");
+            return repaired;
+        }
+
+        private static bool IsInlineSymbolToken(string token)
+        {
+            if (string.IsNullOrEmpty(token) || token.Length < 3 ||
+                token[0] != '(' || token[token.Length - 1] != ')')
+                return false;
+
+            for (int i = 1; i < token.Length - 1; i++)
+            {
+                char c = token[i];
+                if ((c >= 'a' && c <= 'z') ||
+                    (c >= '0' && c <= '9') ||
+                    c == '_')
+                    continue;
+                return false;
+            }
+            return true;
+        }
+
+        private static string TrailingAmountToken(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+
+            int end = text.Length - 1;
+            while (end >= 0 && char.IsWhiteSpace(text[end])) end--;
+            if (end < 0 || !char.IsDigit(text[end])) return null;
+
+            int start = end;
+            while (start > 0)
+            {
+                char c = text[start - 1];
+                if (char.IsDigit(c) || c == '.' || c == ',' ||
+                    c == '+' || c == '-' || c == '−')
+                {
+                    start--;
+                    continue;
+                }
+                break;
+            }
+
+            return text.Substring(start, end - start + 1);
+        }
+
+        private static int FindUniqueAmountSymbolCluster(string raw, string amount, string symbol)
+        {
+            string ordinary = amount + " " + symbol;
+            int index = raw.IndexOf(ordinary, StringComparison.Ordinal);
+            if (index >= 0 && raw.IndexOf(ordinary, index + ordinary.Length, StringComparison.Ordinal) < 0)
+                return index;
+
+            string noBreak = amount + NoBreakSpace + symbol;
+            index = raw.IndexOf(noBreak, StringComparison.Ordinal);
+            if (index >= 0 && raw.IndexOf(noBreak, index + noBreak.Length, StringComparison.Ordinal) < 0)
+                return index;
+
+            return -1;
         }
 
         private static int MeasureAtomicAnchor(object label, string fullText, int measurementCeiling)
