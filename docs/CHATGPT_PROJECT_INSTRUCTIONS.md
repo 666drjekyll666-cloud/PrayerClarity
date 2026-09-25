@@ -28,7 +28,9 @@ Repository state and accepted runtime evidence outrank chat memory, old handoff 
 
 Use the project evidence chain:
 
-`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> design options -> narrow prototype -> runtime test -> accept`
+`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> define acceptance envelope -> compare viable solution families -> choose the least-complex adequate path -> narrow prototype -> runtime test -> accept`
+
+Keep the user/player outcome separate from the first implementation idea. When materially different approaches could satisfy the same goal, apply the DevRules solution-space checkpoint before substantial implementation or fresh research. Re-open that choice after a failed candidate or when continuing the chosen path would require materially deeper host/UI/runtime research. Generality is not a requirement by itself.
 
 Keep evidence states distinct: **fact**, **hypothesis**, **community signal**, **UX finding**, **design hypothesis**, and **accepted result**.
 
