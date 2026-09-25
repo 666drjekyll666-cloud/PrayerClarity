@@ -21,5 +21,7 @@
   "rebalanced.tech.gratitude_intro": "(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.tech.gratitude_lore": "Ein paar Worte über Ruhe für jene, denen davon besonders wenig vergönnt war.",
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
-  "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%"
+  "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
+  "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
+  "rebalanced.repose.endpoint_bronze_hint": "Silber- und Goldgebete erhöhen weiterhin die Zuverlässigkeit, mit der du den besten verfügbaren Leichnam erhältst."
 }
