@@ -176,6 +176,21 @@ This is shared presentation behavior for PrayerClarity: Vanilla and PrayerClarit
 
 A prayer item tooltip describes the **concrete quality currently held**, not the whole Bronze/Silver/Gold comparison.
 
+The accepted information grammar is:
+
+`title/quality -> lore -> Base result -> 100%-success requirement -> On success/effect -> duration -> native Crafted at`.
+
+Implementation policy:
+
+- use the stock `ItemDefinition.GetTooltipData(Item,bool)` list as the host container, but compose PrayerClarity's prayer section deterministically after the native title/lore rows;
+- do not branch the layout on whether stock happened to emit `preach_params_2`; Rebalanced specialist cleanup can legitimately remove every stock Faith/money/output trigger for that block;
+- remove only the known native prayer-mechanics rows, then insert semantic-model sections in one fixed order;
+- resolve prayer lore independently of the stock requirement sentence so the requirement appears exactly once;
+- keep the native crafting-source row after the PrayerClarity section;
+- item, Technology and pulpit mechanics must remain projections of the same effective prayer semantics.
+
+The native inline quality-symbol tokens `(s1)/(s2)/(s3)` are a preferred title treatment only if the stock HintTitle font is runtime-proved to render those symbols. Until that narrow visual probe is accepted, production keeps quality identity out of the title rather than introducing a custom sprite/layout solely for this decoration.
+
 It should continue to use the same effective semantics as Technology and Pulpit so a Rebalanced item never reports stock mechanics.
 
 ## Temporary Effects contract
