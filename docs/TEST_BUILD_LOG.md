@@ -1341,3 +1341,25 @@ Research helper identity:
 - The production acceptance criterion for the common prayer-item amount+inline-resource wrapping change is therefore satisfied.
 - This accepts the 0.2.32 behavior change as tested evidence. It does **not** by itself promote either edition to the stable line; stable promotion remains a separate user decision.
 - Test-process observation from this run: removing the research Test Console to obtain a clean production path also removes useful neutral setup conveniences such as spawning prayer items. Treat possible separation of neutral test utilities from behavior-mutating probes as a separate research-tooling design question, not as part of the accepted production change.
+
+
+### 2026-09-26 — Neutral Test Console 0.1.16 and Rebalanced 0.2.33 pulpit-height candidate
+
+- Permanent tooling rule was added to `AGENTS.md`: the long-lived Rebalanced Test Console is a neutral setup/access utility only. Behavior-mutating or path-intercepting probes must be separate temporary DLLs/branches.
+- Neutral Test Console **0.1.16**:
+  - branch: `candidate/rebalanced-test-console-0.1.16`;
+  - exact source: `41d09d81e571fb1f2886b6c48ec49c37906b8136`;
+  - CI run: `36200428185` — success;
+  - artifact ID: `10891079949`;
+  - artifact ZIP digest: `sha256:894fd42f5c1411ce705b23c43606b0af51781f5366c7029ec3ffc685d636e2fd`;
+  - DLL SHA-256: `eea36adf4c4737c35847bc0756ed3fcd97a972dc9358bf7e2349ca635a7ce1c7`;
+  - source contains no Harmony patch/prefix/postfix installation. Retained utilities are prayer-item gallery/cleanup, temporary inventory expansion/restoration and native pulpit opening.
+- Rebalanced **0.2.33** / Vanilla **1.0.42** were created from exact accepted 0.2.32 source `768bb9929823a3b3fd2496fdfd71de0587ddeb27`.
+- Gate-only commit: `6d26bb8c78824cf15ac3cf9f73a71ef48ec9c625`; gate `pulpit-content-driven-bottom-clearance` = **READY**.
+- Candidate exact source: `82f6a8501658feed989da3a49861c72670f44085`.
+- CI run: `36200797591` — success; production candidate gate validation passed.
+- Artifact ID: `10891778094`; artifact ZIP digest: `sha256:0caec4f241fa83c7db2884395b392b6df3bc4d4fb46355f2eb543f00b76d6262`.
+- Rebalanced 0.2.33 DLL SHA-256: `2156dc6bd6b4a9e4305f2d613c7a901b0e2a4be0284ddb67fdf74e15aa25adf2`.
+- Vanilla 1.0.42 DLL SHA-256: `9eaaf170b801a6c888b0cec45931eab31bdc7d9dd3eb1b9ec2111547cddb8ffa`.
+- Change scope: preserve the accepted +100 pulpit extra-height baseline; if final wrapped Effect text forces the prayer button below the available parchment bottom margin, grow the already-verified real root window by the measured missing clearance instead of pushing the button back upward into the Effect text. The dynamic amount resets on every redraw, preventing cumulative growth.
+- Runtime acceptance pending. Required focused test: Russian Repose that previously overlapped the action button, then short Faith as the no-unnecessary-growth control. No mechanics retest is required.
