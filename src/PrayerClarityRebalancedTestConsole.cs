@@ -16,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.12";
+        public const string PluginVersion = "0.1.13";
 
         private sealed class TimedEffect
         {
@@ -539,17 +539,25 @@ namespace PrayerClarityResearch
                         text.IndexOf("(faith)", StringComparison.Ordinal) < 0)
                         continue;
 
-                    int faithToken = text.IndexOf("(faith)", StringComparison.Ordinal);
-                    int boundary = text.IndexOf(". ", faithToken, StringComparison.Ordinal);
-                    if (boundary < 0) continue;
+                    int cap = ExtractLastIntegerBeforeToken(text, "(gratitude_points)");
+                    if (cap <= 0) continue;
 
-                    string changed = text.Substring(0, boundary + 1) + "\n" +
-                                     text.Substring(boundary + 2);
+                    // 0.2.31 changed the wording itself, so a layout-only transform of
+                    // that row cannot answer the original question. For this narrow
+                    // Russian runtime probe, restore the exact accepted 0.2.30 wording
+                    // and change only the sentence separator to a real newline.
+                    string changed =
+                        "При успехе каждая потраченная (gratitude_points) даёт 1 (faith).\n" +
+                        "За проповедь можно потратить до " +
+                        cap.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                        " (gratitude_points).";
+
                     Set(row, "text", changed);
                     _log?.LogInfo(
                         "SOULS_REPOSE_WRAP_PROBE" +
                         " item_id=" + itemId +
-                        " variant=sentence_break" +
+                        " variant=accepted_ru_wording_sentence_break" +
+                        " cap=" + cap +
                         " before=\"" + EscapeLogText(text) + "\"" +
                         " after=\"" + EscapeLogText(changed) + "\"");
                     return;
@@ -559,6 +567,30 @@ namespace PrayerClarityResearch
             {
                 _log?.LogError("SOULS_REPOSE_WRAP_PROBE_FAILED " + ex);
             }
+        }
+
+        private static int ExtractLastIntegerBeforeToken(string text, string token)
+        {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(token)) return 0;
+
+            int tokenIndex = text.LastIndexOf(token, StringComparison.Ordinal);
+            if (tokenIndex <= 0) return 0;
+
+            int end = tokenIndex - 1;
+            while (end >= 0 && char.IsWhiteSpace(text[end])) end--;
+            int start = end;
+            while (start >= 0 && char.IsDigit(text[start])) start--;
+            start++;
+
+            if (start > end) return 0;
+            int value;
+            return int.TryParse(
+                text.Substring(start, end - start + 1),
+                System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out value)
+                ? value
+                : 0;
         }
 
         private sealed class PrayerItemDefinition
