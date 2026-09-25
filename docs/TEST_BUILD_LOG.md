@@ -1363,3 +1363,21 @@ Research helper identity:
 - Vanilla 1.0.42 DLL SHA-256: `9eaaf170b801a6c888b0cec45931eab31bdc7d9dd3eb1b9ec2111547cddb8ffa`.
 - Change scope: preserve the accepted +100 pulpit extra-height baseline; if final wrapped Effect text forces the prayer button below the available parchment bottom margin, grow the already-verified real root window by the measured missing clearance instead of pushing the button back upward into the Effect text. The dynamic amount resets on every redraw, preventing cumulative growth.
 - Runtime acceptance pending. Required focused test: Russian Repose that previously overlapped the action button, then short Faith as the no-unnecessary-growth control. No mechanics retest is required.
+
+
+### 2026-09-26 — Rebalanced 0.2.33 rejected; post-render pulpit geometry probe
+
+- Runtime used exact **PrayerClarity: Rebalanced 0.2.33** with **Neutral Test Console 0.1.16** under Graveyard Keeper 1.407 / Russian locale. The returned log confirms both exact versions loaded and the neutral console reported no presentation probes.
+- Visual result: **0.2.33 is rejected**. Russian Repose still lets the long Effect block reach/overlap the action button; the user also reports Japanese fails while English fits. Short Faith and the ordinary pulpit frame showed no noticeable size change.
+- The returned log contains no PrayerClarity forecast exception/failure, so this is not a fallback-to-vanilla/error-path symptom.
+- New exact gate state: **BLOCKED**. The real root-window owner and PrayerClarity final button writer remain known, but 0.2.33 falsified the assumption that same-redraw geometry used by `PulpitPolish.MovePrayerButton` is sufficient to detect the final localized overlap/required bottom deficit.
+- Research-method checkpoint: screenshot/direct observation proves failure but cannot distinguish stale Effect `worldCorners`, selection of a non-representative craft-button UIWidget, or another post-layout geometry difference. Source inspection alone cannot resolve which live value differs.
+- Separate research-only **Pulpit Geometry Probe 0.1.0** was created; the neutral Test Console remains unchanged.
+  - branch: `research/pulpit-geometry-probe-0.1.0`;
+  - exact source: `8ed0995e959976531e9962e3e8eb37a56174c14e`;
+  - CI run: `36201536038` — success;
+  - artifact ID: `10891434373`;
+  - artifact ZIP digest: `sha256:d3c90c05160bd2f616bee50f3730df4abb162435ebf1b5d051f6a18900a183e8`;
+  - DLL SHA-256: `9a5b7766157c0edb98d46566d2919fb3590950eab2d9981f65e6ccd02ea02117`.
+- Probe behavior: no Harmony patches and no UI/save/game mutation. With the failing pulpit screen fully rendered, **F8** dumps root/container geometry, Effect raw/processed text and settled label bounds, every craft-button UIWidget, the exact widget 0.2.33 would select, and a replay of the 0.2.33 overlap/deficit calculation.
+- Minimum next runtime action: keep Rebalanced 0.2.33 + Neutral Test Console 0.1.16, add the probe, open failing Russian Repose, wait until rendered, press F8 once, return the log. No sermon execution or multi-locale sweep is required for this research step.
