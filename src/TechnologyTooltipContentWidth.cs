@@ -17,7 +17,7 @@ namespace PrayerClarity
         private sealed class WideLayoutMarker { }
         private sealed class PrayerItemLayoutMarker { }
 
-        private const int PrayerItemMaxWidth = 420;
+        private const int PrayerItemContentWidth = 200;
 
         private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
             new ConditionalWeakTable<object, WideLayoutMarker>();
@@ -80,12 +80,16 @@ namespace PrayerClarity
                 PrayerItemLayoutMarker itemMarker;
                 if (PrayerItemLayoutData.TryGetValue(__0, out itemMarker))
                 {
-                    // Ordinary item bubbles should remain compact. The native label is
-                    // ResizeFreely, so overflowWidth is a true expansion/wrap ceiling:
-                    // short rows remain narrow while long mechanics prose wraps instead
-                    // of stretching the whole parchment across the screen.
+                    // Prayer item mechanics rows deliberately share one fixed content
+                    // column. This gives the left-aligned values a stable visual edge
+                    // while ResizeHeight wraps long prose instead of letting one line
+                    // stretch the whole parchment.
+                    object overflow = R.Get(label, "overflowMethod");
+                    if (overflow != null)
+                        R.Set(label, "overflowMethod", Enum.Parse(overflow.GetType(), "ResizeHeight"));
+                    R.Set(label, "width", PrayerItemContentWidth);
+                    R.Set(label, "height", 20);
                     R.Set(label, "text", fullText);
-                    R.Set(label, "overflowWidth", PrayerItemMaxWidth);
                     R.Get(label, "processedText");
                     return;
                 }
