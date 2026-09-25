@@ -1349,3 +1349,11 @@ Research helper identity:
 - Publication workflow run: `35442370524` — success.
 - Publication downloaded artifact `10583657918`, verified the accepted source/version/hash, and uploaded the exact accepted DLL; **no rebuild occurred**.
 
+### 2026-09-25 — Rebalanced 0.2.30 runtime presentation result
+
+- Runtime under Graveyard Keeper 1.407 / Russian locale loaded PrayerClarity: Rebalanced 0.2.30 with Rebalanced Test Console 0.1.10.
+- Accepted in this pass: production quality glyph remains after the research probe is disabled; the restructured prayer-item tooltip sections and alignment are accepted; special bonus accents remain intact; Soul Contentment and a short Faith pulpit example fit correctly; Thorough Cleansing still exposes the correct tier-specific shard multiplier.
+- Remaining presentation defects: Soul's Repose item text can leave the Soul Gratitude icon orphaned on its own line; Bronze Repose endpoint text still overlaps the pulpit action button; Combo Prayer can receive a duplicate leading quality glyph.
+- UX follow-up accepted for the next candidate: render the Repose reliability clarification as a shorter parenthetical note, express Soul's Repose conversion as a compact 1:1 relationship plus a separate sermon cap, and spell out the 95% all-sources Roots cap only where the Gold tier can reach it under the accepted vanilla fertilizer interaction.
+- No prayer-mechanics retest is required for the follow-up; acceptance remains visual/presentation-only.
+
