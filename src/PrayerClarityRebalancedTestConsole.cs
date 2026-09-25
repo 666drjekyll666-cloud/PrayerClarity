@@ -16,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.10";
+        public const string PluginVersion = "0.1.11";
 
         private sealed class TimedEffect
         {
@@ -50,7 +50,9 @@ namespace PrayerClarityResearch
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
         private Rect _windowRect = new Rect(24f, 24f, 620f, 680f);
         private bool _visible;
-        private static bool _qualityTitleProbeEnabled = true;
+        private static bool _qualityTitleProbeEnabled = false;
+        private static readonly HashSet<string> RawPrayerTitleLogged =
+            new HashSet<string>(StringComparer.Ordinal);
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
@@ -384,6 +386,10 @@ namespace PrayerClarityResearch
                 nameof(PrayerItemTooltipTitlePostfix),
                 BindingFlags.NonPublic | BindingFlags.Static);
             object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+            SetHarmonyBefore(
+                harmonyMethodType,
+                postfix,
+                "nikich.graveyardkeeper.prayerclarity.rebalanced.itemtooltip");
 
             MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                 .FirstOrDefault(m =>
@@ -403,7 +409,7 @@ namespace PrayerClarityResearch
 
         private static void PrayerItemTooltipTitlePostfix(object __instance, object __result)
         {
-            if (!_qualityTitleProbeEnabled || __instance == null || __result == null) return;
+            if (__instance == null || __result == null) return;
 
             try
             {
@@ -419,6 +425,22 @@ namespace PrayerClarityResearch
                 object titleRow = rows[0];
                 string title = Get(titleRow, "text") as string;
                 if (string.IsNullOrEmpty(title)) return;
+
+                // Explicit Harmony ordering puts this research postfix before the
+                // production item-tooltip postfix, so this is the host-returned title.
+                string itemId = GetId(__instance) ?? string.Empty;
+                if (itemId.StartsWith("b_faith_money", StringComparison.Ordinal) &&
+                    RawPrayerTitleLogged.Add(itemId))
+                {
+                    _log?.LogInfo(
+                        "PRAYER_ITEM_NATIVE_TITLE" +
+                        " item_id=" + itemId +
+                        " quality=" + quality +
+                        " probe_enabled=" + _qualityTitleProbeEnabled +
+                        " raw=\"" + EscapeLogText(title) + "\"");
+                }
+
+                if (!_qualityTitleProbeEnabled) return;
 
                 string prefix = "(s" + quality + ") ";
                 if (title.StartsWith(prefix, StringComparison.Ordinal)) return;
@@ -1845,6 +1867,35 @@ namespace PrayerClarityResearch
             {
                 _log?.LogError("PrayerClarity Rebalanced Test Console Boost II simulation failed closed. " + ex);
             }
+        }
+
+        private static void SetHarmonyBefore(Type harmonyMethodType, object harmonyMethod, params string[] ownerIds)
+        {
+            if (harmonyMethodType == null || harmonyMethod == null) return;
+
+            FieldInfo field = harmonyMethodType.GetField(
+                "before",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field != null)
+            {
+                field.SetValue(harmonyMethod, ownerIds);
+                return;
+            }
+
+            PropertyInfo property = harmonyMethodType.GetProperty(
+                "before",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (property != null && property.CanWrite)
+                property.SetValue(harmonyMethod, ownerIds, null);
+        }
+
+        private static string EscapeLogText(string value)
+        {
+            return (value ?? string.Empty)
+                .Replace("\\", "\\\\")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n")
+                .Replace("\"", "\\\"");
         }
 
         private static object CreateHarmonyMethod(Type harmonyMethodType, MethodInfo method)
