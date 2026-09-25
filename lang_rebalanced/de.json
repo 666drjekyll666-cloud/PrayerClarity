@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht - weder im Körper noch nach der Extraktion. Das Freilassen von Seelen gewährt +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%",
   "rebalanced.tech.souls_intro": "Bei Erfolg werden gespeicherte (gratitude_points) im Verhältnis 1:1 in (faith) umgewandelt.",
-  "rebalanced.tech.souls_tier": "Limit pro Predigt: {0} (gratitude_points)",
+  "rebalanced.tech.souls_tier": "Limit pro Predigt: {0}\u00A0(gratitude_points)",
   "rebalanced.item.souls_repose": "Bei Erfolg gewährt jeder ausgegebene (gratitude_points) 1 (faith). Pro Predigt können bis zu {0} (gratitude_points) ausgegeben werden.",
   "rebalanced.pulpit.souls_conversion": "Wandelt {0} (gratitude_points) in {1} (faith) um.",
   "rebalanced.pulpit.souls_conversion_empty": "keine (gratitude_points) zum Umwandeln",
