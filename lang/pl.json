@@ -36,5 +36,6 @@
   "tech.percent_of_base": "{0} wartości bazowej",
   "active.timer_days_compact": "{0:0.0}",
   "tech.on_success_header": "Przy sukcesie:",
-  "forecast.current_success_chance": "Aktualna szansa powodzenia: {0}%"
+  "forecast.current_success_chance": "Aktualna szansa powodzenia: {0}%",
+  "item.sermon_success": "Powodzenie kazania"
 }
