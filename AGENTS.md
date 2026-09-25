@@ -269,6 +269,10 @@ A diagnostic probe must answer one narrow question and be removable.
 
 When several closely related runtime questions require the user's installed game, prefer a research-only Test Console/harness that turns them into explicit buttons/actions and one returned log. Use native game APIs for the behavior under test, keep synthetic setup narrow/reversible, log the effective inputs/results, warn about any save-persistent test state, and never ship the harness in production. Follow the global DevRules user-operated runtime harness contract.
 
+Before creating or extending a PrayerClarity Test Console/probe, make the DevRules research-method checkpoint explicit: state the exact open question, whether accepted evidence/source inspection/an existing exact candidate or accepted artifact/a short direct in-game action can answer it, and why new research code is still simpler or more reliable if those paths are insufficient.
+
+Do not add Test Console machinery merely to avoid one cheap DLL swap, restart, tooltip hover, or other deterministic user action. In particular, if an existing immutable candidate already provides the required baseline behavior, prefer testing against that exact candidate rather than reproducing the baseline inside the console and thereby adding another writer/assumption. Optimize for fewer assumptions and moving parts, not fewer user clicks.
+
 ## Repository policy
 
 Long-lived findings belong primarily in:
