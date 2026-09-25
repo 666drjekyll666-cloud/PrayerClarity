@@ -499,4 +499,16 @@ If q95 is adopted, PrayerClarity's existing exact success/requirement presentati
 - that a small temporary Church Quality boost will cross the threshold.
 
 Do not hide the last-mile requirement or describe it as a mandatory consumable requirement, because a documented passive CQ96 route exists.
+## Prayer-item inline resource wrapping invariant
 
+Runtime review of Soul's Repose item tooltips exposed a broader readability defect: NGUI can wrap an inline resource icon onto a new visual line while leaving the immediately associated numeric amount on the previous line.
+
+Accepted UX requirement for PrayerClarity-owned prayer-item mechanics rows:
+
+- an inline resource icon must not become the sole content of a new wrapped line;
+- an immediately associated numeric amount and resource icon (for example `1 (faith)`, `90 (gratitude_points)`, or equivalent money/resource pairs) should behave as one visual semantic cluster at wrap boundaries;
+- this invariant applies generally to PrayerClarity-owned prayer-item mechanics text, not only Soul's Repose;
+- do not solve individual occurrences by rewriting understandable wording or inserting prayer-specific hard line breaks when a common item-tooltip wrapping seam can own the behavior;
+- do not patch all game `UILabel` instances globally: the intended blast radius is PrayerClarity-owned prayer-item mechanics rows unless later evidence justifies a broader owner.
+
+The exact NGUI final-wrap mechanism remains under research. U+00A0 was runtime-insufficient for the observed inline-symbol case, and a sentence-boundary newline fixed one orphaned Soul Gratitude icon while leaving the `1 (faith)` pair split. Production remains blocked until the common final-wrap owner/path is proved.

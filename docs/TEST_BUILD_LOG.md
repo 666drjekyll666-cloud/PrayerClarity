@@ -1305,3 +1305,11 @@ Research helper identity:
 - Simpler available path identified after review: use the existing exact 0.2.30 presentation baseline and add only the one new layout experiment when possible, rather than adding research machinery solely to avoid a DLL swap/restart.
 - DevRules now requires a research-method checkpoint before new probe/harness/shim code: exact question, existing evidence/artifact/direct-action path, and justification for new research code. The optimization target is lowest combined evidence complexity/error risk, not fewest user actions.
 - Test Console 0.1.13 corrects the immediate probe by restoring the accepted Russian 0.2.30 wording and changing only the sentence separator, but it remains research-only and unaccepted until runtime observation.
+### 2026-09-26 — Test Console 0.1.13: sentence break insufficient; universal resource-cluster gate opened
+
+- Runtime loaded PrayerClarity: Rebalanced 0.2.31 with Test Console 0.1.13 and the probe restored the accepted Russian Soul's Repose wording with a real newline between the two sentences.
+- The sentence break kept the final `90 (gratitude_points)` cluster together, but the same screenshot showed `1` at the end of one line and the `(faith)` icon alone on the next line.
+- Therefore the 0.1.13 sentence-break variant is **not accepted as the production fix**. The open property is broader: PrayerClarity-owned prayer-item mechanics rows must not orphan inline resource icons from their immediately associated numeric amounts.
+- U+00A0 and prayer-specific hard line breaks are not sufficient general solutions for this runtime symbol/wrap behavior.
+- Production gate state for the universal amount+inline-resource wrapping behavior is **BLOCKED** pending final NGUI wrap ownership evidence.
+- Research-method checkpoint: use exact Rebalanced 0.2.30 as the known baseline and a read-only final-wrap trace; do not reconstruct 0.2.30 wording inside the Test Console merely to avoid a DLL swap.
