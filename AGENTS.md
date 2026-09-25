@@ -74,7 +74,7 @@ The gate file is mutable candidate evidence, not stable product documentation. A
 
 Use this sequence unless new evidence justifies a narrower detour:
 
-`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> define acceptance envelope -> compare viable solution families -> design/role audit -> quantitative power-budget audit -> candidate roster/spec -> narrow prototype -> runtime test -> accept`
+`catalogue -> verify mechanics -> audit presentation -> research player experience -> identify UX gap -> define acceptance envelope -> compare viable solution families -> choose least-complex adequate path -> design/role audit -> quantitative power-budget audit -> candidate roster/spec -> READY/BLOCKED evidence gate -> narrow prototype -> runtime test -> accept`
 
 For PrayerClarity presentation/UX defects, do not treat the first technical mechanism as the requirement. When the same player-facing goal could plausibly be reached through different families such as wording/content changes, layout/spacing changes, bounded fixed geometry, or content-driven/dynamic geometry, apply the global DevRules solution-space checkpoint before substantial implementation or fresh host/UI research. If the selected path fails runtime acceptance or would require materially deeper UI/runtime probing, re-open those alternatives before continuing down the same branch. Product-owned wording/semantics changes remain separate user decisions, not silent implementation shortcuts.
 
