@@ -1313,3 +1313,12 @@ Research helper identity:
 - U+00A0 and prayer-specific hard line breaks are not sufficient general solutions for this runtime symbol/wrap behavior.
 - Production gate state for the universal amount+inline-resource wrapping behavior is **BLOCKED** pending final NGUI wrap ownership evidence.
 - Research-method checkpoint: use exact Rebalanced 0.2.30 as the known baseline and a read-only final-wrap trace; do not reconstruct 0.2.30 wording inside the Test Console merely to avoid a DLL swap.
+### 2026-09-26 — Test Console 0.1.14 closes final prayer-item wrap owner trace
+
+- Runtime used exact PrayerClarity: Rebalanced 0.2.30 with Test Console 0.1.14 under Graveyard Keeper 1.407 / Russian locale.
+- The read-only trace observed the PrayerClarity-owned 200-unit Soul's Repose mechanics row after the normal content-width pass.
+- Raw row retained intact semantic clusters: `... даёт 1 (faith). ... до 90 (gratitude_points).`
+- Final NGUI `processedText` rewrote those points as `... даёт 1\n(faith). ... до 90\n(gratitude_points).`
+- Therefore the orphaned inline icons are produced by final NGUI wrapping after PrayerClarity supplies the row text and fixed item-mechanics width; localization and the semantic renderer are not the final split owner.
+- The common production-fix gate remains **BLOCKED only on the correction mechanism**, not on owner/final-writer uncertainty.
+- Research-only Test Console 0.1.15 is the next narrow hypothesis: after observing final `processedText`, move an automatically inserted break from `amount | icon` to immediately before the amount, preserving wording and width. Runtime visual acceptance is required before production.
