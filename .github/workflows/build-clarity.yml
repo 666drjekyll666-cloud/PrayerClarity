@@ -6,6 +6,12 @@ on:
     branches:
       - 'candidate/**'
       - '!candidate/rebalanced-*'
+    paths:
+      - 'src/**'
+      - 'lang/**'
+      - '*.csproj'
+      - '.github/workflows/build-clarity.yml'
+      - 'scripts/**'
 
 permissions:
   contents: read
@@ -20,23 +26,16 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate production change gate
+        run: python scripts/validate_candidate_gate.py
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Validate localization JSON
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          files = sorted(Path('lang').glob('*.json'))
-          assert len(files) == 11, len(files)
-          for path in files:
-              with path.open(encoding='utf-8') as fh:
-                  json.load(fh)
-          PY
+      - name: Validate localization contracts
+        run: python scripts/validate_localization.py lang
       - name: Restore
         run: dotnet restore PrayerClarity.csproj
       - name: Build Release DLL

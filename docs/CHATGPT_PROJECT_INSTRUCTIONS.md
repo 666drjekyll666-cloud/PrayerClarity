@@ -36,7 +36,17 @@ Do not treat `prayer`, `sermon`, localized names, or internal identifiers as int
 
 Do not guess game IDs, formulas, localization keys, Harmony targets, lifecycle, UI ownership, or final writers when they can be established from accepted project/shared research or direct inspection.
 
-Apply the DevRules per-change evidence gate before production changes. Do not bundle independent unresolved hypotheses into one candidate.
+Apply the DevRules per-change evidence gate before production changes.
+
+Before the first production-source mutation for each materially independent behavior change, make a concise gate checkpoint reviewable in chat or the repository: observable property, canonical owner, final writer/consumer/commit point where applicable, blast radius, preserved invariants, acceptance evidence, and gate state **READY** or **BLOCKED**.
+
+There is no small/obvious/presentation-only/follow-up exception. **BLOCKED means research/probe only; do not edit production behavior under that gate.** A new runtime/user-visible regression opens a gate for that exact property; prior evidence may be reused only when it proves the relevant owner/final-writer path.
+
+Treat the reported defect/request as the default scope. Adjacent wording, mechanics, layout, data semantics, lifecycle, and other nearby behavior are preserved unless the proved path requires changing them or the user separately accepts the additional change.
+
+Do not optimize for fewer in-game test cycles or candidate versions by bypassing or combining unresolved gates. Do not bundle independent unresolved hypotheses into one production candidate.
+
+For numbered PrayerClarity production candidates, follow the repository's `docs/CANDIDATE_GATE_TEMPLATE.json` / candidate-CI contract. Research-only Test Console/probe builds remain separate.
 
 ## Research and knowledge
 

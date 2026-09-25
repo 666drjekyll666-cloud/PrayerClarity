@@ -47,6 +47,29 @@ Stock Graveyard Keeper 1.407 behavior must remain documented independently of mo
 
 Do not assume `prayer`, `sermon`, localized names, item IDs, `PrayCraft`, or `PrayEventDefinition` are interchangeable. Record mappings only when evidence supports them.
 
+## Production-change gate enforcement
+
+PrayerClarity uses the global DevRules evidence gate as a hard stop, not as an advisory checklist.
+
+For every materially independent production behavior change:
+
+1. before the first production-source mutation, make the gate reviewable as **READY** or **BLOCKED** with the observable property, canonical owner, final writer/consumer/commit point where applicable, blast radius, preserved invariants, and acceptance evidence;
+2. there is no exception for a change that appears small, obvious, presentation-only, follow-up, or convenient to bundle;
+3. **BLOCKED means research/probe only**; do not change production behavior under that gate;
+4. a fresh runtime/user-visible regression opens a new gate for that exact property; prior PrayerClarity/shared research may be reused only when it proves the relevant owner/final-writer path;
+5. treat the reported defect/request as the default scope. Wording, mechanics, layout, data semantics, lifecycle, and other adjacent behavior are preserved unless the proved path requires changing them or the user separately accepts that additional change;
+6. do not optimize for fewer game restarts, candidate versions, or user test cycles by bypassing or combining unresolved gates.
+
+For a numbered production candidate branch handled by the standard PrayerClarity candidate workflows:
+
+- create `docs/CANDIDATE_GATE.json` from `docs/CANDIDATE_GATE_TEMPLATE.json` in a **gate-only commit** before production-source changes relative to the declared `baseline_sha`;
+- `baseline_sha` is the exact pre-change source state for that candidate's change set;
+- every listed change must be `READY`; research-only probes/Test Console branches do not use this production gate file;
+- candidate CI validates the gate record and its ordering before compiling or uploading a handoff artifact;
+- if a tested candidate is rejected, do not blindly stack the next candidate on the full rejected source. Choose and record the next baseline deliberately, retaining only already accepted/proved changes plus newly READY fixes.
+
+The gate file is mutable candidate evidence, not stable product documentation. Accepted durable conclusions still belong in the canonical project/shared docs.
+
 ## Research / design order
 
 Use this sequence unless new evidence justifies a narrower detour:

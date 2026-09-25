@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "candidate_branch": "candidate/<version-or-purpose>",
+  "baseline_sha": "<exact 40-character pre-change source SHA>",
+  "changes": [
+    {
+      "id": "<short-change-id>",
+      "observable_property": "<exact behavior being changed>",
+      "canonical_owner": "<verified owner>",
+      "final_writer_or_commit_point": "<verified final writer/consumer/commit point, or a concrete explanation why no later writer applies>",
+      "blast_radius": [
+        "<known affected surface/consumer>"
+      ],
+      "preserved_invariants": [
+        "<nearby behavior that must remain unchanged>"
+      ],
+      "acceptance_evidence": "<cheapest representative test through the real path>",
+      "evidence_refs": [
+        "<accepted doc/source/probe/runtime evidence>"
+      ],
+      "state": "READY"
+    }
+  ]
+}
