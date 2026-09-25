@@ -36,5 +36,6 @@
   "tech.percent_of_base": "기본값의 {0}",
   "active.timer_days_compact": "{0:0.0}",
   "tech.on_success_header": "성공 시:",
-  "forecast.current_success_chance": "현재 성공 확률: {0}%"
+  "forecast.current_success_chance": "현재 성공 확률: {0}%",
+  "item.sermon_success": "설교 성공"
 }
