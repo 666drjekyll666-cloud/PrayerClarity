@@ -16,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.11";
+        public const string PluginVersion = "0.1.12";
 
         private sealed class TimedEffect
         {
@@ -51,6 +51,7 @@ namespace PrayerClarityResearch
         private Rect _windowRect = new Rect(24f, 24f, 620f, 680f);
         private bool _visible;
         private static bool _qualityTitleProbeEnabled = false;
+        private static bool _soulsReposeSentenceBreakProbeEnabled = true;
         private static readonly HashSet<string> RawPrayerTitleLogged =
             new HashSet<string>(StringComparer.Ordinal);
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
@@ -83,6 +84,7 @@ namespace PrayerClarityResearch
             _log = Logger;
             ResolveBuffApi();
             PatchPrayerItemTitleQualityProbe();
+            PatchSoulsReposeSentenceBreakProbe();
             PatchRootsDiagnostic();
             PatchBoostIISimulation();
             PatchCombatRegenDiagnostic();
@@ -161,7 +163,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.10");
+                "PrayerClarity: Rebalanced Test Console " + PluginVersion);
         }
 
         private void DrawWindow(int id)
@@ -237,6 +239,17 @@ namespace PrayerClarityResearch
                 _status = _qualityTitleProbeEnabled
                     ? "Prayer-title quality glyph probe enabled. Hover a Bronze/Silver/Gold prayer item and check the title."
                     : "Prayer-title quality glyph probe disabled.";
+            }
+
+            if (GUILayout.Button(
+                _soulsReposeSentenceBreakProbeEnabled
+                    ? "Soul's Repose sentence-break probe: ON"
+                    : "Soul's Repose sentence-break probe: OFF"))
+            {
+                _soulsReposeSentenceBreakProbeEnabled = !_soulsReposeSentenceBreakProbeEnabled;
+                _status = _soulsReposeSentenceBreakProbeEnabled
+                    ? "Soul's Repose probe enabled. Hover the prayer item and inspect whether the cap icon stays with its number."
+                    : "Soul's Repose sentence-break probe disabled.";
             }
 
             if (GUILayout.Button("Open pulpit sermon UI now (any day / repeat this week)"))
@@ -450,6 +463,101 @@ namespace PrayerClarityResearch
             catch (Exception ex)
             {
                 _log?.LogError("PRAYER_TITLE_QUALITY_GLYPH_PROBE_FAILED " + ex);
+            }
+        }
+
+        private static void PatchSoulsReposeSentenceBreakProbe()
+        {
+            Type itemDefinitionType = FindGameType("ItemDefinition");
+            Type itemType = FindGameType("Item");
+            if (itemDefinitionType == null || itemType == null)
+                throw new MissingMemberException("ItemDefinition/Item");
+
+            MethodInfo getTooltipData = itemDefinitionType.GetMethod(
+                "GetTooltipData",
+                AnyInstance,
+                null,
+                new[] { itemType, typeof(bool) },
+                null);
+            if (getTooltipData == null)
+                throw new MissingMethodException("ItemDefinition.GetTooltipData(Item,bool)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.soulsreposewrapprobe" });
+
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(SoulsReposeSentenceBreakPostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+            SetHarmonyAfter(
+                harmonyMethodType,
+                postfix,
+                "nikich.graveyardkeeper.prayerclarity.rebalanced.itemtooltip");
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = getTooltipData;
+            args[1] = null;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void SoulsReposeSentenceBreakPostfix(object __instance, object __result)
+        {
+            if (!_soulsReposeSentenceBreakProbeEnabled || __instance == null || __result == null)
+                return;
+
+            try
+            {
+                string itemId = GetId(__instance) ?? string.Empty;
+                if (!itemId.StartsWith("b_souls", StringComparison.Ordinal))
+                    return;
+
+                IList rows = __result as IList;
+                if (rows == null) return;
+
+                foreach (object row in rows)
+                {
+                    if (row == null) continue;
+                    string text = Get(row, "text") as string;
+                    if (string.IsNullOrEmpty(text) ||
+                        text.IndexOf("(gratitude_points)", StringComparison.Ordinal) < 0 ||
+                        text.IndexOf("(faith)", StringComparison.Ordinal) < 0)
+                        continue;
+
+                    int faithToken = text.IndexOf("(faith)", StringComparison.Ordinal);
+                    int boundary = text.IndexOf(". ", faithToken, StringComparison.Ordinal);
+                    if (boundary < 0) continue;
+
+                    string changed = text.Substring(0, boundary + 1) + "\n" +
+                                     text.Substring(boundary + 2);
+                    Set(row, "text", changed);
+                    _log?.LogInfo(
+                        "SOULS_REPOSE_WRAP_PROBE" +
+                        " item_id=" + itemId +
+                        " variant=sentence_break" +
+                        " before=\"" + EscapeLogText(text) + "\"" +
+                        " after=\"" + EscapeLogText(changed) + "\"");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("SOULS_REPOSE_WRAP_PROBE_FAILED " + ex);
             }
         }
 
@@ -1871,10 +1979,24 @@ namespace PrayerClarityResearch
 
         private static void SetHarmonyBefore(Type harmonyMethodType, object harmonyMethod, params string[] ownerIds)
         {
+            SetHarmonyOwnerOrder(harmonyMethodType, harmonyMethod, "before", ownerIds);
+        }
+
+        private static void SetHarmonyAfter(Type harmonyMethodType, object harmonyMethod, params string[] ownerIds)
+        {
+            SetHarmonyOwnerOrder(harmonyMethodType, harmonyMethod, "after", ownerIds);
+        }
+
+        private static void SetHarmonyOwnerOrder(
+            Type harmonyMethodType,
+            object harmonyMethod,
+            string memberName,
+            params string[] ownerIds)
+        {
             if (harmonyMethodType == null || harmonyMethod == null) return;
 
             FieldInfo field = harmonyMethodType.GetField(
-                "before",
+                memberName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (field != null)
             {
@@ -1883,7 +2005,7 @@ namespace PrayerClarityResearch
             }
 
             PropertyInfo property = harmonyMethodType.GetProperty(
-                "before",
+                memberName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (property != null && property.CanWrite)
                 property.SetValue(harmonyMethod, ownerIds, null);
