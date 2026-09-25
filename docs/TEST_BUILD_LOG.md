@@ -1415,3 +1415,21 @@ Research helper identity:
   - grows the verified real root window only when the predicted settled button bottom would violate the 10-unit parchment margin;
   - dynamic growth resets on every host redraw; there is no permanent per-frame polling.
 - Runtime acceptance pending. Minimum focused acceptance: Russian Repose, Japanese Repose, then short Faith as the no-unnecessary-growth control. The geometry probe should be removed for this production acceptance; Neutral Test Console 0.1.17 may remain installed.
+
+
+### 2026-09-26 — Rebalanced 0.2.34 rejected; final settled placement still wrong
+
+- Runtime used exact **PrayerClarity: Rebalanced 0.2.34** with **Neutral Test Console 0.1.17** and with the pulpit geometry probe removed. The returned log confirms both versions and confirms the neutral console uses F2.
+- Visual result: **0.2.34 is rejected**.
+  - Russian Soul's Repose: the pulpit visibly redraws/grows compared with the fixed baseline, but the last Effect line is still too close to / visually intrudes into the action-button area.
+  - Japanese Soul's Repose: the failure is stronger; the final Effect block visibly overlaps the action button.
+- The screenshots also show unused parchment below the button, especially in Japanese. Therefore the remaining defect is not simply "the root window cannot become long enough"; the final relationship between settled Effect bounds and the final visible button position is still wrong.
+- The returned log contains no PrayerClarity forecast exception/failure. It confirms Japanese was selected through the normal language path and the native pulpit was reopened under that locale.
+- Fresh regression gate for the exact final-placement property is **BLOCKED**. 0.2.34 proved that the selected next-frame/full-button-union mechanism is still insufficient; do not produce 0.2.35 by changing constants or adding more growth passes without measuring the final 0.2.34 state.
+- Solution-space checkpoint reopened:
+  - keep fixed/worst-case geometry as an available simpler fallback if dynamic geometry continues to require fragile lifecycle assumptions;
+  - before choosing, measure the already-rendered 0.2.34 result rather than adding another production mechanism.
+- Research-method checkpoint:
+  - exact question: after 0.2.34 has finished all bounded settled-layout passes, what are the final root-window bounds, Effect UILabel bounds/printed size, and full visible button bounds in a failing locale, and how much clearance actually remains?
+  - existing path: the already-built read-only **Pulpit Geometry Probe 0.1.0** can answer this without modifying production or the neutral Test Console; no new probe build is needed.
+  - minimum runtime action: install the existing probe alongside exact 0.2.34, open failing Russian Repose and press F8 once, then switch to Japanese Repose and press F8 once, and return the log. No sermon execution or Faith retest is needed at this research step.
