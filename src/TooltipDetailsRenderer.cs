@@ -46,12 +46,10 @@ namespace PrayerClarity
 
             if (tier.Requirement > 0)
             {
-                string quality = TierPrefix(tier, false);
-                string threshold = Localization.F("tech.success_threshold", tier.Requirement);
-                requirement = string.IsNullOrEmpty(quality)
-                    ? threshold
-                    : quality + NoBreakSpace + threshold;
-                requirement = requirement.Replace(" ", NoBreakSpace);
+                // A single item already communicates its quality in the title.
+                // Keep the sermon threshold as a plain readable sentence instead of
+                // repeating the tier glyph and forcing the whole line to be atomic.
+                requirement = Localization.F("tech.success_threshold", tier.Requirement);
             }
 
             AddSingleResourceLines(success, tier, R.VanillaLocalize("faith"), "(faith)",
