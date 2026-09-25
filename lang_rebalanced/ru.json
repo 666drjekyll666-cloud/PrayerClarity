@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Состояние душ не ухудшается со временем — ни в теле, ни после извлечения. За освобождение душ вы получаете на {0:0}% больше (gratitude_points).",
   "rebalanced.tech.plant_tier": "Время роста растений: -{0:0}%",
   "rebalanced.tech.souls_intro": "При успехе накопленная (gratitude_points) преобразуется в (faith) в соотношении 1:1.",
-  "rebalanced.tech.souls_tier": "Лимит за проповедь: {0} (gratitude_points)",
+  "rebalanced.tech.souls_tier": "Лимит за проповедь: {0}\u00A0(gratitude_points)",
   "rebalanced.item.souls_repose": "При успехе каждая потраченная (gratitude_points) даёт 1 (faith). За проповедь можно потратить до {0} (gratitude_points).",
   "rebalanced.pulpit.souls_conversion": "Преобразует {0} (gratitude_points) в {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "нет (gratitude_points) для преобразования",
