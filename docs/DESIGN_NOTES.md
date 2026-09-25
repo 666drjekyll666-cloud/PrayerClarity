@@ -191,8 +191,6 @@ Implementation policy:
 
 The native inline quality-symbol tokens `(s1)/(s2)/(s3)` are a preferred title treatment only if the stock HintTitle font is runtime-proved to render those symbols. Until that narrow visual probe is accepted, production keeps quality identity out of the title rather than introducing a custom sprite/layout solely for this decoration.
 
-A prayer item tooltip describes the **concrete quality currently held**, not the whole Bronze/Silver/Gold comparison.
-
 It should continue to use the same effective semantics as Technology and Pulpit so a Rebalanced item never reports stock mechanics.
 
 ## Temporary Effects contract
