@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Повышает качество письма.",
   "tech.effect.excellence_intro": "Повышает качество изделий.",
   "tech.souls_base_faith": "Вера зависит от качества церкви и Благодарности душ.",
-  "repose.endpoint": "Более качественные тела недоступны.",
+  "repose.endpoint": "Максимально возможный уровень качества тел уже достигнут — эта молитва больше не может открыть более качественные тела.",
   "buff.souls_repose": "(faith) зависит от качества церкви и (gratitude_points).",
   "active.sword": "+{0:0.##} к урону",
   "active.shield": "+{0:0.##} к броне",
@@ -35,5 +35,6 @@
   "tech.base_result": "Базовый результат",
   "tech.percent_of_base": "{0} от базового значения",
   "active.timer_days_compact": "{0:0.0}",
-  "tech.on_success_header": "При успехе:"
+  "tech.on_success_header": "При успехе:",
+  "forecast.current_success_chance": "Текущий шанс успеха: {0}%"
 }
