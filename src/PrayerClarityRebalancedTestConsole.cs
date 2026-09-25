@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.9";
+        public const string PluginVersion = "0.1.10";
 
         private sealed class TimedEffect
         {
@@ -47,8 +48,9 @@ namespace PrayerClarityResearch
         private static readonly HashSet<string> RootsDiagnosticLoggedCrafts = new HashSet<string>(StringComparer.Ordinal);
 
         private readonly List<TimedEffect> _effects = new List<TimedEffect>();
-        private Rect _windowRect = new Rect(24f, 24f, 620f, 600f);
+        private Rect _windowRect = new Rect(24f, 24f, 620f, 680f);
         private bool _visible;
+        private static bool _qualityTitleProbeEnabled = true;
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
@@ -78,6 +80,7 @@ namespace PrayerClarityResearch
         {
             _log = Logger;
             ResolveBuffApi();
+            PatchPrayerItemTitleQualityProbe();
             PatchRootsDiagnostic();
             PatchBoostIISimulation();
             PatchCombatRegenDiagnostic();
@@ -156,7 +159,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.9");
+                "PrayerClarity: Rebalanced Test Console 0.1.10");
         }
 
         private void DrawWindow(int id)
@@ -221,6 +224,25 @@ namespace PrayerClarityResearch
             GUILayout.EndHorizontal();
 
             GUILayout.Space(8f);
+            GUILayout.Label("Presentation / access test helpers:");
+
+            if (GUILayout.Button(
+                _qualityTitleProbeEnabled
+                    ? "Prayer title quality glyph probe: ON"
+                    : "Prayer title quality glyph probe: OFF"))
+            {
+                _qualityTitleProbeEnabled = !_qualityTitleProbeEnabled;
+                _status = _qualityTitleProbeEnabled
+                    ? "Prayer-title quality glyph probe enabled. Hover a Bronze/Silver/Gold prayer item and check the title."
+                    : "Prayer-title quality glyph probe disabled.";
+            }
+
+            if (GUILayout.Button("Open pulpit sermon UI now (any day / repeat this week)"))
+                OpenPulpitSermonNow();
+
+            GUILayout.Label("Opening is nonpersistent. Pressing Pray runs a REAL sermon and changes normal save/game state.");
+
+            GUILayout.Space(8f);
             GUILayout.Label("Native-seam probes:");
 
             if (GUILayout.Button("Capture live pulpit Soul's Repose identity (no sermon)"))
@@ -271,6 +293,142 @@ namespace PrayerClarityResearch
             GUILayout.Label("Status: " + _status);
 
             GUI.DragWindow(new Rect(0f, 0f, 10000f, 24f));
+        }
+
+        private void OpenPulpitSermonNow()
+        {
+            try
+            {
+                Type worldMapType = FindType("WorldMap");
+                Type worldGameObjectType = FindGameType("WorldGameObject");
+                if (worldMapType == null || worldGameObjectType == null)
+                    throw new MissingMemberException("WorldMap/WorldGameObject");
+
+                MethodInfo findPulpit = worldMapType.GetMethod(
+                    "GetWorldGameObjectByCustomTag",
+                    AnyStatic,
+                    null,
+                    new[] { typeof(string), typeof(bool) },
+                    null);
+                if (findPulpit == null)
+                    throw new MissingMethodException("WorldMap.GetWorldGameObjectByCustomTag(string,bool)");
+
+                object pulpit = findPulpit.Invoke(null, new object[] { "church_pulpit", false });
+                if (pulpit == null)
+                    throw new InvalidOperationException("church_pulpit WorldGameObject is unavailable.");
+
+                Type guiElementsType = FindType("GUIElements");
+                object guiElements = GetStatic(guiElementsType, "me");
+                if (guiElements == null)
+                    throw new InvalidOperationException("GUIElements.me unavailable.");
+
+                MethodInfo openCraftGui = guiElements.GetType().GetMethod(
+                    "OpenCraftGUI",
+                    AnyInstance,
+                    null,
+                    new[] { worldGameObjectType },
+                    null);
+                if (openCraftGui == null)
+                    throw new MissingMethodException("GUIElements.OpenCraftGUI(WorldGameObject)");
+
+                object player = GetPlayer();
+                Type mainGameType = FindType("MainGame");
+                object mainGame = GetStatic(mainGameType, "me");
+                object save = Get(mainGame, "save");
+                int day = Convert.ToInt32(Get(save, "day") ?? -1);
+                float prayedThisWeek = GetPlayerParam(player, "prayed_this_week", 0f);
+
+                openCraftGui.Invoke(guiElements, new[] { pulpit });
+
+                _status =
+                    "Native pulpit sermon UI opened without changing the calendar. " +
+                    "If you press Pray, it is a real sermon with normal rewards/effects and save-state changes.";
+                _log?.LogInfo(
+                    "PULPIT_ANY_DAY_OPENED day=" + day +
+                    " prayed_this_week=" + prayedThisWeek.ToString("0.###") +
+                    " calendar_mutated=false native_gui=true");
+            }
+            catch (Exception ex)
+            {
+                _status = "Any-day pulpit open failed: " + ex.GetType().Name;
+                _log?.LogError("PULPIT_ANY_DAY_OPEN_FAILED " + ex);
+            }
+        }
+
+        private static void PatchPrayerItemTitleQualityProbe()
+        {
+            Type itemDefinitionType = FindGameType("ItemDefinition");
+            Type itemType = FindGameType("Item");
+            if (itemDefinitionType == null || itemType == null)
+                throw new MissingMemberException("ItemDefinition/Item");
+
+            MethodInfo getTooltipData = itemDefinitionType.GetMethod(
+                "GetTooltipData",
+                AnyInstance,
+                null,
+                new[] { itemType, typeof(bool) },
+                null);
+            if (getTooltipData == null)
+                throw new MissingMethodException("ItemDefinition.GetTooltipData(Item,bool)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.qualitytitleprobe" });
+
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(PrayerItemTooltipTitlePostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = getTooltipData;
+            args[1] = null;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void PrayerItemTooltipTitlePostfix(object __instance, object __result)
+        {
+            if (!_qualityTitleProbeEnabled || __instance == null || __result == null) return;
+
+            try
+            {
+                string type = Convert.ToString(Get(__instance, "type"));
+                if (!string.Equals(type, "Preach", StringComparison.Ordinal)) return;
+
+                int quality = (int)Math.Round(Convert.ToSingle(Get(__instance, "quality") ?? 0f));
+                if (quality < 1 || quality > 3) return;
+
+                IList rows = __result as IList;
+                if (rows == null || rows.Count == 0 || rows[0] == null) return;
+
+                object titleRow = rows[0];
+                string title = Get(titleRow, "text") as string;
+                if (string.IsNullOrEmpty(title)) return;
+
+                string prefix = "(s" + quality + ") ";
+                if (title.StartsWith(prefix, StringComparison.Ordinal)) return;
+
+                Set(titleRow, "text", prefix + title);
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("PRAYER_TITLE_QUALITY_GLYPH_PROBE_FAILED " + ex);
+            }
         }
 
         private sealed class PrayerItemDefinition
