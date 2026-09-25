@@ -53,7 +53,8 @@ namespace PrayerClarity
                 TooltipPresentationSections sections = TooltipDetailsRenderer.BuildSingleSections(tier);
                 if (sections == null || !sections.HasContent) return;
 
-                ComposePrayerTooltip(list, craft, tier, sections);
+                int itemQuality = (int)Math.Round(R.Float(R.Get(__instance, "quality")));
+                ComposePrayerTooltip(list, craft, itemQuality, sections);
             }
             catch (Exception ex)
             {
@@ -86,14 +87,14 @@ namespace PrayerClarity
         private static void ComposePrayerTooltip(
             IList list,
             object craft,
-            PrayerForecast.TierDetails tier,
+            int itemQuality,
             TooltipPresentationSections sections)
         {
             if (list == null || list.Count < 2) return;
             if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
             if (_bubbleTextType == null) return;
 
-            PrefixTitleWithQualityGlyph(list, tier);
+            PrefixTitleWithQualityGlyph(list, itemQuality);
 
             object descriptionRow = list[1];
             if (descriptionRow == null || !_bubbleTextType.IsInstanceOfType(descriptionRow)) return;
@@ -128,10 +129,9 @@ namespace PrayerClarity
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
         }
 
-        private static void PrefixTitleWithQualityGlyph(IList list, PrayerForecast.TierDetails tier)
+        private static void PrefixTitleWithQualityGlyph(IList list, int quality)
         {
-            if (list == null || list.Count == 0 || tier == null) return;
-            int quality = tier.QualityTier;
+            if (list == null || list.Count == 0) return;
             if (quality < 1 || quality > 3) return;
 
             object titleRow = list[0];
