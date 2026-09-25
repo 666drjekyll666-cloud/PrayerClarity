@@ -1322,3 +1322,12 @@ Research helper identity:
 - Therefore the orphaned inline icons are produced by final NGUI wrapping after PrayerClarity supplies the row text and fixed item-mechanics width; localization and the semantic renderer are not the final split owner.
 - The common production-fix gate remains **BLOCKED only on the correction mechanism**, not on owner/final-writer uncertainty.
 - Research-only Test Console 0.1.15 is the next narrow hypothesis: after observing final `processedText`, move an automatically inserted break from `amount | icon` to immediately before the amount, preserving wording and width. Runtime visual acceptance is required before production.
+### 2026-09-26 — Test Console 0.1.15 validates common amount+inline-icon repair
+
+- Runtime used exact PrayerClarity: Rebalanced 0.2.30 with Test Console 0.1.15.
+- Russian Soul's Repose: the probe observed final NGUI splits at both `1 | (faith)` and `90 | (gratitude_points)`, then moved each wrap before the numeric amount. User visual inspection confirmed both amount/icon clusters stayed together and the tooltip remained readable.
+- Cross-locale runtime evidence supports the same conditional rule rather than a Russian-specific wording fix: Italian and German exposed the `1 | (faith)` split and were repaired; Polish exposed the `90 | (gratitude_points)` split and was repaired; French, Japanese and Simplified Chinese did not need that repair at the observed lines and remained on their normal NGUI wrapping.
+- The accepted research rule is therefore conditional: only PrayerClarity-owned prayer-item mechanics rows whose final NGUI `processedText` actually splits an integer amount from the immediately following inline symbol should be normalized, by moving that line boundary before the amount.
+- Wording, localization, tooltip width, mechanics and other surfaces are preserved.
+- Production gate for the common prayer-item amount+inline-icon wrapping behavior is **READY**.
+- Rebalanced 0.2.32 / Vanilla 1.0.41 were created from the exact 0.2.30 / 1.0.39 candidate baseline, intentionally excluding rejected 0.2.31 wording/title changes. Candidate source: `768bb9929823a3b3fd2496fdfd71de0587ddeb27`; CI run `36199112978` succeeded. Runtime acceptance is still pending.
