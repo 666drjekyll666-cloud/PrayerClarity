@@ -273,6 +273,26 @@ Before creating or extending a PrayerClarity Test Console/probe, make the DevRul
 
 Do not add Test Console machinery merely to avoid one cheap DLL swap, restart, tooltip hover, or other deterministic user action. In particular, if an existing immutable candidate already provides the required baseline behavior, prefer testing against that exact candidate rather than reproducing the baseline inside the console and thereby adding another writer/assumption. Optimize for fewer assumptions and moving parts, not fewer user clicks.
 
+### Neutral Test Console boundary
+
+PrayerClarity's long-lived Rebalanced Test Console is a **neutral setup/access utility**, not a probe host.
+
+It may:
+- spawn/remove verified prayer items for inspection;
+- temporarily expand/restore inventory capacity;
+- activate/remove already-verified prayer buffs through the game's native buff API when this is only test-state setup;
+- open an already-verified game UI seam such as the pulpit without rewriting that UI's behavior.
+
+It must **not**:
+- install Harmony patches or other hooks into the production path under test;
+- rewrite UI text/layout, mechanics values, formulas, final writers, consumers, or lifecycle behavior;
+- simulate an input/value specifically to prove a hypothesis;
+- contain read/write diagnostic probes whose presence adds another interception/order dependency to the path being accepted.
+
+Any behavior-mutating or path-intercepting research probe must be a separate temporary DLL and separate research/candidate branch, with its own exact question and research-method checkpoint. Removing that probe DLL must leave the neutral Test Console available, so production can be tested without probe influence while retaining setup conveniences.
+
+Do not add future probes back into the neutral Test Console merely because the UI already exists there.
+
 ## Repository policy
 
 Long-lived findings belong primarily in:
