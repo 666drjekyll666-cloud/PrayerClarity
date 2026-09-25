@@ -421,13 +421,19 @@ namespace PrayerClarity
                     out semanticKey);
 
                 bool stockAddsHigherTier = CorpseTierSemantics.StockReposeAddsHigherOrdinaryTier();
-                bool reliabilityStillChangesDistribution =
+                bool premiumCanStillChangeDistribution =
                     hasRebalancedSemantics &&
-                    forecast.QualityTier >= 2 &&
                     CorpseTierSemantics.BestTierNarrowingChangesDistribution();
+                bool reliabilityStillChangesDistribution =
+                    forecast.QualityTier >= 2 &&
+                    premiumCanStillChangeDistribution;
 
                 if (!stockAddsHigherTier && !reliabilityStillChangesDistribution)
+                {
                     forecast.SpecialText = Localization.F("repose.endpoint");
+                    if (forecast.QualityTier == 1 && premiumCanStillChangeDistribution)
+                        forecast.SpecialText += "\n" + Localization.F("rebalanced.repose.endpoint_bronze_hint");
+                }
                 else if (!hasRebalancedSemantics)
                     forecast.SpecialText = Localization.F("buff.skull", 1f, duration);
 
