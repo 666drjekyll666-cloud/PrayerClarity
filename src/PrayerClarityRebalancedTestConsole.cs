@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Neutral Test Console";
-        public const string PluginVersion = "0.1.16";
+        public const string PluginVersion = "0.1.17";
 
         private static readonly BindingFlags AnyStatic =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -27,7 +27,7 @@ namespace PrayerClarityResearch
         private Rect _windowRect = new Rect(24f, 24f, 620f, 520f);
         private bool _visible;
         private string _status =
-            "F1 opens/closes this neutral setup console. It installs no Harmony patches or research probes.";
+            "F2 opens/closes this neutral setup console. It installs no Harmony patches or research probes.";
 
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
@@ -58,14 +58,14 @@ namespace PrayerClarityResearch
             _log = Logger;
             Logger.LogInfo(
                 PluginName + " " + PluginVersion +
-                " loaded. Press F1 for neutral test-state setup/access helpers. " +
+                " loaded. Press F2 for neutral test-state setup/access helpers. " +
                 "No Harmony patches, mechanic simulations, presentation rewrites, or diagnostic probes are installed. " +
                 "Prayer-gallery items and temporary inventory expansion are save-persistent until cleaned up/restored.");
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (Input.GetKeyDown(KeyCode.F2))
                 _visible = !_visible;
 
             if (_visible && Input.GetKeyDown(KeyCode.Escape))
@@ -84,7 +84,7 @@ namespace PrayerClarityResearch
 
         private void DrawWindow(int id)
         {
-            GUILayout.Label("Neutral setup/access utility. F1 toggles. Escape closes.");
+            GUILayout.Label("Neutral setup/access utility. F2 toggles. Escape closes.");
             GUILayout.Label("No Harmony patches or research probes are installed by this DLL.");
 
             GUILayout.Space(10f);
