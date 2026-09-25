@@ -6,9 +6,17 @@ on:
     branches:
       - 'candidate/rebalanced-*'
       - '!candidate/rebalanced-test-console-*'
+    paths:
+      - 'src/**'
+      - 'lang/**'
+      - 'lang_rebalanced/**'
+      - '*.csproj'
+      - '.github/workflows/build-rebalanced.yml'
+      - 'scripts/**'
 
 permissions:
   contents: read
+  statuses: write
 
 concurrency:
   group: prayerclarity-shared-${{ github.ref }}
@@ -20,44 +28,16 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate production change gate
+        run: python scripts/validate_candidate_gate.py
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Validate localization JSON
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          required_base = {
-              'forecast.current_success_chance',
-              'repose.endpoint',
-              'item.sermon_success',
-          }
-          required_rebalanced = {
-              'rebalanced.tech.gratitude_effect',
-              'rebalanced.tech.gratitude_lore',
-              'rebalanced.tech.sin_shard_lore',
-              'rebalanced.tech.souls_intro',
-              'rebalanced.pulpit.souls_conversion',
-              'rebalanced.active.sins_detailed',
-              'rebalanced.repose.endpoint_bronze_hint',
-          }
-          for root in (Path('lang'), Path('lang_rebalanced')):
-              files = sorted(root.glob('*.json'))
-              assert len(files) == 11, (root, len(files))
-              for path in files:
-                  with path.open(encoding='utf-8') as fh:
-                      data = json.load(fh)
-                  if root.name == 'lang':
-                      missing = sorted(required_base - set(data))
-                      assert not missing, (path, missing)
-                  if root.name == 'lang_rebalanced':
-                      missing = sorted(required_rebalanced - set(data))
-                      assert not missing, (path, missing)
-          PY
+      - name: Validate localization contracts
+        run: python scripts/validate_localization.py lang lang_rebalanced
       - name: Restore sibling projects
         run: |
           dotnet restore PrayerClarity.Rebalanced.csproj
@@ -77,15 +57,24 @@ jobs:
           test -f "$vanilla"
 
           for locale in en fr de zh_cn es pt_br ko ja ru it pl; do
-            grep -a -q ".lang.${locale}.json" "$rebalanced"
-            grep -a -q ".lang_rebalanced.${locale}.json" "$rebalanced"
-            grep -a -q ".lang.${locale}.json" "$vanilla"
+            grep -a -q ".lang.${locale}.json" "$rebalanced" || {
+              echo "Rebalanced base locale marker missing: ${locale}" >&2
+              exit 1
+            }
+            grep -a -q ".lang_rebalanced.${locale}.json" "$rebalanced" || {
+              echo "Rebalanced overlay locale marker missing: ${locale}" >&2
+              exit 1
+            }
+            grep -a -q ".lang.${locale}.json" "$vanilla" || {
+              echo "Vanilla locale marker missing: ${locale}" >&2
+              exit 1
+            }
           done
 
           mkdir -p dist
-          reb_handoff='PrayerClarity.Rebalanced-0.2.30-ci.dll'
+          reb_handoff='PrayerClarity.Rebalanced-0.2.32-ci.dll'
           reb_canonical='PrayerClarity.Rebalanced.dll'
-          van_handoff='PrayerClarity-1.0.39-ci.dll'
+          van_handoff='PrayerClarity-1.0.41-ci.dll'
           van_canonical='PrayerClarity.dll'
 
           cp "$rebalanced" "dist/$reb_handoff"
@@ -106,13 +95,13 @@ jobs:
             echo "Locales: en fr de zh_cn es pt_br ko ja ru it pl"
             echo
             echo "PrayerClarity: Vanilla"
-            echo "Version: 1.0.39"
+            echo "Version: 1.0.41"
             echo "Handoff DLL: $van_handoff"
             echo "Canonical DLL: $van_canonical"
             echo "DLL SHA-256: $van_hash"
             echo
             echo "PrayerClarity: Rebalanced"
-            echo "Version: 0.2.30"
+            echo "Version: 0.2.32"
             echo "Handoff DLL: $reb_handoff"
             echo "Canonical DLL: $reb_canonical"
             echo "DLL SHA-256: $reb_hash"
@@ -122,10 +111,14 @@ jobs:
           echo "reb_canonical=$reb_canonical" >> "$GITHUB_OUTPUT"
           echo "van_handoff=$van_handoff" >> "$GITHUB_OUTPUT"
           echo "van_canonical=$van_canonical" >> "$GITHUB_OUTPUT"
+          echo "reb_sha256=$reb_hash" >> "$GITHUB_OUTPUT"
+          echo "van_sha256=$van_hash" >> "$GITHUB_OUTPUT"
+          echo "PrayerClarity: Rebalanced 0.2.32 DLL SHA-256: $reb_hash"
+          echo "PrayerClarity: Vanilla 1.0.41 DLL SHA-256: $van_hash"
       - name: Upload shared runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-rebalanced-0.2.30-ci-${{ github.sha }}
+          name: PrayerClarity-rebalanced-0.2.32-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.reb_handoff }}
             dist/${{ steps.artifact.outputs.reb_canonical }}
@@ -134,3 +127,21 @@ jobs:
             dist/BUILD_INFO.txt
           if-no-files-found: error
           retention-days: 14
+      - name: Report candidate workflow run
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$JOB_STATUS" in
+            success) state=success ;;
+            cancelled) state=error ;;
+            *) state=failure ;;
+          esac
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state="$state" \
+            -f context="PrayerClarity shared candidate" \
+            -f description="Shared candidate workflow: $JOB_STATUS" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
