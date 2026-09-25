@@ -15,9 +15,14 @@ namespace PrayerClarity
         private const int SoftProseWordThreshold = 5;
 
         private sealed class WideLayoutMarker { }
+        private sealed class PrayerItemLayoutMarker { }
+
+        private const int PrayerItemMaxWidth = 420;
 
         private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
             new ConditionalWeakTable<object, WideLayoutMarker>();
+        private static readonly ConditionalWeakTable<object, PrayerItemLayoutMarker> PrayerItemLayoutData =
+            new ConditionalWeakTable<object, PrayerItemLayoutMarker>();
 
         private static ManualLogSource _log;
         private static bool _errorLogged;
@@ -27,6 +32,13 @@ namespace PrayerClarity
             if (data == null) return;
             WideLayoutData.Remove(data);
             WideLayoutData.Add(data, new WideLayoutMarker());
+        }
+
+        internal static void PreferPrayerItemLayout(object data)
+        {
+            if (data == null) return;
+            PrayerItemLayoutData.Remove(data);
+            PrayerItemLayoutData.Add(data, new PrayerItemLayoutMarker());
         }
 
         internal static void Install(string harmonyId, ManualLogSource log)
@@ -58,13 +70,27 @@ namespace PrayerClarity
                 if (__instance == null || __0 == null) return;
 
                 int maxWidth = R.Int(R.Get(__0, "max_width"));
-                if (maxWidth != OwnedMaxWidth) return;
 
                 object label = R.Get(__instance, "_label") ?? R.Get(__instance, "ui_widget");
                 if (label == null) return;
 
                 string fullText = R.Get(label, "text") as string;
                 if (string.IsNullOrEmpty(fullText)) return;
+
+                PrayerItemLayoutMarker itemMarker;
+                if (PrayerItemLayoutData.TryGetValue(__0, out itemMarker))
+                {
+                    // Ordinary item bubbles should remain compact. The native label is
+                    // ResizeFreely, so overflowWidth is a true expansion/wrap ceiling:
+                    // short rows remain narrow while long mechanics prose wraps instead
+                    // of stretching the whole parchment across the screen.
+                    R.Set(label, "text", fullText);
+                    R.Set(label, "overflowWidth", PrayerItemMaxWidth);
+                    R.Get(label, "processedText");
+                    return;
+                }
+
+                if (maxWidth != OwnedMaxWidth) return;
 
                 WideLayoutMarker marker;
                 if (WideLayoutData.TryGetValue(__0, out marker))
