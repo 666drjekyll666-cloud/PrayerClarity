@@ -66,6 +66,8 @@ Ask the user only for product/design decisions and for installed-game runtime/pe
 
 Prefer a narrow automated research harness when it reduces repetitive, timing-sensitive, RNG, arithmetic, transcription, or fragile manual testing.
 
+Do not automate merely to eliminate a cheap user action. Before creating new research code, state the exact question, whether accepted evidence/direct inspection/an existing exact artifact/a short direct runtime action can answer it, and why the probe is simpler or more reliable if those paths are insufficient. Prefer fewer assumptions and moving parts over fewer in-game clicks, DLL swaps, restarts, or test cycles.
+
 ## New chats
 
 No special first-message handoff is required inside this ChatGPT Project.
