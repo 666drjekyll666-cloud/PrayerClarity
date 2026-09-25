@@ -1287,4 +1287,13 @@ Research helper identity:
 - Release asset ID: `574716424`, canonical filename `PrayerClarity.Rebalanced.dll`, asset digest `sha256:ecba7297a80bde91a044d4d7c7e4348fd32805e960e3fa467be8d1465cfa52e2`.
 - Publication workflow run: `35442370524` — success.
 - Publication downloaded artifact `10583657918`, verified the accepted source/version/hash, and uploaded the exact accepted DLL; **no rebuild occurred**.
+### 2026-09-26 — Rebalanced 0.2.31 rejected; process gate hardened
 
+- Runtime under Graveyard Keeper 1.407 / Russian locale confirmed the intended 0.2.31 build was loaded with Rebalanced Test Console 0.1.10; this was not a stale-DLL/install mix-up.
+- Candidate 0.2.31 is **rejected** and must not be promoted or used blindly as the next production baseline.
+- Observed presentation regressions: Combo Prayer still shows two quality glyphs; Soul's Repose item wording exposes a literal `\\n` and the experimental `1 icon = 1 icon` rewrite is rejected in favor of restoring the previously understandable wording; Shoots & Roots still shows the 95% all-sources cap on Bronze/Silver because the wrong presentation writer was edited; Bronze Repose still overlaps the pulpit action button because the current layout has a fixed extra-height budget rather than content-driven root-window growth.
+- Root process finding: the 0.2.30/0.2.31 follow-up treated several apparently small presentation issues as obvious and bypassed/reduced the normal per-change owner/final-writer evidence gate. This violated existing DevRules rather than exposing a missing prayer-specific mechanics rule.
+- Global DevRules and PrayerClarity local policy were hardened: every materially independent production change now requires a reviewable READY/BLOCKED gate before the first production-source mutation, with no small/obvious/presentation-only/follow-up exception; candidate CI requires a gate-only record before production edits relative to the declared baseline.
+- PrayerClarity candidate localization CI now validates the complete 11-locale key set, placeholder parity, and rejects literal escaped control sequences such as the observed `\\n` failure.
+- Combo Prayer title ownership remains **open research**, not a production-fix hypothesis. Rebalanced Test Console 0.1.11 is the narrow read-only owner trace; production title code must not change again until that trace establishes the pre-production title state.
+- No prayer mechanics retest is required. Next production work must choose its baseline deliberately and carry forward only accepted/proved presentation changes plus separately READY fixes.
