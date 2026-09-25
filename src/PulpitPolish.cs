@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PrayerClarity
 {
     // Final presentation pass for the accepted pulpit layout. It runs only on pulpit
-    // redraw after PulpitLayoutV4 has applied the fixed window geometry.
+    // redraw after PulpitLayoutV4 has applied the baseline window geometry.
     // Leading effect icons come from the same BuffDefinition.GetIconName() seam used
     // by vanilla BuffIcon.Draw. Item/resource nouns stay as localized text because the
     // attempted inline-item sprite paths did not resolve in the verified 1.407 runtime.
@@ -120,11 +120,11 @@ namespace PrayerClarity
         {
             if (!_craftButtonCaptured || _craftButton == null) return;
 
-            Vector3 target = new Vector3(
+            Vector3 baseline = new Vector3(
                 PulpitTuning.PrayerButtonX.Value,
                 PulpitTuning.PrayerButtonY.Value,
                 _craftButtonOriginalPosition.z);
-            _craftButton.localPosition = target;
+            _craftButton.localPosition = baseline;
 
             if (_effectLabel == null ||
                 _effectLabelObject == null ||
@@ -133,47 +133,54 @@ namespace PrayerClarity
                 _window == null)
                 return;
 
-            // ResizeHeight has to process the current localized text before its live
-            // widget height is authoritative. Measure both widgets in the common
-            // window coordinate space so the calculation is independent of their
-            // different parents/pivots.
-            R.Get(_effectLabel, "processedText");
-
-            float effectBottom;
-            float effectTop;
-            float buttonBottom;
-            float buttonTop;
-            if (!TryGetVerticalBounds(_effectLabel, _window, out effectBottom, out effectTop) ||
-                !TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
-                return;
-
             const float clearance = 8f;
-            float allowedButtonTop = effectBottom - clearance;
-            if (buttonTop <= allowedButtonTop) return;
+            const float bottomMargin = 10f;
 
-            float downward = buttonTop - allowedButtonTop;
-            target.y -= downward;
-
-            // The accepted pulpit window already carries 100 UI units of extra height.
-            // Keep the adaptive move inside that live window; if a future locale ever
-            // exceeds this budget, the visual acceptance test will expose it instead
-            // of silently moving the action button outside the parchment.
-            float windowBottom;
-            float windowTop;
-            if (_windowWidget != null &&
-                TryGetVerticalBounds(_windowWidget, _window, out windowBottom, out windowTop))
+            // The Effect label is ResizeHeight and may change with locale/prayer.
+            // Recompute from the accepted baseline after each conditional root-window
+            // growth because the anchored container may move when the real window grows.
+            // Three passes are a bounded safety net for integer rounding; the normal
+            // centre-growth case resolves in one pass.
+            for (int pass = 0; pass < 3; pass++)
             {
-                _craftButton.localPosition = target;
-                if (TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
-                {
-                    const float bottomMargin = 10f;
-                    float minBottom = windowBottom + bottomMargin;
-                    if (buttonBottom < minBottom)
-                        target.y += minBottom - buttonBottom;
-                }
-            }
+                R.Get(_effectLabel, "processedText");
 
-            _craftButton.localPosition = target;
+                float effectBottom;
+                float effectTop;
+                float buttonBottom;
+                float buttonTop;
+                if (!TryGetVerticalBounds(_effectLabel, _window, out effectBottom, out effectTop))
+                    return;
+
+                _craftButton.localPosition = baseline;
+                if (!TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
+                    return;
+
+                Vector3 target = baseline;
+                float allowedButtonTop = effectBottom - clearance;
+                if (buttonTop > allowedButtonTop)
+                    target.y -= buttonTop - allowedButtonTop;
+
+                _craftButton.localPosition = target;
+
+                if (_windowWidget == null)
+                    return;
+
+                float windowBottom;
+                float windowTop;
+                if (!TryGetVerticalBounds(_windowWidget, _window, out windowBottom, out windowTop) ||
+                    !TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
+                    return;
+
+                float deficit = (windowBottom + bottomMargin) - buttonBottom;
+                if (deficit <= 0f)
+                    return;
+
+                // Do not push the button back upward into the Effect text. Grow the
+                // verified real pulpit window by the measured deficit instead.
+                if (!PulpitLayoutV4.GrowWindowForBottomDeficit(deficit))
+                    return;
+            }
         }
 
         private static void PolishResultRows()
