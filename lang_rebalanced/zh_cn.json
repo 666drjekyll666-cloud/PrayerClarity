@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "每个忏悔室中的忏悔会更频繁地发生。",
   "rebalanced.tech.repose_intro": "驴子可能带来品质更好的尸体。",
   "rebalanced.tech.combat_intro": "增强守墓人在战斗中的能力。",
-  "rebalanced.active.plant": "植物生长时间：-{0:0}% · 总减幅上限：-{1:0}%",
+  "rebalanced.active.plant": "植物生长时间：-{0:0}% · 来自所有来源的植物生长时间总减幅不超过{1:0}%",
   "rebalanced.active.sins": "忏悔概率：{0:0}%",
   "rebalanced.active.repose.bronze": "驴子可能带来品质高一级的尸体",
   "rebalanced.active.repose.silver": "有一半的情况保证获得最佳尸体",
@@ -13,7 +13,7 @@
   "rebalanced.tech.plant_tier": "植物生长时间：-{0:0}%",
   "rebalanced.tech.souls_intro": "成功时，已储存的(gratitude_points)会按1:1转化为(faith)。",
   "rebalanced.tech.souls_tier": "每次布道上限：{0} (gratitude_points)",
-  "rebalanced.item.souls_repose": "成功时，每消耗1点(gratitude_points)获得1点(faith)。每次布道最多可消耗{0}点(gratitude_points)。",
+  "rebalanced.item.souls_repose": "成功时：1点(gratitude_points) = 1点(faith)。\\n每次布道上限：{0}点(gratitude_points)。",
   "rebalanced.pulpit.souls_conversion": "将{0}(gratitude_points)转化为{1}(faith)。",
   "rebalanced.pulpit.souls_conversion_empty": "没有可转换的(gratitude_points)",
   "rebalanced.tech.sin_shard_intro": "增加治愈灵魂时获得的罪恶碎片数量。",
@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "说几句为什么灵魂最好要彻底净化。",
   "rebalanced.tech.gratitude_effect": "灵魂状态不会随时间恶化——无论仍在尸体中还是已经提取。\n释放灵魂获得的(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "每个告解室每天触发告解的概率：{0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "白银和黄金祷告仍会提高获得当前最佳尸体的可靠性。"
+  "rebalanced.repose.endpoint_bronze_hint": "（白银和黄金仍会提高获得当前最佳尸体的概率。）"
 }

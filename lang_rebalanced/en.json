@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "Confessions happen more often in each confessional.",
   "rebalanced.tech.repose_intro": "The Donkey may bring better-quality bodies.",
   "rebalanced.tech.combat_intro": "Strengthens the Keeper in combat.",
-  "rebalanced.active.plant": "Plant growth time: -{0:0}% · Combined maximum: -{1:0}%",
+  "rebalanced.active.plant": "Plant growth time: -{0:0}% · Total plant growth-time reduction from all sources: no more than {1:0}%",
   "rebalanced.active.sins": "Confession chance: {0:0}%",
   "rebalanced.active.repose.bronze": "The Donkey may bring a body one quality tier better",
   "rebalanced.active.repose.silver": "In half of cases, the best body is guaranteed",
@@ -12,8 +12,8 @@
   "rebalanced.active.gratitude": "Soul condition does not deteriorate over time - whether still in the body or already extracted. Releasing souls grants +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Plant growth time: -{0:0}%",
   "rebalanced.tech.souls_intro": "On success, stored (gratitude_points) is converted into (faith) at a 1:1 rate.",
-  "rebalanced.tech.souls_tier": "Sermon limit: {0}\u00A0(gratitude_points)",
-  "rebalanced.item.souls_repose": "On success, each spent (gratitude_points) grants 1 (faith). Up to {0} (gratitude_points) can be spent per sermon.",
+  "rebalanced.tech.souls_tier": "Sermon limit: {0} (gratitude_points)",
+  "rebalanced.item.souls_repose": "On success: 1 (gratitude_points) = 1 (faith).\\nPer-sermon limit: {0} (gratitude_points).",
   "rebalanced.pulpit.souls_conversion": "Converts {0} (gratitude_points) into {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "no (gratitude_points) to convert",
   "rebalanced.tech.sin_shard_intro": "Increases the number of Sin Shards gained from healing souls.",
@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "A few words about why souls are best cleansed thoroughly.",
   "rebalanced.tech.gratitude_effect": "Soul condition does not deteriorate over time — neither in the body nor after extraction.\n(gratitude_points) from releasing souls: +{0:0}%",
   "rebalanced.active.sins_detailed": "Daily confession chance in each confessional: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "Silver and Gold prayers still improve the reliability of receiving the best available body."
+  "rebalanced.repose.endpoint_bronze_hint": "(Silver and Gold still increase the chance of the best available body.)"
 }

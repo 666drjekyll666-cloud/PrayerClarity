@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "В каждой исповедальне чаще проходят исповеди.",
   "rebalanced.tech.repose_intro": "Осёл может привозить более качественные тела.",
   "rebalanced.tech.combat_intro": "Усиливает Хранителя в бою.",
-  "rebalanced.active.plant": "Время роста растений: -{0:0}% · Суммарно не более -{1:0}%",
+  "rebalanced.active.plant": "Время роста растений: -{0:0}% · Суммарное снижение времени роста из всех источников — не более {1:0}%",
   "rebalanced.active.sins": "Шанс исповеди: {0:0}%",
   "rebalanced.active.repose.bronze": "Осёл может привезти тело на уровень качественнее",
   "rebalanced.active.repose.silver": "В половине случаев лучшее тело гарантировано",
@@ -12,8 +12,8 @@
   "rebalanced.active.gratitude": "Состояние душ не ухудшается со временем — ни в теле, ни после извлечения. За освобождение душ вы получаете на {0:0}% больше (gratitude_points).",
   "rebalanced.tech.plant_tier": "Время роста растений: -{0:0}%",
   "rebalanced.tech.souls_intro": "При успехе накопленная (gratitude_points) преобразуется в (faith) в соотношении 1:1.",
-  "rebalanced.tech.souls_tier": "Лимит за проповедь: {0}\u00A0(gratitude_points)",
-  "rebalanced.item.souls_repose": "При успехе каждая потраченная (gratitude_points) даёт 1 (faith). За проповедь можно потратить до {0} (gratitude_points).",
+  "rebalanced.tech.souls_tier": "Лимит за проповедь: {0} (gratitude_points)",
+  "rebalanced.item.souls_repose": "При успехе: 1 (gratitude_points) = 1 (faith).\\nЛимит за проповедь: {0} (gratitude_points).",
   "rebalanced.pulpit.souls_conversion": "Преобразует {0} (gratitude_points) в {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "нет (gratitude_points) для преобразования",
   "rebalanced.tech.sin_shard_intro": "Увеличивает количество Осколков греха, получаемых при исцелении душ.",
@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "Несколько слов о том, что душу лучше очищать тщательно.",
   "rebalanced.tech.gratitude_effect": "Состояние душ со временем не ухудшается — ни в теле, ни после извлечения.\n(gratitude_points) за освобождение душ: +{0:0}%",
   "rebalanced.active.sins_detailed": "Ежедневный шанс исповеди в каждой исповедальне: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "Серебряная и золотая молитвы всё ещё повышают надёжность получения лучшего доступного тела."
+  "rebalanced.repose.endpoint_bronze_hint": "(Серебряная и золотая всё ещё повышают шанс получить лучшее доступное тело.)"
 }

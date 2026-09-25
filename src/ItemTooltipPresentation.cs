@@ -149,8 +149,26 @@ namespace PrayerClarity
                 default: return;
             }
 
-            if (!title.StartsWith(prefix, StringComparison.Ordinal))
-                R.Set(titleRow, "text", prefix + title);
+            // Some stock prayer-item titles already carry a quality glyph. In that
+            // case the native title is the authoritative owner and we must not stack
+            // a second glyph in front of it (Combo Prayer is the known example).
+            for (int tier = 1; tier <= 3; tier++)
+            {
+                string existing;
+                switch (tier)
+                {
+                    case 1: existing = Localization.F("quality.bronze") + " "; break;
+                    case 2: existing = Localization.F("quality.silver") + " "; break;
+                    case 3: existing = Localization.F("quality.gold") + " "; break;
+                    default: existing = null; break;
+                }
+
+                if (!string.IsNullOrEmpty(existing) &&
+                    title.StartsWith(existing, StringComparison.Ordinal))
+                    return;
+            }
+
+            R.Set(titleRow, "text", prefix + title);
         }
 
         private static void RemoveVanillaPrayerMechanics(IList list)
