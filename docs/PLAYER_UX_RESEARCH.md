@@ -511,4 +511,8 @@ Accepted UX requirement for PrayerClarity-owned prayer-item mechanics rows:
 - do not solve individual occurrences by rewriting understandable wording or inserting prayer-specific hard line breaks when a common item-tooltip wrapping seam can own the behavior;
 - do not patch all game `UILabel` instances globally: the intended blast radius is PrayerClarity-owned prayer-item mechanics rows unless later evidence justifies a broader owner.
 
-The exact NGUI final-wrap mechanism remains under research. U+00A0 was runtime-insufficient for the observed inline-symbol case, and a sentence-boundary newline fixed one orphaned Soul Gratitude icon while leaving the `1 (faith)` pair split. Production remains blocked until the common final-wrap owner/path is proved.
+Runtime follow-up closed the mechanism. Exact 0.2.30 + Test Console 0.1.14 proved that the raw semantic row remains intact and that final NGUI `processedText` introduces the `amount | icon` split after PrayerClarity applies its 200-unit prayer-item mechanics width.
+
+Test Console 0.1.15 then validated the common correction: when final wrapping produces a boundary such as `1\n(faith)` or `90\n(gratitude_points)`, move that boundary before the numeric amount so the amount and icon remain on one visual line. Russian confirmed both cases visually. Italian/German exercised the Faith case, Polish exercised the Soul Gratitude case, while French/Japanese/Simplified Chinese demonstrated that the rule remains inactive where their observed final wrapping already keeps the cluster intact.
+
+This amount+inline-icon wrapping rule is an **accepted research result / READY production gate**. Production acceptance still requires the actual numbered candidate to reproduce the behavior without the research console.
