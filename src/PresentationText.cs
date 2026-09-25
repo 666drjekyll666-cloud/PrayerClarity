@@ -14,30 +14,36 @@ namespace PrayerClarity
             if (forecast == null) return string.Empty;
 
             string dependencies = IndentMultiline(DependencyMap(forecast.UsesSoulGratitude), "    ");
-            string contribution;
+            string contribution = string.Empty;
+            bool hasContribution = false;
+
             if (forecast.SoulGratitudeFaithCap > 0)
             {
                 string conversion = forecast.SoulGratitudeConversion > 0
-                    ? Localization.F(
-                        "rebalanced.pulpit.souls_conversion",
-                        forecast.SoulGratitudeConversion,
-                        forecast.SoulGratitudeConversion)
+                    ? Localization.F("rebalanced.pulpit.souls_conversion",
+                        forecast.SoulGratitudeConversion, forecast.SoulGratitudeConversion)
                     : Localization.F("rebalanced.pulpit.souls_conversion_empty");
                 contribution = "\n    " + conversion;
+                hasContribution = true;
             }
-            else
+            else if (Math.Abs(forecast.FaithBonusRate) >= 0.0001f ||
+                     forecast.FixedFaithBonus != 0 ||
+                     Math.Abs(forecast.MoneyBonusRate) >= 0.0001f ||
+                     Math.Abs(forecast.FixedMoneyBonus) >= 0.0001f)
             {
                 contribution = FormatPrayerContribution(
-                    forecast.FaithBonusRate,
-                    forecast.FixedFaithBonus,
-                    forecast.MoneyBonusRate,
-                    forecast.FixedMoneyBonus);
+                    forecast.FaithBonusRate, forecast.FixedFaithBonus,
+                    forecast.MoneyBonusRate, forecast.FixedMoneyBonus);
+                hasContribution = true;
             }
+
+            string onSuccess = "  " + Localization.F("tech.on_success_header");
+            if (hasContribution) onSuccess += contribution;
 
             return "  " + Localization.F("forecast.guaranteed") + ":\n" +
                    dependencies + "\n" +
-                   "  " + Localization.F("forecast.success_bonus", forecast.ChancePercent) + ":" +
-                   contribution;
+                   "  " + Localization.F("forecast.current_success_chance", forecast.ChancePercent) + "\n" +
+                   onSuccess;
         }
 
         internal static string DependencyMap(bool usesSoulGratitude)
