@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "A condição das almas não piora com o tempo, nem no corpo nem depois da extração. Libertar almas concede +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tempo de crescimento das plantas: -{0:0}%",
   "rebalanced.tech.souls_intro": "Com sucesso, os (gratitude_points) acumulados são convertidos em (faith) na proporção de 1:1.",
-  "rebalanced.tech.souls_tier": "Limite por sermão: {0} (gratitude_points)",
+  "rebalanced.tech.souls_tier": "Limite por sermão: {0}\u00A0(gratitude_points)",
   "rebalanced.item.souls_repose": "Com sucesso, cada (gratitude_points) gasto concede 1 (faith). Até {0} (gratitude_points) podem ser gastos por sermão.",
   "rebalanced.pulpit.souls_conversion": "Converte {0} (gratitude_points) em {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "sem (gratitude_points) para converter",
