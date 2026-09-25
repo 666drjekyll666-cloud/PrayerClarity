@@ -40,25 +40,25 @@ jobs:
           dll='bin/RebalancedTestConsole/PrayerClarity.RebalancedTestConsole.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.RebalancedTestConsole-0.1.8-ci.dll'
+          handoff='PrayerClarity.RebalancedTestConsole-0.1.9-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.8"
+            echo "Version: 0.1.9"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
             echo "Target: PrayerClarity: Rebalanced 0.2.25 source 3f5d4feef3b50de048ab3eec1d2e9a9388182340 / Graveyard Keeper 1.407"
-            echo "Purpose: research-only F1 console with native prayer probes plus a data-driven prayer-item gallery for Bronze/Silver/Gold tooltip review."
-            echo "Save safety: prayer items added by the gallery are save-persistent; use the console cleanup button before saving a permanent playthrough state."
+            echo "Purpose: research-only F1 console with native prayer probes, a verified player-facing prayer-item gallery, and reversible temporary player inventory expansion for tooltip review."
+            echo "Save safety: gallery items and temporary inventory capacity are save-persistent; remove spawned items and restore original inventory size before saving a permanent playthrough state."
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
           echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
-          echo "Rebalanced Test Console 0.1.8 DLL SHA-256: $sha256"
+          echo "Rebalanced Test Console 0.1.9 DLL SHA-256: $sha256"
       - name: Upload research candidate
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-RebalancedTestConsole-0.1.8-ci-${{ github.sha }}
+          name: PrayerClarity-RebalancedTestConsole-0.1.9-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
