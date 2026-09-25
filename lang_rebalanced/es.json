@@ -21,5 +21,7 @@
   "rebalanced.tech.gratitude_intro": "(gratitude_points) al liberar almas: +{0:0}%",
   "rebalanced.tech.gratitude_lore": "Unas palabras sobre el descanso para quienes han tenido especialmente poco de él.",
   "rebalanced.tech.sin_shard_lore": "Unas palabras sobre por qué conviene purificar las almas a fondo.",
-  "rebalanced.tech.gratitude_effect": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.\\n(gratitude_points) al liberar almas: +{0:0}%"
+  "rebalanced.tech.gratitude_effect": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.\n(gratitude_points) al liberar almas: +{0:0}%",
+  "rebalanced.active.sins_detailed": "Probabilidad diaria de confesión en cada confesionario: {0:0} %",
+  "rebalanced.repose.endpoint_bronze_hint": "Las oraciones de plata y oro siguen aumentando la fiabilidad de recibir el mejor cadáver disponible."
 }
