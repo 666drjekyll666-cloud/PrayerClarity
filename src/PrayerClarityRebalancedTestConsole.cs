@@ -16,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.14";
+        public const string PluginVersion = "0.1.15";
 
         private sealed class TimedEffect
         {
@@ -51,6 +51,7 @@ namespace PrayerClarityResearch
         private Rect _windowRect = new Rect(24f, 24f, 620f, 680f);
         private bool _visible;
         private static bool _qualityTitleProbeEnabled = false;
+        private static bool _resourceWrapRepairProbeEnabled = true;
         private static readonly HashSet<string> RawPrayerTitleLogged =
             new HashSet<string>(StringComparer.Ordinal);
         private static readonly HashSet<string> PrayerItemWrapTraceLogged =
@@ -240,6 +241,17 @@ namespace PrayerClarityResearch
                 _status = _qualityTitleProbeEnabled
                     ? "Prayer-title quality glyph probe enabled. Hover a Bronze/Silver/Gold prayer item and check the title."
                     : "Prayer-title quality glyph probe disabled.";
+            }
+
+            if (GUILayout.Button(
+                _resourceWrapRepairProbeEnabled
+                    ? "Prayer item amount+icon wrap repair probe: ON"
+                    : "Prayer item amount+icon wrap repair probe: OFF"))
+            {
+                _resourceWrapRepairProbeEnabled = !_resourceWrapRepairProbeEnabled;
+                _status = _resourceWrapRepairProbeEnabled
+                    ? "Amount+icon wrap repair probe enabled. Hover Soul's Repose and inspect the resource clusters."
+                    : "Amount+icon wrap repair probe disabled.";
             }
 
             if (GUILayout.Button("Open pulpit sermon UI now (any day / repeat this week)"))
@@ -434,21 +446,98 @@ namespace PrayerClarityResearch
                 string overflow = Convert.ToString(Get(label, "overflowMethod"));
 
                 string signature = width + "|" + raw + "|" + processed;
-                if (!PrayerItemWrapTraceLogged.Add(signature)) return;
+                if (PrayerItemWrapTraceLogged.Add(signature))
+                {
+                    _log?.LogInfo(
+                        "PRAYER_ITEM_WRAP_TRACE" +
+                        " width=" + width +
+                        " overflow=" + overflow +
+                        " printed=" + printed.x.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                        "x" + printed.y.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                        " raw=\"" + EscapeLogText(raw) + "\"" +
+                        " processed=\"" + EscapeLogText(processed) + "\"");
+                }
+
+                if (!_resourceWrapRepairProbeEnabled) return;
+
+                string repaired = BuildAmountIconWrapRepair(raw, processed);
+                if (string.Equals(repaired, raw, StringComparison.Ordinal)) return;
+
+                Set(label, "text", repaired);
+                string repairedProcessed = Get(label, "processedText") as string ?? string.Empty;
+                object repairedPrintedObj = Get(label, "printedSize");
+                Vector2 repairedPrinted = repairedPrintedObj is Vector2
+                    ? (Vector2)repairedPrintedObj
+                    : Vector2.zero;
 
                 _log?.LogInfo(
-                    "PRAYER_ITEM_WRAP_TRACE" +
-                    " width=" + width +
-                    " overflow=" + overflow +
-                    " printed=" + printed.x.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
-                    "x" + printed.y.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
-                    " raw=\"" + EscapeLogText(raw) + "\"" +
-                    " processed=\"" + EscapeLogText(processed) + "\"");
+                    "PRAYER_ITEM_WRAP_REPAIR_PROBE" +
+                    " before=\"" + EscapeLogText(processed) + "\"" +
+                    " raw_after=\"" + EscapeLogText(repaired) + "\"" +
+                    " processed_after=\"" + EscapeLogText(repairedProcessed) + "\"" +
+                    " printed_after=" +
+                    repairedPrinted.x.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    "x" +
+                    repairedPrinted.y.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
             }
             catch (Exception ex)
             {
                 _log?.LogError("PRAYER_ITEM_WRAP_TRACE_FAILED " + ex);
             }
+        }
+
+        private static string BuildAmountIconWrapRepair(string raw, string processed)
+        {
+            if (string.IsNullOrEmpty(raw) || string.IsNullOrEmpty(processed))
+                return raw;
+
+            string normalized = processed.Replace("\r\n", "\n");
+            string[] lines = normalized.Split(new[] { '\n' }, StringSplitOptions.None);
+            List<int> insertionPoints = new List<int>();
+
+            for (int i = 0; i + 1 < lines.Length; i++)
+            {
+                string previous = (lines[i] ?? string.Empty).TrimEnd();
+                string next = (lines[i + 1] ?? string.Empty).TrimStart();
+                if (previous.Length == 0 || next.Length == 0 || next[0] != '(')
+                    continue;
+
+                int close = next.IndexOf(')');
+                if (close <= 1 || close > 48) continue;
+                string symbol = next.Substring(0, close + 1);
+
+                int end = previous.Length - 1;
+                while (end >= 0 && char.IsWhiteSpace(previous[end])) end--;
+                int start = end;
+                while (start >= 0 && char.IsDigit(previous[start])) start--;
+                start++;
+                if (start > end) continue;
+
+                string amount = previous.Substring(start, end - start + 1);
+                int clusterAt = FindAmountSymbolCluster(raw, amount, symbol);
+                if (clusterAt <= 0 || raw[clusterAt - 1] == '\n') continue;
+
+                insertionPoints.Add(clusterAt);
+            }
+
+            if (insertionPoints.Count == 0) return raw;
+
+            insertionPoints = insertionPoints.Distinct().OrderByDescending(x => x).ToList();
+            string result = raw;
+            foreach (int index in insertionPoints)
+                result = result.Insert(index, "\n");
+
+            return result;
+        }
+
+        private static int FindAmountSymbolCluster(string raw, string amount, string symbol)
+        {
+            string ordinary = amount + " " + symbol;
+            int index = raw.IndexOf(ordinary, StringComparison.Ordinal);
+            if (index >= 0) return index;
+
+            string noBreak = amount + "\u00A0" + symbol;
+            return raw.IndexOf(noBreak, StringComparison.Ordinal);
         }
 
         private static void PatchPrayerItemTitleQualityProbe()
