@@ -21,5 +21,7 @@
   "rebalanced.tech.gratitude_intro": "(gratitude_points) за освобождение душ: +{0:0}%",
   "rebalanced.tech.gratitude_lore": "Несколько слов о покое для тех, кому с ним особенно не повезло.",
   "rebalanced.tech.sin_shard_lore": "Несколько слов о том, что душу лучше очищать тщательно.",
-  "rebalanced.tech.gratitude_effect": "Состояние душ со временем не ухудшается — ни в теле, ни после извлечения.\\n(gratitude_points) за освобождение душ: +{0:0}%"
+  "rebalanced.tech.gratitude_effect": "Состояние душ со временем не ухудшается — ни в теле, ни после извлечения.\n(gratitude_points) за освобождение душ: +{0:0}%",
+  "rebalanced.active.sins_detailed": "Ежедневный шанс исповеди в каждой исповедальне: {0:0}%",
+  "rebalanced.repose.endpoint_bronze_hint": "Серебряная и золотая молитвы всё ещё повышают надёжность получения лучшего доступного тела."
 }
