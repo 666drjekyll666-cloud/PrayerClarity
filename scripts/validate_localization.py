@@ -6,7 +6,7 @@ from collections import Counter
 from pathlib import Path
 
 OFFICIAL = ("en", "fr", "de", "zh_cn", "es", "pt_br", "ko", "ja", "ru", "it", "pl")
-LITERAL_CONTROL = re.compile(r"\\\\[nrt]")
+LITERAL_CONTROL = re.compile(r"\\[nrt]")
 PLACEHOLDER = re.compile(r"(?<!\{)\{(\d+)(?::[^{}]+)?\}(?!\})")
 
 
