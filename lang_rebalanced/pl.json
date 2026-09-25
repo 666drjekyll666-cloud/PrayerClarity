@@ -21,5 +21,7 @@
   "rebalanced.tech.gratitude_intro": "(gratitude_points) za uwalnianie dusz: +{0:0}%",
   "rebalanced.tech.gratitude_lore": "Kilka słów o spokoju dla tych, którym szczególnie go brakowało.",
   "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
-  "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\\n(gratitude_points) za uwalnianie dusz: +{0:0}%"
+  "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\n(gratitude_points) za uwalnianie dusz: +{0:0}%",
+  "rebalanced.active.sins_detailed": "Dzienna szansa na spowiedź w każdym konfesjonale: {0:0}%",
+  "rebalanced.repose.endpoint_bronze_hint": "Srebrna i złota modlitwa nadal zwiększają pewność otrzymania najlepszego dostępnego ciała."
 }
