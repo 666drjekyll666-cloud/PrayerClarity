@@ -36,5 +36,6 @@
   "tech.percent_of_base": "基础值的 {0}",
   "active.timer_days_compact": "{0:0.0}",
   "tech.on_success_header": "成功时：",
-  "forecast.current_success_chance": "当前成功率：{0}%"
+  "forecast.current_success_chance": "当前成功率：{0}%",
+  "item.sermon_success": "布道成功"
 }
