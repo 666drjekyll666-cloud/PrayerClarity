@@ -176,6 +176,21 @@ This is shared presentation behavior for PrayerClarity: Vanilla and PrayerClarit
 
 A prayer item tooltip describes the **concrete quality currently held**, not the whole Bronze/Silver/Gold comparison.
 
+The accepted information grammar is:
+
+`title/quality -> lore -> Base result -> 100%-success requirement -> On success/effect -> duration -> native Crafted at`.
+
+Implementation policy:
+
+- use the stock `ItemDefinition.GetTooltipData(Item,bool)` list as the host container, but compose PrayerClarity's prayer section deterministically after the native title/lore rows;
+- do not branch the layout on whether stock happened to emit `preach_params_2`; Rebalanced specialist cleanup can legitimately remove every stock Faith/money/output trigger for that block;
+- remove only the known native prayer-mechanics rows, then insert semantic-model sections in one fixed order;
+- resolve prayer lore independently of the stock requirement sentence so the requirement appears exactly once;
+- keep the native crafting-source row after the PrayerClarity section;
+- item, Technology and pulpit mechanics must remain projections of the same effective prayer semantics.
+
+The native inline quality-symbol tokens `(s1)/(s2)/(s3)` are a preferred title treatment only if the stock HintTitle font is runtime-proved to render those symbols. Until that narrow visual probe is accepted, production keeps quality identity out of the title rather than introducing a custom sprite/layout solely for this decoration.
+
 It should continue to use the same effective semantics as Technology and Pulpit so a Rebalanced item never reports stock mechanics.
 
 ## Temporary Effects contract
@@ -221,3 +236,17 @@ No new balance round is required unless implementation evidence contradicts an a
 The current stable implementation line is Rebalanced 0.2.14. It retains the accepted 0.2.3 Repentance/Combat native seams, the 0.2.2 Roots safety repair, the 0.2.4 Repentance/Repose 30/42/54-minute duration projection, ordinary Gold Repose q60, the 0.2.13 specialist-purity/resource/Soul presentation work, and now uses the same concise Technology **On success:** / **При успехе:** heading as Vanilla 1.0.32. `POST_AUDIT_VERDICT.md` remains the gameplay/save-lifecycle closure at **A — no architecture action**.
 
 There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.
+
+
+## Prayer item tooltip grammar — accepted design direction, 2026-09-25
+
+Prayer items use one stable player-facing hierarchy across mouse and gamepad:
+
+1. quality glyph + localized prayer name;
+2. lore/flavour text;
+3. **Base result**;
+4. **Sermon success** — the 100% Church Quality requirement for this exact prayer item, without repeating the tier glyph;
+5. **On success** — prayer-owned Faith/donation modifiers, special effect/reward and duration;
+6. stock crafting / purchase metadata.
+
+Section headings stay centered. Mechanics content is left-aligned inside one bounded shared column so short rows keep a common visual edge and long prose wraps instead of widening the entire parchment. The title quality glyph replaces repeated quality decoration in the 100%-success requirement; it does not change prayer mechanics or success thresholds.
