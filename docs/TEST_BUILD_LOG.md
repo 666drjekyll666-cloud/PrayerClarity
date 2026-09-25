@@ -1,6 +1,34 @@
 # Test / Research Build Log
 
 
+## 2026-09-25 — Rebalanced 0.2.26 / Vanilla 1.0.35 prayer-item and pulpit presentation candidate
+
+- User-approved scope: replace shape-dependent prayer-item tooltip patching with one deterministic prayer-item composition, share edition-aware prayer lore, make pulpit success probability explicit, clarify terminal Repose wording, and make Repentance's world effect self-explanatory.
+- Exact runtime source: `ec85a9982957394f95cf46d54c26d9b07e131441`.
+- GitHub Actions run: `36157862591`; result: **success**. Both Rebalanced and Vanilla builds complete with 0 warnings / 0 errors; localization validation passes for all 11 base + 11 Rebalanced bundles.
+- Artifact ID: `10874081584`.
+- Artifact: `PrayerClarity-rebalanced-0.2.26-ci-ec85a9982957394f95cf46d54c26d9b07e131441`.
+- Artifact ZIP digest: `sha256:f3df5685fb9c699d5641880d74585e08c50be59d5c7e11fdcb7f1446227d225f`.
+- Rebalanced 0.2.26 DLL SHA-256: `b6192f797f9804477e9c5214486a4b60e1efd287e5acde1fe2d0ff37b782c869`.
+- Vanilla 1.0.35 sibling DLL SHA-256: `8a266ab79f849aa465e340750783d445eaf740e43e40d7cb8623275801bf160a`.
+- Item-tooltip implementation now always keeps the native tooltip container but composes prayer-owned sections immediately after title/lore, removes only the known native prayer mechanics block when present, removes the stock duplicated church-quality line by replacing the prayer description with resolved lore, and leaves native `Crafted at` below the prayer sections.
+- Rebalanced Contentment/Thorough Cleansing lore now resolves from the same edition-aware lore seam used by Technology; the Contentment effect localization also uses a real newline rather than displaying a literal `\n`.
+- Single-item Imagination presentation now preserves both the writing-quality buff and premium Story reward and accents the decision value/reward name; Excellence item quality value uses the same established accent helper.
+- Pulpit final writer now separates `Current success chance` from `On success`; no exact final sermon payout is exposed.
+- Terminal Repose now states that maximum available body quality has been reached. Rebalanced Bronze adds the Silver/Gold reliability hint only when those premium tiers can still change the live corpse distribution.
+- Rebalanced Repentance item/pulpit/active-effect text now states the daily confession chance in each confessional; Technology retains its existing concise shared/tier grammar.
+- Runtime acceptance is visual/presentation-only. No prayer mechanics, save lifecycle, carousel navigation, or sermon arithmetic changed.
+
+## 2026-09-25 — Rebalanced Test Console 0.1.10
+
+- Exact source: `c59dd462ed87256039183b3830a7436d9ef411f9`.
+- GitHub Actions run: `36156370197`; result: **success**.
+- Artifact ID: `10872834440`; artifact digest: `sha256:12556504c906d5714687874f81cfbd4a5613bde66f9e43d6742227776a74b28a`.
+- DLL SHA-256: `6c42ff25b232ef046db65bc2b7b585c1492d3b42dec9208cf8360a4192b4a2d1`.
+- Adds a research-only native pulpit opener: it resolves `church_pulpit` through `WorldMap.GetWorldGameObjectByCustomTag` and invokes `GUIElements.OpenCraftGUI`. It does not mutate the calendar or globally patch weekday logic. Pressing Pray after opening remains a real sermon with normal rewards/effects/save-state changes.
+- Adds a toggleable prayer-title quality-glyph probe that prefixes the native HintTitle row with the verified `(s1)/(s2)/(s3)` glyph tokens. This is research-only until runtime observation proves the HintTitle font renders them as native quality symbols rather than raw token text.
+
+
 ## 2026-09-24 — Rebalanced 0.2.24 runtime review / superseded by 0.2.25
 
 - User visual/runtime review confirmed the 0.2.24 BSS cleanup behaves correctly for:
