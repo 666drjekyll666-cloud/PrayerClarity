@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu. Uwalnianie dusz daje +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%",
   "rebalanced.tech.souls_intro": "Przy powodzeniu zgromadzone (gratitude_points) są zamieniane na (faith) w stosunku 1:1.",
-  "rebalanced.tech.souls_tier": "Limit na kazanie: {0} (gratitude_points)",
+  "rebalanced.tech.souls_tier": "Limit na kazanie: {0}\u00A0(gratitude_points)",
   "rebalanced.item.souls_repose": "Przy powodzeniu każdy wydany (gratitude_points) daje 1 (faith). Podczas jednego kazania można wydać do {0} (gratitude_points).",
   "rebalanced.pulpit.souls_conversion": "Zamienia {0} (gratitude_points) na {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "brak (gratitude_points) do zamiany",
