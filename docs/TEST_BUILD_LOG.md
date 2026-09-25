@@ -1381,3 +1381,37 @@ Research helper identity:
   - DLL SHA-256: `9a5b7766157c0edb98d46566d2919fb3590950eab2d9981f65e6ccd02ea02117`.
 - Probe behavior: no Harmony patches and no UI/save/game mutation. With the failing pulpit screen fully rendered, **F8** dumps root/container geometry, Effect raw/processed text and settled label bounds, every craft-button UIWidget, the exact widget 0.2.33 would select, and a replay of the 0.2.33 overlap/deficit calculation.
 - Minimum next runtime action: keep Rebalanced 0.2.33 + Neutral Test Console 0.1.16, add the probe, open failing Russian Repose, wait until rendered, press F8 once, return the log. No sermon execution or multi-locale sweep is required for this research step.
+
+
+### 2026-09-26 — Pulpit geometry cause closed; Rebalanced 0.2.34 ready
+
+- Neutral Test Console shortcut conflict was confirmed in the returned runtime log: BepInEx Configuration Manager uses F1. Neutral Test Console **0.1.17** therefore changes only its toggle to **F2**; the neutral tooling boundary and utilities are unchanged.
+  - branch: `candidate/rebalanced-test-console-0.1.17`;
+  - exact source: `922924f228777830d8551c40481a6083c359cbaa`;
+  - CI run: `36202280309` — success;
+  - artifact ID: `10892053632`;
+  - artifact ZIP digest: `sha256:6230e2b16e4648e759f8797eb051f23711d933ce53fff00cc4bf8e98f52e5fdd`;
+  - DLL SHA-256: `9d4743e443d99bf9b77b0aec99d795b9b348ca9e206c40a58c39b8a74577359c`.
+- The exact Pulpit Geometry Probe 0.1.0 runtime closed the 0.2.33 failure cause:
+  - settled root window: 284x341;
+  - settled Russian Repose Effect label: 240x56, bounds Y `[-131.939, -76]`;
+  - craft-button root after the 0.2.33 immediate pass: local Y `-134`;
+  - 0.2.33 selected the direct button UILabel only, bounds `[-142, -126]`;
+  - the active visible red button background spans `[-147, -123]`, proving the UILabel does not represent the full visible button;
+  - replaying the same 0.2.33 calculation after NGUI had settled still required another `13.938` UI units downward. Therefore the same-redraw measurement was not final settled geometry.
+- Exact Graveyard Keeper 1.407 decompilation at `Kupie/GYK_DECOMP@6abf79199d92482af1c7573870dd9a20ec2270b9` confirms `PrayCraftGUI : MonoBehaviour`, so a bounded one-shot next-frame coroutine can observe final NGUI geometry on the existing host GUI instance without adding a permanent Update poll.
+- New production gate `pulpit-settled-visible-button-clearance` = **READY** in gate-only commit `07ecf281aeecdf3d84789359f903e96f8fcebede`.
+- Rebalanced **0.2.34** / Vanilla sibling **1.0.43** were deliberately created from accepted 0.2.32 source `768bb9929823a3b3fd2496fdfd71de0587ddeb27`, not from rejected 0.2.33.
+- Candidate exact source: `0cbd08055d40d9bb2f25493ad46878cfec76de42`.
+- CI run: `36202519978` — success; candidate gate validation, localization validation and both sibling builds passed.
+- Artifact ID: `10892562384`; artifact ZIP digest: `sha256:96aa6336d7c1e16fdeaac09cf38676d31b605c589c0b2e3f2db28c724c23a720`.
+- Rebalanced 0.2.34 DLL SHA-256: `f536b9a6f776dc060c966a4e74e29793687d4444b4e01b9d8eeeb1c6b4d6706c`.
+- Vanilla 1.0.43 DLL SHA-256: `2bc7a3eb4aafec3d46a92ab63c57bd9a36169feb24bd70b9e8019c11078788b0`.
+- 0.2.34 implementation:
+  - renders/resets immediately on the normal `RedrawTextValues` path;
+  - schedules only a bounded settled-layout pass on the existing `PrayCraftGUI` MonoBehaviour;
+  - measures the union of **all active UIWidget children** under the craft button, rather than only its UILabel;
+  - moves the visible button below the settled Effect by 8 UI units;
+  - grows the verified real root window only when the predicted settled button bottom would violate the 10-unit parchment margin;
+  - dynamic growth resets on every host redraw; there is no permanent per-frame polling.
+- Runtime acceptance pending. Minimum focused acceptance: Russian Repose, Japanese Repose, then short Faith as the no-unnecessary-growth control. The geometry probe should be removed for this production acceptance; Neutral Test Console 0.1.17 may remain installed.
