@@ -53,7 +53,7 @@ namespace PrayerClarity
                 TooltipPresentationSections sections = TooltipDetailsRenderer.BuildSingleSections(tier);
                 if (sections == null || !sections.HasContent) return;
 
-                ComposePrayerTooltip(list, craft, sections);
+                ComposePrayerTooltip(list, craft, tier, sections);
             }
             catch (Exception ex)
             {
@@ -83,11 +83,17 @@ namespace PrayerClarity
             return PrayerItemFamilies.Contains(family);
         }
 
-        private static void ComposePrayerTooltip(IList list, object craft, TooltipPresentationSections sections)
+        private static void ComposePrayerTooltip(
+            IList list,
+            object craft,
+            PrayerForecast.TierDetails tier,
+            TooltipPresentationSections sections)
         {
             if (list == null || list.Count < 2) return;
             if (_bubbleTextType == null) _bubbleTextType = R.GameType("BubbleWidgetTextData");
             if (_bubbleTextType == null) return;
+
+            PrefixTitleWithQualityGlyph(list, tier);
 
             object descriptionRow = list[1];
             if (descriptionRow == null || !_bubbleTextType.IsInstanceOfType(descriptionRow)) return;
@@ -103,20 +109,48 @@ namespace PrayerClarity
             int insertIndex = Math.Min(2, list.Count);
             if (!string.IsNullOrEmpty(sections.BaseResult))
             {
-                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("tech.base_result"), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.BaseResult, 4, ItemTooltipMaxWidth));
+                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("tech.base_result"), 3, "Center", false));
+                list.Insert(insertIndex++, CreateTextData(sections.BaseResult, 4, "Left", true));
             }
 
             if (!string.IsNullOrEmpty(sections.Requirement))
-                list.Insert(insertIndex++, CreateTextData(sections.Requirement, 4, ItemTooltipMaxWidth));
+            {
+                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("item.sermon_success"), 3, "Center", false));
+                list.Insert(insertIndex++, CreateTextData(sections.Requirement, 4, "Left", true));
+            }
 
             if (!string.IsNullOrEmpty(sections.SuccessBonuses))
             {
-                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("tech.on_success_header"), 3));
-                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, ItemTooltipMaxWidth));
+                list.Insert(insertIndex++, CreateTextData("\n" + Localization.F("tech.on_success_header"), 3, "Center", false));
+                list.Insert(insertIndex++, CreateTextData(sections.SuccessBonuses, 4, "Left", true));
             }
 
             TooltipTextPolish.NormalizeFollowingCraftingRow(list, insertIndex, _bubbleTextType);
+        }
+
+        private static void PrefixTitleWithQualityGlyph(IList list, PrayerForecast.TierDetails tier)
+        {
+            if (list == null || list.Count == 0 || tier == null) return;
+            int quality = tier.QualityTier;
+            if (quality < 1 || quality > 3) return;
+
+            object titleRow = list[0];
+            if (titleRow == null || !_bubbleTextType.IsInstanceOfType(titleRow)) return;
+
+            string title = R.Get(titleRow, "text") as string;
+            if (string.IsNullOrEmpty(title)) return;
+
+            string prefix;
+            switch (quality)
+            {
+                case 1: prefix = Localization.F("quality.bronze") + " "; break;
+                case 2: prefix = Localization.F("quality.silver") + " "; break;
+                case 3: prefix = Localization.F("quality.gold") + " "; break;
+                default: return;
+            }
+
+            if (!title.StartsWith(prefix, StringComparison.Ordinal))
+                R.Set(titleRow, "text", prefix + title);
         }
 
         private static void RemoveVanillaPrayerMechanics(IList list)
@@ -180,7 +214,11 @@ namespace PrayerClarity
             return -1;
         }
 
-        private static object CreateTextData(string text, int styleValue, int maxWidth = -1)
+        private static object CreateTextData(
+            string text,
+            int styleValue,
+            string alignmentName,
+            bool compactPrayerItem)
         {
             if (_bubbleTextConstructor == null)
             {
@@ -202,8 +240,11 @@ namespace PrayerClarity
 
             ParameterInfo[] parameters = _bubbleTextConstructor.GetParameters();
             object style = Enum.ToObject(parameters[1].ParameterType, styleValue);
-            object alignment = Enum.ToObject(parameters[2].ParameterType, 1);
-            return _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, maxWidth });
+            object alignment = Enum.Parse(parameters[2].ParameterType, alignmentName);
+            object data = _bubbleTextConstructor.Invoke(new object[] { text, style, alignment, -1 });
+            if (compactPrayerItem)
+                TechnologyTooltipContentWidth.PreferPrayerItemLayout(data);
+            return data;
         }
     }
 }
