@@ -7,11 +7,12 @@ namespace PrayerClarity
     internal sealed class TooltipPresentationSections
     {
         internal string BaseResult;
+        internal string Requirement;
         internal string SuccessBonuses;
 
         internal bool HasContent
         {
-            get { return !string.IsNullOrEmpty(BaseResult) || !string.IsNullOrEmpty(SuccessBonuses); }
+            get { return !string.IsNullOrEmpty(BaseResult) || !string.IsNullOrEmpty(Requirement) || !string.IsNullOrEmpty(SuccessBonuses); }
         }
     }
 
@@ -41,32 +42,22 @@ namespace PrayerClarity
 
             List<PrayerForecast.TierDetails> tiers = new List<PrayerForecast.TierDetails> { tier };
             List<string> success = new List<string>();
+            string requirement = null;
 
             if (tier.Requirement > 0)
             {
                 string quality = TierPrefix(tier, false);
                 string threshold = Localization.F("tech.success_threshold", tier.Requirement);
-                string line = string.IsNullOrEmpty(quality)
+                requirement = string.IsNullOrEmpty(quality)
                     ? threshold
                     : quality + NoBreakSpace + threshold;
-                success.Add(line.Replace(" ", NoBreakSpace));
+                requirement = requirement.Replace(" ", NoBreakSpace);
             }
 
-            AddSingleResourceLines(
-                success,
-                tier,
-                R.VanillaLocalize("faith"),
-                "(faith)",
-                t => t.FaithBonusRate,
-                t => t.FixedFaithBonus);
-
-            AddSingleResourceLines(
-                success,
-                tier,
-                Localization.F("tech.donations"),
-                "(slv)",
-                t => t.MoneyBonusRate,
-                t => t.FixedMoneyBonus);
+            AddSingleResourceLines(success, tier, R.VanillaLocalize("faith"), "(faith)",
+                t => t.FaithBonusRate, t => t.FixedFaithBonus);
+            AddSingleResourceLines(success, tier, Localization.F("tech.donations"), "(slv)",
+                t => t.MoneyBonusRate, t => t.FixedMoneyBonus);
 
             AddSection(success, BuildEffect(tiers, false));
             AddSection(success, BuildDuration(tiers, false));
@@ -74,6 +65,7 @@ namespace PrayerClarity
             return new TooltipPresentationSections
             {
                 BaseResult = PresentationText.DependencyMap(tier.UsesSoulGratitude),
+                Requirement = requirement,
                 SuccessBonuses = success.Count == 0 ? null : string.Join("\n", success.ToArray())
             };
         }
@@ -330,7 +322,11 @@ namespace PrayerClarity
 
         private static string BuildEffect(List<PrayerForecast.TierDetails> tiers, bool comparative)
         {
-            string reward = BuildStructuredRewardEffect(tiers, comparative);
+            if (tiers == null || tiers.Count == 0) return null;
+            if (!comparative || tiers.Count == 1)
+                return BuildSingleEffect(tiers[0]);
+
+            string reward = BuildStructuredRewardEffect(tiers, true);
             if (!string.IsNullOrEmpty(reward)) return reward;
 
             bool any = false;
@@ -345,12 +341,7 @@ namespace PrayerClarity
             if (!any) return null;
 
             string header = Localization.F("forecast.effect_header") + ":";
-
-            if (!comparative || tiers.Count == 1)
-                return header + "\n" + (tiers[0].SpecialCoreText ?? "—");
-
-            bool same = AllSpecialKeysEqual(tiers);
-            if (same)
+            if (AllSpecialKeysEqual(tiers))
                 return header + "\n" + (tiers[0].SpecialCoreText ?? "—");
 
             List<string> lines = new List<string> { header };
@@ -358,6 +349,79 @@ namespace PrayerClarity
                 lines.Add(TierPrefix(tier, true) + (string.IsNullOrEmpty(tier.SpecialCoreText) ? "—" : tier.SpecialCoreText));
 
             return string.Join("\n", lines.ToArray());
+        }
+
+        private static string BuildSingleEffect(PrayerForecast.TierDetails tier)
+        {
+            if (tier == null) return null;
+
+            TooltipSemanticModel.RewardDetails reward = TooltipSemanticModel.ResolveSingleReward(tier);
+            string special = tier.SpecialCoreText;
+
+            if (reward != null && !string.IsNullOrEmpty(special))
+            {
+                string plainReward = BuildPlainRewardBlock(reward);
+                if (!string.IsNullOrEmpty(plainReward) &&
+                    special.EndsWith(plainReward, StringComparison.Ordinal))
+                {
+                    special = special.Substring(0, special.Length - plainReward.Length).TrimEnd();
+                    if (special.EndsWith("·", StringComparison.Ordinal))
+                        special = special.Substring(0, special.Length - 1).TrimEnd();
+                }
+            }
+
+            List<string> lines = new List<string>();
+            if (!string.IsNullOrEmpty(special))
+                lines.Add(AccentSingleItemSpecial(tier, special));
+            if (reward != null)
+                lines.Add(BuildAccentedRewardBlock(reward));
+
+            if (lines.Count == 0) return null;
+            return Localization.F("forecast.effect_header") + ":\n" +
+                   string.Join("\n", lines.ToArray());
+        }
+
+        private static string AccentSingleItemSpecial(PrayerForecast.TierDetails tier, string text)
+        {
+            if (tier == null || string.IsNullOrEmpty(text)) return text;
+            if (tier.CraftId.StartsWith("pray:b_pen:", StringComparison.Ordinal) ||
+                tier.CraftId.StartsWith("pray:b_star:", StringComparison.Ordinal))
+                return TechnologyTooltipTextStyle.AccentValueAfterColon(text);
+            return text;
+        }
+
+        private static string BuildPlainRewardBlock(TooltipSemanticModel.RewardDetails reward)
+        {
+            if (reward == null) return null;
+            string name = R.VanillaLocalize(reward.Id);
+            string rewardText = name + " ×" + reward.Count.ToString(CultureInfo.InvariantCulture);
+            if (string.Equals(reward.Id, "blessing_commerce", StringComparison.Ordinal))
+            {
+                string description = R.VanillaLocalize("blessing_commerce_d");
+                if (!string.IsNullOrEmpty(description) &&
+                    !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal))
+                    rewardText += " — " + description;
+            }
+            return Localization.F("forecast.reward", rewardText);
+        }
+
+        private static string BuildAccentedRewardBlock(TooltipSemanticModel.RewardDetails reward)
+        {
+            if (reward == null) return null;
+            string localizedName = R.VanillaLocalize(reward.Id);
+            string name = TechnologyTooltipTextStyle.RewardName(
+                reward.Id,
+                localizedName.Replace(" ", NoBreakSpace));
+            string rewardText = name + NoBreakSpace +
+                                "×" + reward.Count.ToString(CultureInfo.InvariantCulture);
+            if (string.Equals(reward.Id, "blessing_commerce", StringComparison.Ordinal))
+            {
+                string description = R.VanillaLocalize("blessing_commerce_d");
+                if (!string.IsNullOrEmpty(description) &&
+                    !string.Equals(description, "blessing_commerce_d", StringComparison.Ordinal))
+                    rewardText += " — " + description;
+            }
+            return Localization.F("forecast.reward", rewardText);
         }
 
         private static string BuildStructuredRewardEffect(List<PrayerForecast.TierDetails> tiers, bool comparative)
