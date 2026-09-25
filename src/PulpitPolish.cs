@@ -24,7 +24,9 @@ namespace PrayerClarity
         private static Transform _container;
         private static Transform _root;
         private static object _containerWidget;
+        private static object _windowWidget;
         private static Transform _craftButton;
+        private static object _craftButtonWidget;
         private static Vector3 _craftButtonOriginalPosition;
         private static bool _craftButtonCaptured;
 
@@ -49,9 +51,9 @@ namespace PrayerClarity
         {
             if (_template == null || _gui == null || _forecast == null) return;
             Capture();
-            MovePrayerButton();
             PolishResultRows();
             PolishEffectRow();
+            MovePrayerButton();
         }
 
         internal static void Restore()
@@ -77,8 +79,12 @@ namespace PrayerClarity
                 _containerWidget = uiWidgetType == null || container == null
                     ? null
                     : container.gameObject.GetComponent(uiWidgetType);
+                _windowWidget = uiWidgetType == null
+                    ? null
+                    : window.gameObject.GetComponent(uiWidgetType);
 
                 _craftButton = window.Find("craft button");
+                _craftButtonWidget = FindFirstWidget(_craftButton, uiWidgetType);
                 _craftButtonOriginalPosition = _craftButton == null ? Vector3.zero : _craftButton.localPosition;
                 _craftButtonCaptured = _craftButton != null;
 
@@ -113,10 +119,61 @@ namespace PrayerClarity
         private static void MovePrayerButton()
         {
             if (!_craftButtonCaptured || _craftButton == null) return;
-            _craftButton.localPosition = new Vector3(
+
+            Vector3 target = new Vector3(
                 PulpitTuning.PrayerButtonX.Value,
                 PulpitTuning.PrayerButtonY.Value,
                 _craftButtonOriginalPosition.z);
+            _craftButton.localPosition = target;
+
+            if (_effectLabel == null ||
+                _effectLabelObject == null ||
+                !_effectLabelObject.activeSelf ||
+                _craftButtonWidget == null ||
+                _window == null)
+                return;
+
+            // ResizeHeight has to process the current localized text before its live
+            // widget height is authoritative. Measure both widgets in the common
+            // window coordinate space so the calculation is independent of their
+            // different parents/pivots.
+            R.Get(_effectLabel, "processedText");
+
+            float effectBottom;
+            float effectTop;
+            float buttonBottom;
+            float buttonTop;
+            if (!TryGetVerticalBounds(_effectLabel, _window, out effectBottom, out effectTop) ||
+                !TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
+                return;
+
+            const float clearance = 8f;
+            float allowedButtonTop = effectBottom - clearance;
+            if (buttonTop <= allowedButtonTop) return;
+
+            float downward = buttonTop - allowedButtonTop;
+            target.y -= downward;
+
+            // The accepted pulpit window already carries 100 UI units of extra height.
+            // Keep the adaptive move inside that live window; if a future locale ever
+            // exceeds this budget, the visual acceptance test will expose it instead
+            // of silently moving the action button outside the parchment.
+            float windowBottom;
+            float windowTop;
+            if (_windowWidget != null &&
+                TryGetVerticalBounds(_windowWidget, _window, out windowBottom, out windowTop))
+            {
+                _craftButton.localPosition = target;
+                if (TryGetVerticalBounds(_craftButtonWidget, _window, out buttonBottom, out buttonTop))
+                {
+                    const float bottomMargin = 10f;
+                    float minBottom = windowBottom + bottomMargin;
+                    if (buttonBottom < minBottom)
+                        target.y += minBottom - buttonBottom;
+                }
+            }
+
+            _craftButton.localPosition = target;
         }
 
         private static void PolishResultRows()
@@ -194,6 +251,7 @@ namespace PrayerClarity
             GameObject resultGo = R.Get(_resultRowsLabel, "gameObject") as GameObject;
             if (resultGo == null) return desired;
 
+            R.Get(_resultRowsLabel, "processedText");
             int height = Math.Max(0, R.Int(R.Get(_resultRowsLabel, "height")));
             if (height <= 0) return desired;
 
@@ -308,6 +366,42 @@ namespace PrayerClarity
             if (transform == null) return null;
             Type type = R.AnyType(typeName);
             return type == null ? null : transform.gameObject.GetComponent(type);
+        }
+
+        private static object FindFirstWidget(Transform root, Type uiWidgetType)
+        {
+            if (root == null || uiWidgetType == null) return null;
+
+            object direct = root.gameObject.GetComponent(uiWidgetType);
+            if (direct != null) return direct;
+
+            Component[] children = root.gameObject.GetComponentsInChildren(uiWidgetType, true);
+            return children != null && children.Length > 0 ? children[0] : null;
+        }
+
+        private static bool TryGetVerticalBounds(
+            object widget,
+            Transform frame,
+            out float minY,
+            out float maxY)
+        {
+            minY = 0f;
+            maxY = 0f;
+            if (widget == null || frame == null) return false;
+
+            Vector3[] corners = R.Get(widget, "worldCorners") as Vector3[];
+            if (corners == null || corners.Length == 0) return false;
+
+            minY = float.PositiveInfinity;
+            maxY = float.NegativeInfinity;
+            foreach (Vector3 corner in corners)
+            {
+                float y = frame.InverseTransformPoint(corner).y;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            }
+
+            return !float.IsInfinity(minY) && !float.IsInfinity(maxY);
         }
 
         private static void SetEnum(object obj, string property, string name)
