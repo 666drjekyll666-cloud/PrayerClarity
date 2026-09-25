@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "candidate_branch": "candidate/rebalanced-0.2.32",
+  "baseline_sha": "c723069d719d33210d9406b6c95059b2cd252d8f",
+  "changes": [
+    {
+      "id": "prayer-item-amount-icon-wrap",
+      "observable_property": "In PrayerClarity-owned prayer-item mechanics rows, a numeric amount and its immediately following inline resource icon are not split so that the icon becomes the sole content of a new visual line.",
+      "canonical_owner": "TechnologyTooltipContentWidth prayer-item layout path for BubbleWidgetText.Draw on BubbleWidgetTextData marked by ItemTooltipPresentation.",
+      "final_writer_or_commit_point": "UILabel.processedText after PrayerClarity sets the prayer-item mechanics row to fixed width 200 with ResizeHeight and triggers NGUI processing.",
+      "blast_radius": [
+        "PrayerClarity-owned prayer-item mechanics rows using the fixed 200-unit compact item layout",
+        "Only rows whose final NGUI wrap actually separates an integer amount from the immediately following parenthesized inline symbol token"
+      ],
+      "preserved_invariants": [
+        "Prayer wording and localization text remain unchanged",
+        "Prayer mechanics and values remain unchanged",
+        "Prayer-item tooltip width remains 200",
+        "Technology, pulpit, Temporary Effects and non-prayer tooltips remain unchanged",
+        "Languages whose final wrap does not orphan an amount/icon cluster remain untouched"
+      ],
+      "acceptance_evidence": "Run Rebalanced 0.2.32 without the research repair enabled and inspect Gold Soul's Repose in Russian and Japanese. Russian must keep both 1 + Faith and 90 + Soul Gratitude together; Japanese must retain its normal readable wrapping. Return one screenshot per language or equivalent direct visual confirmation.",
+      "evidence_refs": [
+        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.14 proved NGUI processedText creates 1\\n(faith) and 90\\n(gratitude_points) after the 200-unit width pass.",
+        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.15 visually kept both Russian amount/icon pairs together by moving the wrap before the amount.",
+        "2026-09-26 runtime: Japanese Soul's Repose did not trigger the repair and remained readable under stock final wrapping."
+      ],
+      "state": "READY"
+    }
+  ]
+}
