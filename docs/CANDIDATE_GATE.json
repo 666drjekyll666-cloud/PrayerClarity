@@ -1,29 +1,34 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.32",
-  "baseline_sha": "c723069d719d33210d9406b6c95059b2cd252d8f",
+  "candidate_branch": "candidate/rebalanced-0.2.34",
+  "baseline_sha": "768bb9929823a3b3fd2496fdfd71de0587ddeb27",
   "changes": [
     {
-      "id": "prayer-item-amount-icon-wrap",
-      "observable_property": "In PrayerClarity-owned prayer-item mechanics rows, a numeric amount and its immediately following inline resource icon are not split so that the icon becomes the sole content of a new visual line.",
-      "canonical_owner": "TechnologyTooltipContentWidth prayer-item layout path for BubbleWidgetText.Draw on BubbleWidgetTextData marked by ItemTooltipPresentation.",
-      "final_writer_or_commit_point": "UILabel.processedText after PrayerClarity sets the prayer-item mechanics row to fixed width 200 with ResizeHeight and triggers NGUI processing.",
+      "id": "pulpit-settled-visible-button-clearance",
+      "observable_property": "After NGUI has settled the localized ResizeHeight Effect label, PrayerClarity keeps the entire visible prayer action-button geometry below the Effect block with 8 UI units of clearance and grows the verified real pulpit root window only when that settled button placement would violate the 10-unit bottom margin.",
+      "canonical_owner": "PrayerClarity owns the Effect UILabel and final craft-button placement. The visible action button is the union of active UIWidget children under UI Root/Pray GUI/window/craft button, while the real UI Root/Pray GUI/window UIWidget owns the parchment height. Exact Graveyard Keeper 1.407 source proves PrayCraftGUI derives MonoBehaviour, so a one-shot next-frame coroutine on the existing GUI instance can observe NGUI after its layout pass without a persistent Update hook.",
+      "final_writer_or_commit_point": "PrayCraftGUI.RedrawTextValues postfix remains the presentation entry point. PulpitPolish first renders/resets the button, then schedules a bounded next-frame settled-layout pass on that same PrayCraftGUI MonoBehaviour. That pass is the final PrayerClarity writer of button Y and, only when required, requests root-window growth through PulpitLayoutV4.",
       "blast_radius": [
-        "PrayerClarity-owned prayer-item mechanics rows using the fixed 200-unit compact item layout",
-        "Only rows whose final NGUI wrap actually separates an integer amount from the immediately following parenthesized inline symbol token"
+        "PrayerClarity pulpit action-button vertical placement after a prayer selection/redraw",
+        "PrayerClarity pulpit root height only when settled localized content plus the full visible button would otherwise violate the preserved clearance/margin",
+        "No other tooltip, Technology, inventory, mechanics, save-state, or prayer-result surface"
       ],
       "preserved_invariants": [
-        "Prayer wording and localization text remain unchanged",
-        "Prayer mechanics and values remain unchanged",
-        "Prayer-item tooltip width remains 200",
-        "Technology, pulpit, Temporary Effects and non-prayer tooltips remain unchanged",
-        "Languages whose final wrap does not orphan an amount/icon cluster remain untouched"
+        "Prayer wording, localization strings, mechanics, success values and rewards remain unchanged",
+        "Existing +100 UI-unit pulpit height and +10 width remain the minimum baseline",
+        "Short prayers/locales do not receive extra window height when the settled geometry already fits",
+        "Effect-to-visible-button clearance is 8 UI units and button-to-window-bottom margin is at least 10 UI units",
+        "The whole active visible button geometry is measured, not only its UILabel",
+        "Layout work is event-driven and bounded after redraw; no permanent per-frame production polling is added",
+        "Pulpit restore returns captured stock geometry"
       ],
-      "acceptance_evidence": "Run Rebalanced 0.2.32 without the research repair enabled and inspect Gold Soul's Repose in Russian and Japanese. Russian must keep both 1 + Faith and 90 + Soul Gratitude together; Japanese must retain its normal readable wrapping. Return one screenshot per language or equivalent direct visual confirmation.",
+      "acceptance_evidence": "Run exact Rebalanced 0.2.34 in Graveyard Keeper 1.407. With Neutral Test Console allowed, open the failing Russian Soul's Repose and confirm the final text, full red action button and parchment no longer overlap and the window grows only as much as needed. Spot-check Japanese Soul's Repose because it was independently reported failing, then a short Faith prayer to confirm the baseline window is not unnecessarily enlarged.",
       "evidence_refs": [
-        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.14 proved NGUI processedText creates 1\\n(faith) and 90\\n(gratitude_points) after the 200-unit width pass.",
-        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.15 visually kept both Russian amount/icon pairs together by moving the wrap before the amount.",
-        "2026-09-26 runtime: Japanese Soul's Repose did not trigger the repair and remained readable under stock final wrapping."
+        "Rejected 0.2.33 runtime: Russian Repose still visually overlapped the action button; Japanese was also reported failing while English fit.",
+        "Pulpit Geometry Probe 0.1.0 post-render evidence: root window=284x341, Effect UILabel=240x56 with settled bounds minY=-131.939/maxY=-76, craft-button root localY=-134.",
+        "Probe evidence: production selected only the direct UILabel bounds [-142,-126], but the active craft-button background sprite spans [-147,-123]; therefore the previous selected widget did not represent the full visible button.",
+        "Probe replay after layout settlement: the 0.2.33 algorithm still required another 13.938 UI units downward, proving the same-redraw measurement was not the final settled geometry.",
+        "Exact Graveyard Keeper 1.407 decompilation at Kupie/GYK_DECOMP commit 6abf79199d92482af1c7573870dd9a20ec2270b9 shows PrayCraftGUI : MonoBehaviour and RedrawTextValues is the selection redraw path."
       ],
       "state": "READY"
     }
