@@ -712,34 +712,7 @@ namespace PrayerClarity
 
         private static string ResolveVanillaPrayerLore(List<object> crafts)
         {
-            if (crafts == null || crafts.Count == 0) return null;
-
-            string commonKey = null;
-            foreach (object craft in crafts)
-            {
-                string key = ResolveBaseLoreKey(R.Id(craft));
-                if (string.IsNullOrEmpty(key)) return null;
-
-                if (commonKey == null) commonKey = key;
-                else if (!string.Equals(commonKey, key, StringComparison.Ordinal)) return null;
-            }
-
-            if (string.IsNullOrEmpty(commonKey)) return null;
-            string lore = R.VanillaLocalize(commonKey);
-            if (string.IsNullOrEmpty(lore) || string.Equals(lore, commonKey, StringComparison.Ordinal)) return null;
-
-            if (string.Equals(commonKey, "b_village_d", StringComparison.Ordinal))
-            {
-                lore = TechnologyTooltipTextStyle.AccentLoreEntity(
-                    lore,
-                    "blessing_commerce",
-                    R.VanillaLocalize("blessing_commerce"));
-            }
-
-            if (PrayerEditionSemantics.HasTechnologyProvider)
-                lore = NormalizeRebalancedBssLore(R.Id(crafts[0]), lore);
-
-            return lore;
+            return PrayerLoreResolver.ResolveForCrafts(crafts);
         }
 
         private static string ResolveBaseLoreKey(string craftId)
