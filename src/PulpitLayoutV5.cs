@@ -482,7 +482,21 @@ namespace PrayerClarity
 
             if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
             {
-                forecast.SpecialText = Localization.F("buff.sin_shard", duration);
+                string rebalancedText;
+                string semanticKey;
+                if (PrayerEditionSemantics.TryBuildTierEffect(
+                    craftId,
+                    "buff_sin_shard",
+                    out rebalancedText,
+                    out semanticKey))
+                {
+                    forecast.SpecialText = rebalancedText;
+                }
+                else
+                {
+                    forecast.SpecialText = Localization.F("buff.sin_shard", duration);
+                }
+
                 forecast.SpecialIconName = "i_sin_shard";
             }
         }
