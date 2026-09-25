@@ -36,5 +36,6 @@
   "tech.percent_of_base": "{0} del valore base",
   "active.timer_days_compact": "{0:0.0}",
   "tech.on_success_header": "In caso di successo:",
-  "forecast.current_success_chance": "Probabilità di successo attuale: {0}%"
+  "forecast.current_success_chance": "Probabilità di successo attuale: {0}%",
+  "item.sermon_success": "Successo del sermone"
 }
