@@ -1331,3 +1331,13 @@ Research helper identity:
 - Wording, localization, tooltip width, mechanics and other surfaces are preserved.
 - Production gate for the common prayer-item amount+inline-icon wrapping behavior is **READY**.
 - Rebalanced 0.2.32 / Vanilla 1.0.41 were created from the exact 0.2.30 / 1.0.39 candidate baseline, intentionally excluding rejected 0.2.31 wording/title changes. Candidate source: `768bb9929823a3b3fd2496fdfd71de0587ddeb27`; CI run `36199112978` succeeded. Runtime acceptance is still pending.
+
+
+### 2026-09-26 — Rebalanced 0.2.32 production amount+icon wrapping accepted
+
+- Runtime used exact PrayerClarity: Rebalanced 0.2.32 source `768bb9929823a3b3fd2496fdfd71de0587ddeb27` under Graveyard Keeper 1.407 with the research Test Console removed, so no probe could supply or mask the production wrapping behavior.
+- Russian Gold Soul's Repose visually confirmed both previously failing semantic clusters now remain intact: `1 + Faith icon` and `90 + Soul Gratitude icon`. The readable 0.2.30 wording is preserved.
+- Japanese spot-check showed no visible regression; the conditional repair stayed out of the way where the locale's normal final wrapping was already readable.
+- The production acceptance criterion for the common prayer-item amount+inline-resource wrapping change is therefore satisfied.
+- This accepts the 0.2.32 behavior change as tested evidence. It does **not** by itself promote either edition to the stable line; stable promotion remains a separate user decision.
+- Test-process observation from this run: removing the research Test Console to obtain a clean production path also removes useful neutral setup conveniences such as spawning prayer items. Treat possible separation of neutral test utilities from behavior-mutating probes as a separate research-tooling design question, not as part of the accepted production change.
