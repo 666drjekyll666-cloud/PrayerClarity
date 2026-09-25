@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Soul condition does not deteriorate over time - whether still in the body or already extracted. Releasing souls grants +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Plant growth time: -{0:0}%",
   "rebalanced.tech.souls_intro": "On success, stored (gratitude_points) is converted into (faith) at a 1:1 rate.",
-  "rebalanced.tech.souls_tier": "Sermon limit: {0} (gratitude_points)",
+  "rebalanced.tech.souls_tier": "Sermon limit: {0}\u00A0(gratitude_points)",
   "rebalanced.item.souls_repose": "On success, each spent (gratitude_points) grants 1 (faith). Up to {0} (gratitude_points) can be spent per sermon.",
   "rebalanced.pulpit.souls_conversion": "Converts {0} (gratitude_points) into {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "no (gratitude_points) to convert",
