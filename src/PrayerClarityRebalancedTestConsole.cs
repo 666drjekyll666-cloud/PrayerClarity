@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.8";
+        public const string PluginVersion = "0.1.9";
 
         private sealed class TimedEffect
         {
@@ -52,6 +52,27 @@ namespace PrayerClarityResearch
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
+
+        private static readonly HashSet<string> PlayerFacingPrayerFamilies =
+            new HashSet<string>(StringComparer.Ordinal)
+            {
+                "b_faith",
+                "b_money",
+                "b_faith_money",
+                "b_plant",
+                "b_sins",
+                "b_skull",
+                "b_sword",
+                "b_shield",
+                "b_pen",
+                "b_star",
+                "b_village",
+                "b_souls",
+                "b_grat_points_incr",
+                "b_sin_shard"
+            };
+
+        private int _originalPlayerInventorySize = -1;
 
         private void Awake()
         {
@@ -135,7 +156,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.8");
+                "PrayerClarity: Rebalanced Test Console 0.1.9");
         }
 
         private void DrawWindow(int id)
@@ -172,7 +193,7 @@ namespace PrayerClarityResearch
 
             GUILayout.Space(10f);
             GUILayout.Label("Prayer item gallery (SAVE-PERSISTENT until cleanup):");
-            GUILayout.Label("Adds only missing prayer items found in the current GameBalance. Existing copies are not duplicated.");
+            GUILayout.Label("Adds only verified player-facing prayer families. Existing copies are not duplicated.");
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Give Bronze prayers"))
@@ -188,6 +209,16 @@ namespace PrayerClarityResearch
 
             if (GUILayout.Button("Remove prayer items spawned by this console"))
                 RemoveSpawnedPrayerItems();
+
+            GUILayout.Space(8f);
+            GUILayout.Label("Temporary player inventory capacity (SAVE-PERSISTENT until restored):");
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Expand player inventory ×5"))
+                ExpandPlayerInventory();
+            if (GUILayout.Button("Restore original inventory size"))
+                RestorePlayerInventorySize();
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(8f);
             GUILayout.Label("Native-seam probes:");
@@ -375,6 +406,11 @@ namespace PrayerClarityResearch
                     !craftId.StartsWith("pray:", StringComparison.Ordinal))
                     continue;
 
+                string family = GetPrayerFamily(craftId);
+                if (string.IsNullOrEmpty(family) ||
+                    !PlayerFacingPrayerFamilies.Contains(family))
+                    continue;
+
                 result.Add(new PrayerItemDefinition
                 {
                     Id = id,
@@ -386,6 +422,130 @@ namespace PrayerClarityResearch
                 .OrderBy(x => x.Id, StringComparer.Ordinal)
                 .ThenBy(x => x.Quality)
                 .ToList();
+        }
+
+        private static string GetPrayerFamily(string craftId)
+        {
+            const string prefix = "pray:";
+            if (string.IsNullOrEmpty(craftId) ||
+                !craftId.StartsWith(prefix, StringComparison.Ordinal))
+                return null;
+
+            string itemId = craftId.Substring(prefix.Length);
+            int tierSeparator = itemId.LastIndexOf(':');
+            if (tierSeparator <= 0)
+                return itemId;
+
+            return itemId.Substring(0, tierSeparator);
+        }
+
+        private void ExpandPlayerInventory()
+        {
+            try
+            {
+                object player = GetPlayer();
+                object data = Get(player, "data");
+                if (data == null)
+                    throw new InvalidOperationException("MainGame.me.player.data unavailable.");
+
+                int currentSize = Convert.ToInt32(Get(data, "inventory_size") ?? 0);
+                if (currentSize <= 0)
+                    throw new InvalidOperationException("Player inventory size is unavailable or zero.");
+
+                if (_originalPlayerInventorySize < 0)
+                    _originalPlayerInventorySize = currentSize;
+
+                int targetSize = Math.Max(currentSize, _originalPlayerInventorySize * 5);
+                MethodInfo setInventorySize = data.GetType().GetMethod(
+                    "SetInventorySize",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(int) },
+                    null);
+                if (setInventorySize == null)
+                    throw new MissingMethodException("Item.SetInventorySize(int)");
+
+                bool success = Convert.ToBoolean(
+                    setInventorySize.Invoke(data, new object[] { targetSize }));
+                if (!success)
+                    throw new InvalidOperationException("SetInventorySize returned false.");
+
+                _status =
+                    "Player inventory expanded: " +
+                    _originalPlayerInventorySize + " -> " + targetSize +
+                    ". Restore before saving a permanent playthrough state.";
+                _log?.LogInfo(
+                    "PLAYER_INVENTORY_TEST_CAPACITY original=" +
+                    _originalPlayerInventorySize +
+                    " current=" + targetSize);
+            }
+            catch (Exception ex)
+            {
+                _status = "Player inventory expansion failed: " + ex.GetType().Name;
+                _log?.LogError("PLAYER_INVENTORY_TEST_CAPACITY_FAILED " + ex);
+            }
+        }
+
+        private void RestorePlayerInventorySize()
+        {
+            try
+            {
+                if (_originalPlayerInventorySize < 0)
+                {
+                    _status = "Player inventory was not expanded by this console in the current session.";
+                    return;
+                }
+
+                if (_spawnedPrayerItems.Count > 0)
+                {
+                    _status =
+                        "Remove prayer items spawned by this console before restoring inventory size.";
+                    return;
+                }
+
+                object player = GetPlayer();
+                object data = Get(player, "data");
+                if (data == null)
+                    throw new InvalidOperationException("MainGame.me.player.data unavailable.");
+
+                System.Collections.ICollection inventory =
+                    Get(data, "inventory") as System.Collections.ICollection;
+                int storedEntries = inventory?.Count ?? 0;
+                if (storedEntries > _originalPlayerInventorySize)
+                {
+                    _status =
+                        "Inventory still contains " + storedEntries +
+                        " entries, more than original capacity " +
+                        _originalPlayerInventorySize +
+                        ". Remove/move test items first.";
+                    return;
+                }
+
+                MethodInfo setInventorySize = data.GetType().GetMethod(
+                    "SetInventorySize",
+                    AnyInstance,
+                    null,
+                    new[] { typeof(int) },
+                    null);
+                if (setInventorySize == null)
+                    throw new MissingMethodException("Item.SetInventorySize(int)");
+
+                int restoredSize = _originalPlayerInventorySize;
+                bool success = Convert.ToBoolean(
+                    setInventorySize.Invoke(data, new object[] { restoredSize }));
+                if (!success)
+                    throw new InvalidOperationException("SetInventorySize returned false.");
+
+                _originalPlayerInventorySize = -1;
+                _status = "Player inventory capacity restored to " + restoredSize + ".";
+                _log?.LogInfo(
+                    "PLAYER_INVENTORY_TEST_CAPACITY_RESTORED size=" + restoredSize);
+            }
+            catch (Exception ex)
+            {
+                _status = "Player inventory restore failed: " + ex.GetType().Name;
+                _log?.LogError("PLAYER_INVENTORY_TEST_CAPACITY_RESTORE_FAILED " + ex);
+            }
         }
 
         private void RemoveSpawnedPrayerItems()
