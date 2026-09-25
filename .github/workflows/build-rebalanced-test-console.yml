@@ -40,16 +40,16 @@ jobs:
           dll='bin/RebalancedTestConsole/PrayerClarity.RebalancedTestConsole.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.RebalancedTestConsole-0.1.16-ci.dll'
+          handoff='PrayerClarity.RebalancedTestConsole-0.1.17-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.16"
+            echo "Version: 0.1.17"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
             echo "Target: Graveyard Keeper 1.407 / PrayerClarity: Rebalanced"
-            echo "Purpose: long-lived neutral F1 setup/access console: prayer-item gallery, temporary inventory capacity, and native pulpit opening."
+            echo "Purpose: long-lived neutral F2 setup/access console: prayer-item gallery, temporary inventory capacity, and native pulpit opening."
             echo "Probe boundary: installs no Harmony patches, mechanic simulations, presentation rewrites, or diagnostic probes."
             echo "Save safety: gallery items and temporary inventory capacity are save-persistent; remove spawned items and restore original inventory size before saving a permanent playthrough state."
           } > dist/BUILD_INFO.txt
@@ -58,7 +58,7 @@ jobs:
       - name: Upload neutral research utility
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-RebalancedTestConsole-0.1.16-ci-${{ github.sha }}
+          name: PrayerClarity-RebalancedTestConsole-0.1.17-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
