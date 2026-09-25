@@ -16,7 +16,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Test Console";
-        public const string PluginVersion = "0.1.11";
+        public const string PluginVersion = "0.1.14";
 
         private sealed class TimedEffect
         {
@@ -53,6 +53,8 @@ namespace PrayerClarityResearch
         private static bool _qualityTitleProbeEnabled = false;
         private static readonly HashSet<string> RawPrayerTitleLogged =
             new HashSet<string>(StringComparer.Ordinal);
+        private static readonly HashSet<string> PrayerItemWrapTraceLogged =
+            new HashSet<string>(StringComparer.Ordinal);
         private string _status = "F1 opens/closes this console. Synthetic buffs use the game's native BuffsLogics path.";
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
@@ -83,6 +85,7 @@ namespace PrayerClarityResearch
             _log = Logger;
             ResolveBuffApi();
             PatchPrayerItemTitleQualityProbe();
+            PatchPrayerItemWrapTrace();
             PatchRootsDiagnostic();
             PatchBoostIISimulation();
             PatchCombatRegenDiagnostic();
@@ -161,7 +164,7 @@ namespace PrayerClarityResearch
                 736214,
                 _windowRect,
                 DrawWindow,
-                "PrayerClarity: Rebalanced Test Console 0.1.10");
+                "PrayerClarity: Rebalanced Test Console " + PluginVersion);
         }
 
         private void DrawWindow(int id)
@@ -354,6 +357,97 @@ namespace PrayerClarityResearch
             {
                 _status = "Any-day pulpit open failed: " + ex.GetType().Name;
                 _log?.LogError("PULPIT_ANY_DAY_OPEN_FAILED " + ex);
+            }
+        }
+
+        private static void PatchPrayerItemWrapTrace()
+        {
+            Type bubbleWidgetTextType = FindGameType("BubbleWidgetText");
+            Type bubbleWidgetTextDataType = FindGameType("BubbleWidgetTextData");
+            if (bubbleWidgetTextType == null || bubbleWidgetTextDataType == null)
+                throw new MissingMemberException("BubbleWidgetText/BubbleWidgetTextData");
+
+            MethodInfo draw = bubbleWidgetTextType.GetMethod(
+                "Draw",
+                AnyInstance,
+                null,
+                new[] { bubbleWidgetTextDataType },
+                null);
+            if (draw == null)
+                throw new MissingMethodException("BubbleWidgetText.Draw(BubbleWidgetTextData)");
+
+            Type harmonyType = FindType("HarmonyLib.Harmony");
+            Type harmonyMethodType = FindType("HarmonyLib.HarmonyMethod");
+            if (harmonyType == null || harmonyMethodType == null)
+                throw new InvalidOperationException("Harmony unavailable.");
+
+            object harmony = Activator.CreateInstance(
+                harmonyType,
+                new object[] { "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole.prayeritemwraptrace" });
+
+            MethodInfo postfixMethod = typeof(PrayerClarityRebalancedTestConsole).GetMethod(
+                nameof(PrayerItemWrapTracePostfix),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            object postfix = CreateHarmonyMethod(harmonyMethodType, postfixMethod);
+            SetHarmonyAfter(
+                harmonyMethodType,
+                postfix,
+                "nikich.graveyardkeeper.prayerclarity.rebalanced.technologycontentwidth");
+
+            MethodInfo patch = harmonyType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == "Patch" &&
+                    m.GetParameters().Length >= 5 &&
+                    typeof(MethodBase).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+            if (patch == null) throw new MissingMethodException("Harmony.Patch");
+
+            object[] args = new object[patch.GetParameters().Length];
+            args[0] = draw;
+            args[1] = null;
+            args[2] = postfix;
+            args[3] = null;
+            args[4] = null;
+            patch.Invoke(harmony, args);
+        }
+
+        private static void PrayerItemWrapTracePostfix(object __instance)
+        {
+            if (__instance == null) return;
+
+            try
+            {
+                object label = Get(__instance, "_label") ?? Get(__instance, "ui_widget");
+                if (label == null) return;
+
+                string raw = Get(label, "text") as string;
+                if (string.IsNullOrEmpty(raw) ||
+                    (raw.IndexOf("(faith)", StringComparison.Ordinal) < 0 &&
+                     raw.IndexOf("(gratitude_points)", StringComparison.Ordinal) < 0))
+                    return;
+
+                int width = Convert.ToInt32(Get(label, "width") ?? 0);
+                if (width != 200) return;
+
+                string processed = Get(label, "processedText") as string ?? string.Empty;
+                object printedObj = Get(label, "printedSize");
+                Vector2 printed = printedObj is Vector2 ? (Vector2)printedObj : Vector2.zero;
+                string overflow = Convert.ToString(Get(label, "overflowMethod"));
+
+                string signature = width + "|" + raw + "|" + processed;
+                if (!PrayerItemWrapTraceLogged.Add(signature)) return;
+
+                _log?.LogInfo(
+                    "PRAYER_ITEM_WRAP_TRACE" +
+                    " width=" + width +
+                    " overflow=" + overflow +
+                    " printed=" + printed.x.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    "x" + printed.y.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    " raw=\"" + EscapeLogText(raw) + "\"" +
+                    " processed=\"" + EscapeLogText(processed) + "\"");
+            }
+            catch (Exception ex)
+            {
+                _log?.LogError("PRAYER_ITEM_WRAP_TRACE_FAILED " + ex);
             }
         }
 
@@ -1871,10 +1965,24 @@ namespace PrayerClarityResearch
 
         private static void SetHarmonyBefore(Type harmonyMethodType, object harmonyMethod, params string[] ownerIds)
         {
+            SetHarmonyOrder(harmonyMethodType, harmonyMethod, "before", ownerIds);
+        }
+
+        private static void SetHarmonyAfter(Type harmonyMethodType, object harmonyMethod, params string[] ownerIds)
+        {
+            SetHarmonyOrder(harmonyMethodType, harmonyMethod, "after", ownerIds);
+        }
+
+        private static void SetHarmonyOrder(
+            Type harmonyMethodType,
+            object harmonyMethod,
+            string memberName,
+            params string[] ownerIds)
+        {
             if (harmonyMethodType == null || harmonyMethod == null) return;
 
             FieldInfo field = harmonyMethodType.GetField(
-                "before",
+                memberName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (field != null)
             {
@@ -1883,7 +1991,7 @@ namespace PrayerClarityResearch
             }
 
             PropertyInfo property = harmonyMethodType.GetProperty(
-                "before",
+                memberName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (property != null && property.CanWrite)
                 property.SetValue(harmonyMethod, ownerIds, null);

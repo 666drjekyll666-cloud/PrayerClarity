@@ -40,16 +40,16 @@ jobs:
           dll='bin/RebalancedTestConsole/PrayerClarity.RebalancedTestConsole.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.RebalancedTestConsole-0.1.11-ci.dll'
+          handoff='PrayerClarity.RebalancedTestConsole-0.1.14-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.11"
+            echo "Version: 0.1.14"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
-            echo "Target: PrayerClarity: Rebalanced 0.2.31 source 6f26e62c00714734efdb726a0be84b678e829102 / Graveyard Keeper 1.407"
-            echo "Purpose: research-only F1 console with native prayer probes, prayer-item gallery, native any-day pulpit opening, and a pre-production Combo Prayer title-owner trace. The old quality-glyph mutation probe is OFF by default."
+            echo "Target: PrayerClarity: Rebalanced 0.2.30 source c723069d719d33210d9406b6c95059b2cd252d8f / Graveyard Keeper 1.407"
+            echo "Purpose: research-only F1 console with native prayer probes, prayer-item gallery, native any-day pulpit opening, and a read-only final prayer-item wrap trace after PrayerClarity content-width processing. The old quality-glyph mutation probe is OFF by default."
             echo "Save safety: gallery items and temporary inventory capacity are save-persistent; remove spawned items and restore original inventory size before saving a permanent playthrough state."
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
@@ -58,7 +58,7 @@ jobs:
       - name: Upload research candidate
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-RebalancedTestConsole-0.1.11-ci-${{ github.sha }}
+          name: PrayerClarity-RebalancedTestConsole-0.1.14-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
