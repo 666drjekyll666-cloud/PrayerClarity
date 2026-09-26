@@ -1647,3 +1647,11 @@ Closed by later evidence/source:
 - pulpit localized-text clearance + live-language font lifecycle = accepted 0.2.37.
 
 Non-blocking evidence gaps remain unchanged: terminal Repose endpoint and real successful Silver/Gold Imagination three-Story payout.
+
+
+### 2026-09-26 — legacy Protective Prayer lore decision closed
+
+- User product decision: preserve the historical stock lore on legacy `b_shield` / Protective Prayer items.
+- Rebalanced continues to retire Protection crafting/Technology and map existing legacy `b_shield` items/mechanics to the Combat `buff_sword` path.
+- Do **not** normalize legacy item lore to Combat Prayer lore. The current stock `b_shield_d` item text is intentionally preserved.
+- No production change or runtime test is required for this decision.
