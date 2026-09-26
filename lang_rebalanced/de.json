@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "In jedem Beichtstuhl finden Beichten häufiger statt.",
   "rebalanced.tech.repose_intro": "Der Esel kann hochwertigere Körper bringen.",
   "rebalanced.tech.combat_intro": "Stärkt den Hüter im Kampf.",
-  "rebalanced.active.plant": "Pflanzenwachstumszeit: -{0:0}% · Maximale Gesamtreduktion: -{1:0}%",
+  "rebalanced.active.plant": "Pflanzenwachstumszeit: -{0:0}% · Gesamte Wachstumszeitreduktion aus allen Quellen: höchstens {1:0}%",
   "rebalanced.active.sins": "Beichtchance: {0:0}%",
   "rebalanced.active.repose.bronze": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen",
   "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste Körper garantiert",
@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht - weder im Körper noch nach der Extraktion. Das Freilassen von Seelen gewährt +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%",
   "rebalanced.tech.souls_intro": "Bei Erfolg werden gespeicherte (gratitude_points) im Verhältnis 1:1 in (faith) umgewandelt.",
-  "rebalanced.tech.souls_tier": "Limit pro Predigt: {0}\u00A0(gratitude_points)",
+  "rebalanced.tech.souls_tier": "Limit pro Predigt: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "Bei Erfolg gewährt jeder ausgegebene (gratitude_points) 1 (faith). Pro Predigt können bis zu {0} (gratitude_points) ausgegeben werden.",
   "rebalanced.pulpit.souls_conversion": "Wandelt {0} (gratitude_points) in {1} (faith) um.",
   "rebalanced.pulpit.souls_conversion_empty": "keine (gratitude_points) zum Umwandeln",
@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
   "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
-  "rebalanced.repose.endpoint_bronze_hint": "Silber- und Goldgebete erhöhen weiterhin die Zuverlässigkeit, mit der du den besten verfügbaren Leichnam erhältst."
+  "rebalanced.repose.endpoint_bronze_hint": "(Silber und Gold erhöhen weiter die Chance auf den besten verfügbaren Leichnam.)"
 }
