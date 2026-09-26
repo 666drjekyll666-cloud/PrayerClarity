@@ -1,5 +1,30 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.42 / Vanilla 1.0.48 Repose surface-language candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.41 exact source `f571eebd6942f14eaeddcf979c9689feec9b358c`. 0.2.41 is superseded before acceptance because its shared sentence could read as a fourth effect and its tier lines did not make inheritance of the base effect obvious.
+- Candidate branch: `candidate/rebalanced-0.2.42`.
+- Gate-only commit: `d295ba41e566313a52938e6880601a0869247af5`.
+- Exact candidate source SHA: `dd683e5c369a9056151ab43ae5eb18da2522b33d`.
+- CI run: `36257362849`; result: **success**.
+- Artifact ID: `10910459521`.
+- Artifact: `PrayerClarity-rebalanced-0.2.42-ci-dd683e5c369a9056151ab43ae5eb18da2522b33d`.
+- Artifact ZIP digest: `sha256:868d5f86f699a701ba22bc4dbe6aac569cfccd75572fd83230dbe88ed91f39d9`.
+- Rebalanced 0.2.42 DLL SHA-256: `73ddc586bfd340b31c4c98271015499dfefcd956946579303440e5b97134778f`.
+- Shared sibling Vanilla 1.0.48 DLL SHA-256: `455e7acfcf147559ed1745b132cb9ff5e79636203778b1bb2e0c91fcd512ecb0`.
+- Player-facing model:
+  - forecast/planning surfaces use future tense: the Donkey **will be able** to bring higher-quality bodies;
+  - Character -> Temporary Effects uses present tense: the Donkey **can** bring higher-quality bodies;
+  - Rebalanced Technology states that shared effect once and shows only the quality delta: Bronze = main effect only, Silver = the chance of the best available body will increase, Gold = the best available body will be guaranteed;
+  - a concrete Rebalanced item or ordinary pulpit selection is self-contained: Bronze shows the base effect; Silver/Gold show the base effect plus their reliability delta.
+- Terminal pulpit model:
+  - shared Vanilla/Rebalanced endpoint wording explains a natural ceiling: no still-higher-quality body can be obtained, even with prayer;
+  - terminal Rebalanced Bronze adds a worded Bronze/Silver/Gold explanation rather than star-glyph labels;
+  - terminal Rebalanced Silver/Gold, while reliability still changes the distribution, show only their still-working reliability sentence plus the corpse-quality cue; the no-longer-true higher-tier sentence is removed.
+- All player-facing changes are synchronized across the 11 supported locales. No Repose mechanics, endpoint predicates, corpse-tier selection/distribution, requirements, duration, RNG, layout/font lifecycle, or unrelated prayer behavior changed.
+- Focused runtime acceptance: in Russian Rebalanced 0.2.42, inspect Repose Technology, one Silver/Gold prayer item, an ordinary Silver/Gold pulpit state, the active Repose Temporary Effect, then terminal Bronze/Silver/Gold using Repose State Switcher 0.1.0. Verify meaning, glyphs, wrapping and button clearance. No sermon execution or corpse-generation sampling is required. Vanilla 1.0.48 uses the same accepted renderers and shared base/endpoint strings; its one-line forecast-key substitution is statically covered by source/CI and does not require a separate mechanics replay.
+
 ## 2026-09-26 — Rebalanced 0.2.41 Repose terminology-unification candidate
 
 - Stable runtime remains Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
