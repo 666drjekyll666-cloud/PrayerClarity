@@ -1513,3 +1513,43 @@ Research helper identity:
   - DLL SHA-256: `eb0dec1e9adce244aa54080e1e56bc80db17099e28a7e4893a97aadf50959d14`.
 - Probe 0.1.1 remains read-only and adds: full active visible-button union calculation, every button UIWidget's anchor state/targets/offsets, and all components on the craft-button root.
 - Minimum next runtime action: replace probe 0.1.0 with 0.1.1, keep exact Rebalanced 0.2.35, open Japanese Soul's Repose, wait for final render, press **F8 once**, return the log. No RU/KO/Faith retest is needed.
+
+
+### 2026-09-26 — Craft-button anchor owner proved; Rebalanced 0.2.36 ready
+
+- Exact runtime used **PrayerClarity: Rebalanced 0.2.35**, **Neutral Test Console 0.1.17**, and **Pulpit Geometry Probe 0.1.1** under Graveyard Keeper 1.407 / Japanese.
+- Probe 0.1.1 proved the actual final button owner:
+  - root `UI Root/Pray GUI/window/craft button` carries the root `UILabel`;
+  - that UILabel is `isAnchored=True`, `isAnchoredVertical=True`, `updateAnchors=OnUpdate`;
+  - its vertical anchors both target `UI Root/Pray GUI/window` at relative `0`, with bottom absolute `28` and top absolute `44`;
+  - the active red `craft button back` UI2DSprite is itself anchored to the root craft-button widget with bottom/top absolutes `-5/+3`.
+- This proves NGUI anchor resolution, not PrayerClarity's `craft button.transform.localPosition`, is the final writer of action-button placement. The failed 0.2.34/0.2.35 transform mutations were therefore being legitimately overwritten by native NGUI ownership.
+- Same Japanese settled sample:
+  - root window bounds `[-173,173]`, height `346`;
+  - Effect bounds `[-129.939,-74]`;
+  - full active visible button union `[-150,-126]`;
+  - current algorithm requires `11.938` UI units downward for 8-unit clearance.
+- Native-anchor arithmetic:
+  - the button root is bottom-anchored to the root window, so increasing total root height by `2*d` moves the button down by `d`;
+  - the stock content container is already accepted as anchored on all four sides with fixed bottom/top margins `+7/-35`, so symmetric root growth increases container height while preserving its centre (`(-35 + 7)/2 = -14`), leaving PrayerClarity forecast positions stable;
+  - therefore the measured Japanese collision can be resolved by root-window growth alone, without mutating button anchors or transforms.
+- Solution-space checkpoint after anchor proof:
+  - iterative transform correction — rejected: it writes the wrong owner;
+  - direct anchor-offset mutation — viable but more invasive than necessary;
+  - fixed worst-case window — viable but unnecessarily enlarges short prayers;
+  - **native anchor-driven root growth** — selected as the least-powerful adequate mechanism because it writes the already-verified root owner and lets NGUI perform its own final button placement.
+- Rebalanced **0.2.36** / Vanilla sibling **1.0.45** were created from accepted 0.2.32 source `768bb9929823a3b3fd2496fdfd71de0587ddeb27`.
+- Gate-only commit: `135a8d724ca56c21f8446dfbc95f265432e84568`; gate `pulpit-native-anchor-driven-clearance` = **READY**.
+- Candidate exact source: `6c4d1ffddc53a8c32f0bdac39c7dcbfe127eefee`.
+- 0.2.36 implementation:
+  - waits one frame for localized ResizeHeight Effect geometry to settle;
+  - measures the full active visible button-widget union;
+  - computes required Effect-to-button clearance once;
+  - changes **only** the unanchored real root-window height by approximately `2 * requiredDownward` with a small integer rounding guard;
+  - performs no craft-button transform write, no anchor-offset mutation, no iterative convergence loop and no permanent polling.
+- CI run: `36232422519` — success; candidate gate, localization validation and both sibling builds passed.
+- Artifact ID: `10903415227`; artifact ZIP digest: `sha256:329665f1ce2a730805c0fd2d8f080e20bda59301d1751acac1d30456941a4b4c`.
+- Rebalanced 0.2.36 DLL SHA-256: `228539ed3579fb9a94257e6747489e32657e615ba69da8990e96195ac6e9ca15`.
+- Vanilla 1.0.45 DLL SHA-256: `1cf45a439d9b75725cfd417b802502718da95a3a01e7c9f45002838642fb9bdc`.
+- Runtime acceptance pending. Remove Pulpit Geometry Probe before acceptance; Neutral Test Console 0.1.17 may remain. Check Russian, Japanese and Korean Soul's Repose, then short Faith as the no-unnecessary-growth control.
+- If accepted, promote the reusable host fact about the pulpit craft-button anchor chain/final-writer ownership into `NikichMods/GraveyardKeeperResearch`.
