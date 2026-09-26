@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Zwiększa jakość pisania.",
   "tech.effect.excellence_intro": "Zwiększa jakość wytwarzania.",
   "tech.souls_base_faith": "Wiara zależy od jakości kościoła i Wdzięczności dusz.",
-  "repose.endpoint": "Nie można już zdobyć ciał jeszcze wyższej jakości — nawet modlitwa tu nie pomoże. (up) (skull) (rskull)",
+  "repose.endpoint": "Nie można już zdobyć ciał jeszcze wyższej jakości — nawet modlitwa tu nie pomoże.",
   "buff.souls_repose": "(faith) zależy od jakości kościoła i (gratitude_points).",
   "active.sword": "+{0:0.##} obrażeń",
   "active.shield": "+{0:0.##} pancerza",

@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "提高书写品质。",
   "tech.effect.excellence_intro": "提高制作质量。",
   "tech.souls_base_faith": "信仰取决于教堂品质和灵魂感恩值。",
-  "repose.endpoint": "已经无法获得品质更高的尸体了——即使祷告也无能为力。 (up) (skull) (rskull)",
+  "repose.endpoint": "已经无法获得品质更高的尸体了——即使祷告也无能为力。",
   "buff.souls_repose": "(faith)取决于教堂品质和(gratitude_points)。",
   "active.sword": "伤害 +{0:0.##}",
   "active.shield": "护甲 +{0:0.##}",

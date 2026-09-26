@@ -18,7 +18,7 @@ namespace PrayerClarity
         private sealed class WideLayoutMarker { }
         private sealed class PrayerItemLayoutMarker { }
 
-        private const int PrayerItemContentWidth = 200;
+        private const int PrayerItemMaxWidth = 420;
 
         private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
             new ConditionalWeakTable<object, WideLayoutMarker>();
@@ -81,16 +81,13 @@ namespace PrayerClarity
                 PrayerItemLayoutMarker itemMarker;
                 if (PrayerItemLayoutData.TryGetValue(__0, out itemMarker))
                 {
-                    // Prayer item mechanics rows deliberately share one fixed content
-                    // column. This gives the left-aligned values a stable visual edge
-                    // while ResizeHeight wraps long prose instead of letting one line
-                    // stretch the whole parchment.
-                    object overflow = R.Get(label, "overflowMethod");
-                    if (overflow != null)
-                        R.Set(label, "overflowMethod", Enum.Parse(overflow.GetType(), "ResizeHeight"));
-                    R.Set(label, "width", PrayerItemContentWidth);
-                    R.Set(label, "height", 20);
+                    // Prayer-item mechanics rows keep the native ResizeFreely behavior:
+                    // short rows use only the width they need, while long prose wraps at
+                    // a finite ceiling instead of forcing every row into one fixed narrow
+                    // column. This restores balanced use of the parchment while keeping
+                    // the accepted final-wrap amount+inline-symbol repair below.
                     R.Set(label, "text", fullText);
+                    R.Set(label, "overflowWidth", PrayerItemMaxWidth);
                     string processed = R.Get(label, "processedText") as string ?? string.Empty;
 
                     // NGUI can wrap between a numeric amount and the following inline

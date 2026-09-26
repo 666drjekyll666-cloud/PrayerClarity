@@ -20,7 +20,7 @@
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
   "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
-  "rebalanced.repose.endpoint_bronze_hint": "Das Bronzegebet hat keinen Effekt mehr; Silber wird die Chance auf den besten verfügbaren Körper erhöhen; Gold wird den besten verfügbaren Körper garantieren.",
+  "rebalanced.repose.endpoint_bronze_hint": "(Das Bronzegebet hat keinen Effekt mehr; das Silbergebet erhöht die Chance auf den besten verfügbaren Körper; das Goldgebet garantiert den besten verfügbaren Körper.)",
   "rebalanced.repose.tier.bronze": "Nur der Haupteffekt",
   "rebalanced.repose.tier.silver": "Die Chance auf den besten verfügbaren Körper wird steigen.",
   "rebalanced.repose.tier.gold": "Der beste verfügbare Körper wird garantiert.",

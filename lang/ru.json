@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Повышает качество письма.",
   "tech.effect.excellence_intro": "Повышает качество изделий.",
   "tech.souls_base_faith": "Вера зависит от качества церкви и Благодарности душ.",
-  "repose.endpoint": "Получить тела ещё более высокого качества уже нельзя — даже молитва тут не поможет. (up) (skull) (rskull)",
+  "repose.endpoint": "Получить тела ещё более высокого качества уже нельзя — даже молитва тут не поможет.",
   "buff.souls_repose": "(faith) зависит от качества церкви и (gratitude_points).",
   "active.sword": "+{0:0.##} к урону",
   "active.shield": "+{0:0.##} к броне",

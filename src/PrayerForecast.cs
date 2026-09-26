@@ -223,7 +223,9 @@ namespace PrayerClarity
                 case "buff_shield":
                     return NumberedActiveResEffect("active.shield", res, "add_armor");
                 case "buff_skull":
-                    return NumberedActiveResEffect("active.skull", res, "body_max");
+                    return CorpseTierSemantics.StockReposeAddsHigherOrdinaryTier()
+                        ? NumberedActiveResEffect("active.skull", res, "body_max")
+                        : Localization.F("repose.endpoint");
                 case "buff_pen":
                     return Localization.F("active.pen", R.Float(R.Get(buff, "craft_q")));
                 case "buff_star":

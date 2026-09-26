@@ -20,7 +20,7 @@
   "rebalanced.tech.sin_shard_lore": "Unas palabras sobre por qué conviene purificar las almas a fondo.",
   "rebalanced.tech.gratitude_effect": "El estado de las almas no se deteriora con el tiempo, ni dentro del cuerpo ni después de extraerlas.\n(gratitude_points) al liberar almas: +{0:0}%",
   "rebalanced.active.sins_detailed": "Probabilidad diaria de confesión en cada confesionario: {0:0} %",
-  "rebalanced.repose.endpoint_bronze_hint": "La oración de bronce ya no tiene efecto; la de plata aumentará la probabilidad de obtener el mejor cuerpo disponible; la de oro lo garantizará.",
+  "rebalanced.repose.endpoint_bronze_hint": "(La oración de bronce ya no tiene efecto; la oración de plata aumentará la probabilidad de obtener el mejor cuerpo disponible; la oración de oro garantizará el mejor cuerpo disponible.)",
   "rebalanced.repose.tier.bronze": "Solo el efecto principal",
   "rebalanced.repose.tier.silver": "Aumentará la probabilidad de obtener el mejor cuerpo disponible.",
   "rebalanced.repose.tier.gold": "El mejor cuerpo disponible estará garantizado.",

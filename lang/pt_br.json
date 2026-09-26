@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Melhora a qualidade da escrita.",
   "tech.effect.excellence_intro": "Melhora a qualidade da fabricação.",
   "tech.souls_base_faith": "A Fé depende da qualidade da igreja e da Gratidão das almas.",
-  "repose.endpoint": "Não é mais possível obter corpos de qualidade ainda maior — nem mesmo uma oração pode ajudar. (up) (skull) (rskull)",
+  "repose.endpoint": "Não é mais possível obter corpos de qualidade ainda maior — nem mesmo uma oração pode ajudar.",
   "buff.souls_repose": "A (faith) depende da qualidade da igreja e de (gratitude_points).",
   "active.sword": "+{0:0.##} de dano",
   "active.shield": "+{0:0.##} de armadura",

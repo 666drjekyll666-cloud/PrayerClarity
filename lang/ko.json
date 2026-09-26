@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "글쓰기 품질을 높입니다.",
   "tech.effect.excellence_intro": "제작 품질을 높입니다.",
   "tech.souls_base_faith": "신앙은 교회 품질과 영혼 감사도에 따라 달라집니다.",
-  "repose.endpoint": "이제 더 높은 품질의 시체는 얻을 수 없습니다. 기도도 여기서는 도움이 되지 않습니다. (up) (skull) (rskull)",
+  "repose.endpoint": "이제 더 높은 품질의 시체는 얻을 수 없습니다. 기도도 여기서는 도움이 되지 않습니다.",
   "buff.souls_repose": "(faith)은 교회 품질과 (gratitude_points)에 따라 달라집니다.",
   "active.sword": "피해 +{0:0.##}",
   "active.shield": "방어력 +{0:0.##}",

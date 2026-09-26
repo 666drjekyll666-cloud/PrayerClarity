@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Verbessert die Schreibqualität.",
   "tech.effect.excellence_intro": "Verbessert die Herstellungsqualität.",
   "tech.souls_base_faith": "Glaube hängt von Kirchenqualität und Seelendankbarkeit ab.",
-  "repose.endpoint": "Körper von noch höherer Qualität sind nicht mehr zu bekommen — selbst ein Gebet kann dabei nicht helfen. (up) (skull) (rskull)",
+  "repose.endpoint": "Körper von noch höherer Qualität sind nicht mehr zu bekommen — selbst ein Gebet kann dabei nicht helfen.",
   "buff.souls_repose": "(faith) hängt von Kirchenqualität und (gratitude_points) ab.",
   "active.sword": "+{0:0.##} Schaden",
   "active.shield": "+{0:0.##} Rüstung",

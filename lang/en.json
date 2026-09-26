@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Improves writing quality.",
   "tech.effect.excellence_intro": "Improves crafted-item quality.",
   "tech.souls_base_faith": "Faith depends on Church Quality and Soul Gratitude.",
-  "repose.endpoint": "There are no higher-quality bodies left to obtain — even prayer cannot help here. (up) (skull) (rskull)",
+  "repose.endpoint": "There are no higher-quality bodies left to obtain — even prayer cannot help here.",
   "buff.souls_repose": "(faith) depends on Church Quality and (gratitude_points).",
   "active.sword": "+{0:0.##} damage",
   "active.shield": "+{0:0.##} armor",

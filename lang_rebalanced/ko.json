@@ -20,7 +20,7 @@
   "rebalanced.tech.sin_shard_lore": "영혼은 철저히 정화하는 편이 낫다는 몇 마디.",
   "rebalanced.tech.gratitude_effect": "영혼의 상태는 시간이 지나도 악화되지 않습니다. 시체 안에 있을 때도, 추출된 뒤에도 마찬가지입니다.\n영혼 해방으로 얻는 (gratitude_points): +{0:0}%",
   "rebalanced.active.sins_detailed": "각 고해소의 일일 고해 확률: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "동 등급 기도는 더 이상 효과가 없고, 은 등급은 현재 가능한 시체 중 최상의 시체를 받을 확률을 높이며, 금 등급은 최상의 시체를 보장합니다.",
+  "rebalanced.repose.endpoint_bronze_hint": "(동 등급 기도는 더 이상 효과가 없고, 은 등급 기도는 현재 가능한 시체 중 최상의 시체를 받을 확률을 높이며, 금 등급 기도는 최상의 시체를 보장합니다.)",
   "rebalanced.repose.tier.bronze": "기본 효과만 적용",
   "rebalanced.repose.tier.silver": "현재 가능한 시체 중 최상의 시체를 받을 확률이 높아집니다.",
   "rebalanced.repose.tier.gold": "현재 가능한 시체 중 최상의 시체가 보장됩니다.",

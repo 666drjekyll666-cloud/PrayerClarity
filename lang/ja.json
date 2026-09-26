@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "執筆品質を高めます。",
   "tech.effect.excellence_intro": "製作品質を高めます。",
   "tech.souls_base_faith": "信仰は教会の質と魂の感謝度に左右されます。",
-  "repose.endpoint": "これ以上高品質な死体はもう手に入りません。祈りでもどうにもできません。 (up) (skull) (rskull)",
+  "repose.endpoint": "これ以上高品質な死体はもう手に入りません。祈りでもどうにもできません。",
   "buff.souls_repose": "(faith)は教会の質と(gratitude_points)に左右されます。",
   "active.sword": "ダメージ +{0:0.##}",
   "active.shield": "防御 +{0:0.##}",

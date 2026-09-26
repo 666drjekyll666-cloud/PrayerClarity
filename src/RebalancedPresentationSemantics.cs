@@ -266,10 +266,42 @@ namespace PrayerClarity
             out string text,
             out string semanticKey)
         {
-            text = Localization.F("active.skull");
+            text = null;
             semanticKey = null;
 
             ReposeQualityMode mode = rule.TierValue(rule.ReposeModes, tier, ReposeQualityMode.Stock);
+            bool stockAddsHigherTier = CorpseTierSemantics.StockReposeAddsHigherOrdinaryTier();
+            bool reliabilityStillChangesDistribution =
+                CorpseTierSemantics.BestTierNarrowingChangesDistribution();
+
+            if (!stockAddsHigherTier)
+            {
+                switch (mode)
+                {
+                    case ReposeQualityMode.Stock:
+                        text = Localization.F("repose.endpoint");
+                        semanticKey = "rebalanced:repose=stock";
+                        return true;
+                    case ReposeQualityMode.HalfwayToBest:
+                        text = reliabilityStillChangesDistribution
+                            ? Localization.F("rebalanced.repose.active.silver") + " " +
+                              TechnologyTooltipTextStyle.CorpseQualityCue()
+                            : Localization.F("repose.endpoint");
+                        semanticKey = "rebalanced:repose=halfway";
+                        return true;
+                    case ReposeQualityMode.Best:
+                        text = reliabilityStillChangesDistribution
+                            ? Localization.F("rebalanced.repose.active.gold") + " " +
+                              TechnologyTooltipTextStyle.CorpseQualityCue()
+                            : Localization.F("repose.endpoint");
+                        semanticKey = "rebalanced:repose=best";
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            text = Localization.F("active.skull");
             switch (mode)
             {
                 case ReposeQualityMode.Stock:
