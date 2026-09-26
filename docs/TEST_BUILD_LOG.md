@@ -1,5 +1,24 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.38 accepted stable
+
+- User runtime acceptance: **2026-09-26**.
+- Frozen accepted ref: `accepted/rebalanced-0.2.38`.
+- Exact accepted runtime/source SHA: `6f5ef168810945135cee57082cbf90d31776e46b`.
+- CI run: `36245784593`; result: **success**.
+- Artifact ID: `10907083834`.
+- Artifact: `PrayerClarity-rebalanced-0.2.38-ci-6f5ef168810945135cee57082cbf90d31776e46b`.
+- Artifact ZIP digest: `sha256:875905412950ab7c27ded1985997cddb39b5d39a89084ad5f568cfc71acc5ecd`.
+- Accepted Rebalanced DLL SHA-256: `e547f7bb76e0ef512dc669ea30543dada5a2aeb8044b1c7ffcbe7fecf17303e5`.
+- Runtime acceptance explicitly confirmed all three 0.2.38 presentation properties:
+  1. Shoots & Roots Bronze/Silver omit the 95% combined-cap note, while Gold shows the all-sources 95% cap wording;
+  2. Gold Prayer for Donations shows its +100-silver-equivalent fixed reward as **+1 gold** at the pulpit;
+  3. Soul's Repose endpoint note uses the parenthetical presentation and the prayer effects remain correct across all three qualities.
+- Legacy Protective Prayer / `b_shield` historical item lore is intentionally preserved by product decision.
+- New follow-up wording question: the Bronze Repose endpoint note is mechanically correct but may not explain “reliability” clearly enough to a player who does not know the corpse-quality distribution system. This is a separate future wording/design task and does not invalidate 0.2.38 acceptance.
+- Stable publication must reuse the exact accepted DLL bytes above; do not rebuild 0.2.38.
+
+
 
 ## 2026-09-24 — Rebalanced 0.2.22 prayer-carousel result accepted
 

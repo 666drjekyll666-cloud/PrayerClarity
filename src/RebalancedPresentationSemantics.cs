@@ -12,7 +12,35 @@ namespace PrayerClarity
                 TryBuildActiveEffect,
                 TryBuildTechnologyEffect,
                 TryGetSoulConversion,
-                TryGetEffectivePrayEvent);
+                TryGetEffectivePrayEvent,
+                TryResolveLore);
+        }
+
+        private static bool TryResolveLore(
+            string craftId,
+            string vanillaLore,
+            out string lore)
+        {
+            lore = vanillaLore;
+
+            RebalancedPrayerRule rule;
+            int tier;
+            if (!RebalancedRuleSet.TryParseCraftId(craftId, out rule, out tier))
+                return false;
+
+            if (string.Equals(rule.PrayerId, "b_grat_points_incr", StringComparison.Ordinal))
+            {
+                lore = Localization.F("rebalanced.tech.gratitude_lore");
+                return true;
+            }
+
+            if (string.Equals(rule.PrayerId, "b_sin_shard", StringComparison.Ordinal))
+            {
+                lore = Localization.F("rebalanced.tech.sin_shard_lore");
+                return true;
+            }
+
+            return false;
         }
 
         private static bool TryGetEffectivePrayEvent(
@@ -69,10 +97,13 @@ namespace PrayerClarity
                 case "buff_plant":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.PlantTierParam);
                     if (tier <= 0 || !RebalancedRuleSet.TryGet("b_plant", out rule)) return false;
-                    text = Localization.F(
-                        "rebalanced.active.plant",
-                        rule.TierValue(rule.GrowthReduction, tier) * 100f,
-                        RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                    float growthReduction = rule.TierValue(rule.GrowthReduction, tier) * 100f;
+                    text = tier >= 3
+                        ? Localization.F(
+                            "rebalanced.active.plant",
+                            growthReduction,
+                            RebalancedRoots.MaxCombinedGrowthReduction * 100f)
+                        : Localization.F("rebalanced.tech.plant_tier", growthReduction);
                     return true;
                 case "buff_sins":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.ConfessionTierParam);
@@ -182,7 +213,9 @@ namespace PrayerClarity
 
             if (rule.SoulGratitudeBonusRate != null)
             {
-                sharedText = Localization.F("rebalanced.active.gratitude", rule.TierValue(rule.SoulGratitudeBonusRate, tier) * 100f);
+                sharedText = Localization.F(
+                    "rebalanced.tech.gratitude_effect",
+                    rule.TierValue(rule.SoulGratitudeBonusRate, tier) * 100f);
                 return true;
             }
 
@@ -217,7 +250,7 @@ namespace PrayerClarity
             if (rule.ConfessionProbability != null)
             {
                 float value = rule.TierValue(rule.ConfessionProbability, tier);
-                text = Localization.F("rebalanced.active.sins", value * 100f);
+                text = Localization.F("rebalanced.active.sins_detailed", value * 100f);
                 semanticKey = "rebalanced:confession=" + Rv(value);
                 return true;
             }

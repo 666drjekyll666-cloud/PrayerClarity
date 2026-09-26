@@ -10,11 +10,11 @@ This document is a **closure record**, not a new redesign proposal. It records w
 
 ### PrayerClarity: Vanilla
 
-- accepted/released version: **1.0.32**
-- accepted ref: `accepted/vanilla-1.0.32`
-- exact source: `aaabd3cf154faa019e36b2112439ec9990fdc1bd`
-- DLL SHA-256: `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`
-- release: `v1.0.32`
+- accepted/released version: **1.0.33**
+- accepted ref: `accepted/vanilla-1.0.33`
+- exact source: `93b66e747ffe1685003afb894b24f14416edb8c0`
+- DLL SHA-256: `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`
+- release: `v1.0.33`
 
 ### PrayerClarity: Rebalanced
 
@@ -185,7 +185,7 @@ The only known unresolved Repose item is the **terminal Donkey-progression endpo
 
 ## Vanilla verdict
 
-Vanilla 1.0.32 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
+Vanilla 1.0.33 remains a Clarity/UI-only accepted release. No gameplay architecture action is indicated.
 
 The same terminal Repose endpoint presentation case remains optional/non-blocking.
 
@@ -280,3 +280,17 @@ The mechanism adds a narrowly scoped synchronous global-data projection, but no 
 Because the executable delta is limited to these two values and the requirement-projection/native-success path is already accepted, a fresh in-game runtime test would only repeat closed evidence. Clean compilation/package validation plus exact source/diff inspection is sufficient for this release.
 
 The existing **A — architecture/save-lifecycle clean; no production action required** verdict therefore carries forward unchanged.
+
+
+### 2026-09-26 Rebalanced 0.2.38 addendum
+
+The accepted 0.2.17+ mechanics changes and 0.2.24–0.2.38 presentation work preserve the established architecture ownership model:
+
+- Donations remains a static rule/output projection; the 0.2.38 denomination change is presentation-only and uses the game's native money formatter.
+- Better Save Soul Soul's Repose uses the verified tier-matched native sermon event plus a narrow success-only Soul Gratitude conversion; Soul Contentment and Thorough Cleansing remain on their accepted narrow runtime seams.
+- prayer-item, Technology, controller-carousel, pulpit layout and language-font changes are UI lifecycle work and add no gameplay polling or save-owned parallel state;
+- the long-text pulpit fix grows the native-owned window so existing NGUI button anchors remain authoritative;
+- live language switching reuses the game's own GJL font owner at redraw;
+- Roots keeps the accepted 95% mechanical cap; 0.2.38 changes only which active-effect tiers explain that cap.
+
+No new persistent gameplay owner, background loop, duplicated host simulation, save serializer, or broad runtime scan was introduced. The existing **A — architecture/save-lifecycle clean; no production action required** verdict carries forward to Rebalanced 0.2.38.

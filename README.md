@@ -4,26 +4,26 @@ PrayerClarity is a pair of alternative BepInEx mods for **Graveyard Keeper 1.407
 
 ## Editions
 
-### PrayerClarity: Vanilla — 1.0.32
+### PrayerClarity: Vanilla — 1.0.33
 
 *Understand what your prayers actually do — without changing how they work.*
 
 Keeps Graveyard Keeper's stock prayer mechanics and balance intact while improving prayer descriptions, quality comparisons, success requirements, pulpit information, item tooltips, and Character -> Temporary Effects.
 
-[Download PrayerClarity: Vanilla 1.0.32](https://github.com/NikichMods/PrayerClarity/releases/tag/v1.0.32)
+[Download PrayerClarity: Vanilla 1.0.33](https://github.com/NikichMods/PrayerClarity/releases/tag/v1.0.33)
 
-### PrayerClarity: Rebalanced — 0.2.16
+### PrayerClarity: Rebalanced — 0.2.38
 
 Uses the same Clarity presentation layer, but intentionally rebalances and repairs the prayer roster so different prayers and qualities create more meaningful choices. Runtime-sensitive prayer effects are implemented through narrow Graveyard Keeper-native seams where verified.
 
-[Download PrayerClarity: Rebalanced 0.2.16](https://github.com/NikichMods/PrayerClarity/releases/tag/rebalanced-v0.2.16)
+[Download PrayerClarity: Rebalanced 0.2.38](https://github.com/NikichMods/PrayerClarity/releases/tag/rebalanced-v0.2.38)
 
 **Install one edition, not both.**
 
 ## Current stable differences
 
-- **Vanilla 1.0.32:** keeps stock 1.407 prayer mechanics/balance while carrying the accepted compact Clarity hierarchy, parenthetical Base-result dependencies, cleaner item rewards and prayer-item spacing, the stock Prayer for Excellence lore fallback, and the clearer Technology success-condition hierarchy using **On success:** / **При успехе:**.
-- **Rebalanced 0.2.16:** includes the same Clarity layer plus the accepted full-roster rebalance; specialist prayers keep only their own success role instead of generic Faith/donation garnish, Donations pays +5/+15/+30 silver, Combo scales Faith +100/+150/+200% and donations +100/+200/+300%, Repose uses q20/q40/q95 with Gold guaranteeing the maximum total skull count inside the best currently available corpse tier, Excellence uses q20/q60/q95, Roots keeps the 95% combined growth-time safety cap, and Technology uses the same concise **On success:** / **При успехе:** hierarchy as Vanilla.
+- **Vanilla 1.0.33:** keeps stock 1.407 prayer mechanics/balance and includes the accepted Clarity presentation plus the generalized gamepad prayer-Technology carousel.
+- **Rebalanced 0.2.38:** includes the same Clarity layer plus the accepted full-roster rebalance, later Better Save Soul rework, robust localized pulpit layout/font handling, Gold-only Roots 95% cap wording, native 1-gold display for Gold Donations at the pulpit, and the accepted Repose reliability note presentation.
 
 ## Shared clarity features
 

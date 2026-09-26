@@ -11,6 +11,7 @@ namespace PrayerClarity
     internal static class TechnologyTooltipViewportClamp
     {
         private const float SafeMarginPixels = 24f;
+        private const float SelectedUnlockGapPixels = 12f;
         private const string GamepadTooltipPositionFixHarmonyId = "nikich.gyk.movegamepadtooltips";
 
         private sealed class Marker
@@ -22,11 +23,28 @@ namespace PrayerClarity
         private sealed class BubbleState
         {
             internal readonly Component Root;
-            internal BubbleState(Component root) { Root = root; }
+            internal readonly object Tooltip;
+            internal BubbleState(Component root, object tooltip)
+            {
+                Root = root;
+                Tooltip = tooltip;
+            }
+        }
+
+        private sealed class AvoidanceState
+        {
+            internal readonly object Widget;
+            internal readonly Component Component;
+            internal AvoidanceState(object widget, Component component)
+            {
+                Widget = widget;
+                Component = component;
+            }
         }
 
         private static readonly ConditionalWeakTable<object, Marker> OwnedTooltips = new ConditionalWeakTable<object, Marker>();
         private static readonly ConditionalWeakTable<object, BubbleState> OwnedBubbles = new ConditionalWeakTable<object, BubbleState>();
+        private static readonly ConditionalWeakTable<object, AvoidanceState> AvoidanceTargets = new ConditionalWeakTable<object, AvoidanceState>();
 
         private static ManualLogSource _log;
         private static bool _installed;
@@ -36,6 +54,7 @@ namespace PrayerClarity
         private static Func<object, object> _widgetGetter;
         private static Func<object, int> _widgetWidthGetter;
         private static Func<object, int> _widgetHeightGetter;
+        private static Func<object, Vector2> _widgetPivotOffsetGetter;
         private static Func<object, int> _manualHeightGetter;
 
         internal static void Install(string harmonyId, ManualLogSource log)
@@ -53,12 +72,15 @@ namespace PrayerClarity
             Type widgetType = MemberType(widget);
             MemberInfo width = RequireMember(widgetType, "width");
             MemberInfo height = RequireMember(widgetType, "height");
+            MemberInfo pivotOffset = FindMember(widgetType, "pivotOffset");
             MemberInfo manualHeight = RequireMember(_uiRootType, "manualHeight");
 
             _linkedTooltipGetter = CompileGetter<object>(tooltipType, linkedTooltip);
             _widgetGetter = CompileGetter<object>(bubbleType, widget);
             _widgetWidthGetter = CompileGetter<int>(widgetType, width);
             _widgetHeightGetter = CompileGetter<int>(widgetType, height);
+            if (pivotOffset != null)
+                _widgetPivotOffsetGetter = CompileGetter<Vector2>(widgetType, pivotOffset);
             _manualHeightGetter = CompileGetter<int>(_uiRootType, manualHeight);
 
             MethodInfo tooltipShow = R.Method(tooltipType, "Show", false, new[] { typeof(bool) });
@@ -86,9 +108,26 @@ namespace PrayerClarity
             OwnedTooltips.Add(tooltip, Marker.Instance);
         }
 
+        internal static void SetSelectedUnlockAvoidance(object tooltip, object widget)
+        {
+            if (!_installed || tooltip == null) return;
+
+            AvoidanceTargets.Remove(tooltip);
+            Component component = widget as Component;
+            if (widget != null && component != null)
+                AvoidanceTargets.Add(tooltip, new AvoidanceState(widget, component));
+        }
+
+        internal static void ClearSelectedUnlockAvoidance(object tooltip)
+        {
+            if (tooltip != null) AvoidanceTargets.Remove(tooltip);
+        }
+
         private static void TooltipClearPostfix(object __instance)
         {
-            if (__instance != null) OwnedTooltips.Remove(__instance);
+            if (__instance == null) return;
+            OwnedTooltips.Remove(__instance);
+            AvoidanceTargets.Remove(__instance);
         }
 
         private static void TooltipShowPostfix(object __instance)
@@ -109,7 +148,7 @@ namespace PrayerClarity
                 if (root == null) return;
 
                 OwnedBubbles.Remove(bubble);
-                OwnedBubbles.Add(bubble, new BubbleState(root));
+                OwnedBubbles.Add(bubble, new BubbleState(root, __instance));
             }
             catch (Exception ex)
             {
@@ -154,13 +193,214 @@ namespace PrayerClarity
                 float x = ClampAxis(position.x, left, right, width, margin);
                 float y = ClampAxis(position.y, bottom, top, height, margin);
 
-                if (Math.Abs(x - position.x) <= 0.01f && Math.Abs(y - position.y) <= 0.01f) return;
-                bubble.transform.localPosition = new Vector3(x, y, position.z);
+                if (Math.Abs(x - position.x) > 0.01f || Math.Abs(y - position.y) > 0.01f)
+                    bubble.transform.localPosition = new Vector3(x, y, position.z);
+
+                AvoidSelectedUnlock(
+                    bubble,
+                    widget,
+                    state,
+                    left + margin,
+                    right - margin,
+                    bottom + margin,
+                    top - margin,
+                    SelectedUnlockGapPixels * scale);
             }
             catch (Exception ex)
             {
                 DisableAfterRuntimeFailure("clamping Technology tooltip bubble", ex);
             }
+        }
+
+        private static void AvoidSelectedUnlock(
+            Component bubble,
+            object bubbleWidget,
+            BubbleState state,
+            float safeLeft,
+            float safeRight,
+            float safeBottom,
+            float safeTop,
+            float gap)
+        {
+            if (_widgetPivotOffsetGetter == null || state == null || state.Tooltip == null)
+                return;
+
+            AvoidanceState target;
+            if (!AvoidanceTargets.TryGetValue(state.Tooltip, out target) ||
+                target == null ||
+                target.Component == null ||
+                !target.Component.gameObject.activeInHierarchy)
+                return;
+
+            Rect bubbleRect;
+            Rect targetRect;
+            if (!TryGetRectInRoot(bubbleWidget, bubble, state.Root, out bubbleRect) ||
+                !TryGetRectInRoot(target.Widget, target.Component, state.Root, out targetRect))
+                return;
+
+            Rect keepOut = Rect.MinMaxRect(
+                targetRect.xMin - gap,
+                targetRect.yMin - gap,
+                targetRect.xMax + gap,
+                targetRect.yMax + gap);
+
+            if (!Overlaps(bubbleRect, keepOut)) return;
+
+            Vector2 best = Vector2.zero;
+            float bestScore = float.PositiveInfinity;
+            bool found = false;
+
+            EvaluateCandidate(
+                bubbleRect,
+                keepOut,
+                new Vector2(keepOut.xMin - bubbleRect.xMax, 0f),
+                0f,
+                safeLeft,
+                safeRight,
+                safeBottom,
+                safeTop,
+                ref found,
+                ref best,
+                ref bestScore);
+            EvaluateCandidate(
+                bubbleRect,
+                keepOut,
+                new Vector2(keepOut.xMax - bubbleRect.xMin, 0f),
+                0f,
+                safeLeft,
+                safeRight,
+                safeBottom,
+                safeTop,
+                ref found,
+                ref best,
+                ref bestScore);
+
+            // Horizontal separation is the product rule. Vertical separation is only
+            // a fallback for narrow aspect ratios / unusually wide localizations.
+            EvaluateCandidate(
+                bubbleRect,
+                keepOut,
+                new Vector2(0f, keepOut.yMin - bubbleRect.yMax),
+                1000000f,
+                safeLeft,
+                safeRight,
+                safeBottom,
+                safeTop,
+                ref found,
+                ref best,
+                ref bestScore);
+            EvaluateCandidate(
+                bubbleRect,
+                keepOut,
+                new Vector2(0f, keepOut.yMax - bubbleRect.yMin),
+                1000000f,
+                safeLeft,
+                safeRight,
+                safeBottom,
+                safeTop,
+                ref found,
+                ref best,
+                ref bestScore);
+
+            if (!found || best.sqrMagnitude <= 0.0001f) return;
+
+            Transform root = state.Root.transform;
+            Vector3 currentRoot = root.InverseTransformPoint(bubble.transform.position);
+            Vector3 desiredRoot = currentRoot + new Vector3(best.x, best.y, 0f);
+            bubble.transform.position = root.TransformPoint(desiredRoot);
+        }
+
+        private static void EvaluateCandidate(
+            Rect bubble,
+            Rect keepOut,
+            Vector2 requested,
+            float directionPenalty,
+            float safeLeft,
+            float safeRight,
+            float safeBottom,
+            float safeTop,
+            ref bool found,
+            ref Vector2 best,
+            ref float bestScore)
+        {
+            Vector2 delta = requested;
+            Rect moved = OffsetRect(bubble, delta);
+
+            if (moved.xMin < safeLeft) delta.x += safeLeft - moved.xMin;
+            if (moved.xMax > safeRight) delta.x += safeRight - moved.xMax;
+            if (moved.yMin < safeBottom) delta.y += safeBottom - moved.yMin;
+            if (moved.yMax > safeTop) delta.y += safeTop - moved.yMax;
+
+            moved = OffsetRect(bubble, delta);
+            const float epsilon = 0.01f;
+            if (moved.xMin < safeLeft - epsilon ||
+                moved.xMax > safeRight + epsilon ||
+                moved.yMin < safeBottom - epsilon ||
+                moved.yMax > safeTop + epsilon ||
+                Overlaps(moved, keepOut))
+                return;
+
+            float score = directionPenalty + delta.sqrMagnitude;
+            if (found && score >= bestScore) return;
+
+            found = true;
+            best = delta;
+            bestScore = score;
+        }
+
+        private static Rect OffsetRect(Rect rect, Vector2 delta)
+        {
+            return Rect.MinMaxRect(
+                rect.xMin + delta.x,
+                rect.yMin + delta.y,
+                rect.xMax + delta.x,
+                rect.yMax + delta.y);
+        }
+
+        private static bool Overlaps(Rect a, Rect b)
+        {
+            return a.xMin < b.xMax &&
+                   a.xMax > b.xMin &&
+                   a.yMin < b.yMax &&
+                   a.yMax > b.yMin;
+        }
+
+        private static bool TryGetRectInRoot(
+            object widget,
+            Component component,
+            Component root,
+            out Rect rect)
+        {
+            rect = new Rect();
+            if (widget == null || component == null || root == null || _widgetPivotOffsetGetter == null)
+                return false;
+
+            int width = _widgetWidthGetter(widget);
+            int height = _widgetHeightGetter(widget);
+            if (width <= 0 || height <= 0) return false;
+
+            Vector2 pivot = _widgetPivotOffsetGetter(widget);
+            float x0 = -pivot.x * width;
+            float y0 = -pivot.y * height;
+            float x1 = x0 + width;
+            float y1 = y0 + height;
+
+            Transform widgetTransform = component.transform;
+            Transform rootTransform = root.transform;
+
+            Vector3 p0 = rootTransform.InverseTransformPoint(widgetTransform.TransformPoint(new Vector3(x0, y0, 0f)));
+            Vector3 p1 = rootTransform.InverseTransformPoint(widgetTransform.TransformPoint(new Vector3(x0, y1, 0f)));
+            Vector3 p2 = rootTransform.InverseTransformPoint(widgetTransform.TransformPoint(new Vector3(x1, y0, 0f)));
+            Vector3 p3 = rootTransform.InverseTransformPoint(widgetTransform.TransformPoint(new Vector3(x1, y1, 0f)));
+
+            float minX = Math.Min(Math.Min(p0.x, p1.x), Math.Min(p2.x, p3.x));
+            float maxX = Math.Max(Math.Max(p0.x, p1.x), Math.Max(p2.x, p3.x));
+            float minY = Math.Min(Math.Min(p0.y, p1.y), Math.Min(p2.y, p3.y));
+            float maxY = Math.Max(Math.Max(p0.y, p1.y), Math.Max(p2.y, p3.y));
+
+            if (maxX <= minX || maxY <= minY) return false;
+            rect = Rect.MinMaxRect(minX, minY, maxX, maxY);
+            return true;
         }
 
         private static float ClampAxis(float value, float low, float high, float size, float margin)
@@ -227,11 +467,21 @@ namespace PrayerClarity
 
         private static MemberInfo RequireMember(Type type, string name)
         {
-            FieldInfo field = type.GetField(name, R.Inst);
-            if (field != null) return field;
-            PropertyInfo property = type.GetProperty(name, R.Inst);
-            if (property != null && property.CanRead) return property;
+            MemberInfo member = FindMember(type, name);
+            if (member != null) return member;
             throw new MissingMemberException(type.FullName, name);
+        }
+
+        private static MemberInfo FindMember(Type type, string name)
+        {
+            for (Type current = type; current != null; current = current.BaseType)
+            {
+                FieldInfo field = current.GetField(name, R.Inst);
+                if (field != null) return field;
+                PropertyInfo property = current.GetProperty(name, R.Inst);
+                if (property != null && property.CanRead) return property;
+            }
+            return null;
         }
 
         private static Type MemberType(MemberInfo member)

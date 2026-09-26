@@ -45,8 +45,6 @@ namespace PrayerClarity
         private static MethodInfo _tooltipsRedraw;
         private static readonly Dictionary<object, State> States =
             new Dictionary<object, State>(ReferenceComparer.Instance);
-        private static readonly HashSet<string> LoggedTargets =
-            new HashSet<string>(StringComparer.Ordinal);
         private static State _active;
         private static int _pendingHorizontalDirection;
         private static int _pendingHorizontalFrame = -1;
@@ -136,15 +134,6 @@ namespace PrayerClarity
 
                 States[__instance] = state;
                 RebuildSelectedTooltip(state, false);
-
-                string techId = Convert.ToString(Get(__instance, "tech_id")) ?? "<unknown>";
-                if (LoggedTargets.Add(techId))
-                {
-                    _log?.LogInfo(
-                        "PC_CAROUSEL_TARGET tech_id=" + techId +
-                        " prayer_labels=" + string.Join(",", state.PrayerLabels.ToArray()) +
-                        " unlock_ids=" + string.Join(",", state.Unlocks.Select(GetId).ToArray()));
-                }
             }
             catch (Exception ex)
             {
@@ -175,7 +164,6 @@ namespace PrayerClarity
                 _pendingHorizontalFrame = -1;
 
                 ApplyHighlight(state);
-                LogSelection(state, "focus");
             }
             catch (Exception ex)
             {
@@ -191,6 +179,7 @@ namespace PrayerClarity
                 if (!States.TryGetValue(__instance, out state)) return;
 
                 RestoreHighlight(state);
+                TechnologyTooltipViewportClamp.ClearSelectedUnlockAvoidance(state.Tooltip);
                 if (ReferenceEquals(_active, state)) _active = null;
             }
             catch (Exception ex)
@@ -223,6 +212,7 @@ namespace PrayerClarity
                     if (item == null || !item.gameObject.activeInHierarchy)
                     {
                         RestoreHighlight(state);
+                        TechnologyTooltipViewportClamp.ClearSelectedUnlockAvoidance(state.Tooltip);
                         _active = null;
                     }
                     else
@@ -233,7 +223,6 @@ namespace PrayerClarity
                             state.SelectedIndex = nextIndex;
                             RebuildSelectedTooltip(state, true);
                             ApplyHighlight(state);
-                            LogSelection(state, direction < 0 ? "left" : "right");
 
                             result = true;
                             return false;
@@ -350,6 +339,8 @@ namespace PrayerClarity
             _tooltipClearData.Invoke(state.Tooltip, null);
             getTooltip.Invoke(unlock, new[] { state.Tooltip });
 
+            BindSelectedUnlockAvoidance(state);
+
             if (redraw)
                 _tooltipsRedraw.Invoke(null, null);
         }
@@ -357,6 +348,8 @@ namespace PrayerClarity
         private static void ApplyHighlight(State state)
         {
             if (state == null) return;
+
+            BindSelectedUnlockAvoidance(state);
 
             for (int i = 0; i < state.Children.Count && i < state.Unlocks.Count; i++)
             {
@@ -389,18 +382,18 @@ namespace PrayerClarity
             state.OriginalSpriteColors.Clear();
         }
 
-        private static void LogSelection(State state, string reason)
+        private static void BindSelectedUnlockAvoidance(State state)
         {
-            if (state == null ||
-                state.SelectedIndex < 0 ||
-                state.SelectedIndex >= state.Unlocks.Count)
+            if (state == null || state.Tooltip == null)
                 return;
 
-            _log?.LogInfo(
-                "PC_CAROUSEL_SELECT reason=" + reason +
-                " index=" + (state.SelectedIndex + 1) + "/" + state.Unlocks.Count +
-                " prayer=" + state.PrayerLabels[state.SelectedIndex] +
-                " unlock_id=" + GetId(state.Unlocks[state.SelectedIndex]));
+            TechnologyTooltipViewportClamp.MarkTechnologyTooltip(state.Tooltip);
+
+            object sprite = null;
+            if (state.SelectedIndex >= 0 && state.SelectedIndex < state.Children.Count)
+                sprite = Get(state.Children[state.SelectedIndex], "spr");
+
+            TechnologyTooltipViewportClamp.SetSelectedUnlockAvoidance(state.Tooltip, sprite);
         }
 
         private static void Patch(MethodInfo target, string prefixName, string postfixName)

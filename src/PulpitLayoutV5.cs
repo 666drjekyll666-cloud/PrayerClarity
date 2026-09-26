@@ -53,6 +53,7 @@ namespace PrayerClarity
         private static object _effectIcon;
         private static object _noteLabel;
         private static bool _captured;
+        private static int _dynamicExtraHeight;
 
         internal static void Apply(object template, object gui, PrayerForecast.Result forecast)
         {
@@ -60,6 +61,11 @@ namespace PrayerClarity
             _template = template;
             _gui = gui;
             _forecast = forecast;
+
+            // Recompute content-driven height from the accepted baseline on every
+            // host redraw. The native anchored craft button then follows the root
+            // window bottom; PrayerClarity does not own its final transform.
+            _dynamicExtraHeight = 0;
 
             Capture(template);
             OverrideSpecialPresentation(gui, forecast);
@@ -81,6 +87,7 @@ namespace PrayerClarity
 
         internal static void Restore()
         {
+            _dynamicExtraHeight = 0;
             if (!_captured) return;
 
             // Restore the owner rectangle first. The container is anchored on all four
@@ -188,6 +195,10 @@ namespace PrayerClarity
                 }
             }
 
+            // ResultHeader is created by this layout layer after PulpitPresentation's
+            // font refresh, so explicitly bind it to the current language as well.
+            R.EnsureLabelHasCorrectFont(_resultHeaderLabel);
+
             GameObject headerGo = _resultHeaderLabel == null ? null : R.Get(_resultHeaderLabel, "gameObject") as GameObject;
             if (headerGo != null) headerGo.SetActive(true);
         }
@@ -204,12 +215,29 @@ namespace PrayerClarity
             return type == null ? null : transform.gameObject.GetComponent(type);
         }
 
+        internal static bool GrowWindowForButtonClearance(float requiredDownward)
+        {
+            if (!_captured || _windowState == null || requiredDownward <= 0f) return false;
+
+            // The root window is unanchored and grows around its centre. The native
+            // craft-button UILabel is bottom-anchored to this window, so increasing
+            // total root height by 2*d moves that button down by d while the stock
+            // all-sides-anchored content container keeps its centre fixed.
+            // Keep a tiny integer-rounding guard and make the request idempotent.
+            int growth = Mathf.Max(2, Mathf.CeilToInt(requiredDownward * 2f) + 2);
+            _dynamicExtraHeight = Mathf.Max(_dynamicExtraHeight, growth);
+            ApplyWindowGeometry();
+            return true;
+        }
+
         private static void ApplyWindowGeometry()
         {
             if (!_captured || _windowState == null) return;
 
             int extraW = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraWidth.Value));
-            int extraH = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraHeight.Value));
+            int extraH =
+                Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraHeight.Value)) +
+                Mathf.Max(0, _dynamicExtraHeight);
             float halfW = extraW * 0.5f;
             float halfH = extraH * 0.5f;
 
@@ -421,13 +449,19 @@ namespace PrayerClarity
                     out semanticKey);
 
                 bool stockAddsHigherTier = CorpseTierSemantics.StockReposeAddsHigherOrdinaryTier();
-                bool reliabilityStillChangesDistribution =
+                bool premiumCanStillChangeDistribution =
                     hasRebalancedSemantics &&
-                    forecast.QualityTier >= 2 &&
                     CorpseTierSemantics.BestTierNarrowingChangesDistribution();
+                bool reliabilityStillChangesDistribution =
+                    forecast.QualityTier >= 2 &&
+                    premiumCanStillChangeDistribution;
 
                 if (!stockAddsHigherTier && !reliabilityStillChangesDistribution)
+                {
                     forecast.SpecialText = Localization.F("repose.endpoint");
+                    if (forecast.QualityTier == 1 && premiumCanStillChangeDistribution)
+                        forecast.SpecialText += "\n" + Localization.F("rebalanced.repose.endpoint_bronze_hint");
+                }
                 else if (!hasRebalancedSemantics)
                     forecast.SpecialText = Localization.F("buff.skull", 1f, duration);
 
@@ -476,7 +510,21 @@ namespace PrayerClarity
 
             if (craftId.StartsWith("pray:b_sin_shard:", StringComparison.Ordinal))
             {
-                forecast.SpecialText = Localization.F("buff.sin_shard", duration);
+                string rebalancedText;
+                string semanticKey;
+                if (PrayerEditionSemantics.TryBuildTierEffect(
+                    craftId,
+                    "buff_sin_shard",
+                    out rebalancedText,
+                    out semanticKey))
+                {
+                    forecast.SpecialText = rebalancedText;
+                }
+                else
+                {
+                    forecast.SpecialText = Localization.F("buff.sin_shard", duration);
+                }
+
                 forecast.SpecialIconName = "i_sin_shard";
             }
         }

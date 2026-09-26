@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Améliore la qualité d’écriture.",
   "tech.effect.excellence_intro": "Améliore la qualité de fabrication.",
   "tech.souls_base_faith": "La Foi dépend de la qualité de l’église et de la Gratitude des âmes.",
-  "repose.endpoint": "Aucun corps de meilleure qualité n’est disponible.",
+  "repose.endpoint": "La qualité maximale disponible des corps est déjà atteinte — cette prière ne peut pas débloquer de corps de meilleure qualité.",
   "buff.souls_repose": "La (faith) dépend de la qualité de l’église et de (gratitude_points).",
   "active.sword": "+{0:0.##} dégâts",
   "active.shield": "+{0:0.##} armure",
@@ -35,5 +35,7 @@
   "tech.base_result": "Résultat de base",
   "tech.percent_of_base": "{0} de la valeur de base",
   "active.timer_days_compact": "{0:0.0}",
-  "tech.on_success_header": "En cas de succès :"
+  "tech.on_success_header": "En cas de succès :",
+  "forecast.current_success_chance": "Chance de réussite actuelle : {0} %",
+  "item.sermon_success": "Réussite du sermon"
 }

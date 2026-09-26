@@ -5,6 +5,7 @@ namespace PrayerClarity
     internal delegate bool PrayerTechnologyEffectResolver(string craftId, out string sharedText, out string tierText);
     internal delegate bool PrayerSoulConversionResolver(string craftId, out int cap, out int conversion);
     internal delegate bool PrayerEventResolver(string craftId, string currentEventId, out string effectiveEventId);
+    internal delegate bool PrayerLoreOverrideResolver(string craftId, string vanillaLore, out string lore);
 
     // Shared presentation seam for sibling editions. Vanilla leaves it unconfigured;
     // Rebalanced installs its provider during plugin initialization. Shared Clarity
@@ -16,19 +17,22 @@ namespace PrayerClarity
         private static PrayerTechnologyEffectResolver _technologyEffect;
         private static PrayerSoulConversionResolver _soulConversion;
         private static PrayerEventResolver _prayEvent;
+        private static PrayerLoreOverrideResolver _loreOverride;
 
         internal static void Install(
             PrayerTierEffectResolver tierEffect,
             PrayerActiveEffectResolver activeEffect,
             PrayerTechnologyEffectResolver technologyEffect = null,
             PrayerSoulConversionResolver soulConversion = null,
-            PrayerEventResolver prayEvent = null)
+            PrayerEventResolver prayEvent = null,
+            PrayerLoreOverrideResolver loreOverride = null)
         {
             _tierEffect = tierEffect;
             _activeEffect = activeEffect;
             _technologyEffect = technologyEffect;
             _soulConversion = soulConversion;
             _prayEvent = prayEvent;
+            _loreOverride = loreOverride;
         }
 
         internal static bool TryBuildTierEffect(string craftId, string buffId, out string text, out string semanticKey)
@@ -61,6 +65,17 @@ namespace PrayerClarity
             cap = 0;
             conversion = 0;
             return _soulConversion != null && _soulConversion(craftId, out cap, out conversion);
+        }
+
+        internal static bool TryResolveLoreOverride(
+            string craftId,
+            string vanillaLore,
+            out string lore)
+        {
+            lore = vanillaLore;
+            return _loreOverride != null &&
+                   _loreOverride(craftId, vanillaLore, out lore) &&
+                   !string.IsNullOrEmpty(lore);
         }
 
         internal static bool TryGetEffectivePrayEvent(
