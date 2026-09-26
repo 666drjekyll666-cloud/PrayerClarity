@@ -40,23 +40,23 @@ jobs:
           dll='bin/PulpitGeometryProbe/PrayerClarity.PulpitGeometryProbe.dll'
           test -f "$dll"
           mkdir -p dist
-          handoff='PrayerClarity.PulpitGeometryProbe-0.1.0-ci.dll'
+          handoff='PrayerClarity.PulpitGeometryProbe-0.1.1-ci.dll'
           cp "$dll" "dist/$handoff"
           sha256=$(sha256sum "dist/$handoff" | awk '{print $1}')
           {
-            echo "Version: 0.1.0"
+            echo "Version: 0.1.1"
             echo "Source SHA: $GITHUB_SHA"
             echo "Handoff DLL: $handoff"
             echo "DLL SHA-256: $sha256"
-            echo "Target production candidate: PrayerClarity: Rebalanced 0.2.33"
-            echo "Question: which post-render NGUI bounds are actually present for the Effect label, craft button widgets, anchored container and root window, and why did 0.2.33 not request root-window growth?"
+            echo "Target production candidate: PrayerClarity: Rebalanced 0.2.35"
+            echo "Question: after 0.2.35 fails to preserve its final button correction, what anchor/component state owns the craft-button geometry, and what full visible-button bounds remain after settlement?"
             echo "Behavior: read-only F8 geometry dump; no Harmony patches; no UI/game/save mutation."
           } > dist/BUILD_INFO.txt
           echo "handoff=$handoff" >> "$GITHUB_OUTPUT"
       - name: Upload research DLL
         uses: actions/upload-artifact@v4
         with:
-          name: PrayerClarity-PulpitGeometryProbe-0.1.0-ci-${{ github.sha }}
+          name: PrayerClarity-PulpitGeometryProbe-0.1.1-ci-${{ github.sha }}
           path: |
             dist/${{ steps.artifact.outputs.handoff }}
             dist/BUILD_INFO.txt
