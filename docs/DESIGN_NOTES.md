@@ -231,6 +231,20 @@ No new balance round is required unless implementation evidence contradicts an a
 
 ## Current engineering state
 
-The current stable implementation line is Rebalanced 0.2.14. It retains the accepted 0.2.3 Repentance/Combat native seams, the 0.2.2 Roots safety repair, the 0.2.4 Repentance/Repose 30/42/54-minute duration projection, ordinary Gold Repose q60, the 0.2.13 specialist-purity/resource/Soul presentation work, and now uses the same concise Technology **On success:** / **При успехе:** heading as Vanilla 1.0.32. `POST_AUDIT_VERDICT.md` remains the gameplay/save-lifecycle closure at **A — no architecture action**.
+The current **public stable** Rebalanced release is 0.2.23. The current **accepted Rebalanced development/runtime baseline** is 0.2.37, frozen at `accepted/rebalanced-0.2.37` / `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05`. This distinction is intentional: runtime acceptance of 0.2.37 does not by itself publish it as the public stable release.
+
+The accepted 0.2.37 line carries forward the closed gameplay/save-lifecycle architecture from `POST_AUDIT_VERDICT.md` (**A — no architecture action**) and adds later accepted presentation/runtime work, including the common prayer-item amount+inline-icon wrap repair and the pulpit native-anchor/language-font fixes accepted on 2026-09-26.
 
 There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.
+
+### Current actionable UX / presentation backlog
+
+The 2026-09-26 post-0.2.37 review found **one actionable queued micro-change**:
+
+- **Soul's Repose reliability note:** keep the accepted meaning of the final Silver/Gold reliability sentence, but present it parenthetically so it reads as a note rather than another primary effect sentence. This is presentation-only and intentionally **queued**, not a reason by itself to consume a new version/DLL. Its own per-change gate must be recorded before the eventual production-source mutation, and it should ride the next natural coherent presentation candidate if another READY item appears.
+
+Known evidence gaps that are **not** active UX backlog:
+- terminal ordinary Repose endpoint wording/presentation remains optional/non-blocking until a naturally available save reaches that progression state;
+- the physical three-Story payout from a real successful Silver/Gold Imagination sermon remains an evidence gap on a verified native drop path, not a current presentation defect.
+
+No other current canonical UX document contains an unresolved production-facing presentation problem that justifies a candidate now. `PLAYER_UX_RESEARCH.md` explicitly has no open UX-research gate; historical candidate notes and rejected experiments are not backlog.
