@@ -1613,3 +1613,16 @@ Research helper identity:
   1. long localized Effect text now obtains sufficient bottom clearance through native-anchor-driven root-window growth without permanent button-transform fighting;
   2. PrayerClarity-owned pulpit UILabels now rejoin the game's native GJL current-language font lifecycle on redraw, preventing stale CJK/Latin/Cyrillic font inheritance across live language changes.
 - This is an accepted runtime behavior result for 0.2.37. It does **not** by itself promote 0.2.37 / Vanilla 1.0.46 to the public stable line; stable promotion remains a separate user decision.
+
+
+### 2026-09-26 — Rebalanced 0.2.37 frozen as accepted runtime baseline
+
+- Exact accepted runtime/source SHA: `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05`.
+- Frozen accepted ref: `accepted/rebalanced-0.2.37`.
+- Accepted Rebalanced DLL SHA-256: `6498e120809832a7efdb9ec17fd1a36e91e1faee9e102de083f35d6804f612dc`.
+- User runtime acceptance already closed both pending pulpit properties on exact 0.2.37:
+  1. long localized Effect text clears the full visible action button through native-anchor-driven root-window growth while short Faith remains compact;
+  2. PrayerClarity-owned pulpit UILabels follow the current-language GJL font lifecycle across live CJK / Latin / Cyrillic switching.
+- This ref is the current **accepted Rebalanced development/runtime baseline** for future candidates.
+- This bookkeeping step does **not** publish 0.2.37 as the current public stable GitHub/Nexus release and does not imply acceptance of the untested Vanilla sibling 1.0.46.
+- No new runtime test or hosted CI is required for this ref/docs-only closure.
