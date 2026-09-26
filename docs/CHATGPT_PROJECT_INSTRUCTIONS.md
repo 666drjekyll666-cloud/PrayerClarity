@@ -46,9 +46,13 @@ There is no small/obvious/presentation-only/follow-up exception. **BLOCKED means
 
 Treat the reported defect/request as the default scope. Adjacent wording, mechanics, layout, data semantics, lifecycle, and other nearby behavior are preserved unless the proved path requires changing them or the user separately accepts the additional change.
 
-Do not optimize for fewer in-game test cycles or candidate versions by bypassing or combining unresolved gates. Do not bundle independent unresolved hypotheses into one production candidate.
+Do not optimize for fewer in-game test cycles or candidate versions by bypassing or combining unresolved gates.
 
-For numbered PrayerClarity production candidates, follow the repository's `docs/CANDIDATE_GATE_TEMPLATE.json` / candidate-CI contract. Research-only Test Console/probe builds remain separate.
+Treat gate granularity and candidate/build granularity separately. Several materially independent **READY** changes may share one coherent PrayerClarity candidate when their interactions are understood and the combined acceptance pass still proves each changed property clearly enough for failures to remain attributable. A non-urgent READY micro-change may wait for the next natural candidate boundary rather than consuming its own version/DLL.
+
+Do not use batching to hide uncertainty: **BLOCKED** changes and independent unverified mechanisms stay separate, and split candidates whenever combined testing would materially weaken diagnosis or rollback clarity.
+
+For numbered PrayerClarity production candidates, follow the repository's `docs/CANDIDATE_GATE_TEMPLATE.json` / candidate-CI contract and list each independent included change separately in the gate's `changes` array. Research-only Test Console/probe builds remain separate.
 
 ## Research and knowledge
 
