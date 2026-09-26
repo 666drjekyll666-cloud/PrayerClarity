@@ -54,7 +54,7 @@
       "id": "repose-reliability-parenthetical-note",
       "observable_property": "When Bronze Soul's Repose is at the endpoint where its direct quality improvement is exhausted but Silver/Gold can still improve reliability, the explanatory Silver/Gold sentence is rendered as a parenthetical note rather than a peer primary-effect sentence.",
       "canonical_owner": "PulpitLayoutV5.OverrideSpecialPresentation appends localization key rebalanced.repose.endpoint_bronze_hint at the accepted endpoint condition. The player-facing wording is owned by the 11 lang_rebalanced localization files.",
-      "final_writer_or_commit_point": "Keep the existing endpoint condition and line placement unchanged; replace only the localized hint text with the previously reviewed concise parenthetical form.",
+      "final_writer_or_commit_point": "Keep the existing endpoint condition and line placement unchanged; preserve each locale's exact accepted 0.2.37 sentence and add only parenthetical punctuation around it.",
       "blast_radius": [
         "Rebalanced Soul's Repose endpoint hint text only",
         "all 11 Rebalanced localization files for rebalanced.repose.endpoint_bronze_hint"
@@ -68,8 +68,8 @@
       "acceptance_evidence": "Open the Bronze Soul's Repose endpoint case in Rebalanced 0.2.38 and confirm the Silver/Gold reliability clarification is visibly parenthetical and wraps cleanly. Because 0.2.37 dynamic pulpit growth/font behavior is already accepted, only a concise RU visual check is required unless wrapping looks suspicious; JA/KO are needed only if the new parenthetical visibly stresses wrapping.",
       "evidence_refs": [
         "User requested the final Silver/Gold reliability clarification be presented as a note in parentheses.",
-        "A concise parenthetical localization set was already prepared in the superseded 0.2.31 branch; the later clean 0.2.32 baseline dropped it for unrelated candidate-scope reasons, not because the wording was rejected.",
-        "Exact accepted 0.2.37 still contains the older non-parenthetical localization text."
+        "Exact accepted 0.2.37 supplies the canonical sentence in every locale; 0.2.38 preserves those words and adds only parentheses.",
+        "PulpitLayoutV5 already owns the exact endpoint condition and appends this localization key only for the Bronze endpoint case."
       ],
       "state": "READY"
     }
