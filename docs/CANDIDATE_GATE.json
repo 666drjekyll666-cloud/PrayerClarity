@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "candidate_branch": "candidate/rebalanced-0.2.40",
+  "baseline_sha": "4563481a5e37c07516525c0e3ad596306e07a7c3",
+  "changes": [
+    {
+      "id": "repose-bronze-endpoint-complete-player-facing-wording",
+      "observable_property": "At the terminal Bronze Soul's Repose state where no higher ordinary body-quality tier can be unlocked but Silver/Gold can still improve the delivered-body distribution, the effect text says that the highest available body-quality tier is already unlocked, Bronze can no longer raise it, the donkey may still bring a worse available body, Silver raises the chance of the best available body, and Gold guarantees it.",
+      "canonical_owner": "PulpitLayoutV5.OverrideSpecialPresentation owns the Repose endpoint branch selection. Rebalanced wording is owned by lang_rebalanced/*.json. The shared repose.endpoint key remains unchanged for true terminal states that may also be reached by Silver/Gold.",
+      "final_writer_or_commit_point": "OverrideSpecialPresentation writes forecast.SpecialText after evaluating the already-accepted stockAddsHigherTier / premiumCanStillChangeDistribution / reliabilityStillChangesDistribution state. The Bronze-with-premium-still-useful branch will select Rebalanced-only keys rebalanced.repose.endpoint_bronze and rebalanced.repose.endpoint_bronze_hint; the existing condition itself is not changed.",
+      "blast_radius": [
+        "Rebalanced Bronze Repose endpoint presentation only when premium Repose still changes corpse distribution",
+        "all 11 Rebalanced localization overlays for the two Bronze endpoint strings"
+      ],
+      "preserved_invariants": [
+        "No Repose mechanics, corpse generation, corpse-tier selection, Silver probability, Gold guarantee, q20/q40/q95 requirements, duration or RNG behavior changes",
+        "The existing endpoint condition and CorpseTierSemantics queries remain unchanged",
+        "True terminal endpoint wording for Silver/Gold continues to use the shared repose.endpoint key",
+        "The accepted 0.2.37/0.2.38 pulpit layout, dynamic growth and language-font lifecycle remain unchanged",
+        "PrayerClarity: Vanilla source, wording and behavior remain unchanged",
+        "Other prayers and Legacy Protective Prayer lore remain unchanged"
+      ],
+      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. In Graveyard Keeper 1.407, open the already-reachable Bronze Repose endpoint in Russian and confirm both new lines are readable, wrap cleanly, do not overlap the button, and clearly communicate Bronze versus Silver versus Gold. No sermon execution, corpse-generation sampling, or mechanics replay is required.",
+      "evidence_refs": [
+        "User explicitly approved the full two-line Russian formulation on 2026-09-26.",
+        "Stable 0.2.38 source proves the existing endpoint condition and final writer in PulpitLayoutV5.OverrideSpecialPresentation.",
+        "Localization.Load overlays lang_rebalanced after lang, proving Rebalanced-only key ownership without changing Vanilla.",
+        "0.2.37 runtime acceptance proves the existing dynamic long-text pulpit growth and current-language font ownership.",
+        "Rebalanced 0.2.39 was built but only changed the parenthetical hint, so it is superseded before runtime acceptance rather than reused."
+      ],
+      "state": "READY"
+    }
+  ]
+}
