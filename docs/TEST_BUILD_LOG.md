@@ -1,5 +1,42 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.45 / Vanilla 1.0.51 vanilla-width + final Repose wording candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.44 exact source `7886a5cb860842aa1df139a84e81d69622dc7be1`.
+- Runtime result of 0.2.44: **partial pass / superseded by 0.2.45 before acceptance**.
+  - Repose item text structure was reported correct/readable.
+  - Terminal Bronze quality stars rendered correctly and the one-line-per-tier scan pattern was accepted.
+  - The fixed 280-unit prayer-item mechanics column still produced visibly non-native/unbalanced parchment geometry, so the third custom-width attempt was rejected.
+  - Product decision: stop owning prayer-item width entirely and return marked mechanics rows to the game's standard item-tooltip geometry.
+  - Repose wording received one final clarity refinement: Bronze explicitly says the best body is not guaranteed; terminal Silver/Gold explicitly refer to the bodies the Donkey can already bring.
+- Candidate branch: `candidate/rebalanced-0.2.45`.
+- Gate-only commit: `afeb8a9740a92c76bc041cfb943fe753683d6cbc`.
+- Exact candidate source SHA: `42feed5758e22118c5c1ef1ab573ad2e7bd10039`.
+- CI run: `36263711336`; result: **success**. Gate validation, 11-locale contract validation, both sibling builds, staging and upload all passed.
+- Artifact ID: `10913227944`.
+- Artifact: `PrayerClarity-rebalanced-0.2.45-ci-42feed5758e22118c5c1ef1ab573ad2e7bd10039`.
+- Artifact ZIP digest: `sha256:92407344af9bcd3526b19f2fb084f5da412786950a5687d08bf021d6258b4bdc`.
+- Rebalanced 0.2.45 DLL SHA-256: `43e98d1819e36a334ee1412ee7fccd2f53b10e91b914e49507689fe6e447e46f`.
+- Shared sibling Vanilla 1.0.51 DLL SHA-256: `a9ad41486eb9008aec383ad0541fdca8df0cf826a5cce69eb6f4898db681af78`.
+- Prayer-item geometry:
+  - PrayerClarity still marks its own inserted mechanics rows so the accepted amount+inline-resource final-wrap repair can remain narrowly scoped.
+  - For those rows, PrayerClarity no longer writes `UILabel.width`, `height`, `overflowMethod` or `overflowWidth`; standard game item-tooltip geometry is authoritative again.
+  - Technology-tooltip width behavior is unchanged.
+- Rebalanced Repose wording:
+  - concrete Bronze forecast: the Donkey can bring higher-quality bodies, **but getting the best body is not guaranteed**;
+  - concrete Silver/Gold forecast: shared higher-quality-body effect plus the quality-specific reliability result;
+  - Technology remains compact: shared effect once, then Bronze “no guarantee of the best”, Silver improved chance, Gold guarantee;
+  - terminal Bronze retains the accepted parenthetical three-line `(s1)/(s2)/(s3)` presentation;
+  - terminal Silver/Gold explicitly describe the best among the bodies the Donkey can **already** bring, and still omit the false higher-tier sentence.
+- Vanilla does not receive Rebalanced reliability semantics. Its only 1.0.51 runtime change is the shared return to standard item-tooltip width ownership.
+- Focused runtime acceptance:
+  1. inspect Repose, Imagination/another ordinary prayer, and Prosperity/another long-line prayer as items; parchment width should now look like ordinary vanilla item tooltips, while amount+resource pairs remain intact;
+  2. inspect Repose Technology and Bronze/Silver/Gold item text for the final reliability wording;
+  3. inspect Early Silver/Gold Repose at the pulpit: shared higher-quality-body sentence + reliability sentence;
+  4. inspect terminal Bronze/Silver/Gold: accepted star-per-line Bronze note; Silver/Gold “among bodies the Donkey can already bring” wording.
+- No sermon execution, corpse generation, Temporary Effects replay, Imagination payout replay, or mechanics test is required.
+
 ## 2026-09-26 — Rebalanced 0.2.44 / Vanilla 1.0.50 Repose wording + stable prayer-item width candidate
 
 - Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
