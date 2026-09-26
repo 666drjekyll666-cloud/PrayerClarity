@@ -20,10 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "A few words about why souls are best cleansed thoroughly.",
   "rebalanced.tech.gratitude_effect": "Soul condition does not deteriorate over time — neither in the body nor after extraction.\n(gratitude_points) from releasing souls: +{0:0}%",
   "rebalanced.active.sins_detailed": "Daily confession chance in each confessional: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(Bronze prayer no longer has an effect; Silver prayer will increase the chance of getting the best available body; Gold prayer will guarantee the best available body.)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) no longer has an effect.\n(s2) will increase the chance of getting the best body the Donkey can bring.\n(s3) will guarantee the best body the Donkey can bring.)",
   "rebalanced.repose.tier.bronze": "Main effect only",
-  "rebalanced.repose.tier.silver": "The chance of getting the best available body will increase.",
-  "rebalanced.repose.tier.gold": "The best available body will be guaranteed.",
-  "rebalanced.repose.active.silver": "The chance of getting the best available body is higher.",
-  "rebalanced.repose.active.gold": "The best available body is guaranteed."
+  "rebalanced.repose.tier.silver": "The chance of getting the best body the Donkey can bring will increase.",
+  "rebalanced.repose.tier.gold": "The best body the Donkey can bring will be guaranteed.",
+  "rebalanced.repose.active.silver": "The chance of getting the best body the Donkey can bring is higher.",
+  "rebalanced.repose.active.gold": "The best body the Donkey can bring is guaranteed."
 }
