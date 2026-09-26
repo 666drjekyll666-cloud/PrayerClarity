@@ -1655,3 +1655,26 @@ Non-blocking evidence gaps remain unchanged: terminal Repose endpoint and real s
 - Rebalanced continues to retire Protection crafting/Technology and map existing legacy `b_shield` items/mechanics to the Combat `buff_sword` path.
 - Do **not** normalize legacy item lore to Combat Prayer lore. The current stock `b_shield_d` item text is intentionally preserved.
 - No production change or runtime test is required for this decision.
+
+
+### 2026-09-26 — Rebalanced 0.2.38 presentation cleanup candidate
+
+- Baseline: accepted Rebalanced 0.2.37 source `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05` / `accepted/rebalanced-0.2.37`.
+- Candidate branch: `candidate/rebalanced-0.2.38`.
+- Gate-only commit: `e2ec253a538178932ad009196be5c3c6456c3e40`.
+- Included READY changes:
+  1. Shoots & Roots active-effect 95% all-sources cap note is Gold-only; Bronze/Silver show only their own prayer reduction.
+  2. Fixed-only pulpit money bonuses use the native money formatter, so Gold Donations presents 100 silver-equivalent as 1 gold rather than 100 silver.
+  3. Soul's Repose endpoint reliability clarification keeps its existing meaning and becomes a parenthetical note.
+- Legacy Protective Prayer / `b_shield` historical item lore is intentionally preserved and is not part of this candidate.
+- Rebalanced candidate: **0.2.38**. Shared sibling build metadata advances Vanilla to **1.0.47**.
+- Exact runtime artifact source: `6f5ef168810945135cee57082cbf90d31776e46b`.
+- CI run: `36245784593` — success; production gate validation, localization validation, Rebalanced build, Vanilla sibling build and artifact staging passed.
+- Artifact ID: `10907083834`; artifact ZIP digest: `sha256:875905412950ab7c27ded1985997cddb39b5d39a89084ad5f568cfc71acc5ecd`.
+- Rebalanced 0.2.38 DLL SHA-256: `e547f7bb76e0ef512dc669ea30543dada5a2aeb8044b1c7ffcbe7fecf17303e5`.
+- Vanilla 1.0.47 sibling DLL SHA-256: `48af2068935f1e34152dbbfeda7e13bd312ee91fd4c73a4c88712acf8b8ac94e`.
+- Runtime acceptance pending. Minimal combined visual pass:
+  - Bronze/Silver/Gold Shoots & Roots Temporary Effects: no 95% cap note on Bronze/Silver, explicit all-sources 95% cap on Gold;
+  - Gold Prayer for Donations at the pulpit: fixed bonus shown as 1 gold;
+  - Bronze Soul's Repose endpoint case: reliability clarification shown as a parenthetical note and wraps cleanly.
+- No prayer-mechanics replay is required because all three changes are presentation-only over already accepted mechanics.
