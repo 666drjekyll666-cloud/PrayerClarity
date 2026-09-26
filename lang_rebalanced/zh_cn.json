@@ -20,10 +20,13 @@
   "rebalanced.tech.sin_shard_lore": "说几句为什么灵魂最好要彻底净化。",
   "rebalanced.tech.gratitude_effect": "灵魂状态不会随时间恶化——无论仍在尸体中还是已经提取。\n释放灵魂获得的(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "每个告解室每天触发告解的概率：{0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "（(s1) 不再产生效果。\n(s2) 会提高获得驴子当前能带来的最佳尸体的概率。\n(s3) 会保证获得驴子当前能带来的最佳尸体。）",
-  "rebalanced.repose.tier.bronze": "仅有基础效果",
+  "rebalanced.repose.endpoint_bronze_hint": "（(s1) 不再产生效果。\n(s2) 会提高获得驴子已经能带来的尸体中最佳尸体的概率。\n(s3) 会保证获得驴子已经能带来的尸体中最佳的尸体。）",
+  "rebalanced.repose.tier.bronze": "不保证获得最佳尸体",
   "rebalanced.repose.tier.silver": "获得驴子当前能带来的最佳尸体的概率会提高。",
   "rebalanced.repose.tier.gold": "保证获得驴子当前能带来的最佳尸体。",
   "rebalanced.repose.active.silver": "获得驴子当前能带来的最佳尸体的概率更高。",
-  "rebalanced.repose.active.gold": "保证获得驴子当前能带来的最佳尸体。"
+  "rebalanced.repose.active.gold": "保证获得驴子当前能带来的最佳尸体。",
+  "rebalanced.repose.forecast.bronze": "驴子将能带来品质更高的尸体，但不保证会带来其中最好的。",
+  "rebalanced.repose.terminal.silver": "会提高获得驴子已经能带来的尸体中最佳尸体的概率。",
+  "rebalanced.repose.terminal.gold": "会保证获得驴子已经能带来的尸体中最佳的尸体。"
 }
