@@ -15,7 +15,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced.testconsole";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity: Rebalanced Neutral Test Console";
-        public const string PluginVersion = "0.1.17";
+        public const string PluginVersion = "0.1.18";
 
         private static readonly BindingFlags AnyStatic =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -24,13 +24,46 @@ namespace PrayerClarityResearch
 
         private static ManualLogSource _log;
 
-        private Rect _windowRect = new Rect(24f, 24f, 620f, 520f);
+        private Rect _windowRect = new Rect(24f, 24f, 620f, 780f);
         private bool _visible;
         private string _status =
             "F2 opens/closes this neutral setup console. It installs no Harmony patches or research probes.";
 
         private readonly Dictionary<string, int> _spawnedPrayerItems =
             new Dictionary<string, int>(StringComparer.Ordinal);
+
+        private sealed class TimedPrayerBuff
+        {
+            internal string Name;
+            internal string PrayerFamily;
+
+            internal TimedPrayerBuff(string name, string prayerFamily)
+            {
+                Name = name;
+                PrayerFamily = prayerFamily;
+            }
+        }
+
+        private static readonly TimedPrayerBuff[] TimedPrayerBuffs =
+        {
+            new TimedPrayerBuff("Shoots & Roots", "b_plant"),
+            new TimedPrayerBuff("Repentance", "b_sins"),
+            new TimedPrayerBuff("Repose", "b_skull"),
+            new TimedPrayerBuff("Combat", "b_sword"),
+            new TimedPrayerBuff("Imagination", "b_pen"),
+            new TimedPrayerBuff("Excellence", "b_star"),
+            new TimedPrayerBuff("Soul Contentment (BSS)", "b_grat_points_incr"),
+            new TimedPrayerBuff("Thorough Cleansing (BSS)", "b_sin_shard")
+        };
+
+        private readonly HashSet<string> _syntheticBuffIds =
+            new HashSet<string>(StringComparer.Ordinal);
+        private readonly Dictionary<string, float> _originalSyntheticParams =
+            new Dictionary<string, float>(StringComparer.Ordinal);
+
+        private static Action<string, float?> _addBuff;
+        private static Action<string> _removeBuff;
+        private static MethodInfo _findBuffById;
 
         private static readonly HashSet<string> PlayerFacingPrayerFamilies =
             new HashSet<string>(StringComparer.Ordinal)
@@ -56,11 +89,12 @@ namespace PrayerClarityResearch
         private void Awake()
         {
             _log = Logger;
+            ResolveBuffApi();
             Logger.LogInfo(
                 PluginName + " " + PluginVersion +
                 " loaded. Press F2 for neutral test-state setup/access helpers. " +
                 "No Harmony patches, mechanic simulations, presentation rewrites, or diagnostic probes are installed. " +
-                "Prayer-gallery items and temporary inventory expansion are save-persistent until cleaned up/restored.");
+                "Prayer-gallery items, synthetic prayer buffs/tier tokens, and temporary inventory expansion can persist in save state until cleaned up/restored.");
         }
 
         private void Update()
@@ -107,6 +141,30 @@ namespace PrayerClarityResearch
                 RemoveSpawnedPrayerItems();
 
             GUILayout.Space(10f);
+            GUILayout.Label("Synthetic timed prayer buffs (native BuffsLogics.AddBuff):");
+            GUILayout.Label("Blocks activation if a real copy of the same buff is already active. Cleanup restores captured tier params.");
+
+            foreach (TimedPrayerBuff effect in TimedPrayerBuffs)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(effect.Name, GUILayout.Width(220f));
+                if (GUILayout.Button("Bronze", GUILayout.Width(72f)))
+                    ActivateSyntheticPrayerBuff(effect, 1);
+                if (GUILayout.Button("Silver", GUILayout.Width(72f)))
+                    ActivateSyntheticPrayerBuff(effect, 2);
+                if (GUILayout.Button("Gold", GUILayout.Width(72f)))
+                    ActivateSyntheticPrayerBuff(effect, 3);
+                if (GUILayout.Button("Remove", GUILayout.Width(72f)))
+                    RemoveSyntheticPrayerBuff(effect);
+                GUILayout.EndHorizontal();
+            }
+
+            if (GUILayout.Button("Remove ALL synthetic prayer buffs"))
+                RemoveAllSyntheticPrayerBuffs();
+
+            GUILayout.Label("Synthetic buffs/tier tokens may persist if you save. Use cleanup before saving a permanent playthrough state.");
+
+            GUILayout.Space(10f);
             GUILayout.Label("Temporary player inventory capacity (SAVE-PERSISTENT until restored):");
 
             GUILayout.BeginHorizontal();
@@ -135,6 +193,297 @@ namespace PrayerClarityResearch
                     internal string Id;
                     internal int Quality;
                 }
+
+        private static void ResolveBuffApi()
+        {
+            Type buffsLogics = FindType("BuffsLogics");
+            if (buffsLogics == null)
+                throw new MissingMemberException("BuffsLogics");
+
+            MethodInfo add = buffsLogics.GetMethods(AnyStatic)
+                .FirstOrDefault(m =>
+                {
+                    if (m.Name != "AddBuff") return false;
+                    ParameterInfo[] p = m.GetParameters();
+                    return p.Length == 2 &&
+                           p[0].ParameterType == typeof(string) &&
+                           p[1].ParameterType == typeof(float?);
+                });
+            MethodInfo remove = buffsLogics.GetMethod(
+                "RemoveBuff",
+                AnyStatic,
+                null,
+                new[] { typeof(string) },
+                null);
+            _findBuffById = buffsLogics.GetMethod(
+                "FindBuffByID",
+                AnyStatic,
+                null,
+                new[] { typeof(string) },
+                null);
+
+            if (add == null)
+                throw new MissingMethodException("BuffsLogics.AddBuff(string, Nullable<float>)");
+            if (remove == null)
+                throw new MissingMethodException("BuffsLogics.RemoveBuff(string)");
+            if (_findBuffById == null)
+                throw new MissingMethodException("BuffsLogics.FindBuffByID(string)");
+
+            _addBuff = (Action<string, float?>)Delegate.CreateDelegate(typeof(Action<string, float?>), add);
+            _removeBuff = (Action<string>)Delegate.CreateDelegate(typeof(Action<string>), remove);
+        }
+
+        private void ActivateSyntheticPrayerBuff(TimedPrayerBuff effect, int tier)
+        {
+            try
+            {
+                if (effect == null || tier < 1 || tier > 3)
+                    return;
+
+                object craft = ResolvePrayerCraft(effect.PrayerFamily, tier);
+                if (craft == null)
+                {
+                    _status = effect.Name + " " + TierName(tier) + " prayer craft is unavailable in this game/DLC state.";
+                    return;
+                }
+
+                string buffId = Convert.ToString(Get(craft, "buff"));
+                if (string.IsNullOrEmpty(buffId))
+                {
+                    _status = effect.Name + " has no timed buff on this tier.";
+                    return;
+                }
+
+                bool live = IsBuffActive(buffId);
+                bool synthetic = _syntheticBuffIds.Contains(buffId);
+                if (live && !synthetic)
+                {
+                    _status = effect.Name + " already has a real active buff. Synthetic activation was blocked to preserve it.";
+                    return;
+                }
+
+                if (live)
+                    _removeBuff(buffId);
+
+                ApplySyntheticTierParams(effect.PrayerFamily, tier);
+
+                float duration = Convert.ToSingle(Get(craft, "dur_parameter") ?? 0f);
+                _addBuff(buffId, duration > 0f ? (float?)duration : null);
+
+                if (!IsBuffActive(buffId))
+                {
+                    RestoreSyntheticTierParams(effect.PrayerFamily);
+                    _status = effect.Name + " synthetic buff could not be activated.";
+                    return;
+                }
+
+                _syntheticBuffIds.Add(buffId);
+                _status =
+                    effect.Name + " " + TierName(tier) +
+                    " synthetic buff activated through native BuffsLogics.AddBuff" +
+                    (duration > 0f ? " (" + duration.ToString("0.#") + " min)." : ".");
+                _log?.LogInfo(
+                    "SYNTHETIC_PRAYER_BUFF_ACTIVATED family=" + effect.PrayerFamily +
+                    " tier=" + tier +
+                    " buff=" + buffId +
+                    " duration=" + duration.ToString("0.###"));
+            }
+            catch (Exception ex)
+            {
+                _status = "Synthetic buff activation failed for " + effect?.Name + ": " + ex.GetType().Name;
+                _log?.LogError("SYNTHETIC_PRAYER_BUFF_ACTIVATION_FAILED " + ex);
+            }
+        }
+
+        private void RemoveSyntheticPrayerBuff(TimedPrayerBuff effect)
+        {
+            if (effect == null) return;
+
+            try
+            {
+                object craft = ResolvePrayerCraft(effect.PrayerFamily, 1);
+                string buffId = craft == null ? null : Convert.ToString(Get(craft, "buff"));
+                if (string.IsNullOrEmpty(buffId) || !_syntheticBuffIds.Contains(buffId))
+                {
+                    _status = effect.Name + " has no synthetic buff tracked by this console.";
+                    return;
+                }
+
+                if (IsBuffActive(buffId))
+                    _removeBuff(buffId);
+
+                _syntheticBuffIds.Remove(buffId);
+                RestoreSyntheticTierParams(effect.PrayerFamily);
+                _status = effect.Name + " synthetic buff removed and captured tier params restored.";
+                _log?.LogInfo("SYNTHETIC_PRAYER_BUFF_REMOVED family=" + effect.PrayerFamily + " buff=" + buffId);
+            }
+            catch (Exception ex)
+            {
+                _status = "Synthetic buff removal failed for " + effect.Name + ": " + ex.GetType().Name;
+                _log?.LogError("SYNTHETIC_PRAYER_BUFF_REMOVAL_FAILED " + ex);
+            }
+        }
+
+        private void RemoveAllSyntheticPrayerBuffs()
+        {
+            try
+            {
+                int removed = 0;
+                foreach (string buffId in _syntheticBuffIds.ToArray())
+                {
+                    if (IsBuffActive(buffId))
+                        _removeBuff(buffId);
+                    _syntheticBuffIds.Remove(buffId);
+                    removed++;
+                }
+
+                foreach (KeyValuePair<string, float> pair in _originalSyntheticParams.ToArray())
+                    SetPlayerParam(pair.Key, pair.Value);
+                _originalSyntheticParams.Clear();
+
+                _status = "Removed " + removed + " synthetic prayer buff(s) and restored captured tier params.";
+                _log?.LogInfo("SYNTHETIC_PRAYER_BUFF_CLEANUP removed=" + removed);
+            }
+            catch (Exception ex)
+            {
+                _status = "Synthetic buff cleanup failed: " + ex.GetType().Name;
+                _log?.LogError("SYNTHETIC_PRAYER_BUFF_CLEANUP_FAILED " + ex);
+            }
+        }
+
+        private static bool IsBuffActive(string buffId)
+        {
+            return !string.IsNullOrEmpty(buffId) &&
+                   _findBuffById != null &&
+                   _findBuffById.Invoke(null, new object[] { buffId }) != null;
+        }
+
+        private object ResolvePrayerCraft(string family, int tier)
+        {
+            Type gameBalanceType = FindType("GameBalance");
+            object gameBalance = GetStatic(gameBalanceType, "me");
+            System.Collections.IEnumerable items =
+                Get(gameBalance, "items_data") as System.Collections.IEnumerable;
+            if (items == null)
+                throw new InvalidOperationException("GameBalance.me.items_data unavailable.");
+
+            foreach (object definition in items)
+            {
+                if (definition == null) continue;
+                if (!string.Equals(Convert.ToString(Get(definition, "type")), "Preach", StringComparison.Ordinal))
+                    continue;
+
+                int quality = (int)Math.Round(Convert.ToSingle(Get(definition, "quality") ?? 0f));
+                if (quality != tier) continue;
+
+                object linkedCraft = Get(definition, "linked_craft");
+                string craftId = GetId(linkedCraft);
+                if (string.Equals(GetPrayerFamily(craftId), family, StringComparison.Ordinal))
+                    return linkedCraft;
+            }
+
+            return null;
+        }
+
+        private void ApplySyntheticTierParams(string family, int tier)
+        {
+            switch (family)
+            {
+                case "b_plant":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_plant_tier", tier);
+                    CaptureAndSetPlayerParam(
+                        "prayerclarity_rebalanced_plant_reduction",
+                        tier == 1 ? 0.20f : tier == 2 ? 0.30f : 0.40f);
+                    break;
+                case "b_sins":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_confession_tier", tier);
+                    break;
+                case "b_skull":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_repose_tier", tier);
+                    break;
+                case "b_sword":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_combat_tier", tier);
+                    CaptureAndSetPlayerParam(
+                        "prayerclarity_rebalanced_combat_regen",
+                        tier == 1 ? 1f : tier == 2 ? 2f : 4f);
+                    break;
+                case "b_star":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_excellence_tier", tier);
+                    break;
+                case "b_sin_shard":
+                    CaptureAndSetPlayerParam("prayerclarity_rebalanced_sin_shard_tier", tier);
+                    break;
+            }
+        }
+
+        private void RestoreSyntheticTierParams(string family)
+        {
+            foreach (string param in SyntheticParamsForFamily(family))
+            {
+                float original;
+                if (!_originalSyntheticParams.TryGetValue(param, out original))
+                    continue;
+                SetPlayerParam(param, original);
+                _originalSyntheticParams.Remove(param);
+            }
+        }
+
+        private static IEnumerable<string> SyntheticParamsForFamily(string family)
+        {
+            switch (family)
+            {
+                case "b_plant":
+                    yield return "prayerclarity_rebalanced_plant_tier";
+                    yield return "prayerclarity_rebalanced_plant_reduction";
+                    yield break;
+                case "b_sins":
+                    yield return "prayerclarity_rebalanced_confession_tier";
+                    yield break;
+                case "b_skull":
+                    yield return "prayerclarity_rebalanced_repose_tier";
+                    yield break;
+                case "b_sword":
+                    yield return "prayerclarity_rebalanced_combat_tier";
+                    yield return "prayerclarity_rebalanced_combat_regen";
+                    yield break;
+                case "b_star":
+                    yield return "prayerclarity_rebalanced_excellence_tier";
+                    yield break;
+                case "b_sin_shard":
+                    yield return "prayerclarity_rebalanced_sin_shard_tier";
+                    yield break;
+            }
+        }
+
+        private void CaptureAndSetPlayerParam(string name, float value)
+        {
+            if (!_originalSyntheticParams.ContainsKey(name))
+                _originalSyntheticParams[name] = GetPlayerParam(GetPlayer(), name, 0f);
+            SetPlayerParam(name, value);
+        }
+
+        private static void SetPlayerParam(string name, float value)
+        {
+            object player = GetPlayer();
+            if (player == null)
+                throw new InvalidOperationException("MainGame.me.player unavailable.");
+
+            MethodInfo setParam = player.GetType().GetMethod(
+                "SetParam",
+                AnyInstance,
+                null,
+                new[] { typeof(string), typeof(float) },
+                null);
+            if (setParam == null)
+                throw new MissingMethodException("WorldGameObject.SetParam(string,float)");
+
+            setParam.Invoke(player, new object[] { name, value });
+        }
+
+        private static string TierName(int tier)
+        {
+            return tier == 1 ? "Bronze" : tier == 2 ? "Silver" : "Gold";
+        }
 
         private void OpenPulpitSermonNow()
                 {
