@@ -88,15 +88,12 @@ namespace PrayerClarity
                     R.Get(__instance, "bubble_widgets") as System.Collections.IEnumerable;
                 if (rows == null) return;
 
-                List<object> allRows = new List<object>();
                 List<object> leftPrayerRows = new List<object>();
                 int nativeMaxWidth = 0;
 
                 foreach (object row in rows)
                 {
                     if (row == null) continue;
-                    allRows.Add(row);
-
                     object widget = R.Get(row, "ui_widget");
                     int width = R.Int(R.Get(widget, "width"));
                     if (width > nativeMaxWidth)
