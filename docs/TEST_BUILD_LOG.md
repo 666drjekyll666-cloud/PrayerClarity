@@ -1,5 +1,20 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.39 Repose endpoint wording candidate
+
+- Baseline: stable Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
+- Candidate branch: `candidate/rebalanced-0.2.39`.
+- Gate-only commit: `b678ca69764b7248de829850113a5b332cb7b0ae`.
+- Exact candidate source SHA: `9434871a27c212bfefc16bec1cd77df2003ce815`.
+- CI run: `36249314660`; result: **success**.
+- Artifact ID: `10907854112`.
+- Artifact ZIP digest: `sha256:deebe1c79849b88e7f3ffe8ef376f644e5d5b6c4f7f6d88d358bcea733f2a041`.
+- Rebalanced 0.2.39 DLL SHA-256: `a57bdf4b423c1d2ab79cb2249bc0d35bb103d5a0388444ea8f15dc2f976c70ec`.
+- Change scope: wording only. The Bronze terminal Repose parenthetical now explains that the donkey can still bring a body below the best currently available; Silver raises the chance of receiving the best one and Gold guarantees it.
+- All 11 Rebalanced locale overlays were updated. Repose mechanics, endpoint condition, layout/font ownership and Vanilla remain unchanged.
+- Runtime acceptance pending: one Russian Bronze terminal-endpoint visual/readability check; no sermon/mechanics replay required.
+
+
 ## 2026-09-26 — Rebalanced 0.2.38 accepted stable
 
 - User runtime acceptance: **2026-09-26**.
