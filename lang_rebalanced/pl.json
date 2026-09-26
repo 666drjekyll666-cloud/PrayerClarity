@@ -20,10 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
   "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\n(gratitude_points) za uwalnianie dusz: +{0:0}%",
   "rebalanced.active.sins_detailed": "Dzienna szansa na spowiedź w każdym konfesjonale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(Brązowa modlitwa nie daje już efektu; srebrna modlitwa zwiększy szansę na otrzymanie najlepszego dostępnego ciała; złota modlitwa zagwarantuje najlepsze dostępne ciało.)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) nie daje już efektu.\n(s2) zwiększy szansę na otrzymanie najlepszego ciała, jakie osioł może przywieźć.\n(s3) zagwarantuje najlepsze ciało, jakie osioł może przywieźć.)",
   "rebalanced.repose.tier.bronze": "Tylko efekt podstawowy",
-  "rebalanced.repose.tier.silver": "Szansa na otrzymanie najlepszego dostępnego ciała wzrośnie.",
-  "rebalanced.repose.tier.gold": "Najlepsze dostępne ciało będzie gwarantowane.",
-  "rebalanced.repose.active.silver": "Szansa na otrzymanie najlepszego dostępnego ciała jest większa.",
-  "rebalanced.repose.active.gold": "Najlepsze dostępne ciało jest gwarantowane."
+  "rebalanced.repose.tier.silver": "Szansa na otrzymanie najlepszego ciała, jakie osioł może przywieźć, wzrośnie.",
+  "rebalanced.repose.tier.gold": "Najlepsze ciało, jakie osioł może przywieźć, będzie gwarantowane.",
+  "rebalanced.repose.active.silver": "Szansa na otrzymanie najlepszego ciała, jakie osioł może przywieźć, jest większa.",
+  "rebalanced.repose.active.gold": "Najlepsze ciało, jakie osioł może przywieźć, jest gwarantowane."
 }
