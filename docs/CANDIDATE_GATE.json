@@ -1,31 +1,56 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.41",
-  "baseline_sha": "229d1837123c980b09192d4e7a9b7a143ae573c4",
+  "candidate_branch": "candidate/rebalanced-0.2.42",
+  "baseline_sha": "f571eebd6942f14eaeddcf979c9689feec9b358c",
   "changes": [
     {
-      "id": "repose-player-facing-terminology-unification",
-      "observable_property": "All Prayer for Repose explanatory text uses one player-facing model: the base effect talks about higher body-quality tiers; Bronze opens the next tier while one remains; Silver increases the chance of receiving the best body among those already available; Gold guarantees the best available body; at the Bronze terminal state the text says no new tiers can be unlocked and summarizes the three prayer qualities with their native star glyphs.",
-      "canonical_owner": "The shared Repose base wording is owned by active.skull in lang/*.json and is consumed by the existing forecast/Rebalanced presentation paths. Rebalanced tier wording is owned by rebalanced.active.repose.bronze/silver/gold in lang_rebalanced/*.json. The Rebalanced Bronze endpoint wording is owned by rebalanced.repose.endpoint_bronze and rebalanced.repose.endpoint_bronze_hint, selected by PulpitLayoutV5.OverrideSpecialPresentation.",
-      "final_writer_or_commit_point": "Existing presentation writers remain unchanged: PrayerForecast/RebalancedPresentationSemantics consume active.skull and the Rebalanced tier keys, while PulpitLayoutV5.OverrideSpecialPresentation writes the Bronze endpoint SpecialText. This change alters only their localized strings and candidate identity.",
+      "id": "repose-surface-specific-language",
+      "observable_property": "Prayer for Repose uses one game-world model without making its shared sentence look like a fourth quality-tier effect. Forecast/planning surfaces say that the donkey will be able to bring higher-quality bodies; active Temporary Effects use present tense. Rebalanced Technology shows the shared body-quality effect once and only the quality-dependent delta under Bronze/Silver/Gold, while a concrete Rebalanced item or non-terminal pulpit selection shows the complete effect of that selected quality.",
+      "canonical_owner": "Shared Vanilla forecast/active Repose text is produced by PrayerForecast.BuildBuffEffect / PrayerForecast.BuildActiveBuffText from base localization. Rebalanced forecast, active and Technology variants are owned by RebalancedPresentationSemantics using the same base Repose localization plus Rebalanced quality-delta localization.",
+      "final_writer_or_commit_point": "TechnologyTooltipTierRenderer is the final structural writer for Technology; TooltipDetailsRenderer/ItemTooltipPresentation consume the selected TierDetails for prayer-item tooltips; PulpitLayoutV5/PulpitPresentation consume PrayerForecast.SpecialText at the pulpit; SecondarySurfacePresentation writes PrayerForecast.BuildActiveBuffText into Character -> Temporary Effects.",
       "blast_radius": [
-        "Shared Prayer for Repose base explanatory wording in Vanilla and Rebalanced across all 11 supported locales",
-        "Rebalanced Bronze/Silver/Gold Repose explanatory wording across all 11 supported locales",
-        "Rebalanced Bronze terminal Repose endpoint wording across all 11 supported locales"
+        "Prayer for Repose Technology wording in both editions across all 11 locales",
+        "Prayer for Repose item-tooltip wording in both editions across all 11 locales",
+        "Non-terminal Prayer for Repose pulpit wording in both editions across all 11 locales",
+        "Prayer for Repose Temporary Effects wording in both editions across all 11 locales"
       ],
       "preserved_invariants": [
-        "No Repose mechanics, corpse generation, corpse-tier selection, Silver probability, Gold guarantee, q20/q40/q95 requirements, duration or RNG behavior changes",
-        "No endpoint condition, CorpseTierSemantics query, final-writer selection, pulpit layout, font lifecycle or wrapping mechanism changes",
-        "Vanilla Repose mechanics and terminal endpoint wording remain unchanged; only the shared non-terminal explanatory phrase is reworded",
-        "Other prayers and unrelated localization remain unchanged"
+        "No Repose mechanics, corpse generation, tier availability, Silver probability, Gold guarantee, requirements, duration or RNG behavior changes",
+        "No Technology/item/pulpit/Temporary Effects layout, wrapping, font or lifecycle mechanism changes",
+        "No other prayer wording or behavior changes",
+        "Vanilla remains mechanically identical to stock Graveyard Keeper 1.407"
       ],
-      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. In Graveyard Keeper 1.407, use the existing Repose State Switcher with Rebalanced 0.2.41 in Russian: verify Bronze in the can-still-unlock state and Bronze in the terminal state. Confirm the terminology reads consistently, native skull/star glyphs render correctly, and neither state introduces clipping/overlap. No sermon execution, corpse-generation sampling, Silver/Gold runtime mechanics replay, or additional progression manipulation is required.",
+      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. In Graveyard Keeper 1.407, visually inspect Russian Repose Technology, one concrete Repose item, a non-terminal pulpit selection, and the active Temporary Effect. Verify the shared-vs-tier hierarchy, future-vs-present tense, corpse-quality glyphs and absence of clipping/overlap. Existing accepted mechanics evidence is reused; no sermon execution or corpse-generation sampling is required.",
       "evidence_refs": [
-        "docs/PRAYER_MECHANICS.md: accepted stock 1.407 evidence establishes permanent corpse-tier progression and the terminal 2..3 ordinary range.",
-        "src/RebalancedPresentationSemantics.cs: accepted owner for Bronze/Silver/Gold Repose presentation and shared active.skull wording.",
-        "src/PulpitLayoutV5.cs: accepted final writer for contextual Bronze endpoint presentation.",
-        "docs/TEST_BUILD_LOG.md: Repose State Switcher 0.1.0 provides a read-only deterministic Early/Terminal visual setup without writing save progression.",
-        "User approved replacing the general Repose effect phrase and unifying Repose terminology around body-quality tiers versus the best among already available bodies on 2026-09-26."
+        "docs/DESIGN_NOTES.md: Technology is the comparison surface; item tooltips describe one concrete quality; Temporary Effects describe the current active effect.",
+        "docs/CLARITY_UI_STATUS.md: accepted Technology/item/Temporary Effects presentation ownership.",
+        "src/PrayerForecast.cs, src/RebalancedPresentationSemantics.cs, src/TechnologyTooltipTierRenderer.cs, src/TooltipDetailsRenderer.cs, src/ItemTooltipPresentation.cs and src/SecondarySurfacePresentation.cs on baseline f571eebd6942f14eaeddcf979c9689feec9b358c.",
+        "User approved the game-world wording model and future-tense forecast / present-tense active distinction on 2026-09-26."
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "repose-terminal-context-wording",
+      "observable_property": "At the Repose progression ceiling, the pulpit explains the natural limit instead of sounding as if the mod disabled the prayer. Bronze says that even prayer cannot obtain still-higher-quality bodies and then explains Bronze/Silver/Gold in words. Rebalanced Silver and Gold, when their reliability benefit still works, show only that working benefit with the corpse-quality cue rather than repeating the no-longer-true higher-tier sentence. Vanilla uses the same natural-limit endpoint sentence without Rebalanced reliability claims.",
+      "canonical_owner": "PulpitLayoutV5.OverrideSpecialPresentation owns contextual Repose endpoint replacement. CorpseTierSemantics supplies the already-accepted terminal/reliability predicates. Base repose.endpoint localization owns the shared natural-limit sentence; Rebalanced endpoint-hint and quality-delta localization own the Rebalanced-only explanation.",
+      "final_writer_or_commit_point": "PulpitLayoutV5.OverrideSpecialPresentation is the accepted final SpecialText writer after PrayerForecast has built the ordinary Repose effect, so it is the narrow final point that can remove the no-longer-applicable base sentence and substitute the terminal text.",
+      "blast_radius": [
+        "Terminal Prayer for Repose pulpit wording in Vanilla across all 11 locales",
+        "Terminal Bronze/Silver/Gold Prayer for Repose pulpit wording in Rebalanced across all 11 locales"
+      ],
+      "preserved_invariants": [
+        "CorpseTierSemantics and all endpoint/reliability predicates remain unchanged",
+        "No Repose mechanics, corpse distribution, tier availability, requirements, durations or RNG behavior changes",
+        "No pulpit layout/font/wrapping mechanism changes",
+        "No non-terminal or unrelated-prayer behavior changes beyond the separately gated Repose language update"
+      ],
+      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. Using the existing Repose State Switcher with Rebalanced 0.2.42 in Russian, inspect terminal Bronze, Silver and Gold at the pulpit: Bronze must show the natural-limit sentence plus the worded Bronze/Silver/Gold comparison; Silver/Gold must show only their still-working reliability sentence plus the corpse-quality cue. Verify readability and no clipping/overlap. The same shared endpoint key and accepted final-writer path make a separate mechanics replay unnecessary.",
+      "evidence_refs": [
+        "docs/PRAYER_MECHANICS.md: accepted stock 1.407 permanent Repose progression and terminal ordinary-body range.",
+        "src/CorpseTierSemantics.cs: accepted predicates for whether stock Repose adds a higher ordinary tier and whether premium narrowing still changes distribution.",
+        "src/PulpitLayoutV5.cs: accepted final writer for contextual Repose endpoint presentation.",
+        "docs/TEST_BUILD_LOG.md: Repose State Switcher 0.1.0 provides deterministic Early/Terminal visual setup without writing save progression.",
+        "User approved the natural-limit endpoint wording and the terminal Silver/Gold working-only sentences on 2026-09-26."
       ],
       "state": "READY"
     }
