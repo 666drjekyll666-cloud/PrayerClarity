@@ -20,10 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
   "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
-  "rebalanced.repose.endpoint_bronze_hint": "(Das Bronzegebet hat keinen Effekt mehr; das Silbergebet erhöht die Chance auf den besten verfügbaren Körper; das Goldgebet garantiert den besten verfügbaren Körper.)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) hat keinen Effekt mehr.\n(s2) erhöht die Chance auf den besten Körper, den der Esel bringen kann.\n(s3) garantiert den besten Körper, den der Esel bringen kann.)",
   "rebalanced.repose.tier.bronze": "Nur der Haupteffekt",
-  "rebalanced.repose.tier.silver": "Die Chance auf den besten verfügbaren Körper wird steigen.",
-  "rebalanced.repose.tier.gold": "Der beste verfügbare Körper wird garantiert.",
-  "rebalanced.repose.active.silver": "Die Chance auf den besten verfügbaren Körper ist höher.",
-  "rebalanced.repose.active.gold": "Der beste verfügbare Körper ist garantiert."
+  "rebalanced.repose.tier.silver": "Die Chance auf den besten Körper, den der Esel bringen kann, steigt.",
+  "rebalanced.repose.tier.gold": "Der beste Körper, den der Esel bringen kann, ist garantiert.",
+  "rebalanced.repose.active.silver": "Die Chance auf den besten Körper, den der Esel bringen kann, ist höher.",
+  "rebalanced.repose.active.gold": "Der beste Körper, den der Esel bringen kann, ist garantiert."
 }
