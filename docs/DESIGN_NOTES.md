@@ -241,7 +241,7 @@ The three 0.2.38 presentation tails are **closed and runtime-accepted**.
 
 One new wording/design question is deliberately open for a future candidate:
 
-- **Bronze Repose terminal wording for a player who does not know the corpse-quality system — candidate 0.2.39 pending visual acceptance.** Product wording is now decided: explain directly that the donkey can still bring a body below the best currently available; the Silver version of this prayer raises the chance of receiving the best one, while Gold guarantees it. This remains wording-only: mechanics, endpoint detection and Silver/Gold distribution behavior are unchanged.
+- **Bronze Repose terminal wording for a player who does not know the corpse-quality system — candidate 0.2.40 pending visual acceptance.** The full two-line wording is implemented: the first line states that the highest currently available body-quality tier is already unlocked and Bronze can no longer raise it; the parenthetical explains that the donkey may still bring a worse available body, Silver raises the chance of the best available body, and Gold guarantees it. Candidate 0.2.39 changed only the parenthetical and was superseded before runtime acceptance. This remains wording-only: mechanics, endpoint detection, Silver/Gold distribution behavior, shared terminal wording and Vanilla are unchanged.
 
 **Closed product decision:**
 
