@@ -244,6 +244,7 @@ namespace PrayerClarity
             switch (mode)
             {
                 case ReposeQualityMode.Stock:
+                    text = Localization.F("rebalanced.repose.forecast.bronze");
                     semanticKey = "rebalanced:repose=stock";
                     return true;
                 case ReposeQualityMode.HalfwayToBest:
