@@ -1,31 +1,32 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.46",
-  "baseline_sha": "42feed5758e22118c5c1ef1ab573ad2e7bd10039",
+  "candidate_branch": "candidate/rebalanced-0.2.47",
+  "baseline_sha": "ef027959871b9f520cee73be88ce381306b30c10",
   "changes": [
     {
-      "id": "prayer-item-requirement-centering",
-      "observable_property": "In prayer-item tooltips, the PrayerClarity-owned 100%-success requirement row should remain visually balanced when the standard vanilla item-tooltip width wraps the numeric Church Quality requirement and cross icon onto a second line.",
-      "canonical_owner": "ItemTooltipPresentation.ComposePrayerTooltip creates the dedicated requirement BubbleWidgetTextData row for prayer items. TooltipDetailsRenderer.BuildSingleSections owns the requirement text itself.",
-      "final_writer_or_commit_point": "ItemTooltipPresentation.CreateTextData sets the BubbleWidgetTextData alignment before the standard item-tooltip renderer lays out and wraps the row; no later PrayerClarity writer should override this alignment.",
+      "id": "prayer-item-left-content-native-span",
+      "observable_property": "Prayer-item section headers and the 100%-success requirement remain centered, while the content under Base Result and On Success is visibly left-aligned even when that content is only one short line. The outer parchment width must remain the game's standard native width.",
+      "canonical_owner": "ItemTooltipPresentation.ComposePrayerTooltip owns which PrayerClarity rows are Left versus Center. TechnologyTooltipContentWidth already owns the final rendering treatment for PrayerClarity-marked prayer-item rows. Stock WidgetsBubbleGUI owns the table's child placement and computes the bubble width from the maximum child widget width.",
+      "final_writer_or_commit_point": "WidgetsBubbleGUI.UpdateSizeAndWidgetsPositions is the stock commit point after all child rows have been drawn: it calls UpdateSize and then Reposition. A narrowly scoped PrayerClarity prefix can therefore measure the already-natural child widths, expand only marked Left content rows to that same existing maximum, then let stock UpdateSize/Reposition finish normally.",
       "blast_radius": [
-        "PrayerClarity-owned success-requirement row in prayer-item tooltips in Vanilla and Rebalanced",
+        "PrayerClarity-owned Base Result content row in prayer-item tooltips in Vanilla and Rebalanced",
+        "PrayerClarity-owned On Success content row in prayer-item tooltips in Vanilla and Rebalanced",
         "All 11 locales through the shared prayer-item presentation path"
       ],
       "preserved_invariants": [
-        "Standard vanilla prayer-item tooltip width remains authoritative",
-        "Requirement wording, values and Church Quality semantics remain unchanged",
-        "Base Result and On Success content rows remain left-aligned",
-        "Section headers remain centered as before",
-        "Accepted amount+inline-resource final-wrap repair remains unchanged",
-        "Technology, pulpit, Temporary Effects and non-prayer item tooltips remain unchanged",
-        "No prayer mechanics, balance or localization strings change"
+        "Section headers remain centered",
+        "The 100%-success requirement content remains centered as accepted in 0.2.46",
+        "The native maximum child width remains the outer tooltip width; PrayerClarity must not introduce a fixed 200/280/420 width or enlarge the parchment beyond the pre-adjustment native maximum",
+        "PrayerClarity-owned content text, wording, values and mechanics remain unchanged",
+        "The amount+inline-resource final-wrap repair is reevaluated after the final content-row width so it remains correct",
+        "Technology, pulpit, Temporary Effects, Repose semantics and non-prayer item tooltips remain unchanged"
       ],
-      "acceptance_evidence": "Build validation plus a focused Russian visual check on one prayer whose requirement wraps under vanilla width and one prayer whose requirement stays on one line. The wrapped number+cross line and the first line should read as one centered block without altering parchment width or any other section alignment.",
+      "acceptance_evidence": "Build validation plus one focused Russian visual pass. On a prayer with a one-line On Success result (for example Prayer for Donations), the +money/+faith line must start at the same left content column used by Base Result while the On Success header stays centered. On a multi-line prayer, Base Result and On Success lines must share a clean left edge. The 100%-success requirement must remain centered and the parchment width must look identical to the accepted native-width 0.2.46 geometry.",
       "evidence_refs": [
-        "User runtime screenshots on 2026-09-26 with Rebalanced 0.2.45 show the vanilla-width requirement row consistently wrapping the Church Quality number+cross while remaining left-aligned.",
-        "src/ItemTooltipPresentation.cs on baseline 42feed5758e22118c5c1ef1ab573ad2e7bd10039 creates sections.Requirement with alignment Left, while the corresponding section header is already Center.",
-        "User product approval on 2026-09-26: center only the Success of sermon requirement content and keep vanilla width."
+        "User runtime screenshot on 2026-09-26 with Rebalanced 0.2.46 shows the requirement block centered correctly but the one-line On Success content still visually centered.",
+        "src/ItemTooltipPresentation.cs on baseline ef027959871b9f520cee73be88ce381306b30c10 already sets Base Result and On Success content to Left and Requirement to Center, proving the requested alignments are not mixed at the data level.",
+        "Direct stock host inspection: BubbleWidgetText.Draw applies data.alignment only to the UILabel; WidgetsBubbleGUI centers child widgets when container alignment is Center and UpdateSize sets bubble width to the maximum child size before Reposition. This explains why a short Left-aligned child still appears centered as a block.",
+        "Solution-space checkpoint: changing alignment again cannot help because it is already Left; changing container alignment would also move headers; fixed widths were repeatedly rejected. Expanding only marked Left rows to the already-existing native maximum width is the least-complex path that preserves native outer geometry."
       ],
       "state": "READY"
     }
