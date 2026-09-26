@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "A few words about why souls are best cleansed thoroughly.",
   "rebalanced.tech.gratitude_effect": "Soul condition does not deteriorate over time — neither in the body nor after extraction.\n(gratitude_points) from releasing souls: +{0:0}%",
   "rebalanced.active.sins_detailed": "Daily confession chance in each confessional: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(Silver and Gold still increase the chance of the best available body.)"
+  "rebalanced.repose.endpoint_bronze_hint": "(Silver and Gold prayers still improve the reliability of receiving the best available body.)"
 }
