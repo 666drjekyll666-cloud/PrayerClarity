@@ -60,10 +60,19 @@ For every materially independent production behavior change:
 5. treat the reported defect/request as the default scope. Wording, mechanics, layout, data semantics, lifecycle, and other adjacent behavior are preserved unless the proved path requires changing them or the user separately accepts that additional change;
 6. do not optimize for fewer game restarts, candidate versions, or user test cycles by bypassing or combining unresolved gates.
 
+Gate granularity and candidate granularity are deliberately separate:
+
+- every materially independent behavior change still has its own gate and must be **READY** before its first production-source mutation;
+- several independent READY changes may share one PrayerClarity candidate when they use a coherent baseline, their interactions are understood, and one combined acceptance run can still verify each property without making a failure ambiguous;
+- a non-urgent READY micro-change may remain queued until the next natural candidate boundary rather than consuming its own version/DLL;
+- never include a **BLOCKED** change or an independent unverified mechanism merely because another READY change already justifies a build;
+- split candidates when combined testing would materially reduce fault attribution, rollback clarity, or confidence.
+
 For a numbered production candidate branch handled by the standard PrayerClarity candidate workflows:
 
 - create `docs/CANDIDATE_GATE.json` from `docs/CANDIDATE_GATE_TEMPLATE.json` in a **gate-only commit** before production-source changes relative to the declared `baseline_sha`;
 - `baseline_sha` is the exact pre-change source state for that candidate's change set;
+- list each materially independent included change separately in the `changes` array;
 - every listed change must be `READY`; research-only probes/Test Console branches do not use this production gate file;
 - candidate CI validates the gate record and its ordering before compiling or uploading a handoff artifact;
 - if a tested candidate is rejected, do not blindly stack the next candidate on the full rejected source. Choose and record the next baseline deliberately, retaining only already accepted/proved changes plus newly READY fixes.
