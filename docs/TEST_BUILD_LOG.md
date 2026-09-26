@@ -1,5 +1,23 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.41 Repose terminology-unification candidate
+
+- Stable runtime remains Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
+- Baseline for this candidate: Rebalanced 0.2.40 exact source `229d1837123c980b09192d4e7a9b7a143ae573c4`; 0.2.40 is superseded for wording, not mechanics.
+- Candidate branch: `candidate/rebalanced-0.2.41`.
+- Gate-only commit: `af975ae76876daf10269e62872c9deaa66b04ab4`.
+- Exact candidate source SHA: `f571eebd6942f14eaeddcf979c9689feec9b358c`.
+- CI run: `36253408463`; result: **success**.
+- Artifact ID: `10910140511`.
+- Artifact: `PrayerClarity-rebalanced-0.2.41-ci-f571eebd6942f14eaeddcf979c9689feec9b358c`.
+- Artifact ZIP digest: `sha256:4f71a93f06b3471962d5f21f73cfb3f8428cb2a1251d3e3d95c99252aa6f9500`.
+- Rebalanced 0.2.41 DLL SHA-256: `76c1179e40406cb43016030fb86d70e22f2a3c475dfdfbdd94a779416caa5c2f`.
+- UX change: Repose now uses one player-facing vocabulary across its explanatory surfaces. The shared base effect talks about bodies from a higher **quality tier**; Rebalanced Bronze opens the next tier, Silver increases the chance of the **best among already available bodies**, and Gold guarantees the best available body.
+- The Bronze terminal message uses the same distinction plus native corpse-quality and prayer-quality glyphs: no new body-quality tiers can be opened; Bronze no longer opens new tiers; Silver raises the chance of the best available body; Gold guarantees the best.
+- The shared `active.skull` phrase was synchronized in all 11 base locales, so the clearer base terminology applies to both Vanilla and Rebalanced. The Rebalanced tier/terminal strings were synchronized in all 11 overlays. Vanilla mechanics and its true-terminal `repose.endpoint` wording remain unchanged.
+- Repose mechanics, endpoint predicates, corpse generation/distribution, q20/q40/q95, durations, layout/font lifecycle and all other prayers are unchanged.
+- Focused runtime acceptance required: with Rebalanced 0.2.41 + Repose State Switcher 0.1.0 in Russian, inspect Bronze once in **Can still unlock** and once in **Terminal**. Confirm the new terminology is clear, `(up)/(skull)/(rskull)` and `(s1)/(s2)/(s3)` render correctly, and the terminal text remains wrap/button-safe. No sermon, corpse generation, Silver/Gold mechanics replay, or additional progression test is required.
+
 ## 2026-09-26 — Repose State Switcher 0.1.0 research helper
 
 - Purpose: provide deterministic visual setup for Rebalanced 0.2.40 Bronze Repose endpoint acceptance without changing the user's save/progression or patching the production presentation writer.
@@ -32,7 +50,7 @@
 - Change scope: wording/presentation only. In the Bronze terminal Repose state where higher ordinary quality can no longer be unlocked but Silver/Gold can still improve the delivered-body distribution, the first line now says the highest available quality tier is already unlocked and Bronze can no longer raise it; the parenthetical explains that the donkey can still bring a worse available body, Silver raises the chance of the best available body, and Gold guarantees it.
 - All 11 Rebalanced locale overlays contain the same semantics. The shared `repose.endpoint` key remains unchanged for true terminal Silver/Gold states and for Vanilla.
 - Repose mechanics, corpse generation/distribution logic, q20/q40/q95, duration, pulpit layout/font lifecycle and all other prayers remain unchanged.
-- Runtime acceptance pending: one Russian Bronze terminal-endpoint visual/readability check of both lines; no sermon, corpse-generation or mechanics replay required.
+- Runtime result: the Repose State Switcher successfully changed the displayed Bronze Repose behavior between a state where a higher body-quality tier was still available and the terminal state, confirming the existing endpoint selection responds correctly to the underlying progression inputs. The user rejected the 0.2.40 terminal wording as too bulky / insufficiently immediately clear. **0.2.40 is superseded by 0.2.41 for wording and must not be promoted.** No mechanics defect was found.
 
 
 ## 2026-09-26 — Rebalanced 0.2.39 Repose endpoint wording candidate
