@@ -1,13 +1,13 @@
 # Prayer Design Audit — Graveyard Keeper 1.407
 
-Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-20 with PrayerClarity: Vanilla 1.0.32 and stable PrayerClarity: Rebalanced 0.2.16.
+Status: **current prayer-by-prayer design source of truth**, reconciled 2026-09-26 with PrayerClarity: Vanilla 1.0.33 and stable PrayerClarity: Rebalanced 0.2.38.
 
 Stock mechanics remain canonical in `PRAYER_MECHANICS.md`. Exact current Rebalanced values are canonical in `PRAYER_REBALANCE_OPTIONS.md`. Historical alternatives and earlier coefficient experiments are retained in `PRAYER_POWER_BUDGET.md` and Git history as analysis only.
 
 ## Current accepted baselines
 
-- **PrayerClarity: Vanilla 1.0.32** — `accepted/vanilla-1.0.32`, exact source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`.
-- **PrayerClarity: Rebalanced 0.2.16** — `accepted/rebalanced-0.2.16`, exact runtime source `d44bf75227f6efc1c4f09fb5cd3c4eaf3b9ee010`, release `rebalanced-v0.2.16`.
+- **PrayerClarity: Vanilla 1.0.33** — `accepted/vanilla-1.0.33`, exact source `93b66e747ffe1685003afb894b24f14416edb8c0`, release `v1.0.33`.
+- **PrayerClarity: Rebalanced 0.2.38** — `accepted/rebalanced-0.2.38`, exact runtime source `6f5ef168810945135cee57082cbf90d31776e46b`, release `rebalanced-v0.2.38`.
 
 The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3 changed runtime safety/ownership, 0.2.4 made the accepted Repentance/Repose duration adjustment to 30/42/54 minutes, and 0.2.10 raises ordinary Repose Gold's guaranteed-success gate from q50 to q60 while preserving its accepted effect. The accepted Roots aggregate safety cap remains in force.
 
@@ -31,7 +31,7 @@ The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3
 | --- | --- | --- |
 | Ordinary | **No change** | Stock starter baseline, q10. |
 | Faith | **Accepted specialist rework** | q20/40/60; flat success-only **+5/+10/+20 Faith**; no prayer-owned donation bonus. |
-| Donations | **Accepted specialist rework** | q20/40/60; flat success-only **+5/+10/+15 silver**; no prayer-owned Faith bonus. |
+| Donations | **Accepted specialist rework** | q20/40/60; flat success-only **+20/+50/+100 silver-equivalent**; no prayer-owned Faith bonus. |
 | Combo | **Accepted generalist rework** | q40/60/80; success-only **+100/+150/+200% Faith and donations**; no prayer-owned flat Faith/money. |
 | Prosperity | **No balance change** | Stock q10/20/30 and 1/2/3 Commercial Blessings. |
 | Shoots & Roots | **Accepted repair + scaling** | q10/30/50; nominal growth time **-20/-30/-40%**, 36/72/108 min; current runtime also enforces the accepted 95% combined reduction safety cap. |
@@ -40,13 +40,13 @@ The Rebalanced roster values were established in 0.2.0. Releases 0.2.2 and 0.2.3
 | Combat | **Accepted structural/numeric rework** | q20/40/60; damage **+5/+10/+15**, armor **+4**, regen **1/2/4 HP/s**; 36/72/108 min. |
 | Imagination | **Accepted premium-output rework** | q20/40/60; writing quality **+0.7** all tiers; successful Silver -> 3 Silver Stories, Gold -> 3 Gold Stories; 18/36/54 min. |
 | Excellence | **Accepted magnitude rework** | q20/60/95; linked-craft quality **+0.2/+0.5/+1.0**; 18/36/54 min. |
-| BSS Soul's Repose | **Accepted state-scaling Faith specialist** | q30/60/120; **+50/+100/+150% Faith** on the verified Souls base; current Soul Gratitude remains an input. |
-| Soul Contentment | **Accepted rework** | q20/40/60; **+20% Soul Gratitude** all tiers; 36/72/108 min. |
-| Thorough Cleansing | **No magnitude increase** | q30/60/90; **x2 Sin Shards** all tiers; 36/72/108 min. |
+| BSS Soul's Repose | **Accepted conversion specialist** | q30/60/90; ordinary church-derived base result plus success-only **1:1 Soul Gratitude -> Faith** conversion capped at **30/60/90**. |
+| Soul Contentment | **Accepted rework** | q20/40/60; **+50% Soul Gratitude** all tiers; 45/90/135 min; passive soul-condition decay suspended while active. |
+| Thorough Cleansing | **Accepted scaling rework** | q30/60/120; **x2/x3/x4 Sin Shards** through the native output path. |
 
 ## Faith / Donations / Combo family
 
-Faith and Donations are flat specialists: Faith gives +5/+10/+20 Faith, Donations gives +5/+10/+15 silver, and both guarantee at q20/q40/q60.
+Faith and Donations are flat specialists: Faith gives +5/+10/+20 Faith, Donations gives +20/+50/+100 silver-equivalent, and both guarantee at q20/q40/q60.
 
 Combo is a percentage generalist: +100/+150/+200% to both Faith and donations, guaranteed at q40/q60/q80.
 
@@ -110,7 +110,7 @@ A prayer should be reopened when new evidence shows that this role is not actual
 
 ## Current architecture consequence
 
-Current stable 0.2.16 keeps Graveyard Keeper authoritative where practical:
+Current stable 0.2.38 keeps Graveyard Keeper authoritative where practical:
 
 - Roots leaves stock growth formulas intact and projects only the native input, with the accepted 95% aggregate cap;
 - Repentance leaves the stock daily reset/RNG/loop intact and projects only the effective `confession_probability` read while the native buff is live;
@@ -123,7 +123,7 @@ Current stable 0.2.16 keeps Graveyard Keeper authoritative where practical:
 
 ## Current status
 
-The stable balance/architecture baseline is **Rebalanced 0.2.16**. The specialist-purity/resource retune, Technology/Soul presentation repairs, and the shared concise **При успехе:** success heading are accepted; there is no blanket rebalance or architecture task pending.
+The stable balance/architecture baseline is **Rebalanced 0.2.38**. The accepted 0.2.17+ Better Save Soul/resource changes and the presentation/runtime refinements through 0.2.38 are now canonical; there is no blanket rebalance or architecture task pending.
 
 Known non-blocking evidence gaps remain:
 
