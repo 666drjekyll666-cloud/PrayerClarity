@@ -1,5 +1,22 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.40 complete Repose endpoint wording candidate
+
+- Baseline: current stable/docs main `4563481a5e37c07516525c0e3ad596306e07a7c3`, with runtime behavior still based on stable Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
+- Candidate branch: `candidate/rebalanced-0.2.40`.
+- Gate-only commit: `663bf85ae9ab27307c1195f76f6b2091fd47bec4`.
+- Exact candidate source SHA: `229d1837123c980b09192d4e7a9b7a143ae573c4`.
+- CI run: `36250317302`; result: **success**.
+- Artifact ID: `10908708470`.
+- Artifact: `PrayerClarity-rebalanced-0.2.40-ci-229d1837123c980b09192d4e7a9b7a143ae573c4`.
+- Artifact ZIP digest: `sha256:e2c8c848b3ebae9527e6cba8cf87f16a69993ae03a72d9d54926b76792689636`.
+- Rebalanced 0.2.40 DLL SHA-256: `7c959c328b202af82e551ed501feed16c652b7f6c0d0833c04ae52c5465e1773`.
+- Change scope: wording/presentation only. In the Bronze terminal Repose state where higher ordinary quality can no longer be unlocked but Silver/Gold can still improve the delivered-body distribution, the first line now says the highest available quality tier is already unlocked and Bronze can no longer raise it; the parenthetical explains that the donkey can still bring a worse available body, Silver raises the chance of the best available body, and Gold guarantees it.
+- All 11 Rebalanced locale overlays contain the same semantics. The shared `repose.endpoint` key remains unchanged for true terminal Silver/Gold states and for Vanilla.
+- Repose mechanics, corpse generation/distribution logic, q20/q40/q95, duration, pulpit layout/font lifecycle and all other prayers remain unchanged.
+- Runtime acceptance pending: one Russian Bronze terminal-endpoint visual/readability check of both lines; no sermon, corpse-generation or mechanics replay required.
+
+
 ## 2026-09-26 — Rebalanced 0.2.39 Repose endpoint wording candidate
 
 - Baseline: stable Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
@@ -12,7 +29,7 @@
 - Rebalanced 0.2.39 DLL SHA-256: `a57bdf4b423c1d2ab79cb2249bc0d35bb103d5a0388444ea8f15dc2f976c70ec`.
 - Change scope: wording only. The Bronze terminal Repose parenthetical now explains that the donkey can still bring a body below the best currently available; Silver raises the chance of receiving the best one and Gold guarantees it.
 - All 11 Rebalanced locale overlays were updated. Repose mechanics, endpoint condition, layout/font ownership and Vanilla remain unchanged.
-- Runtime acceptance pending: one Russian Bronze terminal-endpoint visual/readability check; no sermon/mechanics replay required.
+- **Superseded before runtime acceptance:** 0.2.39 changed only the parenthetical hint and therefore did not implement the full user-approved two-line Bronze endpoint wording. Do not use 0.2.39 for acceptance; 0.2.40 replaces it.
 
 
 ## 2026-09-26 — Rebalanced 0.2.38 accepted stable
