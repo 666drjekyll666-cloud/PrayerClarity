@@ -239,12 +239,28 @@ There is currently **no open production implementation gate** recorded by this d
 
 ### Current actionable UX / presentation backlog
 
-The 2026-09-26 post-0.2.37 review found **one actionable queued micro-change**:
+A deeper 2026-09-26 reconciliation against recent project-chat decisions and the exact accepted 0.2.37 source corrected the earlier too-narrow backlog review.
 
-- **Soul's Repose reliability note:** keep the accepted meaning of the final Silver/Gold reliability sentence, but present it parenthetically so it reads as a note rather than another primary effect sentence. This is presentation-only and intentionally **queued**, not a reason by itself to consume a new version/DLL. Its own per-change gate must be recorded before the eventual production-source mutation, and it should ride the next natural coherent presentation candidate if another READY item appears.
+**Open production-facing presentation items:**
+
+- **Shoots & Roots 95% combined cap wording:** user decision is that the “combined reduction from all sources is no more than 95%” note belongs only to the **Gold** presentation; Bronze/Silver must not show that cap note. The 0.2.31 wording attempt was rejected because Bronze/Silver still exposed it. Exact 0.2.37 source still renders `rebalanced.active.plant` with the 95% combined cap for every active tier, so this remains genuinely open.
+- **Prayer for Donations Gold pulpit denomination:** the accepted target is native denomination **1 gold**, not `+100 silver`, matching the item-tooltip presentation. Exact 0.2.37 final pulpit writer remains `PulpitPolish -> PresentationText.BuildPulpitResultRows -> FormatPrayerContribution`, which formats fixed money as `(slv) +100`; therefore this remains a real presentation tail.
+- **Soul's Repose reliability note:** keep the accepted meaning of the final Silver/Gold reliability sentence, but present it parenthetically so it reads as a note rather than another primary effect sentence. This remains a queued micro-change.
+
+**Decision pending, not yet an approved production change:**
+
+- **Legacy Protective Prayer (`b_shield`) lore:** Rebalanced intentionally retires Protection crafting/Technology while retaining old `b_shield` items as Combat aliases mapped to `buff_sword`. The item tooltip still resolves the stock `b_shield_d` lore, while the surviving Combat Technology/lore is `b_sword`-owned. The user noticed this inconsistency but explicitly called it a minor observation and asked not to change anything yet. A product decision is required before opening a production gate: preserve legacy-item lore or normalize the alias item to Combat lore.
+
+**Confirmed closed / not backlog:**
+
+- prayer-item success requirement is already separated under the accepted **Sermon success / Успех проповеди** section in the current source;
+- the duplicate Combo Prayer quality star was a Test Console 0.1.10 artifact, not a production defect; later neutral console versions removed that confound;
+- prayer-item number+inline-resource-icon wrapping was accepted in 0.2.32;
+- long pulpit localized-text clearance and live-language font switching were accepted in 0.2.37;
+- the prior Contentment / Thorough Cleansing / Repentance / Imagination / Excellence presentation tails were superseded by later accepted source and are not reopened by this review.
 
 Known evidence gaps that are **not** active UX backlog:
 - terminal ordinary Repose endpoint wording/presentation remains optional/non-blocking until a naturally available save reaches that progression state;
 - the physical three-Story payout from a real successful Silver/Gold Imagination sermon remains an evidence gap on a verified native drop path, not a current presentation defect.
 
-No other current canonical UX document contains an unresolved production-facing presentation problem that justifies a candidate now. `PLAYER_UX_RESEARCH.md` explicitly has no open UX-research gate; historical candidate notes and rejected experiments are not backlog.
+Candidate granularity rule applies: the three approved/open presentation tails above are suitable to batch into one future coherent presentation candidate once each production gate is READY; none requires a standalone DLL by itself.
