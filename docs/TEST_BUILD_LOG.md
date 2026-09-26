@@ -1578,3 +1578,21 @@ Research helper identity:
   - manually map fonts by language — rejected because GJL already owns the native mapping;
   - **selected:** before each PrayerClarity pulpit render, call the native `GJL.EnsureLabelHasCorrectFont(label, true)` on the template/custom forecast labels, and likewise on any layout-created label. This is the least-complex path and delegates to the verified host owner.
 - Fresh production gate for this exact property is **READY**; no diagnostic probe is needed because runtime reproduction + direct host/source inspection establish owner and correction seam.
+
+
+### 2026-09-26 — Rebalanced 0.2.37 current-language pulpit font refresh candidate
+
+- Baseline: exact Rebalanced 0.2.36 source `6c4d1ffddc53a8c32f0bdac39c7dcbfe127eefee`; the 0.2.36 native-anchor-driven clearance mechanism is preserved unchanged.
+- Gate-only commit: `002369e72512d107578817a49f581740b7ede07a`; gate `pulpit-language-font-refresh` = **READY**.
+- Selected fix follows the verified host owner instead of maintaining a PrayerClarity font map:
+  - added a narrow bridge to native `GJL.EnsureLabelHasCorrectFont(label, true)`;
+  - every PrayerClarity pulpit redraw now refreshes the current-language font on the pulpit template plus persistent Result / Effect / DependencyNote labels before assigning/configuring text;
+  - the layout-created ResultHeader receives the same native font refresh immediately after capture/creation.
+- No language-change hook, polling, label recreation, custom font table, font asset or new diagnostic probe was added.
+- Rebalanced candidate: **0.2.37**; Vanilla sibling: **1.0.46**.
+- Exact candidate source: `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05`.
+- CI run: `36233062229` — success; production gate, localization validation, Rebalanced build, Vanilla sibling build and artifact staging all passed.
+- Artifact ID: `10903635730`; artifact ZIP digest: `sha256:60b9e9dd8e784cc78db8d400621c5ce03b84b61e1d71f3ae516800c6bcb19b38`.
+- Rebalanced 0.2.37 DLL SHA-256: `6498e120809832a7efdb9ec17fd1a36e91e1faee9e102de083f35d6804f612dc`.
+- Vanilla 1.0.46 DLL SHA-256: `eed4f35a929e42442ec11defad09112253202c1c6cb86641046eefb949f5b7fc`.
+- Runtime acceptance pending. Minimum combined test: in one session check Japanese Soul's Repose, switch to English and reopen, switch to Russian and reopen; then Korean Soul's Repose once and short Faith once. This simultaneously verifies the new font-lifecycle regression fix and completes the still-pending long-locale/no-unnecessary-growth acceptance for the 0.2.36 layout mechanism.
