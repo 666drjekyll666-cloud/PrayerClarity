@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "Algumas palavras sobre por que é melhor purificar as almas com cuidado.",
   "rebalanced.tech.gratitude_effect": "A condição das almas não piora com o tempo — nem no corpo, nem depois da extração.\n(gratitude_points) ao libertar almas: +{0:0}%",
   "rebalanced.active.sins_detailed": "Chance diária de confissão em cada confessionário: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(Prata e ouro ainda aumentam a chance de receber o melhor corpo disponível.)"
+  "rebalanced.repose.endpoint_bronze_hint": "(As orações de prata e ouro ainda aumentam a confiabilidade de receber o melhor corpo disponível.)"
 }
