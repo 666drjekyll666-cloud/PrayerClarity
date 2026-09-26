@@ -1465,3 +1465,27 @@ Research helper identity:
 - Rebalanced 0.2.35 DLL SHA-256: `020e1b8a97286d53be76cbca252013ddd32e272f4d0c8e9383f36d412bcfea8d`.
 - Vanilla 1.0.44 DLL SHA-256: `2f6981f23edd474241bc5ae3f6e829e387f3ac1be0d698878f74dbc4c31234d2`.
 - Runtime acceptance pending. Remove the geometry probe for production acceptance. Keep Neutral Test Console 0.1.17 if useful. Check Russian Soul's Repose, Japanese Soul's Repose, then short Faith as the no-unnecessary-growth control.
+
+
+### 2026-09-26 — Rebalanced 0.2.35 rejected; solution space re-opened again
+
+- Runtime used exact **PrayerClarity: Rebalanced 0.2.35**, **Neutral Test Console 0.1.17**, and the read-only **Pulpit Geometry Probe 0.1.0** remained installed.
+- Visual result: **0.2.35 is rejected**.
+  - Russian Soul's Repose is improved relative to the prior candidate but the final Effect block still sits too close to / intrudes into the action-button area.
+  - Japanese Soul's Repose still visibly overlaps the action button.
+  - Korean Soul's Repose independently reproduces the long-locale collision.
+  - Chinese was visually observed to fit, so the defect is not simply "all CJK locales"; actual glyph metrics/wrapping matter.
+- Source invariant: PrayerClarity still requests the same Effect font size for every locale. The more compact Chinese result therefore must not be explained as a PrayerClarity per-locale font-size override without further evidence.
+- The returned log confirms exact 0.2.35 + Neutral Test Console 0.1.17 + Pulpit Geometry Probe 0.1.0 loaded, and confirms normal language transitions through Russian, Japanese, Chinese and Korean. No PrayerClarity forecast exception/failure is present.
+- Important limitation: this returned log contains **no F8 PULPIT_GEOMETRY dump**. The probe was installed but was not triggered, so there is no post-render 0.2.35 geometry sample yet.
+- Fresh gate for the exact final long-locale button-clearance property is **BLOCKED**. Do not create 0.2.36 by merely increasing the bounded-pass count again.
+- Solution-space checkpoint re-opened after the second failure of the settled-pass mechanism:
+  - continuing the current iterative settled-layout family is still plausible, but only if the existing 0.2.35 post-render geometry shows a narrow, deterministic remaining error;
+  - a deterministic direct-layout family (derive final button/window geometry from settled content once, rather than iterating toward it) is now a credible simpler alternative and must be compared if the 0.2.35 dump shows continued convergence/lifecycle drift;
+  - fixed/worst-case geometry remains available but would enlarge short layouts and is not preferred unless dynamic/direct placement proves lifecycle-fragile;
+  - wording/content reduction remains a separate user-owned design option and is not a technical shortcut.
+- Research-method checkpoint:
+  - exact question: after exact 0.2.35 has finished its four bounded settled passes, what are the final Effect bounds, full visible button bounds, button-root position and root-window bounds in one still-failing locale?
+  - existing exact artifact: Pulpit Geometry Probe 0.1.0 already answers this; no new probe or Test Console change is needed.
+  - minimum runtime action: before removing the probe, open one clearly failing locale (Japanese is sufficient), wait for the pulpit to settle, press **F8 once**, and return the log. Korean/Russian duplicate F8 dumps are not required unless the Japanese geometry differs unexpectedly.
+- The previously discussed wording change that puts the Silver/Gold reliability sentence in parentheses remains deferred. It is a separate presentation change and can alter wrapping by a small amount, so it should be applied only after the layout mechanism is accepted, then included in the final long-locale stress check.
