@@ -1,55 +1,31 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.45",
-  "baseline_sha": "7886a5cb860842aa1df139a84e81d69622dc7be1",
+  "candidate_branch": "candidate/rebalanced-0.2.46",
+  "baseline_sha": "42feed5758e22118c5c1ef1ab573ad2e7bd10039",
   "changes": [
     {
-      "id": "prayer-item-vanilla-width-restoration",
-      "observable_property": "PrayerClarity-owned prayer-item mechanics rows must use the game's standard item-tooltip width behavior rather than any PrayerClarity-owned fixed or expanding width policy.",
-      "canonical_owner": "ItemDefinition.GetTooltipData remains the standard item-tooltip data seam. TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix currently recognizes PrayerClarity-owned prayer-item mechanics rows only to apply width/wrap handling.",
-      "final_writer_or_commit_point": "BubbleWidgetText.Draw -> TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix is the final PrayerClarity interception for those marked rows. In this candidate it must stop writing UILabel width, overflowMethod, height or overflowWidth and retain only the already-accepted amount+inline-symbol final-wrap repair.",
+      "id": "prayer-item-requirement-centering",
+      "observable_property": "In prayer-item tooltips, the PrayerClarity-owned 100%-success requirement row should remain visually balanced when the standard vanilla item-tooltip width wraps the numeric Church Quality requirement and cross icon onto a second line.",
+      "canonical_owner": "ItemTooltipPresentation.ComposePrayerTooltip creates the dedicated requirement BubbleWidgetTextData row for prayer items. TooltipDetailsRenderer.BuildSingleSections owns the requirement text itself.",
+      "final_writer_or_commit_point": "ItemTooltipPresentation.CreateTextData sets the BubbleWidgetTextData alignment before the standard item-tooltip renderer lays out and wraps the row; no later PrayerClarity writer should override this alignment.",
       "blast_radius": [
-        "PrayerClarity-owned mechanics rows in prayer-item tooltips in Vanilla and Rebalanced",
-        "All 11 locales through the same shared item-tooltip rendering path"
+        "PrayerClarity-owned success-requirement row in prayer-item tooltips in Vanilla and Rebalanced",
+        "All 11 locales through the shared prayer-item presentation path"
       ],
       "preserved_invariants": [
-        "The accepted conditional amount+inline-resource wrap repair remains active",
-        "Prayer-item wording, lore, title, crafting-location text and mechanics remain unchanged by this gate",
-        "Technology tooltip layout remains unchanged",
-        "Non-prayer item tooltips remain untouched",
-        "No new UI placement/lifecycle hook is introduced"
+        "Standard vanilla prayer-item tooltip width remains authoritative",
+        "Requirement wording, values and Church Quality semantics remain unchanged",
+        "Base Result and On Success content rows remain left-aligned",
+        "Section headers remain centered as before",
+        "Accepted amount+inline-resource final-wrap repair remains unchanged",
+        "Technology, pulpit, Temporary Effects and non-prayer item tooltips remain unchanged",
+        "No prayer mechanics, balance or localization strings change"
       ],
-      "acceptance_evidence": "Build validation plus Russian visual inspection of Repose, Imagination/another ordinary prayer, and a long-line prayer such as Prosperity. Their parchment width must follow the normal game item-tooltip geometry rather than PrayerClarity's 200/280/420 experiments; long text may wrap naturally. Verify no amount/resource icon is orphaned.",
+      "acceptance_evidence": "Build validation plus a focused Russian visual check on one prayer whose requirement wraps under vanilla width and one prayer whose requirement stays on one line. The wrapped number+cross line and the first line should read as one centered block without altering parchment width or any other section alignment.",
       "evidence_refs": [
-        "Shared research docs/CRAFTING_INVENTORY_AND_TRADING.md: ItemDefinition.GetTooltipData is the verified standard item-tooltip seam.",
-        "docs/PLAYER_UX_RESEARCH.md: amount+inline-resource final-wrap repair is separately runtime-accepted and does not require PrayerClarity to own tooltip width.",
-        "0.2.29 fixed 200, 0.2.43 ResizeFreely/420, and 0.2.44 fixed 280 were all rejected by direct runtime visuals for prayer-item geometry.",
-        "User product decision on 2026-09-26: return prayer items to standard vanilla tooltip width."
-      ],
-      "state": "READY"
-    },
-    {
-      "id": "repose-explicit-reliability-language",
-      "observable_property": "Rebalanced Repose must make the relationship between the shared higher-quality-body effect and prayer-quality reliability immediately clear. Concrete Bronze/Silver/Gold forecast surfaces are self-contained; Technology remains a compact comparison; terminal wording explicitly limits Silver/Gold to bodies the Donkey can already bring.",
-      "canonical_owner": "RebalancedPresentationSemantics owns Rebalanced Repose Technology and concrete forecast text. PulpitLayoutV5.OverrideSpecialPresentation owns terminal Repose substitution. lang_rebalanced/*.json owns the player-facing wording.",
-      "final_writer_or_commit_point": "Technology consumes TryBuildTechnologyEffect; prayer items and ordinary pulpit consume TryBuildTierEffect/PrayerForecast; PulpitLayoutV5.OverrideSpecialPresentation is the final terminal pulpit writer.",
-      "blast_radius": [
-        "Rebalanced Repose Technology wording across all 11 locales",
-        "Rebalanced Repose item-tooltip wording across all 11 locales",
-        "Rebalanced Repose ordinary and terminal pulpit wording across all 11 locales"
-      ],
-      "preserved_invariants": [
-        "Temporary Effects wording/behavior remains unchanged from 0.2.44",
-        "Vanilla Repose reliability semantics are not changed",
-        "Shared Vanilla/Rebalanced natural-limit endpoint sentence remains unchanged",
-        "Repose mechanics, corpse-tier availability, Silver/Gold distribution behavior, requirements, duration and RNG remain unchanged",
-        "Terminal quality-glyph one-line-per-tier structure remains"
-      ],
-      "acceptance_evidence": "Localization/build validation plus Russian visual inspection: Technology must read shared effect + reliability delta; Bronze item/ordinary pulpit must explicitly say higher-quality bodies are possible but the best body is not guaranteed; Silver/Gold item/ordinary pulpit must show shared effect plus their reliability sentence; terminal Bronze must show three glyph-led lines; terminal Silver/Gold must say best among the bodies the Donkey can already bring. No sermon/corpse-generation/active-buff replay is required.",
-      "evidence_refs": [
-        "User-approved wording model on 2026-09-26: concrete Bronze = higher-quality bodies possible but best not guaranteed; Silver/Gold = same shared effect plus increased/guaranteed best result.",
-        "User-approved full terminal wording on 2026-09-26: Silver/Gold refer to 'the bodies the Donkey can already bring'.",
-        "src/RebalancedPresentationSemantics.cs and src/PulpitLayoutV5.cs on baseline 7886a5cb860842aa1df139a84e81d69622dc7be1."
+        "User runtime screenshots on 2026-09-26 with Rebalanced 0.2.45 show the vanilla-width requirement row consistently wrapping the Church Quality number+cross while remaining left-aligned.",
+        "src/ItemTooltipPresentation.cs on baseline 42feed5758e22118c5c1ef1ab573ad2e7bd10039 creates sections.Requirement with alignment Left, while the corresponding section header is already Center.",
+        "User product approval on 2026-09-26: center only the Success of sermon requirement content and keep vanilla width."
       ],
       "state": "READY"
     }
