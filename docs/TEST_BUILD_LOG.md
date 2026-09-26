@@ -1,5 +1,34 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.46 / Vanilla 1.0.52 centered prayer-item success requirement candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.45 exact source `42feed5758e22118c5c1ef1ab573ad2e7bd10039`.
+- Runtime result of 0.2.45: **Repose and vanilla-width direction accepted; one shared prayer-item alignment polish supersedes the candidate before full acceptance**.
+  - Repose item text, ordinary pulpit, terminal pulpit and Character -> Temporary Effects were all reported correct.
+  - Terminal Bronze quality stars and the one-line-per-tier comparison were accepted.
+  - Returning prayer-item geometry to the game's standard vanilla width was accepted as the correct width policy.
+  - Under that standard width, Russian prayer items consistently wrap the final Church Quality number + cross of the 100%-success requirement onto a second line. Functionally correct, but left alignment makes the wrapped block look accidental.
+- Candidate branch: `candidate/rebalanced-0.2.46`.
+- Gate-only commit: `87226b8c7e6ca631b56e4ba40e301272f5bb638e`.
+- Exact candidate source SHA: `ef027959871b9f520cee73be88ce381306b30c10`.
+- CI run: `36265634079`; result: **success**. Production gate, 11-locale localization validation, both sibling builds, staging and upload all passed.
+- Artifact ID: `10914431514`.
+- Artifact: `PrayerClarity-rebalanced-0.2.46-ci-ef027959871b9f520cee73be88ce381306b30c10`.
+- Artifact ZIP digest: `sha256:904cf1752329eac4483da96f17db47c5368587c6680e984e3efb95ad844912a7`.
+- Rebalanced 0.2.46 DLL SHA-256: `789504068d4ab33f988ee55ad2a18fbaed787163f970ff442d81ec6cd45bfba3`.
+- Shared sibling Vanilla 1.0.52 DLL SHA-256: `543e6076ca24340415340475290099bbb95f0e14fddb9702767608cfce7f7264`.
+- Production change is intentionally one line: the PrayerClarity-owned prayer-item requirement content row changes alignment from `Left` to `Center`.
+- Preserved:
+  - game-owned standard prayer-item width/height/overflow;
+  - requirement text/value and normal NGUI wrapping;
+  - centered section header;
+  - left alignment for Base Result and On Success content;
+  - accepted amount + inline-resource wrap repair;
+  - all Technology, pulpit, Temporary Effects, prayer mechanics and balance.
+- Focused runtime acceptance: inspect one Russian prayer whose requirement wraps (for example Silver Repose / Faith) and one whose requirement does not. Both lines of a wrapped requirement must read as one centered block; parchment geometry and all other section alignments must remain unchanged.
+- No Repose state-switching, sermon execution, corpse generation, Temporary Effects replay or other prayer test is required.
+
 ## 2026-09-26 — Rebalanced 0.2.45 / Vanilla 1.0.51 vanilla-width + final Repose wording candidate
 
 - Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
