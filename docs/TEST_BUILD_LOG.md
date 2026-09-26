@@ -1489,3 +1489,27 @@ Research helper identity:
   - existing exact artifact: Pulpit Geometry Probe 0.1.0 already answers this; no new probe or Test Console change is needed.
   - minimum runtime action: before removing the probe, open one clearly failing locale (Japanese is sufficient), wait for the pulpit to settle, press **F8 once**, and return the log. Korean/Russian duplicate F8 dumps are not required unless the Japanese geometry differs unexpectedly.
 - The previously discussed wording change that puts the Silver/Gold reliability sentence in parentheses remains deferred. It is a separate presentation change and can alter wrapping by a small amount, so it should be applied only after the layout mechanism is accepted, then included in the final long-locale stress check.
+
+
+### 2026-09-26 — 0.2.35 Japanese F8 proves extra pass did not become final geometry
+
+- Exact runtime log confirms **PrayerClarity: Rebalanced 0.2.35**, **Neutral Test Console 0.1.17** and **Pulpit Geometry Probe 0.1.0** loaded under Graveyard Keeper 1.407.
+- Japanese Soul's Repose F8 after full render:
+  - root window: 284x346, bounds `[-173,173]`;
+  - Effect: 240x56, bounds `[-129.939,-74]`;
+  - craft-button root local Y: `-137`;
+  - active visible red background: bounds `[-150,-126]`.
+- Those final Japanese values are effectively the same as the previously recorded 0.2.34 Japanese post-render geometry. Therefore increasing the bounded settled loop from three to four passes did **not** produce a durable different final button geometry.
+- Using the actual active visible-button union, the 0.2.35 final state still needs `11.939` UI units downward for the accepted 8-unit Effect/button clearance. The existing window is already tall enough: moving the visible button union from `[-150,-126]` to `[-161.939,-137.939]` leaves `11.061` UI units above the root bottom `-173`, so further window growth is not the missing behavior.
+- Source inspection confirms 0.2.35 writes `craft button.transform.localPosition` inside the bounded coroutine. Because the extra pass does not survive into the observed final geometry, the current open hypothesis is that NGUI anchor/layout ownership rewrites that transform after PrayerClarity's mutation. This is **not yet accepted fact** because probe 0.1.0 did not record anchor state.
+- Production gate remains **BLOCKED**; do not make 0.2.36 by increasing pass count.
+- Solution-space implication: iterative convergence by adding more settled passes is no longer a credible next production step. If anchor ownership is confirmed, compare an anchor-aware/direct deterministic placement with fixed geometry; prefer the least-complex path that owns the actual final geometry.
+- Existing probe was narrowly extended to **Pulpit Geometry Probe 0.1.1** instead of creating a new diagnostic family.
+  - branch: `research/pulpit-geometry-probe-0.1.1`;
+  - exact source: `d33c141f132b430d79140b96c683886851b9cc0a`;
+  - CI run: `36205348199` — success;
+  - artifact ID: `10893244522`;
+  - artifact ZIP digest: `sha256:ebec18c730987a1a3c79bf16d964b2ce0b68fcc85556133f4580f75476658fc8`;
+  - DLL SHA-256: `eb0dec1e9adce244aa54080e1e56bc80db17099e28a7e4893a97aadf50959d14`.
+- Probe 0.1.1 remains read-only and adds: full active visible-button union calculation, every button UIWidget's anchor state/targets/offsets, and all components on the craft-button root.
+- Minimum next runtime action: replace probe 0.1.0 with 0.1.1, keep exact Rebalanced 0.2.35, open Japanese Soul's Repose, wait for final render, press **F8 once**, return the log. No RU/KO/Faith retest is needed.
