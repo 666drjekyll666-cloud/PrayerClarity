@@ -1,0 +1,48 @@
+name: Build Repose state switcher
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'research/repose-state-switcher-*'
+    paths:
+      - 'src/ReposeStateSwitcherPlugin.cs'
+      - 'PrayerClarity.ReposeStateSwitcher.csproj'
+      - '.github/workflows/build-repose-state-switcher.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayerclarity-repose-state-switcher-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PrayerClarity.ReposeStateSwitcher.csproj
+      - name: Build
+        run: dotnet build PrayerClarity.ReposeStateSwitcher.csproj -c Release --no-restore
+      - name: Stage artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll='bin/ReposeStateSwitcher/PrayerClarity.ReposeStateSwitcher.dll'
+          test -f "$dll"
+          mkdir -p dist
+          cp "$dll" dist/PrayerClarity.ReposeStateSwitcher-0.1.0.dll
+          sha256sum dist/PrayerClarity.ReposeStateSwitcher-0.1.0.dll
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrayerClarity-repose-state-switcher-0.1.0-${{ github.sha }}
+          path: dist/PrayerClarity.ReposeStateSwitcher-0.1.0.dll
+          retention-days: 14
