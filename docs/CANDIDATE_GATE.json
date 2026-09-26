@@ -1,29 +1,35 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.32",
-  "baseline_sha": "c723069d719d33210d9406b6c95059b2cd252d8f",
+  "candidate_branch": "candidate/rebalanced-0.2.36",
+  "baseline_sha": "768bb9929823a3b3fd2496fdfd71de0587ddeb27",
   "changes": [
     {
-      "id": "prayer-item-amount-icon-wrap",
-      "observable_property": "In PrayerClarity-owned prayer-item mechanics rows, a numeric amount and its immediately following inline resource icon are not split so that the icon becomes the sole content of a new visual line.",
-      "canonical_owner": "TechnologyTooltipContentWidth prayer-item layout path for BubbleWidgetText.Draw on BubbleWidgetTextData marked by ItemTooltipPresentation.",
-      "final_writer_or_commit_point": "UILabel.processedText after PrayerClarity sets the prayer-item mechanics row to fixed width 200 with ResizeHeight and triggers NGUI processing.",
+      "id": "pulpit-native-anchor-driven-clearance",
+      "observable_property": "Long localized pulpit Effect text never overlaps the full visible action button. Short prayers keep the existing baseline pulpit size. The button is positioned by its native NGUI anchor ownership rather than by PrayerClarity transform writes.",
+      "canonical_owner": "The root craft-button UILabel is vertically anchored to UI Root/Pray GUI/window with updateAnchors=OnUpdate, bottom/top anchor absolutes +28/+44. The visible red craft-button background is itself anchored to that root UILabel. The real pulpit root UIWidget therefore owns the bottom edge that determines final button placement. The PrayerClarity forecast Effect stays under the all-sides-anchored stock container whose fixed bottom/top margins preserve its centre when the root window grows.",
+      "final_writer_or_commit_point": "NGUI anchor resolution is the final writer of craft-button placement. PrayerClarity waits for settled localized Effect geometry, measures the full active button-widget union, then changes only the unanchored root-window height by the exact amount needed for native bottom anchoring to create the accepted clearance. PrayerClarity no longer writes craft-button.transform.localPosition for this property.",
       "blast_radius": [
-        "PrayerClarity-owned prayer-item mechanics rows using the fixed 200-unit compact item layout",
-        "Only rows whose final NGUI wrap actually separates an integer amount from the immediately following parenthesized inline symbol token"
+        "PrayerClarity pulpit root-window height for prayers/locales whose settled Effect block would otherwise collide with the action button",
+        "Native anchored craft-button position as a downstream consequence of root-window growth",
+        "Stock anchored container/frame geometry already owned by PulpitLayoutV4"
       ],
       "preserved_invariants": [
-        "Prayer wording and localization text remain unchanged",
-        "Prayer mechanics and values remain unchanged",
-        "Prayer-item tooltip width remains 200",
-        "Technology, pulpit, Temporary Effects and non-prayer tooltips remain unchanged",
-        "Languages whose final wrap does not orphan an amount/icon cluster remain untouched"
+        "Prayer wording, localization, mechanics, success values and rewards remain unchanged",
+        "Existing +100 UI-unit pulpit extra height remains the minimum baseline",
+        "Short prayers/locales receive no dynamic growth when the full visible button already clears the Effect by at least 8 UI units",
+        "PrayerClarity does not mutate craft-button anchor offsets or write its transform for final placement",
+        "The native craft-button bottom margin remains invariant because the root button is bottom-anchored to the root window",
+        "No permanent Update polling, extra lifecycle hook, iterative convergence loop, or new probe is introduced",
+        "Pulpit restore returns the root window/frame to captured stock geometry",
+        "Non-pulpit surfaces remain unchanged"
       ],
-      "acceptance_evidence": "Run Rebalanced 0.2.32 without the research repair enabled and inspect Gold Soul's Repose in Russian and Japanese. Russian must keep both 1 + Faith and 90 + Soul Gratitude together; Japanese must retain its normal readable wrapping. Return one screenshot per language or equivalent direct visual confirmation.",
+      "acceptance_evidence": "Run exact Rebalanced 0.2.36 in Graveyard Keeper 1.407 with the geometry probe removed. Check Soul's Repose in Russian, Japanese and Korean: the final Effect block must have visible separation from the entire red action button and the button must remain inside the parchment. Then check short Faith: its baseline window must not grow unnecessarily. Chinese may be spot-checked but is not required because it already fit in the rejected candidates.",
       "evidence_refs": [
-        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.14 proved NGUI processedText creates 1\\n(faith) and 90\\n(gratitude_points) after the 200-unit width pass.",
-        "2026-09-26 runtime: exact Rebalanced 0.2.30 + Test Console 0.1.15 visually kept both Russian amount/icon pairs together by moving the wrap before the amount.",
-        "2026-09-26 runtime: Japanese Soul's Repose did not trigger the repair and remained readable under stock final wrapping."
+        "Pulpit Geometry Probe 0.1.1 on exact 0.2.35: root craft-button UILabel isAnchored=True, isAnchoredVertical=True, updateAnchors=OnUpdate, bottom anchor -> root window relative=0 absolute=28, top anchor -> root window relative=0 absolute=44.",
+        "The active red craft-button background UI2DSprite is anchored to the root craft-button widget and spans [-150,-126] in the Japanese failing state.",
+        "Japanese 0.2.35 settled Effect bottom=-129.939; required downward for 8-unit clearance=11.938. Current root window bounds are [-173,173].",
+        "Project-accepted pulpit frame evidence: the stock container is anchored on all four sides with fixed edge offsets; growing the unanchored real root window changes container height while preserving its centre, and the accepted sliced frame path already supports root-window growth.",
+        "Solution-space checkpoint after 0.2.35: iterative transform correction is rejected because NGUI anchors are the final writer; direct anchor-offset mutation is viable but more invasive; fixed worst-case height would unnecessarily enlarge short prayers. Native anchor-driven root growth is the least-powerful mechanism that satisfies the acceptance envelope."
       ],
       "state": "READY"
     }
