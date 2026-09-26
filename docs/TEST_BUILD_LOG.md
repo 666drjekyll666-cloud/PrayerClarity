@@ -1433,3 +1433,35 @@ Research helper identity:
   - exact question: after 0.2.34 has finished all bounded settled-layout passes, what are the final root-window bounds, Effect UILabel bounds/printed size, and full visible button bounds in a failing locale, and how much clearance actually remains?
   - existing path: the already-built read-only **Pulpit Geometry Probe 0.1.0** can answer this without modifying production or the neutral Test Console; no new probe build is needed.
   - minimum runtime action: install the existing probe alongside exact 0.2.34, open failing Russian Repose and press F8 once, then switch to Japanese Repose and press F8 once, and return the log. No sermon execution or Faith retest is needed at this research step.
+
+
+### 2026-09-26 — Rebalanced 0.2.34 final geometry closes solution choice; 0.2.35 ready
+
+- Exact runtime used **PrayerClarity: Rebalanced 0.2.34**, **Neutral Test Console 0.1.17**, and the existing read-only **Pulpit Geometry Probe 0.1.0**. The log confirms all three exact versions loaded under Graveyard Keeper 1.407.
+- Russian post-render geometry:
+  - root window height `350`, bounds `[-175, 175]`;
+  - Effect bounds `[-131.939, -76]`;
+  - active red button background bounds `[-152, -128]`;
+  - actual Effect-to-button gap = `-3.939` UI units (3.939 overlap);
+  - required movement for the accepted 8-unit clearance = `11.939` UI units downward;
+  - after that movement the button bottom would be `-163.939`, leaving `11.061` UI units above the window bottom. **No additional window growth is required.**
+- Japanese post-render geometry:
+  - root window height `346`, bounds `[-173, 173]`;
+  - Effect bounds `[-129.939, -74]`;
+  - active red button background bounds `[-150, -126]`;
+  - the same actual gap `-3.939`, the same required final movement `11.939`, and the same resulting bottom margin `11.061`. **No additional window growth is required.**
+- This closes the 0.2.34 uncertainty: the content-driven root-window sizing is already sufficient in both independently failing locales. The remaining defect is one final settled button correction.
+- Solution-space checkpoint was re-opened after the failed candidate:
+  - **content-driven dynamic layout** — retained;
+  - **bounded fixed/worst-case layout** — rejected for this iteration because the measured dynamic window is already adequate and fixed geometry would unnecessarily enlarge short prayers while requiring a new fixed-height choice;
+  - **wording/content reduction** — not used as a technical shortcut because it changes a user-owned presentation/design requirement.
+  - Current dynamic path remains the least-complex adequate family because the remaining correction is local, measured and requires no new host hook/lifecycle assumption.
+- Rebalanced **0.2.35** / Vanilla sibling **1.0.44** were created from exact accepted 0.2.32 source `768bb9929823a3b3fd2496fdfd71de0587ddeb27`, not from rejected 0.2.34.
+- Gate-only commit: `9acd438ae63b421168722ca5553cc67604907508`; gate `pulpit-final-settled-button-correction` = **READY**.
+- Candidate exact source: `e02ec8deaf41ba55c223ef2a64582aa59b0f3bc2`.
+- Implementation reproduces the evidence-backed 0.2.34 settled/full-visible-button mechanism but allows one **fourth bounded settled pass**. Runtime evidence shows that at the measured 0.2.34 final state this pass requires only the final 11.939-unit button correction in RU and JA; no further root-window growth is predicted.
+- CI run: `36203734225` — success. Candidate-gate validation, localization validation, Rebalanced build, Vanilla sibling build and artifact staging all passed.
+- Artifact ID: `10892742207`; artifact ZIP digest: `sha256:80c44e84cd82bdb35939ef5ad03baa2802bf260a5eab929e1e13405dd7a40df9`.
+- Rebalanced 0.2.35 DLL SHA-256: `020e1b8a97286d53be76cbca252013ddd32e272f4d0c8e9383f36d412bcfea8d`.
+- Vanilla 1.0.44 DLL SHA-256: `2f6981f23edd474241bc5ae3f6e829e387f3ac1be0d698878f74dbc4c31234d2`.
+- Runtime acceptance pending. Remove the geometry probe for production acceptance. Keep Neutral Test Console 0.1.17 if useful. Check Russian Soul's Repose, Japanese Soul's Repose, then short Faith as the no-unnecessary-growth control.
