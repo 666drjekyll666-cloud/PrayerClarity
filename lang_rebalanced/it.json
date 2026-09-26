@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "Accelera la crescita delle piante.",
   "rebalanced.tech.sins_intro": "Le confessioni avvengono più spesso in ogni confessionale.",
-  "rebalanced.tech.repose_intro": "L’asino può portare corpi di qualità migliore.",
+  "rebalanced.tech.repose_intro": "L’asino può portare corpi di un livello di qualità superiore.",
   "rebalanced.tech.combat_intro": "Rafforza il Custode in combattimento.",
   "rebalanced.active.plant": "Tempo di crescita delle piante: -{0:0}% · Riduzione totale del tempo di crescita da tutte le fonti: non oltre {1:0}%",
   "rebalanced.active.sins": "Probabilità di confessione: {0:0}%",
-  "rebalanced.active.repose.bronze": "L’asino può portare un corpo di un livello di qualità migliore",
-  "rebalanced.active.repose.silver": "Nella metà dei casi è garantito il corpo migliore",
-  "rebalanced.active.repose.gold": "L’asino porta sicuramente il corpo migliore",
+  "rebalanced.active.repose.bronze": "Sblocca il livello di qualità dei corpi successivo",
+  "rebalanced.active.repose.silver": "Aumenta la probabilità di ottenere il miglior corpo disponibile",
+  "rebalanced.active.repose.gold": "Garantisce il miglior corpo disponibile",
   "rebalanced.active.combat": "Danni +{0:0.##} · Armatura +{1:0.##} · Rigenerazione {2:0.##} PV/s",
   "rebalanced.active.gratitude": "La condizione delle anime non peggiora nel tempo, né nel corpo né dopo l'estrazione. Liberare le anime fornisce +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tempo di crescita delle piante: -{0:0}%",
@@ -23,6 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "Qualche parola sul perché sia meglio purificare le anime a fondo.",
   "rebalanced.tech.gratitude_effect": "La condizione delle anime non peggiora con il tempo — né nel corpo né dopo l'estrazione.\n(gratitude_points) ottenuti liberando le anime: +{0:0}%",
   "rebalanced.active.sins_detailed": "Probabilità giornaliera di confessione in ogni confessionale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze": "Il livello di qualità dei corpi più alto disponibile è già sbloccato. La preghiera di bronzo non può più aumentarlo.",
-  "rebalanced.repose.endpoint_bronze_hint": "(L'asino può ancora portare un corpo che non sia il migliore disponibile. La versione d'argento di questa preghiera aumenta la probabilità di ottenere il migliore; quella d'oro lo garantisce.)"
+  "rebalanced.repose.endpoint_bronze": "Non è più possibile sbloccare nuovi livelli di qualità dei corpi. (up) (skull) (rskull)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) non sblocca più nuovi livelli; (s2) aumenta la probabilità di ottenere il miglior corpo disponibile; (s3) garantisce il migliore.)"
 }

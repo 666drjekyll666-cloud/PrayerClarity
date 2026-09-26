@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "Beschleunigt das Pflanzenwachstum.",
   "rebalanced.tech.sins_intro": "In jedem Beichtstuhl finden Beichten häufiger statt.",
-  "rebalanced.tech.repose_intro": "Der Esel kann hochwertigere Körper bringen.",
+  "rebalanced.tech.repose_intro": "Der Esel kann Körper aus einer höheren Qualitätsstufe bringen.",
   "rebalanced.tech.combat_intro": "Stärkt den Hüter im Kampf.",
   "rebalanced.active.plant": "Pflanzenwachstumszeit: -{0:0}% · Gesamte Wachstumszeitreduktion aus allen Quellen: höchstens {1:0}%",
   "rebalanced.active.sins": "Beichtchance: {0:0}%",
-  "rebalanced.active.repose.bronze": "Der Esel kann einen Körper um eine Qualitätsstufe besser bringen",
-  "rebalanced.active.repose.silver": "In der Hälfte der Fälle ist der beste Körper garantiert",
-  "rebalanced.active.repose.gold": "Der Esel bringt garantiert den besten Körper",
+  "rebalanced.active.repose.bronze": "Schaltet die nächste Qualitätsstufe für Körper frei",
+  "rebalanced.active.repose.silver": "Erhöht die Chance auf den besten verfügbaren Körper",
+  "rebalanced.active.repose.gold": "Garantiert den besten verfügbaren Körper",
   "rebalanced.active.combat": "Schaden +{0:0.##} · Rüstung +{1:0.##} · Regeneration {2:0.##} LP/s",
   "rebalanced.active.gratitude": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht - weder im Körper noch nach der Extraktion. Das Freilassen von Seelen gewährt +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Pflanzenwachstumszeit: -{0:0}%",
@@ -23,6 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
   "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
-"rebalanced.repose.endpoint_bronze": "Die höchste verfügbare Qualitätsstufe für Leichname ist bereits freigeschaltet. Das Bronzegebet kann sie nicht weiter erhöhen.",
-"rebalanced.repose.endpoint_bronze_hint": "(Der Esel kann weiterhin einen Leichnam bringen, der nicht der beste verfügbare ist. Die Silberversion dieses Gebets erhöht die Chance auf den besten; die Goldversion garantiert ihn.)"
+  "rebalanced.repose.endpoint_bronze": "Weitere Qualitätsstufen für Körper können nicht mehr freigeschaltet werden. (up) (skull) (rskull)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) schaltet keine neuen Stufen mehr frei; (s2) erhöht die Chance auf den besten verfügbaren Körper; (s3) garantiert den besten.)"
 }

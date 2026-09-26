@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "Accélère la croissance des plantes.",
   "rebalanced.tech.sins_intro": "Les confessions sont plus fréquentes dans chaque confessionnal.",
-  "rebalanced.tech.repose_intro": "L’âne peut apporter des corps de meilleure qualité.",
+  "rebalanced.tech.repose_intro": "L’âne peut apporter des corps d’un niveau de qualité supérieur.",
   "rebalanced.tech.combat_intro": "Renforce le Gardien au combat.",
   "rebalanced.active.plant": "Temps de croissance des plantes : -{0:0} % · Réduction totale du temps de croissance, toutes sources confondues : max. {1:0} %",
   "rebalanced.active.sins": "Chance de confession : {0:0} %",
-  "rebalanced.active.repose.bronze": "L’âne peut apporter un corps d’un niveau de qualité supérieur",
-  "rebalanced.active.repose.silver": "Dans la moitié des cas, le meilleur corps est garanti",
-  "rebalanced.active.repose.gold": "L’âne apporte à coup sûr le meilleur corps",
+  "rebalanced.active.repose.bronze": "Débloque le niveau de qualité de corps suivant",
+  "rebalanced.active.repose.silver": "Augmente les chances d’obtenir le meilleur corps disponible",
+  "rebalanced.active.repose.gold": "Garantit le meilleur corps disponible",
   "rebalanced.active.combat": "Dégâts +{0:0.##} · Armure +{1:0.##} · Régénération {2:0.##} PV/s",
   "rebalanced.active.gratitude": "L'état des âmes ne se dégrade pas avec le temps, ni dans le corps ni après extraction. Libérer des âmes accorde +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Temps de croissance des plantes : -{0:0} %",
@@ -23,6 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "Quelques mots sur l’intérêt de purifier les âmes avec soin.",
   "rebalanced.tech.gratitude_effect": "L’état des âmes ne se dégrade pas avec le temps — ni dans le corps, ni après extraction.\n(gratitude_points) obtenus en libérant des âmes : +{0:0}%",
   "rebalanced.active.sins_detailed": "Chance quotidienne de confession dans chaque confessionnal : {0:0} %",
-"rebalanced.repose.endpoint_bronze": "Le niveau de qualité de corps le plus élevé disponible est déjà débloqué. La prière de bronze ne peut plus l'augmenter.",
-"rebalanced.repose.endpoint_bronze_hint": "(L'âne peut encore apporter un corps moins bon que le meilleur disponible. La version argent de cette prière augmente les chances d'obtenir le meilleur ; la version or le garantit.)"
+  "rebalanced.repose.endpoint_bronze": "Aucun nouveau niveau de qualité de corps ne peut être débloqué. (up) (skull) (rskull)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) ne débloque plus de nouveaux niveaux ; (s2) augmente les chances d’obtenir le meilleur corps disponible ; (s3) garantit le meilleur.)"
 }
