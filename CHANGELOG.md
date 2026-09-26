@@ -1,5 +1,16 @@
 # Changelog
 
+## PrayerClarity: Rebalanced 0.2.38
+
+- Promotes the runtime-accepted post-0.2.23 presentation and Better Save Soul work as the new Rebalanced stable line.
+- Prayer for Donations now uses success-only flat rewards of **+20 / +50 / +100 silver-equivalent**; the Gold pulpit displays the native denomination as **+1 gold**.
+- Better Save Soul prayers use the accepted rework: Soul's Repose converts stored Soul Gratitude to Faith **1:1** on success up to **30 / 60 / 90**, Soul Contentment gives **+50% Soul Gratitude** for **45 / 90 / 135 minutes** and prevents passive soul-condition decay while active, and Thorough Cleansing gives **x2 / x3 / x4 Sin Shards** at **q30 / q60 / q120**.
+- Prayer-item and Technology presentation, controller tooltip behavior, long-localization pulpit sizing, and live language-font switching include the accepted fixes through 0.2.37.
+- Shoots & Roots shows the **95% combined all-sources cap** only on Gold Temporary Effects; Bronze/Silver show only their own prayer reduction.
+- The late Bronze Repose reliability clarification is shown as a parenthetical note; legacy Protective Prayer items intentionally keep their historical lore.
+- Final 0.2.38 changes are presentation-only over the already accepted mechanics; the exact tested DLL is published without rebuilding.
+
+
 
 ## PrayerClarity: Vanilla 1.0.33
 
