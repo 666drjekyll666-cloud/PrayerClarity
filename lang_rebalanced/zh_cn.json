@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "加快植物生长。",
   "rebalanced.tech.sins_intro": "每个忏悔室中的忏悔会更频繁地发生。",
-  "rebalanced.tech.repose_intro": "驴子可能带来品质更好的尸体。",
+  "rebalanced.tech.repose_intro": "驴子可能带来更高品质等级的尸体。",
   "rebalanced.tech.combat_intro": "增强守墓人在战斗中的能力。",
   "rebalanced.active.plant": "植物生长时间：-{0:0}% · 来自所有来源的植物生长时间总减幅不超过{1:0}%",
   "rebalanced.active.sins": "忏悔概率：{0:0}%",
-  "rebalanced.active.repose.bronze": "驴子可能带来品质高一级的尸体",
-  "rebalanced.active.repose.silver": "有一半的情况保证获得最佳尸体",
-  "rebalanced.active.repose.gold": "驴子保证带来最佳尸体",
+  "rebalanced.active.repose.bronze": "解锁下一个尸体品质等级",
+  "rebalanced.active.repose.silver": "提高获得当前可用最佳尸体的概率",
+  "rebalanced.active.repose.gold": "保证获得当前可用的最佳尸体",
   "rebalanced.active.combat": "伤害 +{0:0.##} · 护甲 +{1:0.##} · 生命恢复 {2:0.##}/秒",
   "rebalanced.active.gratitude": "灵魂状态不会随时间恶化，无论仍在尸体中还是已被提取。释放灵魂时获得的(gratitude_points)提高{0:0}%。",
   "rebalanced.tech.plant_tier": "植物生长时间：-{0:0}%",
@@ -23,6 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "说几句为什么灵魂最好要彻底净化。",
   "rebalanced.tech.gratitude_effect": "灵魂状态不会随时间恶化——无论仍在尸体中还是已经提取。\n释放灵魂获得的(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "每个告解室每天触发告解的概率：{0:0}%",
-"rebalanced.repose.endpoint_bronze": "当前可达到的最高尸体品质等级已经解锁。青铜祷告无法再提高它。",
-"rebalanced.repose.endpoint_bronze_hint": "（驴子仍可能送来并非当前最佳的尸体。此祷告的白银版本会提高获得最佳尸体的概率，黄金版本则必定获得最佳尸体。）"
+  "rebalanced.repose.endpoint_bronze": "无法再解锁新的尸体品质等级。 (up) (skull) (rskull)",
+  "rebalanced.repose.endpoint_bronze_hint": "（(s1) 不再解锁新等级；(s2) 提高获得当前可用最佳尸体的概率；(s3) 保证获得最佳尸体。）"
 }

@@ -1,13 +1,13 @@
 {
   "rebalanced.tech.plant_intro": "Acelera o crescimento das plantas.",
   "rebalanced.tech.sins_intro": "As confissões acontecem com mais frequência em cada confessionário.",
-  "rebalanced.tech.repose_intro": "O burro pode trazer corpos de melhor qualidade.",
+  "rebalanced.tech.repose_intro": "O burro pode trazer corpos de um nível de qualidade superior.",
   "rebalanced.tech.combat_intro": "Fortalece o Guardião em combate.",
   "rebalanced.active.plant": "Tempo de crescimento das plantas: -{0:0}% · Redução total do tempo de crescimento de todas as fontes: no máximo {1:0}%",
   "rebalanced.active.sins": "Chance de confissão: {0:0}%",
-  "rebalanced.active.repose.bronze": "O burro pode trazer um corpo um nível de qualidade melhor",
-  "rebalanced.active.repose.silver": "Em metade dos casos, o melhor corpo é garantido",
-  "rebalanced.active.repose.gold": "O burro traz garantidamente o melhor corpo",
+  "rebalanced.active.repose.bronze": "Desbloqueia o próximo nível de qualidade de corpos",
+  "rebalanced.active.repose.silver": "Aumenta a chance de receber o melhor corpo disponível",
+  "rebalanced.active.repose.gold": "Garante o melhor corpo disponível",
   "rebalanced.active.combat": "Dano +{0:0.##} · Armadura +{1:0.##} · Regeneração {2:0.##} PV/s",
   "rebalanced.active.gratitude": "A condição das almas não piora com o tempo, nem no corpo nem depois da extração. Libertar almas concede +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tempo de crescimento das plantas: -{0:0}%",
@@ -23,6 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "Algumas palavras sobre por que é melhor purificar as almas com cuidado.",
   "rebalanced.tech.gratitude_effect": "A condição das almas não piora com o tempo — nem no corpo, nem depois da extração.\n(gratitude_points) ao libertar almas: +{0:0}%",
   "rebalanced.active.sins_detailed": "Chance diária de confissão em cada confessionário: {0:0}%",
-"rebalanced.repose.endpoint_bronze": "O nível de qualidade de corpos mais alto disponível já foi desbloqueado. A oração de bronze não pode mais aumentá-lo.",
-"rebalanced.repose.endpoint_bronze_hint": "(O burro ainda pode trazer um corpo que não seja o melhor disponível. A versão de prata desta oração aumenta a chance de receber o melhor; a de ouro garante isso.)"
+  "rebalanced.repose.endpoint_bronze": "Não é mais possível desbloquear novos níveis de qualidade de corpos. (up) (skull) (rskull)",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) não desbloqueia mais novos níveis; (s2) aumenta a chance de receber o melhor corpo disponível; (s3) garante o melhor.)"
 }
