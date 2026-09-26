@@ -1,56 +1,74 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.42",
-  "baseline_sha": "f571eebd6942f14eaeddcf979c9689feec9b358c",
+  "candidate_branch": "candidate/rebalanced-0.2.43",
+  "baseline_sha": "dd683e5c369a9056151ab43ae5eb18da2522b33d",
   "changes": [
     {
-      "id": "repose-surface-specific-language",
-      "observable_property": "Prayer for Repose uses one game-world model without making its shared sentence look like a fourth quality-tier effect. Forecast/planning surfaces say that the donkey will be able to bring higher-quality bodies; active Temporary Effects use present tense. Rebalanced Technology shows the shared body-quality effect once and only the quality-dependent delta under Bronze/Silver/Gold, while a concrete Rebalanced item or non-terminal pulpit selection shows the complete effect of that selected quality.",
-      "canonical_owner": "Shared Vanilla forecast/active Repose text is produced by PrayerForecast.BuildBuffEffect / PrayerForecast.BuildActiveBuffText from base localization. Rebalanced forecast, active and Technology variants are owned by RebalancedPresentationSemantics using the same base Repose localization plus Rebalanced quality-delta localization.",
-      "final_writer_or_commit_point": "TechnologyTooltipTierRenderer is the final structural writer for Technology; TooltipDetailsRenderer/ItemTooltipPresentation consume the selected TierDetails for prayer-item tooltips; PulpitLayoutV5/PulpitPresentation consume PrayerForecast.SpecialText at the pulpit; SecondarySurfacePresentation writes PrayerForecast.BuildActiveBuffText into Character -> Temporary Effects.",
+      "id": "repose-terminal-note-polish",
+      "observable_property": "At the Repose progression ceiling, the pulpit's natural-limit sentence no longer shows corpse-quality glyphs that imply a still-available higher tier, and the Rebalanced Bronze comparison reads as a parenthetical note using explicit Bronze/Silver/Gold prayer names.",
+      "canonical_owner": "The shared natural-limit sentence is owned by repose.endpoint in lang/*.json. The Rebalanced Bronze comparison note is owned by rebalanced.repose.endpoint_bronze_hint in lang_rebalanced/*.json. PulpitLayoutV5.OverrideSpecialPresentation is the accepted final writer that selects these strings.",
+      "final_writer_or_commit_point": "PulpitLayoutV5.OverrideSpecialPresentation writes forecast.SpecialText after the ordinary Repose forecast has been built; no later PrayerClarity writer changes the selected terminal text.",
       "blast_radius": [
-        "Prayer for Repose Technology wording in both editions across all 11 locales",
-        "Prayer for Repose item-tooltip wording in both editions across all 11 locales",
-        "Non-terminal Prayer for Repose pulpit wording in both editions across all 11 locales",
-        "Prayer for Repose Temporary Effects wording in both editions across all 11 locales"
+        "Terminal Repose pulpit wording in Vanilla across all 11 locales",
+        "Terminal Bronze Repose pulpit wording in Rebalanced across all 11 locales"
       ],
       "preserved_invariants": [
-        "No Repose mechanics, corpse generation, tier availability, Silver probability, Gold guarantee, requirements, duration or RNG behavior changes",
-        "No Technology/item/pulpit/Temporary Effects layout, wrapping, font or lifecycle mechanism changes",
-        "No other prayer wording or behavior changes",
-        "Vanilla remains mechanically identical to stock Graveyard Keeper 1.407"
+        "Terminal Silver/Gold working-only reliability wording and corpse-quality cue remain unchanged",
+        "CorpseTierSemantics, endpoint predicates and all Repose mechanics remain unchanged",
+        "Pulpit layout/font/wrapping mechanisms remain unchanged",
+        "Non-terminal Repose wording and unrelated prayers remain unchanged"
       ],
-      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. In Graveyard Keeper 1.407, visually inspect Russian Repose Technology, one concrete Repose item, a non-terminal pulpit selection, and the active Temporary Effect. Verify the shared-vs-tier hierarchy, future-vs-present tense, corpse-quality glyphs and absence of clipping/overlap. Existing accepted mechanics evidence is reused; no sermon execution or corpse-generation sampling is required.",
+      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. In Russian Rebalanced 0.2.43 with Repose State Switcher 0.1.0, inspect terminal Bronze: the natural-limit line must have no corpse-quality glyph cluster; the Bronze/Silver/Gold explanation must be enclosed in parentheses and use explicit prayer names; wrapping/button clearance must remain readable.",
       "evidence_refs": [
-        "docs/DESIGN_NOTES.md: Technology is the comparison surface; item tooltips describe one concrete quality; Temporary Effects describe the current active effect.",
-        "docs/CLARITY_UI_STATUS.md: accepted Technology/item/Temporary Effects presentation ownership.",
-        "src/PrayerForecast.cs, src/RebalancedPresentationSemantics.cs, src/TechnologyTooltipTierRenderer.cs, src/TooltipDetailsRenderer.cs, src/ItemTooltipPresentation.cs and src/SecondarySurfacePresentation.cs on baseline f571eebd6942f14eaeddcf979c9689feec9b358c.",
-        "User approved the game-world wording model and future-tense forecast / present-tense active distinction on 2026-09-26."
+        "src/PulpitLayoutV5.cs and src/CorpseTierSemantics.cs on baseline dd683e5c369a9056151ab43ae5eb18da2522b33d.",
+        "User runtime screenshot on 2026-09-26 showed the terminal natural-limit line still carrying unnecessary corpse-quality glyphs and requested the explanatory sentence as a parenthetical note with explicit prayer names."
       ],
       "state": "READY"
     },
     {
-      "id": "repose-terminal-context-wording",
-      "observable_property": "At the Repose progression ceiling, the pulpit explains the natural limit instead of sounding as if the mod disabled the prayer. Bronze says that even prayer cannot obtain still-higher-quality bodies and then explains Bronze/Silver/Gold in words. Rebalanced Silver and Gold, when their reliability benefit still works, show only that working benefit with the corpse-quality cue rather than repeating the no-longer-true higher-tier sentence. Vanilla uses the same natural-limit endpoint sentence without Rebalanced reliability claims.",
-      "canonical_owner": "PulpitLayoutV5.OverrideSpecialPresentation owns contextual Repose endpoint replacement. CorpseTierSemantics supplies the already-accepted terminal/reliability predicates. Base repose.endpoint localization owns the shared natural-limit sentence; Rebalanced endpoint-hint and quality-delta localization own the Rebalanced-only explanation.",
-      "final_writer_or_commit_point": "PulpitLayoutV5.OverrideSpecialPresentation is the accepted final SpecialText writer after PrayerForecast has built the ordinary Repose effect, so it is the narrow final point that can remove the no-longer-applicable base sentence and substitute the terminal text.",
+      "id": "repose-active-terminal-context",
+      "observable_property": "Character -> Temporary Effects must not claim that the Donkey can bring higher-quality bodies when the current ordinary body-quality ceiling has already been reached. Rebalanced Bronze shows the same natural-limit meaning; terminal Silver/Gold show only the still-working reliability effect when it materially changes the distribution.",
+      "canonical_owner": "PrayerForecast.BuildActiveBuffText owns Vanilla active prayer-buff text. RebalancedPresentationSemantics.TryBuildActiveEffect/TryBuildReposeActiveEffect owns Rebalanced active Repose wording. CorpseTierSemantics supplies the accepted current terminal and distribution-change predicates.",
+      "final_writer_or_commit_point": "SecondarySurfacePresentation.PerkBuffDrawPostfix writes PrayerForecast.BuildActiveBuffText into the active-effect description row; this is the accepted final PrayerClarity writer for Character -> Temporary Effects.",
       "blast_radius": [
-        "Terminal Prayer for Repose pulpit wording in Vanilla across all 11 locales",
-        "Terminal Bronze/Silver/Gold Prayer for Repose pulpit wording in Rebalanced across all 11 locales"
+        "Active Repose Temporary Effects wording in Vanilla across all 11 locales",
+        "Active Bronze/Silver/Gold Repose Temporary Effects wording in Rebalanced across all 11 locales"
       ],
       "preserved_invariants": [
-        "CorpseTierSemantics and all endpoint/reliability predicates remain unchanged",
-        "No Repose mechanics, corpse distribution, tier availability, requirements, durations or RNG behavior changes",
-        "No pulpit layout/font/wrapping mechanism changes",
-        "No non-terminal or unrelated-prayer behavior changes beyond the separately gated Repose language update"
+        "Buff activation, duration, expiry and Repose gameplay behavior remain unchanged",
+        "Corpse-tier availability and Silver/Gold distribution mechanics remain unchanged",
+        "HUD timer and Temporary Effects layout/timer behavior remain unchanged",
+        "Other prayer buffs remain unchanged"
       ],
-      "acceptance_evidence": "Localization/build validation must pass for all 11 locales. Using the existing Repose State Switcher with Rebalanced 0.2.42 in Russian, inspect terminal Bronze, Silver and Gold at the pulpit: Bronze must show the natural-limit sentence plus the worded Bronze/Silver/Gold comparison; Silver/Gold must show only their still-working reliability sentence plus the corpse-quality cue. Verify readability and no clipping/overlap. The same shared endpoint key and accepted final-writer path make a separate mechanics replay unnecessary.",
+      "acceptance_evidence": "Build/localization validation plus a Russian visual check. With a synthetic Repose buff active, inspect Temporary Effects in an Early state and a Terminal state. Terminal Bronze must show the natural-limit sentence rather than the higher-quality-body claim; terminal Silver/Gold must show only their still-working reliability text where applicable. No corpse generation or sermon execution is required.",
       "evidence_refs": [
-        "docs/PRAYER_MECHANICS.md: accepted stock 1.407 permanent Repose progression and terminal ordinary-body range.",
-        "src/CorpseTierSemantics.cs: accepted predicates for whether stock Repose adds a higher ordinary tier and whether premium narrowing still changes distribution.",
-        "src/PulpitLayoutV5.cs: accepted final writer for contextual Repose endpoint presentation.",
-        "docs/TEST_BUILD_LOG.md: Repose State Switcher 0.1.0 provides deterministic Early/Terminal visual setup without writing save progression.",
-        "User approved the natural-limit endpoint wording and the terminal Silver/Gold working-only sentences on 2026-09-26."
+        "docs/CLARITY_UI_STATUS.md: Character -> Temporary Effects is the accepted active-buff presentation surface.",
+        "src/SecondarySurfacePresentation.cs, src/PrayerForecast.cs, src/RebalancedPresentationSemantics.cs and src/CorpseTierSemantics.cs on baseline dd683e5c369a9056151ab43ae5eb18da2522b33d.",
+        "User runtime screenshot on 2026-09-26 proved the current active Repose text is false at the terminal body-quality state."
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "prayer-item-balanced-content-width",
+      "observable_property": "Prayer-item mechanics text should use the parchment's space naturally instead of occupying a fixed narrow left column that leaves a conspicuous one-sided empty strip on every prayer item tooltip.",
+      "canonical_owner": "TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix owns the PrayerClarity-specific layout of mechanics rows marked by PreferPrayerItemLayout. The current branch forces those rows to ResizeHeight with width=200.",
+      "final_writer_or_commit_point": "BubbleWidgetText.Draw -> TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix is the accepted final PrayerClarity width/wrap writer for marked prayer-item mechanics rows; final NGUI processedText is then observed by the existing amount+inline-symbol repair in the same postfix.",
+      "blast_radius": [
+        "PrayerClarity-owned mechanics rows in all prayer-item tooltips in Vanilla and Rebalanced",
+        "All 11 locales through the same locale-independent NGUI width path"
+      ],
+      "preserved_invariants": [
+        "The accepted conditional amount+inline-resource repair remains active after final wrapping",
+        "Prayer-item wording, lore, titles, crafting-location text and mechanics remain unchanged",
+        "Technology tooltip width behavior remains unchanged",
+        "Non-prayer item tooltips remain untouched"
+      ],
+      "acceptance_evidence": "Build validation plus direct visual inspection in Russian: compare the currently reported Repose item tooltip, then a long Soul's Repose item and one short prayer item. Text should use the parchment more symmetrically without excessive horizontal expansion, clipping, or orphaning amount+resource icons. No mechanics test is required.",
+      "evidence_refs": [
+        "src/TechnologyTooltipContentWidth.cs on baseline dd683e5c369a9056151ab43ae5eb18da2522b33d forces width=200 for every marked prayer-item mechanics row.",
+        "candidate/rebalanced-0.2.28 used the narrower-mechanism ResizeFreely + overflowWidth=420 path before 0.2.29 introduced the fixed 200-unit column.",
+        "docs/PLAYER_UX_RESEARCH.md: the later amount+inline-icon repair is conditional on final processedText and can remain independent of the width policy.",
+        "User runtime screenshot on 2026-09-26 showed the resulting persistent right-side empty strip across prayer item tooltips."
       ],
       "state": "READY"
     }
