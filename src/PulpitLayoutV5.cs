@@ -53,6 +53,7 @@ namespace PrayerClarity
         private static object _effectIcon;
         private static object _noteLabel;
         private static bool _captured;
+        private static int _dynamicExtraHeight;
 
         internal static void Apply(object template, object gui, PrayerForecast.Result forecast)
         {
@@ -60,6 +61,10 @@ namespace PrayerClarity
             _template = template;
             _gui = gui;
             _forecast = forecast;
+
+            // Every host redraw starts from the accepted fixed baseline. Any
+            // content-driven growth is recomputed later from settled live geometry.
+            _dynamicExtraHeight = 0;
 
             Capture(template);
             OverrideSpecialPresentation(gui, forecast);
@@ -81,6 +86,7 @@ namespace PrayerClarity
 
         internal static void Restore()
         {
+            _dynamicExtraHeight = 0;
             if (!_captured) return;
 
             // Restore the owner rectangle first. The container is anchored on all four
@@ -204,12 +210,28 @@ namespace PrayerClarity
             return type == null ? null : transform.gameObject.GetComponent(type);
         }
 
+        internal static bool GrowWindowForBottomDeficit(float deficit)
+        {
+            if (!_captured || _windowState == null || deficit <= 0f) return false;
+
+            // The root window grows symmetrically around its centre. A bottom-edge
+            // deficit therefore requires roughly twice that much total height.
+            // Add a small integer-rounding guard and always reapply from captured
+            // stock geometry, so redraws remain idempotent rather than cumulative.
+            int growth = Mathf.Max(2, Mathf.CeilToInt(deficit * 2f) + 2);
+            _dynamicExtraHeight += growth;
+            ApplyWindowGeometry();
+            return true;
+        }
+
         private static void ApplyWindowGeometry()
         {
             if (!_captured || _windowState == null) return;
 
             int extraW = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraWidth.Value));
-            int extraH = Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraHeight.Value));
+            int extraH =
+                Mathf.Max(0, Mathf.RoundToInt(PulpitTuning.WindowExtraHeight.Value)) +
+                Mathf.Max(0, _dynamicExtraHeight);
             float halfW = extraW * 0.5f;
             float halfH = extraH * 0.5f;
 
