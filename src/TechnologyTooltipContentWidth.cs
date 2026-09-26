@@ -18,8 +18,6 @@ namespace PrayerClarity
         private sealed class WideLayoutMarker { }
         private sealed class PrayerItemLayoutMarker { }
 
-        private const int PrayerItemContentWidth = 280;
-
         private static readonly ConditionalWeakTable<object, WideLayoutMarker> WideLayoutData =
             new ConditionalWeakTable<object, WideLayoutMarker>();
         private static readonly ConditionalWeakTable<object, PrayerItemLayoutMarker> PrayerItemLayoutData =
@@ -81,17 +79,9 @@ namespace PrayerClarity
                 PrayerItemLayoutMarker itemMarker;
                 if (PrayerItemLayoutData.TryGetValue(__0, out itemMarker))
                 {
-                    // Keep prayer-item mechanics on one stable middle-width column.
-                    // Runtime rejected both prior extremes: width=200 left too much
-                    // unused parchment, while ResizeFreely/420 let one long line set the
-                    // whole tooltip width. A fixed 280-unit ResizeHeight column bounds
-                    // both failure modes without adding another placement/lifecycle hook.
-                    object overflow = R.Get(label, "overflowMethod");
-                    if (overflow != null)
-                        R.Set(label, "overflowMethod", Enum.Parse(overflow.GetType(), "ResizeHeight"));
-                    R.Set(label, "width", PrayerItemContentWidth);
-                    R.Set(label, "height", 20);
-                    R.Set(label, "text", fullText);
+                    // Prayer-item mechanics follow the game's standard item-tooltip
+                    // geometry. PrayerClarity does not write width/height/overflow here.
+                    // Keep only the separately accepted final-wrap semantic repair below.
                     string processed = R.Get(label, "processedText") as string ?? string.Empty;
 
                     // NGUI can wrap between a numeric amount and the following inline
