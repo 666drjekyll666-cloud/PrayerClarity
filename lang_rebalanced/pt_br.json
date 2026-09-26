@@ -1,13 +1,10 @@
 {
   "rebalanced.tech.plant_intro": "Acelera o crescimento das plantas.",
   "rebalanced.tech.sins_intro": "As confissões acontecem com mais frequência em cada confessionário.",
-  "rebalanced.tech.repose_intro": "O burro pode trazer corpos de um nível de qualidade superior.",
+  "rebalanced.tech.repose_intro": "O burro poderá trazer corpos de qualidade superior.",
   "rebalanced.tech.combat_intro": "Fortalece o Guardião em combate.",
   "rebalanced.active.plant": "Tempo de crescimento das plantas: -{0:0}% · Redução total do tempo de crescimento de todas as fontes: no máximo {1:0}%",
   "rebalanced.active.sins": "Chance de confissão: {0:0}%",
-  "rebalanced.active.repose.bronze": "Desbloqueia o próximo nível de qualidade de corpos",
-  "rebalanced.active.repose.silver": "Aumenta a chance de receber o melhor corpo disponível",
-  "rebalanced.active.repose.gold": "Garante o melhor corpo disponível",
   "rebalanced.active.combat": "Dano +{0:0.##} · Armadura +{1:0.##} · Regeneração {2:0.##} PV/s",
   "rebalanced.active.gratitude": "A condição das almas não piora com o tempo, nem no corpo nem depois da extração. Libertar almas concede +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Tempo de crescimento das plantas: -{0:0}%",
@@ -23,6 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "Algumas palavras sobre por que é melhor purificar as almas com cuidado.",
   "rebalanced.tech.gratitude_effect": "A condição das almas não piora com o tempo — nem no corpo, nem depois da extração.\n(gratitude_points) ao libertar almas: +{0:0}%",
   "rebalanced.active.sins_detailed": "Chance diária de confissão em cada confessionário: {0:0}%",
-  "rebalanced.repose.endpoint_bronze": "Não é mais possível desbloquear novos níveis de qualidade de corpos. (up) (skull) (rskull)",
-  "rebalanced.repose.endpoint_bronze_hint": "((s1) não desbloqueia mais novos níveis; (s2) aumenta a chance de receber o melhor corpo disponível; (s3) garante o melhor.)"
+  "rebalanced.repose.endpoint_bronze_hint": "A oração de bronze não tem mais efeito; a de prata aumentará a chance de receber o melhor corpo disponível; a de ouro garantirá o melhor corpo disponível.",
+  "rebalanced.repose.tier.bronze": "Apenas o efeito principal",
+  "rebalanced.repose.tier.silver": "A chance de receber o melhor corpo disponível aumentará.",
+  "rebalanced.repose.tier.gold": "O melhor corpo disponível será garantido.",
+  "rebalanced.repose.active.silver": "A chance de receber o melhor corpo disponível é maior.",
+  "rebalanced.repose.active.gold": "O melhor corpo disponível é garantido."
 }

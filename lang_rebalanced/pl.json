@@ -1,13 +1,10 @@
 {
   "rebalanced.tech.plant_intro": "Przyspiesza wzrost roślin.",
   "rebalanced.tech.sins_intro": "W każdym konfesjonale spowiedzi odbywają się częściej.",
-  "rebalanced.tech.repose_intro": "Osioł może przywozić ciała z wyższego poziomu jakości.",
+  "rebalanced.tech.repose_intro": "Osioł będzie mógł przywozić ciała wyższej jakości.",
   "rebalanced.tech.combat_intro": "Wzmacnia Strażnika w walce.",
   "rebalanced.active.plant": "Czas wzrostu roślin: -{0:0}% · Łączne skrócenie czasu wzrostu ze wszystkich źródeł: maks. {1:0}%",
   "rebalanced.active.sins": "Szansa na spowiedź: {0:0}%",
-  "rebalanced.active.repose.bronze": "Odblokowuje kolejny poziom jakości ciał",
-  "rebalanced.active.repose.silver": "Zwiększa szansę na otrzymanie najlepszego dostępnego ciała",
-  "rebalanced.active.repose.gold": "Gwarantuje najlepsze dostępne ciało",
   "rebalanced.active.combat": "Obrażenia +{0:0.##} · Pancerz +{1:0.##} · Regeneracja {2:0.##} PŻ/s",
   "rebalanced.active.gratitude": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu. Uwalnianie dusz daje +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%",
@@ -23,6 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
   "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\n(gratitude_points) za uwalnianie dusz: +{0:0}%",
   "rebalanced.active.sins_detailed": "Dzienna szansa na spowiedź w każdym konfesjonale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze": "Nie można już odblokować nowych poziomów jakości ciał. (up) (skull) (rskull)",
-  "rebalanced.repose.endpoint_bronze_hint": "((s1) nie odblokowuje już nowych poziomów; (s2) zwiększa szansę na otrzymanie najlepszego dostępnego ciała; (s3) gwarantuje najlepsze.)"
+  "rebalanced.repose.endpoint_bronze_hint": "Brązowa modlitwa nie daje już efektu; srebrna zwiększy szansę na otrzymanie najlepszego dostępnego ciała; złota zagwarantuje najlepsze dostępne ciało.",
+  "rebalanced.repose.tier.bronze": "Tylko efekt podstawowy",
+  "rebalanced.repose.tier.silver": "Szansa na otrzymanie najlepszego dostępnego ciała wzrośnie.",
+  "rebalanced.repose.tier.gold": "Najlepsze dostępne ciało będzie gwarantowane.",
+  "rebalanced.repose.active.silver": "Szansa na otrzymanie najlepszego dostępnego ciała jest większa.",
+  "rebalanced.repose.active.gold": "Najlepsze dostępne ciało jest gwarantowane."
 }

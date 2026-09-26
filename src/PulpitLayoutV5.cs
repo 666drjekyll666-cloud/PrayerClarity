@@ -456,12 +456,22 @@ namespace PrayerClarity
                     forecast.QualityTier >= 2 &&
                     premiumCanStillChangeDistribution;
 
-                if (!stockAddsHigherTier && !reliabilityStillChangesDistribution)
+                if (!stockAddsHigherTier)
                 {
-                    if (forecast.QualityTier == 1 && premiumCanStillChangeDistribution)
+                    if (hasRebalancedSemantics &&
+                        forecast.QualityTier == 1 &&
+                        premiumCanStillChangeDistribution)
                     {
-                        forecast.SpecialText = Localization.F("rebalanced.repose.endpoint_bronze") + "\n" +
+                        forecast.SpecialText = Localization.F("repose.endpoint") + "\n" +
                                                Localization.F("rebalanced.repose.endpoint_bronze_hint");
+                    }
+                    else if (reliabilityStillChangesDistribution)
+                    {
+                        string deltaKey = forecast.QualityTier == 2
+                            ? "rebalanced.repose.tier.silver"
+                            : "rebalanced.repose.tier.gold";
+                        forecast.SpecialText = Localization.F(deltaKey) + " " +
+                                               TechnologyTooltipTextStyle.CorpseQualityCue();
                     }
                     else
                         forecast.SpecialText = Localization.F("repose.endpoint");

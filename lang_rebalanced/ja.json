@@ -1,13 +1,10 @@
 {
   "rebalanced.tech.plant_intro": "植物の成長を速めます。",
   "rebalanced.tech.sins_intro": "各告解室で告解がより頻繁に行われます。",
-  "rebalanced.tech.repose_intro": "ロバがより高い品質段階の死体を運んでくることがあります。",
+  "rebalanced.tech.repose_intro": "ロバがより高品質な死体を運んでくるようになります。",
   "rebalanced.tech.combat_intro": "戦闘時の墓守を強化します。",
   "rebalanced.active.plant": "植物の成長時間：-{0:0}% · すべての要因を合わせた成長時間短縮は最大{1:0}%",
   "rebalanced.active.sins": "告解発生率：{0:0}%",
-  "rebalanced.active.repose.bronze": "次の死体品質段階を解放する",
-  "rebalanced.active.repose.silver": "入手可能な中で最高の死体を得る確率を上げる",
-  "rebalanced.active.repose.gold": "入手可能な中で最高の死体を保証する",
   "rebalanced.active.combat": "ダメージ +{0:0.##} · 防御 +{1:0.##} · HP再生 {2:0.##}/秒",
   "rebalanced.active.gratitude": "魂の状態は時間経過で悪化しません。死体の中でも、抽出後でも有効です。魂を解放すると(gratitude_points)が+{0:0}%増えます。",
   "rebalanced.tech.plant_tier": "植物の成長時間：-{0:0}%",
@@ -23,6 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "魂は念入りに浄化したほうがよい、という話を少しばかり。",
   "rebalanced.tech.gratitude_effect": "魂の状態は時間が経っても悪化しません。死体の中でも、抽出後でも同じです。\n魂の解放で得られる(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "各告解室で1日に告解が発生する確率：{0:0}%",
-  "rebalanced.repose.endpoint_bronze": "これ以上、新しい死体品質段階は解放できません。 (up) (skull) (rskull)",
-  "rebalanced.repose.endpoint_bronze_hint": "（(s1) は新しい段階を解放しなくなり、(s2) は入手可能な中で最高の死体を得る確率を上げ、(s3) は最高の死体を保証します。）"
+  "rebalanced.repose.endpoint_bronze_hint": "銅の祈りはもう効果がなく、銀なら入手可能な中で最高の死体を得る確率が上がり、金なら最高の死体が保証されます。",
+  "rebalanced.repose.tier.bronze": "基本効果のみ",
+  "rebalanced.repose.tier.silver": "入手可能な中で最高の死体を得る確率が上がります。",
+  "rebalanced.repose.tier.gold": "入手可能な中で最高の死体が保証されます。",
+  "rebalanced.repose.active.silver": "入手可能な中で最高の死体を得る確率が高くなっています。",
+  "rebalanced.repose.active.gold": "入手可能な中で最高の死体が保証されています。"
 }

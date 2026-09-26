@@ -415,7 +415,7 @@ namespace PrayerClarity
                 case "buff_skull":
                 {
                     float value = res == null ? 0f : R.GameResGet(res, "body_max");
-                    text = NumberedActiveResEffect("active.skull", res, "body_max");
+                    text = NumberedActiveResEffect("repose.forecast", res, "body_max");
                     semanticKey += ":body_max=" + value.ToString("R", CultureInfo.InvariantCulture);
                     break;
                 }
