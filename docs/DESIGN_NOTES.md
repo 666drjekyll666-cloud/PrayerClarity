@@ -1,6 +1,6 @@
 # PrayerClarity — Design Notes
 
-Status: product/architecture source of truth, reconciled 2026-09-20 with the accepted stable sibling releases PrayerClarity: Vanilla 1.0.32 and PrayerClarity: Rebalanced 0.2.14.
+Status: product/architecture source of truth, reconciled 2026-09-26 with the accepted stable releases PrayerClarity: Vanilla 1.0.33 and PrayerClarity: Rebalanced 0.2.38.
 
 Detailed evidence and history live in specialized documents rather than being duplicated here:
 
@@ -38,8 +38,8 @@ Internal evidence/design layers remain distinct:
 
 Current accepted stable runtime identities are edition-specific:
 
-- **PrayerClarity: Vanilla 1.0.32** — accepted ref `accepted/vanilla-1.0.32`, exact source `aaabd3cf154faa019e36b2112439ec9990fdc1bd`, release `v1.0.32`, DLL SHA-256 `c12742a23d78214c9d4514a758f9c2417a578df683bebb2cda32a69a8d7674bb`.
-- **PrayerClarity: Rebalanced 0.2.14** — accepted ref `accepted/rebalanced-0.2.14`, exact runtime source `11fa4648fe57995938a2a17093ac4ed4f5e314cd`, release `rebalanced-v0.2.14`, DLL SHA-256 `1f26c487777c4c4744f6ea4318796d369aead2b2fbd6ed299ad3edd8e79b4dc8`.
+- **PrayerClarity: Vanilla 1.0.33** — accepted ref `accepted/vanilla-1.0.33`, exact source `93b66e747ffe1685003afb894b24f14416edb8c0`, release `v1.0.33`, DLL SHA-256 `30b23f9ed62148f3fd08e0c34ae54f165da0e639a041d1e9d7c4abe74268da8a`.
+- **PrayerClarity: Rebalanced 0.2.38** — accepted ref `accepted/rebalanced-0.2.38`, exact runtime source `6f5ef168810945135cee57082cbf90d31776e46b`, release `rebalanced-v0.2.38`, DLL SHA-256 `e547f7bb76e0ef512dc669ea30543dada5a2aeb8044b1c7ffcbe7fecf17303e5`.
 
 Both stable releases were published from their exact accepted CI artifacts without rebuilding. Later `main` documentation/repository-hygiene commits do not redefine those frozen runtime identities.
 
@@ -231,36 +231,24 @@ No new balance round is required unless implementation evidence contradicts an a
 
 ## Current engineering state
 
-The current **public stable** Rebalanced release is 0.2.23. The current **accepted Rebalanced development/runtime baseline** is 0.2.37, frozen at `accepted/rebalanced-0.2.37` / `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05`. This distinction is intentional: runtime acceptance of 0.2.37 does not by itself publish it as the public stable release.
+The current **public stable and accepted Rebalanced baseline** is **0.2.38**, frozen at `accepted/rebalanced-0.2.38` / `6f5ef168810945135cee57082cbf90d31776e46b`. The exact accepted DLL SHA-256 is `e547f7bb76e0ef512dc669ea30543dada5a2aeb8044b1c7ffcbe7fecf17303e5`.
 
-The accepted 0.2.37 line carries forward the closed gameplay/save-lifecycle architecture from `POST_AUDIT_VERDICT.md` (**A — no architecture action**) and adds later accepted presentation/runtime work, including the common prayer-item amount+inline-icon wrap repair and the pulpit native-anchor/language-font fixes accepted on 2026-09-26.
-
-There is currently **no open production implementation gate** recorded by this document. New runtime work should begin only from a concrete mechanics, compatibility, UX, or player-feedback problem. Historical probe/source artifacts are not a reason by themselves to create another numbered candidate.
+0.2.38 carries forward the closed gameplay/save-lifecycle architecture from `POST_AUDIT_VERDICT.md` (**A — no architecture action**) and the accepted presentation/runtime work through 0.2.37. The final 0.2.38 pass closes three presentation tails: Gold-only Roots 95% combined-cap wording, native Gold denomination for the +100-silver Donations reward at the pulpit, and parenthetical Repose reliability-note presentation.
 
 ### Current actionable UX / presentation backlog
 
-A deeper 2026-09-26 reconciliation against recent project-chat decisions and the exact accepted 0.2.37 source corrected the earlier too-narrow backlog review.
+The three 0.2.38 presentation tails are **closed and runtime-accepted**.
 
-**Open production-facing presentation items:**
+One new wording/design question is deliberately open for a future candidate:
 
-- **Shoots & Roots 95% combined cap wording:** user decision is that the “combined reduction from all sources is no more than 95%” note belongs only to the **Gold** presentation; Bronze/Silver must not show that cap note. The 0.2.31 wording attempt was rejected because Bronze/Silver still exposed it. Exact 0.2.37 source still renders `rebalanced.active.plant` with the 95% combined cap for every active tier, so this remains genuinely open.
-- **Prayer for Donations Gold pulpit denomination:** the accepted target is native denomination **1 gold**, not `+100 silver`, matching the item-tooltip presentation. Exact 0.2.37 final pulpit writer remains `PulpitPolish -> PresentationText.BuildPulpitResultRows -> FormatPrayerContribution`, which formats fixed money as `(slv) +100`; therefore this remains a real presentation tail.
-- **Soul's Repose reliability note:** keep the accepted meaning of the final Silver/Gold reliability sentence, but present it parenthetically so it reads as a note rather than another primary effect sentence. This remains a queued micro-change.
+- **Bronze Repose terminal wording for a player who does not know the corpse-quality system.** The current endpoint text correctly says no higher-quality bodies can be unlocked, then notes that Silver/Gold still improve the reliability of receiving the best available body. User feedback is that “reliability” is not self-explanatory: a new player may not understand why the best available body is not already guaranteed. Before implementation, choose a more in-world formulation that explains the distribution change without requiring hidden-system knowledge. This is a product/wording decision, not a mechanics defect, and it did not block 0.2.38 stable acceptance.
 
 **Closed product decision:**
 
-- **Legacy Protective Prayer (`b_shield`) lore stays historical.** Rebalanced continues to retire Protection crafting/Technology while retaining already-existing `b_shield` items as Combat aliases. Their item tooltip deliberately keeps stock `b_shield_d` lore rather than being normalized to Combat Prayer lore. This is intentional preserved behavior, not an open inconsistency.
-
-**Confirmed closed / not backlog:**
-
-- prayer-item success requirement is already separated under the accepted **Sermon success / Успех проповеди** section in the current source;
-- the duplicate Combo Prayer quality star was a Test Console 0.1.10 artifact, not a production defect; later neutral console versions removed that confound;
-- prayer-item number+inline-resource-icon wrapping was accepted in 0.2.32;
-- long pulpit localized-text clearance and live-language font switching were accepted in 0.2.37;
-- the prior Contentment / Thorough Cleansing / Repentance / Imagination / Excellence presentation tails were superseded by later accepted source and are not reopened by this review.
+- **Legacy Protective Prayer (`b_shield`) lore stays historical.** Rebalanced retires Protection crafting/Technology while retaining already-existing `b_shield` items as Combat aliases. Their item tooltip deliberately keeps stock `b_shield_d` lore rather than being normalized to Combat Prayer lore.
 
 Known evidence gaps that are **not** active UX backlog:
-- terminal ordinary Repose endpoint wording/presentation remains optional/non-blocking until a naturally available save reaches that progression state;
+- terminal ordinary Repose progression remains mechanically closed; only wording may be refined as above;
 - the physical three-Story payout from a real successful Silver/Gold Imagination sermon remains an evidence gap on a verified native drop path, not a current presentation defect.
 
-Candidate granularity rule applies: the three approved/open presentation tails above are suitable to batch into one future coherent presentation candidate once each production gate is READY; none requires a standalone DLL by itself.
+No further in-game retest is required for the accepted 0.2.38 properties unless their implementation is changed.
