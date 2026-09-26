@@ -1,6 +1,54 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.43 / Vanilla 1.0.49 Repose terminal-sync + prayer-item width candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.42 exact source `dd683e5c369a9056151ab43ae5eb18da2522b33d`.
+- Runtime review of 0.2.42 found three presentation defects:
+  1. terminal Bronze Repose still showed the corpse-quality glyph cluster after the natural-limit sentence, although no higher ordinary quality tier remains;
+  2. the Bronze terminal comparison needed to read as a parenthetical note with explicit Bronze/Silver/Gold **prayer** names;
+  3. Character -> Temporary Effects still said the Donkey can bring higher-quality bodies at the terminal state, which is false once the ordinary body-quality ceiling is reached.
+- The same runtime pass also exposed a separate shared prayer-item layout regression: the fixed 200-unit mechanics column introduced in 0.2.29 leaves a conspicuous one-sided empty strip on ordinary prayer-item parchment.
+- Candidate branch: `candidate/rebalanced-0.2.43`.
+- Gate-only commit: `515e6cd3fb06c2cd7aee1406c1277524e6452820`.
+- Exact candidate source SHA: `d19902ae7f699384334f7b8b53e9c88b5d9e86c9`.
+- CI run: `36259045391`; result: **success**. Gate/localization/build/staging all passed.
+- Artifact ID: `10911891530`.
+- Artifact: `PrayerClarity-rebalanced-0.2.43-ci-d19902ae7f699384334f7b8b53e9c88b5d9e86c9`.
+- Artifact ZIP digest: `sha256:0964ddcc9a809f4297ff37ef4cc7cd79cfa28228a8931d749dbdc9d7f857abc1`.
+- Rebalanced 0.2.43 DLL SHA-256: `1bfe78dfeaeea3cc9b89c1dec7ab9df3b4e7ec9d696c5488d43b5250cb4a71a5`.
+- Shared sibling Vanilla 1.0.49 DLL SHA-256: `0415f86977a275b02a211001c96c46cea1c0821a28cdaf65060001d74871ca32`.
+- Terminal Repose:
+  - shared natural-limit text no longer carries `(up)/(skull)/(rskull)`;
+  - Rebalanced Bronze comparison is parenthetical and explicitly names Bronze/Silver/Gold prayers;
+  - terminal Silver/Gold working-only reliability rows keep the corpse-quality cue.
+- Active Repose Temporary Effects now consult the same accepted corpse-tier semantics as the pulpit. At the terminal state Bronze shows the natural-limit message; Silver/Gold show only their still-working reliability benefit while distribution narrowing remains meaningful.
+- Prayer-item mechanics rows return from the fixed `ResizeHeight width=200` column to the narrower/native `ResizeFreely + overflowWidth=420` path. The accepted conditional final-wrap repair that keeps `amount + inline resource icon` together remains in the same final `BubbleWidgetText.Draw` postfix.
+- No prayer mechanics, Repose endpoint predicates, corpse generation/distribution, requirements, durations, RNG, Technology layout, non-prayer item tooltips, or unrelated prayer behavior changed.
+- Focused runtime acceptance:
+  1. terminal Bronze Repose at the pulpit via Repose State Switcher: no corpse-quality glyphs on the natural-limit line; parenthetical note uses explicit prayer names; no clipping/button overlap;
+  2. activate Repose synthetically through Neutral Test Console 0.1.18 and inspect Character -> Temporary Effects in Early vs Terminal state;
+  3. inspect Repose item, a long Soul's Repose item and one short prayer item: parchment use should be visually balanced, with no excessive width, clipping or orphaned amount/resource icons.
+- No sermon execution or corpse-generation sampling is required.
+
+## 2026-09-26 — Neutral Test Console 0.1.18 restores native synthetic prayer-buff setup
+
+- Branch: `candidate/rebalanced-test-console-0.1.18`.
+- Exact source SHA: `1e604fc66a1f32ce05ddcf037cb7efe8b0830dc5`.
+- CI run: `36259211806`; result: **success**.
+- Artifact ID: `10910759435`.
+- Artifact: `PrayerClarity-RebalancedTestConsole-0.1.18-ci-1e604fc66a1f32ce05ddcf037cb7efe8b0830dc5`.
+- Artifact ZIP digest: `sha256:8e509ce31e10a4a45292688ba9d5ee2341fed218f05c9d2717b68865e9faddf9`.
+- DLL SHA-256: `03c4e06b8dfb51deacb3f71bdb83bf1a004bd4501e55ded62f9bbc69206c1eeb`.
+- The long-lived Neutral Test Console remains hook-free: no Harmony patches, presentation rewrites or diagnostic probes were added.
+- It now exposes Bronze/Silver/Gold synthetic activation/removal for the verified timed prayer-buff families through native `BuffsLogics.AddBuff/RemoveBuff`, specifically to avoid replaying a full sermon when the test property is the already-verified active-buff presentation.
+- Rebalanced tier tokens needed by tier-dependent active effects are set only as test-state setup; their prior values are captured and restored by console cleanup. Activation is blocked if a non-console copy of the same buff is already live, so a real sermon buff is not silently replaced.
+- Prayer craft `dur_parameter` is read from the live projected linked craft instead of duplicating duration tables in the console.
+- Synthetic buffs/tier tokens can become save-visible state. The console explicitly warns to run cleanup before saving a permanent playthrough state.
+
 ## 2026-09-26 — Rebalanced 0.2.42 / Vanilla 1.0.48 Repose surface-language candidate
+
+- Runtime result: **superseded by 0.2.43 before acceptance**. The surface-language direction was broadly readable, but terminal Bronze retained unnecessary corpse-quality glyphs, its comparison note needed explicit prayer names/parentheses, active Temporary Effects remained contextually false at the terminal body-quality state, and the existing shared 200-unit prayer-item mechanics column was reported as visibly unbalanced.
 
 - Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
 - Baseline: Rebalanced 0.2.41 exact source `f571eebd6942f14eaeddcf979c9689feec9b358c`. 0.2.41 is superseded before acceptance because its shared sentence could read as a fourth effect and its tier lines did not make inheritance of the base effect obvious.
