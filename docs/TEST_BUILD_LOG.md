@@ -1,5 +1,23 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Repose State Switcher 0.1.0 research helper
+
+- Purpose: provide deterministic visual setup for Rebalanced 0.2.40 Bronze Repose endpoint acceptance without changing the user's save/progression or patching the production presentation writer.
+- Research branch: `research/repose-state-switcher-0.1.0`.
+- Exact helper source SHA: `7d4d368935a2ae3617ef79ef9182c71e87b17a01`.
+- Production baseline under test: Rebalanced 0.2.40 candidate source `229d1837123c980b09192d4e7a9b7a143ae573c4`.
+- CI run: `36250867047`; build/stage/upload result: **success**.
+- Artifact ID: `10908584736`.
+- Artifact ZIP digest: `sha256:7687337099efef7641f45a8c9df0b7c16beab9773345621be5f009690d9678f5`.
+- Helper DLL SHA-256: `31b7e4ba729873e8c1c27e5c63e86b52199462a44d081299240f4c89f4bc5ed7`.
+- Mechanism: Harmony-prefix only `PrayerClarity.R.PlayerParam(string,float)` inside the Rebalanced assembly while an override is enabled. It supplies synthetic read values for `body_min`, `body_max`, `add_body_min`, and `add_body_max`; it does not write game/player/save parameters and does not patch `PulpitLayoutV5`, `CorpseTierSemantics`, or host corpse-generation code.
+- **Early / can still unlock:** underlying progression fixture `body_min=1`, `body_max=1`, add modifiers 0. Bronze Repose should remain on the ordinary higher-tier presentation.
+- **Terminal:** underlying progression fixture `body_min=2`, `body_max=3`, add modifiers 0. Because ordinary body definitions stop at tier 3, Bronze Repose should use the terminal 0.2.40 wording.
+- A live `buff_skull` is accounted for by exposing its stock +1 in the synthetic `body_max` read; the production endpoint logic still performs its normal active-buff normalization.
+- F3 opens the helper. `Restore LIVE save state` disables all synthetic reads immediately. Unloading the helper also restores live reads.
+- This helper is temporary research tooling and is not part of PrayerClarity production or the Neutral Test Console.
+
+
 ## 2026-09-26 — Rebalanced 0.2.40 complete Repose endpoint wording candidate
 
 - Baseline: current stable/docs main `4563481a5e37c07516525c0e3ad596306e07a7c3`, with runtime behavior still based on stable Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38`.
