@@ -1,5 +1,46 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.44 / Vanilla 1.0.50 Repose wording + stable prayer-item width candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.43 exact source `d19902ae7f699384334f7b8b53e9c88b5d9e86c9`.
+- Runtime result of 0.2.43: **partial pass / superseded by 0.2.44 before acceptance**.
+  - accepted: terminal Bronze no longer shows the obsolete corpse-quality cue after the natural-limit sentence;
+  - accepted: Character -> Temporary Effects now reflects terminal Repose state correctly;
+  - accepted: Neutral Test Console 0.1.18 synthetic buff setup/removal works through the native buff API;
+  - rejected: returning prayer-item mechanics rows to `ResizeFreely + overflowWidth=420` lets one long line determine the width of the whole parchment;
+  - wording follow-up: Repose reliability language should read as the best body the Donkey can currently/possibly bring, and terminal Bronze should show one glyph-led line per quality tier.
+- Candidate branch: `candidate/rebalanced-0.2.44`.
+- Gate-only commit: `45537221bfb2816dc88867c3483060af20c6ddff`.
+- Exact candidate source SHA: `7886a5cb860842aa1df139a84e81d69622dc7be1`.
+- CI run: `36261054849`; result: **success**. Production gate, localization validation, both sibling builds, staging and artifact upload all passed.
+- Artifact ID: `10912691303`.
+- Artifact: `PrayerClarity-rebalanced-0.2.44-ci-7886a5cb860842aa1df139a84e81d69622dc7be1`.
+- Artifact ZIP digest: `sha256:690dc87946206b59068b7d217db895392b35e146dc1a78afb2cb2f80c3c68899`.
+- Rebalanced 0.2.44 DLL SHA-256: `d31645878437ee591ba83ec096492d3764078e521494d94d5bdd4909f759c8c4`.
+- Shared sibling Vanilla 1.0.50 DLL SHA-256: `248f00aeedf800c5b44574922e1d6c144a8478ce6604fdaf28a94e625bd21d92`.
+- Repose wording:
+  - Russian Silver/Gold now say `лучшее из возможных тел`; other locales use the equivalent meaning “the best body the Donkey can bring” rather than a literal translation that could imply absolute endgame maximum;
+  - terminal Bronze remains one parenthetical note but is split into three lines beginning with native `(s1)/(s2)/(s3)` quality glyphs;
+  - terminal Silver/Gold intentionally continue to omit the shared “higher-quality bodies” sentence, because that statement would be false once no higher ordinary tier exists.
+- Prayer-item width solution-space checkpoint was re-opened after both previous extremes failed:
+  - fixed 200-unit `ResizeHeight` column: rejected by runtime evidence as visibly too narrow / leaving unused parchment;
+  - native `ResizeFreely + overflowWidth=420`: rejected by 0.2.43 runtime evidence because one longest line expands the whole parchment;
+  - selected: fixed **280-unit** `ResizeHeight` mechanics column, keeping the accepted final-wrap amount+inline-icon repair. No new placement/lifecycle hook is added.
+- Focused runtime acceptance for 0.2.44:
+  1. Repose Technology/item wording: confirm the new “possible/currently possible” reliability language reads naturally;
+  2. terminal Bronze pulpit: confirm three separate quality-glyph lines inside the note, with clean wrapping/button clearance;
+  3. Early-state Silver/Gold pulpit via Repose State Switcher: confirm the ordinary pulpit already shows the shared higher-quality-body line plus the quality-specific reliability line;
+  4. terminal Silver/Gold pulpit: confirm only the still-true reliability line remains;
+  5. prayer-item geometry: inspect Repose, Prosperity (or another long-line prayer) and one short prayer; width should remain stable and bounded, with no clipping or orphaned amount/resource icon.
+- No sermon execution, corpse generation, active-buff replay or Imagination replay is required.
+
+## 2026-09-26 — Imagination Silver/Gold physical payout accepted
+
+- Real successful Silver Imagination sermon was observed in the user's runtime and the game collected `story:2 ×3`.
+- Real successful Gold Imagination sermon was observed in the user's runtime and the game collected `story:3 ×3`.
+- This closes the previously documented non-blocking evidence gap for the physical three-Story payout path. No further Imagination payout replay is required unless the implementation changes.
+
 ## 2026-09-26 — Rebalanced 0.2.43 / Vanilla 1.0.49 Repose terminal-sync + prayer-item width candidate
 
 - Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
