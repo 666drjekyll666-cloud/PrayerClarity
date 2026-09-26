@@ -1596,3 +1596,20 @@ Research helper identity:
 - Rebalanced 0.2.37 DLL SHA-256: `6498e120809832a7efdb9ec17fd1a36e91e1faee9e102de083f35d6804f612dc`.
 - Vanilla 1.0.46 DLL SHA-256: `eed4f35a929e42442ec11defad09112253202c1c6cb86641046eefb949f5b7fc`.
 - Runtime acceptance pending. Minimum combined test: in one session check Japanese Soul's Repose, switch to English and reopen, switch to Russian and reopen; then Korean Soul's Repose once and short Faith once. This simultaneously verifies the new font-lifecycle regression fix and completes the still-pending long-locale/no-unnecessary-growth acceptance for the 0.2.36 layout mechanism.
+
+
+### 2026-09-26 — Rebalanced 0.2.37 runtime accepted
+
+- User runtime acceptance was performed on exact **PrayerClarity: Rebalanced 0.2.37** under Graveyard Keeper 1.407 with **Neutral Test Console 0.1.17** and no pulpit geometry probe.
+- Exact candidate source remains `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05`; accepted Rebalanced DLL SHA-256 remains `6498e120809832a7efdb9ec17fd1a36e91e1faee9e102de083f35d6804f612dc`.
+- Visual acceptance evidence supplied by the user:
+  - Russian long Soul's Repose renders all Cyrillic forecast text correctly and the full Effect block clears the action button.
+  - Russian short Faith remains compact and does not acquire unnecessary long-prayer window growth.
+  - Japanese Soul's Repose renders with the correct CJK font/metrics and its Effect block clears the action button.
+  - English Soul's Repose renders normally after live language switching.
+  - Korean Soul's Repose renders with the correct font/metrics and its long Effect block clears the action button.
+- Returned runtime log confirms 0.2.37 loaded and records repeated live language-resource changes through Latin, Cyrillic and CJK locales plus repeated pulpit opens; no PrayerClarity exception/fallback is present during the accepted run.
+- **Accepted result:** both previously open pulpit defects are closed:
+  1. long localized Effect text now obtains sufficient bottom clearance through native-anchor-driven root-window growth without permanent button-transform fighting;
+  2. PrayerClarity-owned pulpit UILabels now rejoin the game's native GJL current-language font lifecycle on redraw, preventing stale CJK/Latin/Cyrillic font inheritance across live language changes.
+- This is an accepted runtime behavior result for 0.2.37. It does **not** by itself promote 0.2.37 / Vanilla 1.0.46 to the public stable line; stable promotion remains a separate user decision.
