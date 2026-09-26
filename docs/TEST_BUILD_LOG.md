@@ -1,5 +1,44 @@
 # Test / Research Build Log
 
+## 2026-09-26 — Rebalanced 0.2.47 / Vanilla 1.0.53 native-span left content candidate
+
+- Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
+- Baseline: Rebalanced 0.2.46 exact source `ef027959871b9f520cee73be88ce381306b30c10`.
+- Runtime result of 0.2.46: **requirement centering accepted; one pre-existing visual alignment defect remains and supersedes the candidate before full acceptance**.
+  - the 100%-success requirement content is now centered correctly under standard vanilla width;
+  - the screenshot also proves that a short one-line On Success row such as the Donations `+20` still appears globally centered even though its `BubbleWidgetTextData.alignment` is already `Left`;
+  - Base Result and On Success were therefore not accidentally switched to Center at the data level.
+- Direct host inspection explains the mismatch:
+  - `BubbleWidgetText.Draw` applies `data.alignment` only inside that row's UILabel;
+  - `WidgetsBubbleGUI` with Center container alignment centers each child widget as a whole;
+  - `UpdateSize` chooses the bubble width from the maximum child widget width, then `Reposition` lays out the rows.
+  A short one-line Left row can therefore still look centered because its UILabel itself is only as wide as its text.
+- Solution-space checkpoint:
+  - setting `Left` again is ineffective because it is already Left;
+  - changing the whole container to Left would also move centered headings;
+  - returning to fixed 200/280/420 widths is rejected by prior runtime evidence;
+  - selected: at `WidgetsBubbleGUI.UpdateSizeAndWidgetsPositions`, measure the already-drawn native child widths and expand only PrayerClarity-marked Left content rows to that same existing maximum. This preserves the native outer parchment width while giving Base Result and On Success a shared left content edge.
+- Candidate branch: `candidate/rebalanced-0.2.47`.
+- Gate-only commit: `0574036e678f5aa47a40a3d6e74554a0f4397f3d`.
+- Exact candidate source SHA: `6b3aa5399c8913d368f2b09bab963326db17e7f3`.
+- CI run: `36266833620`; result: **success**. Production gate, localization validation, both sibling builds, staging and upload all passed.
+- Artifact ID: `10913543057`.
+- Artifact: `PrayerClarity-rebalanced-0.2.47-ci-6b3aa5399c8913d368f2b09bab963326db17e7f3`.
+- Artifact ZIP digest: `sha256:5c07d5b4922467cf239a20f87e64c5ea8036e036dd8e84e6b72386d9645bedb1`.
+- Rebalanced 0.2.47 DLL SHA-256: `2482a159c3108a7868123d7c2cac7a8a620fe537952fee0cda6024c6ea5c7c96`.
+- Shared sibling Vanilla 1.0.53 DLL SHA-256: `eecbcddb5b06856802cde14812acab7a593846c3c7fb950971f25311a15294f5`.
+- Scope:
+  - Base Result and On Success content rows remain semantically `Left`;
+  - only those marked Left rows are widened to the already-existing native maximum child width before stock `UpdateSize/Reposition`;
+  - centered section headers and centered 100%-success requirement are untouched;
+  - the amount+inline-resource repair is re-evaluated at the final content-row width;
+  - outer tooltip width, wording, values and all prayer mechanics remain unchanged.
+- Focused runtime acceptance:
+  1. Prayer for Donations (or another one-line On Success prayer): `+money/+faith` must begin on the same left content column as Base Result while the `On Success` header stays centered;
+  2. one multi-line prayer: Base Result and On Success lines should share a clean left edge;
+  3. confirm the 100%-success requirement remains centered and the parchment width is unchanged from 0.2.46.
+- No Repose, sermon, Temporary Effects, corpse-generation or balance retest is required.
+
 ## 2026-09-26 — Rebalanced 0.2.46 / Vanilla 1.0.52 centered prayer-item success requirement candidate
 
 - Stable runtimes remain Rebalanced 0.2.38 / `accepted/rebalanced-0.2.38` and Vanilla 1.0.33 / `accepted/vanilla-1.0.33`.
