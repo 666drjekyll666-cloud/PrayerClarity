@@ -20,10 +20,13 @@
   "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
   "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\n(gratitude_points) za uwalnianie dusz: +{0:0}%",
   "rebalanced.active.sins_detailed": "Dzienna szansa na spowiedź w każdym konfesjonale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "((s1) nie daje już efektu.\n(s2) zwiększy szansę na otrzymanie najlepszego ciała, jakie osioł może przywieźć.\n(s3) zagwarantuje najlepsze ciało, jakie osioł może przywieźć.)",
-  "rebalanced.repose.tier.bronze": "Tylko efekt podstawowy",
+  "rebalanced.repose.endpoint_bronze_hint": "((s1) nie daje już efektu.\n(s2) zwiększy szansę na otrzymanie najlepszego spośród ciał, które osioł może już przywieźć.\n(s3) zagwarantuje najlepsze spośród ciał, które osioł może już przywieźć.)",
+  "rebalanced.repose.tier.bronze": "Bez gwarancji otrzymania najlepszego",
   "rebalanced.repose.tier.silver": "Szansa na otrzymanie najlepszego ciała, jakie osioł może przywieźć, wzrośnie.",
   "rebalanced.repose.tier.gold": "Najlepsze ciało, jakie osioł może przywieźć, będzie gwarantowane.",
   "rebalanced.repose.active.silver": "Szansa na otrzymanie najlepszego ciała, jakie osioł może przywieźć, jest większa.",
-  "rebalanced.repose.active.gold": "Najlepsze ciało, jakie osioł może przywieźć, jest gwarantowane."
+  "rebalanced.repose.active.gold": "Najlepsze ciało, jakie osioł może przywieźć, jest gwarantowane.",
+  "rebalanced.repose.forecast.bronze": "Osioł będzie mógł przywozić ciała wyższej jakości, ale otrzymanie najlepszego nie będzie gwarantowane.",
+  "rebalanced.repose.terminal.silver": "Zwiększy szansę na otrzymanie najlepszego spośród ciał, które osioł może już przywieźć.",
+  "rebalanced.repose.terminal.gold": "Zagwarantuje najlepsze spośród ciał, które osioł może już przywieźć."
 }
