@@ -24,7 +24,7 @@
   "buff.souls_repose": "(faith)取决于教堂品质和(gratitude_points)。",
   "active.sword": "伤害 +{0:0.##}",
   "active.shield": "护甲 +{0:0.##}",
-  "active.skull": "驴子可能带来品质高一级的尸体 (up) (skull) (rskull)",
+  "active.skull": "驴子可能带来更高品质等级的尸体。 (up) (skull) (rskull)",
   "active.pen": "书写品质加成：+{0:0.##}",
   "active.star": "制作质量加成：+{0:0.##}",
   "active.plant_inactive": "已知问题：此祈祷不会加快植物生长",

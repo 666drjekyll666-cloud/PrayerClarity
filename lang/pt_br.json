@@ -24,7 +24,7 @@
   "buff.souls_repose": "A (faith) depende da qualidade da igreja e de (gratitude_points).",
   "active.sword": "+{0:0.##} de dano",
   "active.shield": "+{0:0.##} de armadura",
-  "active.skull": "O burro pode trazer um corpo um nível de qualidade melhor (up) (skull) (rskull)",
+  "active.skull": "O burro pode trazer corpos de um nível de qualidade superior. (up) (skull) (rskull)",
   "active.pen": "Bônus de qualidade da escrita: +{0:0.##}",
   "active.star": "Bônus de qualidade da fabricação: +{0:0.##}",
   "active.plant_inactive": "Problema conhecido: esta oração não acelera o crescimento das plantas",

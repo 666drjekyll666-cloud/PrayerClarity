@@ -24,7 +24,7 @@
   "buff.souls_repose": "(faith) zależy od jakości kościoła i (gratitude_points).",
   "active.sword": "+{0:0.##} obrażeń",
   "active.shield": "+{0:0.##} pancerza",
-  "active.skull": "Osioł może przywieźć ciało o jeden poziom jakości lepsze (up) (skull) (rskull)",
+  "active.skull": "Osioł może przywozić ciała z wyższego poziomu jakości. (up) (skull) (rskull)",
   "active.pen": "Premia do jakości pisania: +{0:0.##}",
   "active.star": "Premia do jakości wytwarzania: +{0:0.##}",
   "active.plant_inactive": "Znany problem: ta modlitwa nie przyspiesza wzrostu roślin",
