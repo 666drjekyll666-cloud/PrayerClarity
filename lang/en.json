@@ -24,7 +24,7 @@
   "buff.souls_repose": "(faith) depends on Church Quality and (gratitude_points).",
   "active.sword": "+{0:0.##} damage",
   "active.shield": "+{0:0.##} armor",
-  "active.skull": "The Donkey may bring a body one quality tier better (up) (skull) (rskull)",
+  "active.skull": "The Donkey can bring bodies from a higher quality tier. (up) (skull) (rskull)",
   "active.pen": "Writing quality bonus: +{0:0.##}",
   "active.star": "Craft quality bonus: +{0:0.##}",
   "active.plant_inactive": "Known issue: this prayer does not speed up plant growth",

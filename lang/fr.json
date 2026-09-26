@@ -24,7 +24,7 @@
   "buff.souls_repose": "La (faith) dépend de la qualité de l’église et de (gratitude_points).",
   "active.sword": "+{0:0.##} dégâts",
   "active.shield": "+{0:0.##} armure",
-  "active.skull": "L’âne peut apporter un corps d’un niveau de qualité supérieur (up) (skull) (rskull)",
+  "active.skull": "L’âne peut apporter des corps d’un niveau de qualité supérieur. (up) (skull) (rskull)",
   "active.pen": "Bonus de qualité d’écriture : +{0:0.##}",
   "active.star": "Bonus de qualité de fabrication : +{0:0.##}",
   "active.plant_inactive": "Problème connu : cette prière n’accélère pas la croissance des plantes",

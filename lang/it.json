@@ -24,7 +24,7 @@
   "buff.souls_repose": "La (faith) dipende dalla qualità della chiesa e da (gratitude_points).",
   "active.sword": "+{0:0.##} danni",
   "active.shield": "+{0:0.##} armatura",
-  "active.skull": "L’asino può portare un corpo di un livello di qualità migliore (up) (skull) (rskull)",
+  "active.skull": "L’asino può portare corpi di un livello di qualità superiore. (up) (skull) (rskull)",
   "active.pen": "Bonus alla qualità di scrittura: +{0:0.##}",
   "active.star": "Bonus alla qualità di creazione: +{0:0.##}",
   "active.plant_inactive": "Problema noto: questa preghiera non accelera la crescita delle piante",
