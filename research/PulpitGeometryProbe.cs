@@ -14,7 +14,7 @@ namespace PrayerClarityResearch
         public const string PluginGuid = "nikich.graveyardkeeper.prayerclarity.research.pulpitgeometry";
         public const string RebalancedPluginGuid = "nikich.graveyardkeeper.prayerclarity.rebalanced";
         public const string PluginName = "PrayerClarity Pulpit Geometry Probe";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         private static readonly BindingFlags Any =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -90,6 +90,7 @@ namespace PrayerClarityResearch
                 }
 
                 DumpTransform("BUTTON_ROOT", button);
+                DumpComponents("BUTTON_ROOT_COMPONENTS", button);
 
                 object productionButtonWidget = null;
                 Component[] buttonWidgets = Array.Empty<Component>();
@@ -110,9 +111,10 @@ namespace PrayerClarityResearch
                     Component component = buttonWidgets[i];
                     DumpWidget(
                         "BUTTON_WIDGET index=" + i +
-                        " selectedByProduction=" + ReferenceEquals(component, productionButtonWidget),
+                        " directRootWidget=" + ReferenceEquals(component, productionButtonWidget),
                         component,
                         window);
+                    DumpAnchorState("BUTTON_WIDGET_ANCHOR index=" + i, component);
                 }
 
                 if (effectLabel != null && productionButtonWidget != null)
@@ -125,7 +127,7 @@ namespace PrayerClarityResearch
                     float windowTop;
 
                     bool effectOk = TryBounds(effectLabel, window, out effectBottom, out effectTop);
-                    bool buttonOk = TryBounds(productionButtonWidget, window, out buttonBottom, out buttonTop);
+                    bool buttonOk = TryVisibleButtonBounds(buttonWidgets, window, out buttonBottom, out buttonTop);
                     object windowWidget = GetComponent(window, widgetType);
                     bool windowOk = TryBounds(windowWidget, window, out windowBottom, out windowTop);
 
@@ -134,7 +136,7 @@ namespace PrayerClarityResearch
                         const float clearance = 8f;
                         float downward = Math.Max(0f, buttonTop - (effectBottom - clearance));
                         Logger.LogInfo(
-                            "PULPIT_GEOMETRY_SAME_ALGORITHM" +
+                            "PULPIT_GEOMETRY_CURRENT_ALGORITHM" +
                             " effectBottom=" + Num(effectBottom) +
                             " effectTop=" + Num(effectTop) +
                             " buttonBottom=" + Num(buttonBottom) +
@@ -158,7 +160,7 @@ namespace PrayerClarityResearch
                     else
                     {
                         Logger.LogWarning(
-                            "PULPIT_GEOMETRY_SAME_ALGORITHM status=BOUNDS_FAILED" +
+                            "PULPIT_GEOMETRY_CURRENT_ALGORITHM status=BOUNDS_FAILED" +
                             " effectOk=" + effectOk +
                             " buttonOk=" + buttonOk +
                             " windowOk=" + windowOk);
@@ -213,6 +215,106 @@ namespace PrayerClarityResearch
                 " localSize=" + F(Get(widget, "localSize")) +
                 " boundsOk=" + bounds +
                 (bounds ? " minY=" + Num(min) + " maxY=" + Num(max) : string.Empty));
+        }
+
+        private void DumpComponents(string tag, Transform transform)
+        {
+            if (transform == null)
+            {
+                Logger.LogWarning("PULPIT_" + tag + " status=MISSING");
+                return;
+            }
+
+            Component[] components = transform.gameObject.GetComponents<Component>();
+            List<string> names = new List<string>();
+            foreach (Component component in components)
+            {
+                if (component == null) continue;
+                names.Add(component.GetType().FullName ?? component.GetType().Name);
+            }
+
+            Logger.LogInfo(
+                "PULPIT_" + tag +
+                " count=" + names.Count +
+                " types=" + Q(string.Join(",", names.ToArray())));
+        }
+
+        private void DumpAnchorState(string tag, object widget)
+        {
+            if (widget == null)
+            {
+                Logger.LogWarning("PULPIT_" + tag + " status=MISSING");
+                return;
+            }
+
+            Logger.LogInfo(
+                "PULPIT_" + tag +
+                " id=" + WidgetIdentity(widget) +
+                " isAnchored=" + F(Get(widget, "isAnchored")) +
+                " isAnchoredHorizontal=" + F(Get(widget, "isAnchoredHorizontally")) +
+                " isAnchoredVertical=" + F(Get(widget, "isAnchoredVertically")) +
+                " updateAnchors=" + F(Get(widget, "updateAnchors")) +
+                " anchorUpdate=" + F(Get(widget, "anchorUpdate")));
+
+            DumpAnchorPoint(tag + " side=left", Get(widget, "leftAnchor"));
+            DumpAnchorPoint(tag + " side=right", Get(widget, "rightAnchor"));
+            DumpAnchorPoint(tag + " side=bottom", Get(widget, "bottomAnchor"));
+            DumpAnchorPoint(tag + " side=top", Get(widget, "topAnchor"));
+        }
+
+        private void DumpAnchorPoint(string tag, object anchor)
+        {
+            if (anchor == null)
+            {
+                Logger.LogInfo("PULPIT_" + tag + " anchor=<null>");
+                return;
+            }
+
+            object target = Get(anchor, "target");
+            string targetText = "<null>";
+            Transform targetTransform = target as Transform;
+            Component targetComponent = target as Component;
+            if (targetTransform != null)
+                targetText = PathOf(targetTransform);
+            else if (targetComponent != null)
+                targetText = PathOf(targetComponent.transform) + ":" + targetComponent.GetType().Name;
+            else if (target != null)
+                targetText = target.GetType().FullName + ":" + target;
+
+            Logger.LogInfo(
+                "PULPIT_" + tag +
+                " target=" + Q(targetText) +
+                " relative=" + F(Get(anchor, "relative")) +
+                " absolute=" + F(Get(anchor, "absolute")));
+        }
+
+        private static bool TryVisibleButtonBounds(Component[] widgets, Transform frame, out float minY, out float maxY)
+        {
+            minY = 0f;
+            maxY = 0f;
+            if (widgets == null || frame == null) return false;
+
+            bool found = false;
+            float unionMin = float.PositiveInfinity;
+            float unionMax = float.NegativeInfinity;
+
+            foreach (Component widget in widgets)
+            {
+                if (widget == null || !widget.gameObject.activeInHierarchy) continue;
+
+                float childMin;
+                float childMax;
+                if (!TryBounds(widget, frame, out childMin, out childMax)) continue;
+
+                if (childMin < unionMin) unionMin = childMin;
+                if (childMax > unionMax) unionMax = childMax;
+                found = true;
+            }
+
+            if (!found) return false;
+            minY = unionMin;
+            maxY = unionMax;
+            return true;
         }
 
         private static object GetComponent(Transform transform, Type type)
