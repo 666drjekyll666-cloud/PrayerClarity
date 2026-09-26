@@ -20,10 +20,10 @@
   "rebalanced.tech.sin_shard_lore": "魂は念入りに浄化したほうがよい、という話を少しばかり。",
   "rebalanced.tech.gratitude_effect": "魂の状態は時間が経っても悪化しません。死体の中でも、抽出後でも同じです。\n魂の解放で得られる(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "各告解室で1日に告解が発生する確率：{0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "（銅の祈りはもう効果がなく、銀の祈りなら入手可能な中で最高の死体を得る確率が上がり、金の祈りなら最高の死体が保証されます。）",
+  "rebalanced.repose.endpoint_bronze_hint": "（(s1) はもう効果がありません。\n(s2) ロバが運んでこられる最高の死体を得る確率が上がります。\n(s3) ロバが運んでこられる最高の死体を保証します。）",
   "rebalanced.repose.tier.bronze": "基本効果のみ",
-  "rebalanced.repose.tier.silver": "入手可能な中で最高の死体を得る確率が上がります。",
-  "rebalanced.repose.tier.gold": "入手可能な中で最高の死体が保証されます。",
-  "rebalanced.repose.active.silver": "入手可能な中で最高の死体を得る確率が高くなっています。",
-  "rebalanced.repose.active.gold": "入手可能な中で最高の死体が保証されています。"
+  "rebalanced.repose.tier.silver": "ロバが運んでこられる最高の死体を得る確率が上がります。",
+  "rebalanced.repose.tier.gold": "ロバが運んでこられる最高の死体が保証されます。",
+  "rebalanced.repose.active.silver": "ロバが運んでこられる最高の死体を得る確率が高くなっています。",
+  "rebalanced.repose.active.gold": "ロバが運んでこられる最高の死体が保証されています。"
 }
