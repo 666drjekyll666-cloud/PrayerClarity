@@ -1626,3 +1626,24 @@ Research helper identity:
 - This ref is the current **accepted Rebalanced development/runtime baseline** for future candidates.
 - This bookkeeping step does **not** publish 0.2.37 as the current public stable GitHub/Nexus release and does not imply acceptance of the untested Vanilla sibling 1.0.46.
 - No new runtime test or hosted CI is required for this ref/docs-only closure.
+
+
+### 2026-09-26 — post-0.2.37 backlog reconciliation corrected
+
+A deeper review of recent project-chat decisions against exact accepted source `d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05` corrected the earlier statement that only the Soul's Repose parenthetical remained.
+
+Still open:
+- Shoots & Roots: user explicitly rejected the 95% combined-cap note on Bronze/Silver and accepted it for Gold only. Exact 0.2.37 active-effect source still calls `rebalanced.active.plant` with the combined 95% cap for every active tier.
+- Prayer for Donations: user accepted `1 gold` as the Gold pulpit denomination, matching the item tooltip. Exact 0.2.37 final pulpit writer still formats fixed money through `PresentationText.FormatPrayerContribution` as `(slv) +100`.
+- Soul's Repose: Silver/Gold reliability sentence remains queued for parenthetical-note presentation.
+
+Decision pending:
+- legacy Protective Prayer / `b_shield`: item lore still resolves stock `b_shield_d` while Rebalanced maps surviving items/mechanics to Combat / `buff_sword` and removes Protection crafting/Technology. User noticed the wording mismatch but explicitly asked not to change it yet; no production gate should open until a product decision is made.
+
+Closed by later evidence/source:
+- Combo duplicate quality star = Test Console artifact, not production;
+- item-tooltip requirement structure = accepted separate Sermon success section;
+- item inline icon wrapping = accepted 0.2.32;
+- pulpit localized-text clearance + live-language font lifecycle = accepted 0.2.37.
+
+Non-blocking evidence gaps remain unchanged: terminal Repose endpoint and real successful Silver/Gold Imagination three-Story payout.
