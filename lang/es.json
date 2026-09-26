@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Mejora la calidad de escritura.",
   "tech.effect.excellence_intro": "Mejora la calidad de fabricación.",
   "tech.souls_base_faith": "La Fe depende de la calidad de la iglesia y la Gratitud de las almas.",
-  "repose.endpoint": "No hay cuerpos de mayor calidad disponibles.",
+  "repose.endpoint": "Ya has alcanzado la máxima calidad de cadáver disponible: esta oración no puede desbloquear cadáveres de mayor calidad.",
   "buff.souls_repose": "La (faith) depende de la calidad de la iglesia y de (gratitude_points).",
   "active.sword": "+{0:0.##} de daño",
   "active.shield": "+{0:0.##} de armadura",
@@ -35,5 +35,7 @@
   "tech.base_result": "Resultado base",
   "tech.percent_of_base": "{0} del valor base",
   "active.timer_days_compact": "{0:0.0}",
-  "tech.on_success_header": "Con éxito:"
+  "tech.on_success_header": "Con éxito:",
+  "forecast.current_success_chance": "Probabilidad de éxito actual: {0} %",
+  "item.sermon_success": "Éxito del sermón"
 }

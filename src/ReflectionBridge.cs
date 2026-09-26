@@ -12,6 +12,8 @@ namespace PrayerClarity
         internal static Assembly GameAssembly;
         private static MethodInfo _vanillaLocalizeMethod;
         private static bool _vanillaLocalizeResolved;
+        private static MethodInfo _ensureLabelHasCorrectFontMethod;
+        private static bool _ensureLabelHasCorrectFontResolved;
 
         internal static bool BindGameAssembly()
         {
@@ -196,6 +198,23 @@ namespace PrayerClarity
         {
             object value = GetStatic(GameType("GameSettings"), "_cur_lng");
             return value == null ? "en" : value.ToString();
+        }
+
+        internal static void EnsureLabelHasCorrectFont(object label)
+        {
+            if (label == null) return;
+
+            if (!_ensureLabelHasCorrectFontResolved)
+            {
+                Type type = AnyType("GJL");
+                _ensureLabelHasCorrectFontMethod = Method(type, "EnsureLabelHasCorrectFont", true, 2);
+                _ensureLabelHasCorrectFontResolved = true;
+            }
+
+            if (_ensureLabelHasCorrectFontMethod == null)
+                throw new MissingMethodException("GJL.EnsureLabelHasCorrectFont");
+
+            _ensureLabelHasCorrectFontMethod.Invoke(null, new object[] { label, true });
         }
 
         internal static string VanillaLocalize(string key)

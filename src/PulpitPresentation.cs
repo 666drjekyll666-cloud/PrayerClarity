@@ -45,6 +45,15 @@ namespace PrayerClarity
             if (template == null || forecast == null) return;
             Ensure(template, gui);
 
+            // These forecast labels are raw UILabels owned by PrayerClarity rather
+            // than LocalizedLabel components. Rejoin the game's language-font owner
+            // on every redraw so live CJK/Latin/Cyrillic switches cannot leave a
+            // stale bitmap font or stale glyph metrics on persistent custom widgets.
+            R.EnsureLabelHasCorrectFont(template);
+            R.EnsureLabelHasCorrectFont(_resultLabel);
+            R.EnsureLabelHasCorrectFont(_effectLabel);
+            R.EnsureLabelHasCorrectFont(_noteLabel);
+
             ConfigureContext(template);
             R.Set(template, "text", BuildContext(vanillaContext, forecast));
 

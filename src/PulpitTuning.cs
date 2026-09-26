@@ -23,15 +23,15 @@ namespace PrayerClarity
         internal static readonly FixedValue<int> ContextFontSize = new FixedValue<int>(15);
 
         internal static readonly FixedValue<float> ResultHeaderX = new FixedValue<float>(6f);
-        internal static readonly FixedValue<float> ResultHeaderY = new FixedValue<float>(7f);
+        internal static readonly FixedValue<float> ResultHeaderY = new FixedValue<float>(27f);
         internal static readonly FixedValue<int> ResultHeaderFontSize = new FixedValue<int>(15);
 
         internal static readonly FixedValue<float> ResultX = new FixedValue<float>(-5f);
-        internal static readonly FixedValue<float> ResultY = new FixedValue<float>(-8f);
+        internal static readonly FixedValue<float> ResultY = new FixedValue<float>(12f);
         internal static readonly FixedValue<int> ResultFontSize = new FixedValue<int>(14);
 
         internal static readonly FixedValue<float> EffectX = new FixedValue<float>(-128f);
-        internal static readonly FixedValue<float> EffectY = new FixedValue<float>(-70f);
+        internal static readonly FixedValue<float> EffectY = new FixedValue<float>(-50f);
         internal static readonly FixedValue<int> EffectFontSize = new FixedValue<int>(12);
         internal static readonly FixedValue<int> EffectIconSize = new FixedValue<int>(10);
 

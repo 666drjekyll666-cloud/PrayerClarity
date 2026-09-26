@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PrayerClarity
 {
     // Final presentation pass for the accepted pulpit layout. It runs only on pulpit
-    // redraw after PulpitLayoutV4 has applied the fixed window geometry.
+    // redraw after PulpitLayoutV4 has applied the baseline window geometry.
     // Leading effect icons come from the same BuffDefinition.GetIconName() seam used
     // by vanilla BuffIcon.Draw. Item/resource nouns stay as localized text because the
     // attempted inline-item sprite paths did not resolve in the verified 1.407 runtime.
@@ -24,9 +24,9 @@ namespace PrayerClarity
         private static Transform _container;
         private static Transform _root;
         private static object _containerWidget;
+        private static Type _uiWidgetType;
         private static Transform _craftButton;
-        private static Vector3 _craftButtonOriginalPosition;
-        private static bool _craftButtonCaptured;
+        private static int _settledLayoutGeneration;
 
         private static object _resultRowsLabel;
         private static GameObject _dependencyNoteObject;
@@ -49,15 +49,14 @@ namespace PrayerClarity
         {
             if (_template == null || _gui == null || _forecast == null) return;
             Capture();
-            MovePrayerButton();
             PolishResultRows();
             PolishEffectRow();
+            ScheduleNativeButtonClearance();
         }
 
         internal static void Restore()
         {
-            if (_craftButtonCaptured && _craftButton != null)
-                _craftButton.localPosition = _craftButtonOriginalPosition;
+            _settledLayoutGeneration++;
         }
 
         private static void Capture()
@@ -73,14 +72,12 @@ namespace PrayerClarity
             {
                 _window = window;
                 _container = container;
-                Type uiWidgetType = R.AnyType("UIWidget");
-                _containerWidget = uiWidgetType == null || container == null
+                _uiWidgetType = R.AnyType("UIWidget");
+                _containerWidget = _uiWidgetType == null || container == null
                     ? null
-                    : container.gameObject.GetComponent(uiWidgetType);
+                    : container.gameObject.GetComponent(_uiWidgetType);
 
                 _craftButton = window.Find("craft button");
-                _craftButtonOriginalPosition = _craftButton == null ? Vector3.zero : _craftButton.localPosition;
-                _craftButtonCaptured = _craftButton != null;
 
                 _root = null;
                 _resultRowsLabel = null;
@@ -110,13 +107,86 @@ namespace PrayerClarity
             _effectIcon = GetComponent(root.Find("PrayerClarity.Effect.Icon"), "UI2DSprite");
         }
 
-        private static void MovePrayerButton()
+        private static void ScheduleNativeButtonClearance()
         {
-            if (!_craftButtonCaptured || _craftButton == null) return;
-            _craftButton.localPosition = new Vector3(
-                PulpitTuning.PrayerButtonX.Value,
-                PulpitTuning.PrayerButtonY.Value,
-                _craftButtonOriginalPosition.z);
+            MonoBehaviour runner = _gui as MonoBehaviour;
+            if (runner == null) return;
+
+            int generation = ++_settledLayoutGeneration;
+            runner.StartCoroutine(ApplyNativeButtonClearanceAfterLayout(generation));
+        }
+
+        private static IEnumerator ApplyNativeButtonClearanceAfterLayout(int generation)
+        {
+            // RedrawTextValues precedes the final ResizeHeight result for localized
+            // content. Wait one frame, then measure the settled Effect and the full
+            // visible action button. Do not move the button transform: its root UILabel
+            // is natively bottom-anchored to the pulpit window with OnUpdate ownership.
+            yield return null;
+
+            if (generation != _settledLayoutGeneration ||
+                _window == null ||
+                !_window.gameObject.activeInHierarchy ||
+                _effectLabel == null ||
+                _effectLabelObject == null ||
+                !_effectLabelObject.activeInHierarchy ||
+                _craftButton == null ||
+                !_craftButton.gameObject.activeInHierarchy)
+                yield break;
+
+            R.Get(_effectLabel, "processedText");
+
+            float effectBottom;
+            float effectTop;
+            float buttonBottom;
+            float buttonTop;
+            if (!TryGetVerticalBounds(_effectLabel, _window, out effectBottom, out effectTop) ||
+                !TryGetVisibleButtonBounds(out buttonBottom, out buttonTop))
+                yield break;
+
+            const float clearance = 8f;
+            float requiredDownward = Mathf.Max(0f, buttonTop - (effectBottom - clearance));
+            if (requiredDownward <= 0f)
+                yield break;
+
+            // Growing the unanchored root is the canonical write. Native NGUI anchors
+            // move the craft button with the root bottom while the forecast container
+            // keeps its centre, so no iterative transform correction is needed.
+            PulpitLayoutV4.GrowWindowForButtonClearance(requiredDownward);
+        }
+
+        private static bool TryGetVisibleButtonBounds(out float minY, out float maxY)
+        {
+            minY = 0f;
+            maxY = 0f;
+            if (_craftButton == null || _uiWidgetType == null || _window == null)
+                return false;
+
+            Component[] widgets = _craftButton.gameObject.GetComponentsInChildren(_uiWidgetType, true);
+            if (widgets == null || widgets.Length == 0)
+                return false;
+
+            bool found = false;
+            float unionMin = float.PositiveInfinity;
+            float unionMax = float.NegativeInfinity;
+
+            foreach (Component widget in widgets)
+            {
+                if (widget == null || !widget.gameObject.activeInHierarchy) continue;
+
+                float childMin;
+                float childMax;
+                if (!TryGetVerticalBounds(widget, _window, out childMin, out childMax)) continue;
+
+                if (childMin < unionMin) unionMin = childMin;
+                if (childMax > unionMax) unionMax = childMax;
+                found = true;
+            }
+
+            if (!found) return false;
+            minY = unionMin;
+            maxY = unionMax;
+            return true;
         }
 
         private static void PolishResultRows()
@@ -194,6 +264,7 @@ namespace PrayerClarity
             GameObject resultGo = R.Get(_resultRowsLabel, "gameObject") as GameObject;
             if (resultGo == null) return desired;
 
+            R.Get(_resultRowsLabel, "processedText");
             int height = Math.Max(0, R.Int(R.Get(_resultRowsLabel, "height")));
             if (height <= 0) return desired;
 
@@ -308,6 +379,31 @@ namespace PrayerClarity
             if (transform == null) return null;
             Type type = R.AnyType(typeName);
             return type == null ? null : transform.gameObject.GetComponent(type);
+        }
+
+        private static bool TryGetVerticalBounds(
+            object widget,
+            Transform frame,
+            out float minY,
+            out float maxY)
+        {
+            minY = 0f;
+            maxY = 0f;
+            if (widget == null || frame == null) return false;
+
+            Vector3[] corners = R.Get(widget, "worldCorners") as Vector3[];
+            if (corners == null || corners.Length == 0) return false;
+
+            minY = float.PositiveInfinity;
+            maxY = float.NegativeInfinity;
+            foreach (Vector3 corner in corners)
+            {
+                float y = frame.InverseTransformPoint(corner).y;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            }
+
+            return !float.IsInfinity(minY) && !float.IsInfinity(maxY);
         }
 
         private static void SetEnum(object obj, string property, string name)

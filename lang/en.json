@@ -20,7 +20,7 @@
   "tech.effect.imagination_intro": "Improves writing quality.",
   "tech.effect.excellence_intro": "Improves crafted-item quality.",
   "tech.souls_base_faith": "Faith depends on Church Quality and Soul Gratitude.",
-  "repose.endpoint": "No higher-quality bodies are available.",
+  "repose.endpoint": "Maximum available body quality has already been reached — this prayer cannot unlock higher-quality bodies.",
   "buff.souls_repose": "(faith) depends on Church Quality and (gratitude_points).",
   "active.sword": "+{0:0.##} damage",
   "active.shield": "+{0:0.##} armor",
@@ -35,5 +35,7 @@
   "tech.base_result": "Base result",
   "tech.percent_of_base": "{0} of base",
   "active.timer_days_compact": "{0:0.0}",
-  "tech.on_success_header": "On success:"
+  "tech.on_success_header": "On success:",
+  "forecast.current_success_chance": "Current success chance: {0}%",
+  "item.sermon_success": "Sermon success"
 }

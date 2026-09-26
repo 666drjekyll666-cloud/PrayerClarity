@@ -4,7 +4,7 @@
     <LangVersion>7.3</LangVersion>
     <AssemblyName>PrayerClarity</AssemblyName>
     <RootNamespace>PrayerClarity</RootNamespace>
-    <Version>1.0.33</Version>
+    <Version>1.0.47</Version>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -18,6 +18,7 @@
     <Compile Include="src/PrayerClarityPlugin.cs" />
     <Compile Include="src/ReflectionBridge.cs" />
     <Compile Include="src/PrayerEditionSemantics.cs" />
+    <Compile Include="src/PrayerLoreResolver.cs" />
     <Compile Include="src/PrayerForecast.cs" />
     <Compile Include="src/CorpseTierSemantics.cs" />
     <Compile Include="src/PresentationText.cs" />
