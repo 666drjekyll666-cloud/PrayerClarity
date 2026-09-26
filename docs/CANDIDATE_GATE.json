@@ -1,54 +1,55 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.44",
-  "baseline_sha": "d19902ae7f699384334f7b8b53e9c88b5d9e86c9",
+  "candidate_branch": "candidate/rebalanced-0.2.45",
+  "baseline_sha": "7886a5cb860842aa1df139a84e81d69622dc7be1",
   "changes": [
     {
-      "id": "repose-reliability-language-and-terminal-tier-list",
-      "observable_property": "Rebalanced Repose reliability wording should read as natural in-world language across Technology, items, pulpit and active effects, and terminal Bronze should present the three quality outcomes as three separate glyph-led lines rather than a dense sentence.",
-      "canonical_owner": "Rebalanced Repose reliability strings are owned by lang_rebalanced/*.json and consumed by RebalancedPresentationSemantics plus PulpitLayoutV5.OverrideSpecialPresentation.",
-      "final_writer_or_commit_point": "Technology and item surfaces consume RebalancedPresentationSemantics output; PulpitLayoutV5.OverrideSpecialPresentation is the final Repose pulpit writer; SecondarySurfacePresentation consumes active-effect text for Temporary Effects.",
+      "id": "prayer-item-vanilla-width-restoration",
+      "observable_property": "PrayerClarity-owned prayer-item mechanics rows must use the game's standard item-tooltip width behavior rather than any PrayerClarity-owned fixed or expanding width policy.",
+      "canonical_owner": "ItemDefinition.GetTooltipData remains the standard item-tooltip data seam. TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix currently recognizes PrayerClarity-owned prayer-item mechanics rows only to apply width/wrap handling.",
+      "final_writer_or_commit_point": "BubbleWidgetText.Draw -> TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix is the final PrayerClarity interception for those marked rows. In this candidate it must stop writing UILabel width, overflowMethod, height or overflowWidth and retain only the already-accepted amount+inline-symbol final-wrap repair.",
       "blast_radius": [
-        "Rebalanced Repose Technology wording across all 11 locales",
-        "Rebalanced Repose prayer-item wording across all 11 locales",
-        "Rebalanced Repose pulpit wording across all 11 locales",
-        "Rebalanced Repose Temporary Effects wording across all 11 locales"
+        "PrayerClarity-owned mechanics rows in prayer-item tooltips in Vanilla and Rebalanced",
+        "All 11 locales through the same shared item-tooltip rendering path"
       ],
       "preserved_invariants": [
-        "The shared higher-quality-body sentence remains unchanged",
-        "Terminal Silver/Gold continue to omit the higher-quality-body sentence because no higher ordinary tier exists there",
-        "Repose mechanics, endpoint predicates, distribution narrowing, requirements, duration and RNG remain unchanged",
-        "Vanilla wording and mechanics remain unchanged except for shared layout work covered by the separate gate"
+        "The accepted conditional amount+inline-resource wrap repair remains active",
+        "Prayer-item wording, lore, title, crafting-location text and mechanics remain unchanged by this gate",
+        "Technology tooltip layout remains unchanged",
+        "Non-prayer item tooltips remain untouched",
+        "No new UI placement/lifecycle hook is introduced"
       ],
-      "acceptance_evidence": "Build/localization validation plus Russian visual inspection of Repose Technology, one Silver/Gold item, ordinary Silver/Gold pulpit, terminal Bronze pulpit and terminal Silver/Gold pulpit. Terminal Bronze must show three separate lines beginning with native Bronze/Silver/Gold quality glyphs.",
+      "acceptance_evidence": "Build validation plus Russian visual inspection of Repose, Imagination/another ordinary prayer, and a long-line prayer such as Prosperity. Their parchment width must follow the normal game item-tooltip geometry rather than PrayerClarity's 200/280/420 experiments; long text may wrap naturally. Verify no amount/resource icon is orphaned.",
       "evidence_refs": [
-        "User runtime screenshots on 2026-09-26 accepted the current Repose mechanics/presentation structure but preferred 'possible' over 'available' in Russian reliability wording.",
-        "User explicitly requested terminal Bronze to replace the Bronze/Silver/Gold words with native quality glyphs and put each tier sentence on its own line.",
-        "src/RebalancedPresentationSemantics.cs and src/PulpitLayoutV5.cs on baseline d19902ae7f699384334f7b8b53e9c88b5d9e86c9."
+        "Shared research docs/CRAFTING_INVENTORY_AND_TRADING.md: ItemDefinition.GetTooltipData is the verified standard item-tooltip seam.",
+        "docs/PLAYER_UX_RESEARCH.md: amount+inline-resource final-wrap repair is separately runtime-accepted and does not require PrayerClarity to own tooltip width.",
+        "0.2.29 fixed 200, 0.2.43 ResizeFreely/420, and 0.2.44 fixed 280 were all rejected by direct runtime visuals for prayer-item geometry.",
+        "User product decision on 2026-09-26: return prayer items to standard vanilla tooltip width."
       ],
       "state": "READY"
     },
     {
-      "id": "prayer-item-stable-bounded-column",
-      "observable_property": "Prayer-item tooltips should have a stable readable parchment width: they must not leave the narrow 200-unit mechanics column with conspicuous unused space, and they must not let one long mechanics line expand the entire parchment up to the 420-unit natural-width ceiling.",
-      "canonical_owner": "TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix owns PrayerClarity-specific layout for mechanics rows marked by PreferPrayerItemLayout.",
-      "final_writer_or_commit_point": "BubbleWidgetText.Draw -> TechnologyTooltipContentWidth.BubbleWidgetTextDrawPostfix is the accepted final PrayerClarity width/wrap writer for marked prayer-item mechanics rows; WidgetsBubbleGUI then sizes the parchment from the resulting child geometry.",
+      "id": "repose-explicit-reliability-language",
+      "observable_property": "Rebalanced Repose must make the relationship between the shared higher-quality-body effect and prayer-quality reliability immediately clear. Concrete Bronze/Silver/Gold forecast surfaces are self-contained; Technology remains a compact comparison; terminal wording explicitly limits Silver/Gold to bodies the Donkey can already bring.",
+      "canonical_owner": "RebalancedPresentationSemantics owns Rebalanced Repose Technology and concrete forecast text. PulpitLayoutV5.OverrideSpecialPresentation owns terminal Repose substitution. lang_rebalanced/*.json owns the player-facing wording.",
+      "final_writer_or_commit_point": "Technology consumes TryBuildTechnologyEffect; prayer items and ordinary pulpit consume TryBuildTierEffect/PrayerForecast; PulpitLayoutV5.OverrideSpecialPresentation is the final terminal pulpit writer.",
       "blast_radius": [
-        "PrayerClarity-owned mechanics rows in all prayer-item tooltips in Vanilla and Rebalanced",
-        "All 11 locales through the same locale-independent NGUI width path"
+        "Rebalanced Repose Technology wording across all 11 locales",
+        "Rebalanced Repose item-tooltip wording across all 11 locales",
+        "Rebalanced Repose ordinary and terminal pulpit wording across all 11 locales"
       ],
       "preserved_invariants": [
-        "The accepted conditional amount+inline-resource final-wrap repair remains active",
-        "Prayer-item wording, lore, titles, crafting-location text and mechanics remain unchanged",
-        "Technology tooltip width behavior remains unchanged",
-        "Non-prayer item tooltips remain untouched"
+        "Temporary Effects wording/behavior remains unchanged from 0.2.44",
+        "Vanilla Repose reliability semantics are not changed",
+        "Shared Vanilla/Rebalanced natural-limit endpoint sentence remains unchanged",
+        "Repose mechanics, corpse-tier availability, Silver/Gold distribution behavior, requirements, duration and RNG remain unchanged",
+        "Terminal quality-glyph one-line-per-tier structure remains"
       ],
-      "acceptance_evidence": "Use one stable fixed mechanics width between the rejected 200-unit and natural 420-unit extremes. Build validation plus Russian visual inspection of Repose, a short prayer and a long-line prayer such as Prosperity/Soul's Repose. The parchment should remain stable across prayers, long lines should wrap, no one line should dictate a screen-wide tooltip, and no amount/resource icon may be orphaned.",
+      "acceptance_evidence": "Localization/build validation plus Russian visual inspection: Technology must read shared effect + reliability delta; Bronze item/ordinary pulpit must explicitly say higher-quality bodies are possible but the best body is not guaranteed; Silver/Gold item/ordinary pulpit must show shared effect plus their reliability sentence; terminal Bronze must show three glyph-led lines; terminal Silver/Gold must say best among the bodies the Donkey can already bring. No sermon/corpse-generation/active-buff replay is required.",
       "evidence_refs": [
-        "0.2.29 runtime path: fixed 200-unit ResizeHeight column; user runtime evidence on 2026-09-26 reported conspicuous one-sided empty space.",
-        "0.2.43 runtime path: native ResizeFreely with overflowWidth=420; user runtime screenshots on 2026-09-26 showed Repose and especially Prosperity expanding according to the longest line.",
-        "Solution-space checkpoint: rejected returning to either known extreme; rejected late manual UILabel repositioning as a deeper lifecycle mechanism. Selected a fixed intermediate mechanics width because it is the least-complex path that directly bounds both failure modes.",
-        "src/TechnologyTooltipContentWidth.cs and shared NGUI item-tooltip seam evidence on baseline d19902ae7f699384334f7b8b53e9c88b5d9e86c9."
+        "User-approved wording model on 2026-09-26: concrete Bronze = higher-quality bodies possible but best not guaranteed; Silver/Gold = same shared effect plus increased/guaranteed best result.",
+        "User-approved full terminal wording on 2026-09-26: Silver/Gold refer to 'the bodies the Donkey can already bring'.",
+        "src/RebalancedPresentationSemantics.cs and src/PulpitLayoutV5.cs on baseline 7886a5cb860842aa1df139a84e81d69622dc7be1."
       ],
       "state": "READY"
     }
