@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "说几句为什么灵魂最好要彻底净化。",
   "rebalanced.tech.gratitude_effect": "灵魂状态不会随时间恶化——无论仍在尸体中还是已经提取。\n释放灵魂获得的(gratitude_points)：+{0:0}%",
   "rebalanced.active.sins_detailed": "每个告解室每天触发告解的概率：{0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "（白银和黄金仍会提高获得当前最佳尸体的概率。）"
+  "rebalanced.repose.endpoint_bronze_hint": "（白银和黄金祷告仍会提高获得当前最佳尸体的可靠性。）"
 }
