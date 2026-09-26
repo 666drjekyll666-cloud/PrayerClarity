@@ -23,5 +23,6 @@
   "rebalanced.tech.sin_shard_lore": "Ein paar Worte darüber, warum Seelen gründlich gereinigt werden sollten.",
   "rebalanced.tech.gratitude_effect": "Der Zustand von Seelen verschlechtert sich mit der Zeit nicht — weder im Körper noch nach der Extraktion.\n(gratitude_points) für das Freilassen von Seelen: +{0:0}%",
   "rebalanced.active.sins_detailed": "Tägliche Beichtchance in jedem Beichtstuhl: {0:0} %",
-  "rebalanced.repose.endpoint_bronze_hint": "(Silber- und Goldgebete erhöhen weiterhin die Zuverlässigkeit, mit der du den besten verfügbaren Leichnam erhältst.)"
+"rebalanced.repose.endpoint_bronze": "Die höchste verfügbare Qualitätsstufe für Leichname ist bereits freigeschaltet. Das Bronzegebet kann sie nicht weiter erhöhen.",
+"rebalanced.repose.endpoint_bronze_hint": "(Der Esel kann weiterhin einen Leichnam bringen, der nicht der beste verfügbare ist. Die Silberversion dieses Gebets erhöht die Chance auf den besten; die Goldversion garantiert ihn.)"
 }
