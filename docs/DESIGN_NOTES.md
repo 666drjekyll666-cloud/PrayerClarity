@@ -247,9 +247,9 @@ A deeper 2026-09-26 reconciliation against recent project-chat decisions and the
 - **Prayer for Donations Gold pulpit denomination:** the accepted target is native denomination **1 gold**, not `+100 silver`, matching the item-tooltip presentation. Exact 0.2.37 final pulpit writer remains `PulpitPolish -> PresentationText.BuildPulpitResultRows -> FormatPrayerContribution`, which formats fixed money as `(slv) +100`; therefore this remains a real presentation tail.
 - **Soul's Repose reliability note:** keep the accepted meaning of the final Silver/Gold reliability sentence, but present it parenthetically so it reads as a note rather than another primary effect sentence. This remains a queued micro-change.
 
-**Decision pending, not yet an approved production change:**
+**Closed product decision:**
 
-- **Legacy Protective Prayer (`b_shield`) lore:** Rebalanced intentionally retires Protection crafting/Technology while retaining old `b_shield` items as Combat aliases mapped to `buff_sword`. The item tooltip still resolves the stock `b_shield_d` lore, while the surviving Combat Technology/lore is `b_sword`-owned. The user noticed this inconsistency but explicitly called it a minor observation and asked not to change anything yet. A product decision is required before opening a production gate: preserve legacy-item lore or normalize the alias item to Combat lore.
+- **Legacy Protective Prayer (`b_shield`) lore stays historical.** Rebalanced continues to retire Protection crafting/Technology while retaining already-existing `b_shield` items as Combat aliases. Their item tooltip deliberately keeps stock `b_shield_d` lore rather than being normalized to Combat Prayer lore. This is intentional preserved behavior, not an open inconsistency.
 
 **Confirmed closed / not backlog:**
 
