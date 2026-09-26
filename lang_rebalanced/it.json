@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "Qualche parola sul perché sia meglio purificare le anime a fondo.",
   "rebalanced.tech.gratitude_effect": "La condizione delle anime non peggiora con il tempo — né nel corpo né dopo l'estrazione.\n(gratitude_points) ottenuti liberando le anime: +{0:0}%",
   "rebalanced.active.sins_detailed": "Probabilità giornaliera di confessione in ogni confessionale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(Argento e oro aumentano ancora la probabilità di ricevere il miglior corpo disponibile.)"
+  "rebalanced.repose.endpoint_bronze_hint": "(Le preghiere d'argento e d'oro aumentano ancora l'affidabilità nell'ottenere il miglior corpo disponibile.)"
 }
