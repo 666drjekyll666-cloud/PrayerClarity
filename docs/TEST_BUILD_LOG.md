@@ -16,7 +16,12 @@
   3. Soul's Repose endpoint note uses the parenthetical presentation and the prayer effects remain correct across all three qualities.
 - Legacy Protective Prayer / `b_shield` historical item lore is intentionally preserved by product decision.
 - New follow-up wording question: the Bronze Repose endpoint note is mechanically correct but may not explain “reliability” clearly enough to a player who does not know the corpse-quality distribution system. This is a separate future wording/design task and does not invalidate 0.2.38 acceptance.
-- Stable publication must reuse the exact accepted DLL bytes above; do not rebuild 0.2.38.
+- Stable promotion PR: **#39**, squash-merged to `main` as `d40872af6a6088052922f9a9fa4c0a20ac03811e`.
+- Publication workflow run: `36248438930`; result: **success**.
+- GitHub release: `rebalanced-v0.2.38` -> exact accepted source `6f5ef168810945135cee57082cbf90d31776e46b`.
+- Release ID: `397263631`; canonical asset `PrayerClarity.Rebalanced.dll`, asset ID `590809031`, digest `sha256:e547f7bb76e0ef512dc669ea30543dada5a2aeb8044b1c7ffcbe7fecf17303e5`.
+- Publication downloaded the accepted CI artifact, verified the recorded SHA-256, and uploaded the exact DLL bytes; **no rebuild occurred**.
+- Numbered accepted bytes are immutable.
 
 
 
