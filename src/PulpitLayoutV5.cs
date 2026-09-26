@@ -195,6 +195,10 @@ namespace PrayerClarity
                 }
             }
 
+            // ResultHeader is created by this layout layer after PulpitPresentation's
+            // font refresh, so explicitly bind it to the current language as well.
+            R.EnsureLabelHasCorrectFont(_resultHeaderLabel);
+
             GameObject headerGo = _resultHeaderLabel == null ? null : R.Get(_resultHeaderLabel, "gameObject") as GameObject;
             if (headerGo != null) headerGo.SetActive(true);
         }
