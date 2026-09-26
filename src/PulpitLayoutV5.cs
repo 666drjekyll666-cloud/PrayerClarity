@@ -468,8 +468,8 @@ namespace PrayerClarity
                     else if (reliabilityStillChangesDistribution)
                     {
                         string deltaKey = forecast.QualityTier == 2
-                            ? "rebalanced.repose.tier.silver"
-                            : "rebalanced.repose.tier.gold";
+                            ? "rebalanced.repose.terminal.silver"
+                            : "rebalanced.repose.terminal.gold";
                         forecast.SpecialText = Localization.F(deltaKey) + " " +
                                                TechnologyTooltipTextStyle.CorpseQualityCue();
                     }
