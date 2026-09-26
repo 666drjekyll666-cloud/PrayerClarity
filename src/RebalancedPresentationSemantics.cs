@@ -97,10 +97,13 @@ namespace PrayerClarity
                 case "buff_plant":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.PlantTierParam);
                     if (tier <= 0 || !RebalancedRuleSet.TryGet("b_plant", out rule)) return false;
-                    text = Localization.F(
-                        "rebalanced.active.plant",
-                        rule.TierValue(rule.GrowthReduction, tier) * 100f,
-                        RebalancedRoots.MaxCombinedGrowthReduction * 100f);
+                    float growthReduction = rule.TierValue(rule.GrowthReduction, tier) * 100f;
+                    text = tier >= 3
+                        ? Localization.F(
+                            "rebalanced.active.plant",
+                            growthReduction,
+                            RebalancedRoots.MaxCombinedGrowthReduction * 100f)
+                        : Localization.F("rebalanced.tech.plant_tier", growthReduction);
                     return true;
                 case "buff_sins":
                     tier = RebalancedTierState.GetCapturedTier(RebalancedTierState.ConfessionTierParam);
