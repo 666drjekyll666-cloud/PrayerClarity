@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "영혼은 철저히 정화하는 편이 낫다는 몇 마디.",
   "rebalanced.tech.gratitude_effect": "영혼의 상태는 시간이 지나도 악화되지 않습니다. 시체 안에 있을 때도, 추출된 뒤에도 마찬가지입니다.\n영혼 해방으로 얻는 (gratitude_points): +{0:0}%",
   "rebalanced.active.sins_detailed": "각 고해소의 일일 고해 확률: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "(은·금 등급은 여전히 가장 좋은 시체를 받을 확률을 높입니다.)"
+  "rebalanced.repose.endpoint_bronze_hint": "(은·금 등급 기도는 여전히 가장 좋은 시체를 받을 확률의 안정성을 높입니다.)"
 }
