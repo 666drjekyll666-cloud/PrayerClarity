@@ -458,9 +458,13 @@ namespace PrayerClarity
 
                 if (!stockAddsHigherTier && !reliabilityStillChangesDistribution)
                 {
-                    forecast.SpecialText = Localization.F("repose.endpoint");
                     if (forecast.QualityTier == 1 && premiumCanStillChangeDistribution)
-                        forecast.SpecialText += "\n" + Localization.F("rebalanced.repose.endpoint_bronze_hint");
+                    {
+                        forecast.SpecialText = Localization.F("rebalanced.repose.endpoint_bronze") + "\n" +
+                                               Localization.F("rebalanced.repose.endpoint_bronze_hint");
+                    }
+                    else
+                        forecast.SpecialText = Localization.F("repose.endpoint");
                 }
                 else if (!hasRebalancedSemantics)
                     forecast.SpecialText = Localization.F("buff.skull", 1f, duration);
