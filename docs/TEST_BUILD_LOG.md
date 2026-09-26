@@ -1553,3 +1553,28 @@ Research helper identity:
 - Vanilla 1.0.45 DLL SHA-256: `1cf45a439d9b75725cfd417b802502718da95a3a01e7c9f45002838642fb9bdc`.
 - Runtime acceptance pending. Remove Pulpit Geometry Probe before acceptance; Neutral Test Console 0.1.17 may remain. Check Russian, Japanese and Korean Soul's Repose, then short Faith as the no-unnecessary-growth control.
 - If accepted, promote the reusable host fact about the pulpit craft-button anchor chain/final-writer ownership into `NikichMods/GraveyardKeeperResearch`.
+
+
+### 2026-09-26 — Rebalanced 0.2.36 layout improved; live language-switch font regression found
+
+- Runtime used exact **PrayerClarity: Rebalanced 0.2.36** and **Neutral Test Console 0.1.17** with the pulpit geometry probe removed.
+- Visual result:
+  - Japanese Soul's Repose now shows a clear gap between the settled Effect block and the red action button; the native-anchor-driven window-growth mechanism is visibly behaving in the intended direction.
+  - English Soul's Repose also clears the action button.
+  - Full acceptance of 0.2.36 is **blocked** by a separate live-language-switch regression before RU/KO control coverage could be completed.
+- Regression: after cycling through CJK and other languages in the same running session, PrayerClarity pulpit forecast text can inherit the wrong font/metrics. In the reported Russian screen most Cyrillic forecast glyphs disappear while native/localized window chrome (title/action button) remains readable; other post-CJK languages can also look oversized.
+- Exact log sequence immediately before the broken Russian reproduction includes `ko -> zh_cn -> ja -> pl -> it -> ru -> es -> ru`, followed by reopening the church pulpit. No PrayerClarity exception is logged.
+- Host/static ownership proof:
+  - `GameSettings.ApplyLanguageChange()` calls `GJL.LoadLanguageResource(language)`, then `GUIElements.UpdateLanguageChangeForAllBaseGUI()`.
+  - `GUIElements.UpdateLanguageChangeForAllBaseGUI()` and `BaseGUI.UpdateLocalizedLabels()` delegate font ownership to `GJL.EnsureChildLabelsHasCorrectFont(..., true)`.
+  - native `LocalizedLabel.Localize()` explicitly calls `GJL.EnsureLabelHasCorrectFont(label, true)` after assigning localized text.
+- PrayerClarity source finding:
+  - PrayerClarity creates raw cloned `UILabel` forecast widgets and copies `bitmapFont` / `trueTypeFont` from the pulpit template only when those labels are created;
+  - subsequent renders reuse the same custom widgets and do not explicitly re-run the game's language-aware font owner on those labels.
+- Root-cause classification: **PrayerClarity regression**, not accepted as a vanilla game bug. The mod owns the custom raw labels and must rejoin the game's native language-font lifecycle.
+- Solution-space checkpoint:
+  - destroy/recreate forecast labels on every language change — works in principle but adds lifecycle churn and a new language-change state concern;
+  - add a dedicated `GJL.LoadLanguageResource` hook just for pulpit labels — unnecessary because pulpit redraw is already an exact consumer boundary;
+  - manually map fonts by language — rejected because GJL already owns the native mapping;
+  - **selected:** before each PrayerClarity pulpit render, call the native `GJL.EnsureLabelHasCorrectFont(label, true)` on the template/custom forecast labels, and likewise on any layout-created label. This is the least-complex path and delegates to the verified host owner.
+- Fresh production gate for this exact property is **READY**; no diagnostic probe is needed because runtime reproduction + direct host/source inspection establish owner and correction seam.
