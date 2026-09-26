@@ -1,32 +1,75 @@
 {
   "schema_version": 1,
-  "candidate_branch": "candidate/rebalanced-0.2.37",
-  "baseline_sha": "6c4d1ffddc53a8c32f0bdac39c7dcbfe127eefee",
+  "candidate_branch": "candidate/rebalanced-0.2.38",
+  "baseline_sha": "d95eb760105fa0fdcb4922a1d0f270eb5dbc2c05",
   "changes": [
     {
-      "id": "pulpit-language-font-refresh",
-      "observable_property": "PrayerClarity pulpit forecast text uses the correct current-language font and metrics after live language switching, including CJK -> Latin/Cyrillic transitions, without restarting the game.",
-      "canonical_owner": "Graveyard Keeper 1.407 GJL language/font lifecycle. GameSettings.ApplyLanguageChange loads the language then GUIElements.UpdateLanguageChangeForAllBaseGUI / BaseGUI.UpdateLocalizedLabels delegate UILabel font correction to GJL.EnsureChildLabelsHasCorrectFont. Native LocalizedLabel.Localize explicitly calls GJL.EnsureLabelHasCorrectFont(label, true). PrayerClarity owns raw cloned forecast UILabels and therefore must explicitly rejoin that owner path when rendering them.",
-      "final_writer_or_commit_point": "Immediately before PrayerClarity writes/configures each pulpit forecast UILabel for a redraw, invoke native GJL.EnsureLabelHasCorrectFont(label, true). This leaves actual language->font selection to GJL and requires no independent language map or polling.",
+      "id": "roots-gold-only-combined-cap-note",
+      "observable_property": "Shoots & Roots shows the 95% all-sources combined growth-time reduction cap only when the active prayer tier is Gold; Bronze and Silver show only their own -20% / -30% prayer reduction.",
+      "canonical_owner": "RebalancedPresentationSemantics.TryBuildActiveEffect for buff_plant, using captured RebalancedTierState.PlantTierParam and RebalancedRoots.MaxCombinedGrowthReduction. The accepted 0.2.37 active-effect final writer is SecondarySurfacePresentation.PerkBuffDrawPostfix -> txt_descr.",
+      "final_writer_or_commit_point": "At the buff_plant active-effect text construction boundary, choose the ordinary tier-only localization for Bronze/Silver and the all-sources-cap localization only for Gold. No mechanic/state mutation changes.",
       "blast_radius": [
-        "PrayerClarity-owned pulpit forecast UILabel font binding after live language changes",
-        "The reused pulpit context template font binding only insofar as PrayerClarity renders into it",
-        "PrayerClarity layout-created ResultHeader font binding"
+        "Rebalanced Temporary Effects text for buff_plant only",
+        "all 11 Rebalanced localization files for the Gold-only all-sources cap sentence"
       ],
       "preserved_invariants": [
-        "Prayer text, mechanics, balance, localization strings, icon selection and numeric values remain unchanged",
-        "0.2.36 native-anchor-driven pulpit clearance mechanism remains unchanged",
-        "No manual font table, font asset shipping, new language-change Harmony hook, polling loop or probe is introduced",
-        "Native GJL remains the sole language-to-font authority",
-        "Non-pulpit surfaces remain unchanged by this change"
+        "Roots mechanics remain -20% / -30% / -40% by prayer quality",
+        "95% combined safety cap and fertilizer interaction remain unchanged",
+        "Technology, prayer-item and pulpit Roots mechanics/values remain unchanged",
+        "Bronze/Silver active effects do not mention the 95% combined cap",
+        "Gold active effect explicitly states that the 95% limit is combined across all sources"
       ],
-      "acceptance_evidence": "In one running Graveyard Keeper 1.407 session, open Soul's Repose in Japanese, switch to English and reopen, then switch to Russian and reopen. All PrayerClarity forecast glyphs must remain readable with normal current-language metrics; no post-CJK enlargement/missing Cyrillic may remain. Then check Korean Soul's Repose once to finish the pending long-locale layout acceptance, and short Faith once to confirm no unnecessary window growth.",
+      "acceptance_evidence": "In Rebalanced 0.2.38, use the neutral Test Console or natural prayer state to inspect Temporary Effects for Bronze, Silver and Gold Shoots & Roots: Bronze/Silver must show only their prayer reduction; Gold must additionally state the 95% all-sources combined cap. No growth-timing replay is required because mechanics are unchanged and already accepted.",
       "evidence_refs": [
-        "User runtime/screenshots on exact Rebalanced 0.2.36 show Japanese and English readable but a later Russian pulpit forecast largely missing Cyrillic after repeated live language switching; native title/action-button text remains readable.",
-        "Runtime log on 0.2.36 records live sequence ko -> zh_cn -> ja -> pl -> it -> ru -> es -> ru before reopening the pulpit, with no PrayerClarity exception.",
-        "Host source: GameSettings.ApplyLanguageChange -> GJL.LoadLanguageResource -> GUIElements.UpdateLanguageChangeForAllBaseGUI.",
-        "Host source: BaseGUI.UpdateLocalizedLabels calls LocalizedLabel.Localize and GJL.EnsureChildLabelsHasCorrectFont; LocalizedLabel.Localize calls GJL.EnsureLabelHasCorrectFont(label, true).",
-        "PrayerClarity source: CreateLabel/CopyStyle copies bitmapFont or trueTypeFont at label creation, while Ensure reuses the same root/labels for the same pulpit template."
+        "2026-09-25 runtime review rejected the 0.2.31 presentation because the 95% all-sources cap appeared on Bronze/Silver; user direction was to spell it out only where Gold can reach it under the accepted vanilla fertilizer interaction.",
+        "Exact accepted 0.2.37 source still uses rebalanced.active.plant with the combined cap for every captured buff_plant tier.",
+        "RebalancedRoots.MaxCombinedGrowthReduction is the already-accepted canonical mechanic constant."
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "donations-native-gold-denomination-at-pulpit",
+      "observable_property": "Gold Prayer for Donations pulpit success contribution displays the fixed +100-silver reward using the game's native money denomination as +1 gold, matching the prayer-item tooltip instead of showing +100 silver.",
+      "canonical_owner": "The fixed donation value remains RebalancedRuleSet b_money = 2000 / 5000 / 10000 cents. The accepted 0.2.37 final pulpit writer is PulpitPolish.PolishResultRows -> PresentationText.BuildPulpitResultRows -> FormatPrayerContribution. Native denomination formatting is owned by Trading.FormatMoney and exposed by R.FormatSignedMoney.",
+      "final_writer_or_commit_point": "At PresentationText's fixed-only money contribution formatting boundary, use the verified native signed-money formatter rather than forcing the silver icon/number representation.",
+      "blast_radius": [
+        "Pulpit success-contribution formatting for fixed-only money bonuses",
+        "No mechanics, item tooltip or Technology values"
+      ],
+      "preserved_invariants": [
+        "Donation Prayer fixed rewards remain exactly 20 / 50 / 100 silver-equivalent",
+        "Success/failure semantics and base donations remain unchanged",
+        "Percentage donation modifiers retain their existing presentation path",
+        "Use native money denominations rather than a PrayerClarity currency conversion table"
+      ],
+      "acceptance_evidence": "At the pulpit in Rebalanced 0.2.38, Gold Prayer for Donations must show +1 gold in the success contribution. Spot-check Bronze or Silver once to confirm native fixed-money formatting remains readable. No sermon execution is required.",
+      "evidence_refs": [
+        "User previously accepted native 1-gold presentation as the target for Gold Donations, matching the item tooltip.",
+        "Exact accepted 0.2.37 PresentationText still formats fixed money as (slv) +100.",
+        "Verified Graveyard Keeper 1.407 Trading.FormatMoney converts 100 silver-equivalent to (gld)1."
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "repose-reliability-parenthetical-note",
+      "observable_property": "When Bronze Soul's Repose is at the endpoint where its direct quality improvement is exhausted but Silver/Gold can still improve reliability, the explanatory Silver/Gold sentence is rendered as a parenthetical note rather than a peer primary-effect sentence.",
+      "canonical_owner": "PulpitLayoutV5.OverrideSpecialPresentation appends localization key rebalanced.repose.endpoint_bronze_hint at the accepted endpoint condition. The player-facing wording is owned by the 11 lang_rebalanced localization files.",
+      "final_writer_or_commit_point": "Keep the existing endpoint condition and line placement unchanged; replace only the localized hint text with the previously reviewed concise parenthetical form.",
+      "blast_radius": [
+        "Rebalanced Soul's Repose endpoint hint text only",
+        "all 11 Rebalanced localization files for rebalanced.repose.endpoint_bronze_hint"
+      ],
+      "preserved_invariants": [
+        "Repose mechanics, quality requirements, reliability behavior and endpoint detection remain unchanged",
+        "The hint remains visible only under the existing Bronze endpoint condition",
+        "No pulpit geometry algorithm or language-font lifecycle changes",
+        "No Vanilla wording change"
+      ],
+      "acceptance_evidence": "Open the Bronze Soul's Repose endpoint case in Rebalanced 0.2.38 and confirm the Silver/Gold reliability clarification is visibly parenthetical and wraps cleanly. Because 0.2.37 dynamic pulpit growth/font behavior is already accepted, only a concise RU visual check is required unless wrapping looks suspicious; JA/KO are needed only if the new parenthetical visibly stresses wrapping.",
+      "evidence_refs": [
+        "User requested the final Silver/Gold reliability clarification be presented as a note in parentheses.",
+        "A concise parenthetical localization set was already prepared in the superseded 0.2.31 branch; the later clean 0.2.32 baseline dropped it for unrelated candidate-scope reasons, not because the wording was rejected.",
+        "Exact accepted 0.2.37 still contains the older non-parenthetical localization text."
       ],
       "state": "READY"
     }
