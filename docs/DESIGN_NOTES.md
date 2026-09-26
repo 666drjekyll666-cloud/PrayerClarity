@@ -132,6 +132,19 @@ It does **not** expose the fully resolved current final Faith/donation payout me
 
 See `PULPIT_REVEAL_UX.md` for the detailed rationale.
 
+### Accepted pulpit layout/language behavior
+
+For the shared pulpit presentation layer, the accepted runtime behavior is:
+
+- long localized `Effect:` text may increase the real pulpit root-window height only when the final wrapped content would otherwise violate the action-button clearance;
+- short prayers must remain compact rather than inheriting worst-case fixed height;
+- the native Pray GUI action-button anchors remain authoritative; PrayerClarity must change the verified upstream window geometry rather than repeatedly forcing the button transform;
+- PrayerClarity-owned raw `UILabel` forecast widgets must use the game's current-language font owner on redraw, so live language switching cannot leave stale CJK/Latin/Cyrillic font bindings or metrics;
+- these layout/font rules are presentation-only and must not change prayer mechanics, values, wording, localization content, or sermon outcome semantics.
+
+Runtime acceptance: Rebalanced 0.2.37 on Russian, Japanese, English and Korean pulpit views, including long Soul's Repose and short Faith control.
+
+
 ## Technology tooltip contract
 
 Technology is the comparison/planning surface.
