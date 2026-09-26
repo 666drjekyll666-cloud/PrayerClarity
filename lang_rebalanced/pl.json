@@ -3,7 +3,7 @@
   "rebalanced.tech.sins_intro": "W każdym konfesjonale spowiedzi odbywają się częściej.",
   "rebalanced.tech.repose_intro": "Osioł może przywozić ciała lepszej jakości.",
   "rebalanced.tech.combat_intro": "Wzmacnia Strażnika w walce.",
-  "rebalanced.active.plant": "Czas wzrostu roślin: -{0:0}% · Maks. łączna redukcja: -{1:0}%",
+  "rebalanced.active.plant": "Czas wzrostu roślin: -{0:0}% · Łączne skrócenie czasu wzrostu ze wszystkich źródeł: maks. {1:0}%",
   "rebalanced.active.sins": "Szansa na spowiedź: {0:0}%",
   "rebalanced.active.repose.bronze": "Osioł może przywieźć ciało o jeden poziom jakości lepsze",
   "rebalanced.active.repose.silver": "W połowie przypadków najlepsze ciało jest gwarantowane",
@@ -12,7 +12,7 @@
   "rebalanced.active.gratitude": "Stan dusz nie pogarsza się z upływem czasu - ani w ciele, ani po wydobyciu. Uwalnianie dusz daje +{0:0}% (gratitude_points).",
   "rebalanced.tech.plant_tier": "Czas wzrostu roślin: -{0:0}%",
   "rebalanced.tech.souls_intro": "Przy powodzeniu zgromadzone (gratitude_points) są zamieniane na (faith) w stosunku 1:1.",
-  "rebalanced.tech.souls_tier": "Limit na kazanie: {0}\u00A0(gratitude_points)",
+  "rebalanced.tech.souls_tier": "Limit na kazanie: {0} (gratitude_points)",
   "rebalanced.item.souls_repose": "Przy powodzeniu każdy wydany (gratitude_points) daje 1 (faith). Podczas jednego kazania można wydać do {0} (gratitude_points).",
   "rebalanced.pulpit.souls_conversion": "Zamienia {0} (gratitude_points) na {1} (faith).",
   "rebalanced.pulpit.souls_conversion_empty": "brak (gratitude_points) do zamiany",
@@ -23,5 +23,5 @@
   "rebalanced.tech.sin_shard_lore": "Kilka słów o tym, dlaczego dusze najlepiej oczyszczać dokładnie.",
   "rebalanced.tech.gratitude_effect": "Stan dusz nie pogarsza się z upływem czasu — ani w ciele, ani po wydobyciu.\n(gratitude_points) za uwalnianie dusz: +{0:0}%",
   "rebalanced.active.sins_detailed": "Dzienna szansa na spowiedź w każdym konfesjonale: {0:0}%",
-  "rebalanced.repose.endpoint_bronze_hint": "Srebrna i złota modlitwa nadal zwiększają pewność otrzymania najlepszego dostępnego ciała."
+  "rebalanced.repose.endpoint_bronze_hint": "(Srebro i złoto nadal zwiększają szansę na najlepsze dostępne ciało.)"
 }
