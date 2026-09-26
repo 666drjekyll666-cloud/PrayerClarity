@@ -74,7 +74,9 @@ namespace PrayerClarity
             string faith = FormatResourceContribution("(faith)", faithRate, fixedFaith);
             if (!string.IsNullOrEmpty(faith)) parts.Add(faith);
 
-            string money = FormatResourceContribution("(slv)", moneyRate, fixedMoney);
+            string money = Math.Abs(moneyRate) < 0.0001f && Math.Abs(fixedMoney) >= 0.0001f
+                ? R.FormatSignedMoney(fixedMoney)
+                : FormatResourceContribution("(slv)", moneyRate, fixedMoney);
             if (!string.IsNullOrEmpty(money)) parts.Add(money);
 
             // Success contribution is deliberately a dedicated indented row on every
